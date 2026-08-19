@@ -1,0 +1,61 @@
+---
+import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale, type StaticPageKey } from "../config/site";
+import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
+
+interface Props {
+  locale: Locale;
+  path: string;
+  pageKey?: StaticPageKey;
+}
+
+const { locale, path, pageKey } = Astro.props;
+const label = t(locale, "common.selectLanguage");
+---
+
+<nav class="language-selector" aria-label={label}>
+  <span class="language-selector-label">{label}:</span>
+  <ul>
+    {SUPPORTED_LOCALES.map((l) => (
+      <li>
+        <a
+          href={pageKey ? buildStaticPagePath(l, pageKey) : buildLocalizedPath(l, path)}
+          aria-current={l === locale ? "true" : undefined}
+          data-locale={l}
+          class="language-selector-link"
+        >
+          {LOCALE_LABELS[l]}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  const STORAGE_KEY = "resetenlinea_locale_preference";
+  document.querySelectorAll(".language-selector-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      const locale = link.getAttribute("data-locale");
+      if (locale) localStorage.setItem(STORAGE_KEY, locale);
+    });
+  });
+</script>
+
+<style>
+  .language-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .language-selector ul {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .language-selector-link[aria-current="true"] {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+</style>

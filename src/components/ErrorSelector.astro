@@ -1,0 +1,330 @@
+---
+import { getImage } from "astro:assets";
+import { buildWhatsAppMessage, buildWhatsAppLink, t, type ErrorResuelto } from "../i18n/utils";
+import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import { getErrorImage } from "../lib/error-images.js";
+import { getSolucionImage } from "../lib/solucion-images.js";
+import { getModeloImage } from "../lib/model-images.js";
+
+interface Props {
+  errores: ErrorResuelto[];
+  marca: string;
+  modelo: string;
+  modeloSlug?: string;
+  locale: Locale;
+  urlPath: string;
+  sourceIdBase: string;
+}
+
+const { errores, marca, modelo, modeloSlug, locale, urlPath, sourceIdBase } = Astro.props;
+const urlOrigen = `${SITE_URL}${urlPath}`;
+
+function categoriaLabel(tipo: ErrorResuelto["tipo"]): string {
+  if (tipo === "bloqueo") return "Bloqueo";
+  if (tipo === "combinacion") return "Combinación";
+  if (tipo === "notificacion") return "Notificación";
+  return "Otros";
+}
+
+const opciones = await Promise.all(
+  errores.map(async (err) => {
+    const message = buildWhatsAppMessage({ locale, marca, modelo, error: err.descripcion, urlOrigen });
+    const errorImg = getErrorImage(err.error_id) ?? (modeloSlug ? getErrorImage(modeloSlug) : null);
+    const solucionImg = getSolucionImage(err.error_id) ?? (modeloSlug ? getSolucionImage(modeloSlug) : null);
+    const errorImgUrl = errorImg ? (await getImage({ src: errorImg, format: "webp", width: 480 })).src : "";
+    const solucionImgUrl = solucionImg ? (await getImage({ src: solucionImg, format: "webp", width: 480 })).src : "";
+    return {
+      errorId: err.error_id,
+      descripcion: err.descripcion,
+      categoria: categoriaLabel(err.tipo),
+      href: buildWhatsAppLink(WHATSAPP_NUMBER, message),
+      sourceId: `${sourceIdBase}-error-${err.error_id}`,
+      errorImgUrl,
+      solucionImgUrl,
+    };
+  })
+);
+
+const modeloImg = modeloSlug ? getModeloImage(modeloSlug) : null;
+const modeloImgUrl = modeloImg ? (await getImage({ src: modeloImg, format: "webp", width: 480 })).src : "";
+
+const grupos: [string, typeof opciones][] = [];
+for (const op of opciones) {
+  let grupo = grupos.find(([nombre]) => nombre === op.categoria);
+  if (!grupo) {
+    grupo = [op.categoria, []];
+    grupos.push(grupo);
+  }
+  grupo[1].push(op);
+}
+
+const primera = opciones[0];
+const selectId = `error-select-${sourceIdBase}`;
+---
+
+<div class="error-selector">
+  <label for={selectId}>{t(locale, "modelo.seleccionaError")}</label>
+  <select id={selectId} class="error-selector-select">
+    {grupos.map(([categoria, ops]) => (
+      <optgroup label={categoria}>
+        {ops.map((op) => (
+          <option
+            value={op.errorId}
+            data-href={op.href}
+            data-source-id={op.sourceId}
+            data-descripcion={op.descripcion}
+            data-error-imagen={op.errorImgUrl}
+            data-solucion-imagen={op.solucionImgUrl}
+          >
+            {op.descripcion}
+          </option>
+        ))}
+      </optgroup>
+    ))}
+  </select>
+
+  <p class="error-selector-descripcion">{primera.descripcion}</p>
+
+  <div class="evidence-flip" hidden={!primera.errorImgUrl}>
+    <button
+      type="button"
+      class="evidence-flip-trigger"
+      aria-pressed="false"
+      data-sound="select"
+      data-modelo-imagen={modeloImgUrl}
+      hidden={!(primera.solucionImgUrl || modeloImgUrl)}
+    >
+      <span class="evidence-flip-inner">
+        <span class="evidence-face evidence-face-front">
+          <span class="evidence-imagen">
+            <img class="error-selector-imagen-error" src={primera.errorImgUrl} alt="Así se ve este error en la impresora" loading="lazy" />
+          </span>
+          <p class="evidence-caption">{t(locale, "modelo.evidenciaErrorCaption")}</p>
+          <span class="evidence-flip-hint">↻ {t(locale, "modelo.evidenciaFlipHint")}</span>
+        </span>
+        <span class="evidence-face evidence-face-back">
+          <span class="evidence-imagen">
+            <img class="error-selector-imagen-solucion" src={primera.solucionImgUrl || modeloImgUrl} alt="Así queda una vez resuelto" loading="lazy" />
+            <span class="evidence-check" aria-hidden="true" hidden={!!primera.solucionImgUrl}>✅</span>
+          </span>
+          <p class="evidence-caption">{t(locale, "modelo.evidenciaSolucionCaption")}</p>
+        </span>
+      </span>
+    </button>
+
+    <div class="evidence-static" hidden={!!(primera.solucionImgUrl || modeloImgUrl)}>
+      <span class="evidence-imagen">
+        <img class="error-selector-imagen-error-static" src={primera.errorImgUrl} alt="Así se ve este error en la impresora" loading="lazy" />
+      </span>
+      <p class="evidence-caption">{t(locale, "modelo.evidenciaErrorCaption")}</p>
+    </div>
+  </div>
+
+  <a class="whatsapp-cta" href={primera.href} data-source-id={primera.sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer">
+    {t(locale, "common.whatsappButton")}
+  </a>
+</div>
+
+<script>
+  import { playFeedback } from "../lib/sound-manager.js";
+
+  document.querySelectorAll(".error-selector").forEach((container) => {
+    const select = container.querySelector("select");
+    const cta = container.querySelector("a.whatsapp-cta");
+    const desc = container.querySelector(".error-selector-descripcion");
+    const flipWrapper = container.querySelector(".evidence-flip");
+    const flipTrigger = container.querySelector(".evidence-flip-trigger");
+    const staticCard = container.querySelector(".evidence-static");
+    const errorImg = container.querySelector(".error-selector-imagen-error");
+    const errorImgStatic = container.querySelector(".error-selector-imagen-error-static");
+    const solucionImg = container.querySelector(".error-selector-imagen-solucion");
+    const checkBadge = container.querySelector(".evidence-check");
+    const modeloImgUrl = flipTrigger?.dataset.modeloImagen || "";
+    if (!select || !cta) return;
+
+    flipTrigger?.addEventListener("click", () => {
+      const flipped = flipTrigger.getAttribute("aria-pressed") === "true";
+      flipTrigger.setAttribute("aria-pressed", String(!flipped));
+    });
+
+    select.addEventListener("change", () => {
+      const option = select.options[select.selectedIndex];
+      const href = option.getAttribute("data-href");
+      const sourceId = option.getAttribute("data-source-id");
+      const descripcion = option.getAttribute("data-descripcion");
+      const errorUrl = option.getAttribute("data-error-imagen");
+      const solucionUrl = option.getAttribute("data-solucion-imagen");
+      const hayTrasera = Boolean(solucionUrl || modeloImgUrl);
+
+      if (href) cta.setAttribute("href", href);
+      if (sourceId) cta.setAttribute("data-source-id", sourceId);
+      if (desc && descripcion) desc.textContent = descripcion;
+
+      if (flipWrapper) flipWrapper.hidden = !errorUrl;
+      if (flipTrigger) {
+        flipTrigger.hidden = !hayTrasera;
+        flipTrigger.setAttribute("aria-pressed", "false");
+      }
+      if (staticCard) staticCard.hidden = hayTrasera;
+
+      if (errorImg && errorUrl) errorImg.src = errorUrl;
+      if (errorImgStatic && errorUrl) errorImgStatic.src = errorUrl;
+      if (solucionImg) {
+        if (solucionUrl) {
+          solucionImg.src = solucionUrl;
+          if (checkBadge) checkBadge.hidden = true;
+        } else if (modeloImgUrl) {
+          solucionImg.src = modeloImgUrl;
+          if (checkBadge) checkBadge.hidden = false;
+        }
+      }
+      playFeedback("select");
+    });
+  });
+</script>
+
+<style>
+  .error-selector {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+  .error-selector-select {
+    padding: 0.6rem;
+    border-radius: 0.375rem;
+    border: 1px solid #cbd5e1;
+    font: inherit;
+    width: 100%;
+    min-width: 0;
+  }
+  .error-selector-descripcion {
+    color: #334155;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+  .evidence-flip {
+    width: 100%;
+  }
+  .evidence-flip[hidden] {
+    display: none;
+  }
+  .evidence-flip-trigger {
+    all: unset;
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    cursor: pointer;
+    perspective: 1200px;
+  }
+  .evidence-flip-trigger[hidden] {
+    display: none;
+  }
+  .evidence-flip-inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+  }
+  .evidence-flip-trigger[aria-pressed="true"] .evidence-flip-inner {
+    transform: rotateY(180deg);
+  }
+  .evidence-flip-trigger:focus-visible .evidence-flip-inner {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+  .evidence-face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 0.35rem;
+    text-align: center;
+    backface-visibility: hidden;
+  }
+  .evidence-face-back {
+    transform: rotateY(180deg);
+  }
+  .evidence-static {
+    max-width: 480px;
+    margin: 0 auto;
+    display: grid;
+    gap: 0.35rem;
+    text-align: center;
+  }
+  .evidence-static[hidden] {
+    display: none;
+  }
+  .evidence-imagen {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+  }
+  .evidence-static .evidence-imagen {
+    aspect-ratio: 4 / 3;
+  }
+  .evidence-imagen img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .evidence-check {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.9rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  }
+  .evidence-check[hidden] {
+    display: none;
+  }
+  .evidence-caption {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+  }
+  .evidence-flip-hint {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    background: rgba(15, 23, 42, 0.72);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .evidence-flip-inner {
+      transition: none;
+    }
+  }
+  .whatsapp-cta {
+    display: inline-block;
+    width: fit-content;
+    background: #25d366;
+    color: #062f1a;
+    font: inherit;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .whatsapp-cta:hover {
+    background: #1fb958;
+  }
+</style>

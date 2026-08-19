@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PreguntasFrecuentesPage from "../components/pages/PreguntasFrecuentesPage.astro";
+import { t } from "../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title={t(locale, "faq.title")}
+  description={t(locale, "faq.description")}
+  locale={locale}
+  path="/preguntas-frecuentes/"
+  pageKey="preguntasFrecuentes"
+>
+  <PreguntasFrecuentesPage locale={locale} />
+</BaseLayout>

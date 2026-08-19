@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ModeloPage from "../../../components/pages/ModeloPage.astro";
+import { t } from "../../../i18n/utils";
+import modelos from "../../../data/modelos-muestra.json";
+
+export function getStaticPaths() {
+  return modelos.map((modelo) => ({
+    params: { marca: modelo.marcaSlug, modelo: modelo.modeloSlug },
+    props: { modeloData: modelo },
+  }));
+}
+
+const locale = "es" as const;
+const { modeloData } = Astro.props;
+
+const title = t(locale, "modelo.titleTemplate")
+  .replaceAll("{marca}", modeloData.nombreMarca)
+  .replaceAll("{modelo}", modeloData.nombreModelo);
+const description = t(locale, "modelo.descriptionTemplate")
+  .replaceAll("{marca}", modeloData.nombreMarca)
+  .replaceAll("{modelo}", modeloData.nombreModelo);
+const path = `/reset/${modeloData.marcaSlug}/${modeloData.modeloSlug}/`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  locale={locale}
+  path={path}
+  marcaDefault={modeloData.nombreMarca}
+  modeloDefault={modeloData.nombreModelo}
+>
+  <ModeloPage locale={locale} modeloData={modeloData} />
+</BaseLayout>

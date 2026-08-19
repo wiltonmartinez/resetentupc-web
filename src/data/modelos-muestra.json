@@ -1,0 +1,1362 @@
+[
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-1810",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-1810",
+    "nivel": 2,
+    "popularidad": 178
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2400",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2400",
+    "nivel": 2,
+    "popularidad": 177
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2500",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2500",
+    "nivel": 2,
+    "popularidad": 176
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2550",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2550",
+    "nivel": 2,
+    "popularidad": 175
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2600",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2600",
+    "nivel": 2,
+    "popularidad": 174
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2610",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2610",
+    "nivel": 2,
+    "popularidad": 173
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2650",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2650",
+    "nivel": 2,
+    "popularidad": 172
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2710",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2710",
+    "nivel": 2,
+    "popularidad": 171
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2720",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2720",
+    "nivel": 2,
+    "popularidad": 170
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2750",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2750",
+    "nivel": 2,
+    "popularidad": 169
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2760",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2760",
+    "nivel": 2,
+    "popularidad": 168
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2800",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2800",
+    "nivel": 2,
+    "popularidad": 167
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2803",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2803",
+    "nivel": 2,
+    "popularidad": 166
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2810",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2810",
+    "nivel": 2,
+    "popularidad": 165
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2850",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2850",
+    "nivel": 2,
+    "popularidad": 164
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2860",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2860",
+    "nivel": 2,
+    "popularidad": 163
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2862",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2862",
+    "nivel": 2,
+    "popularidad": 162
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2870",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2870",
+    "nivel": 2,
+    "popularidad": 161
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-3600",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-3600",
+    "nivel": 2,
+    "popularidad": 160
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-4550",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-4550",
+    "nivel": 2,
+    "popularidad": 159
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-4700",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-4700",
+    "nivel": 2,
+    "popularidad": 158
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-4800",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-4800",
+    "nivel": 2,
+    "popularidad": 157
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g1100",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G1100",
+    "nivel": 2,
+    "popularidad": 156
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g1110",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G1110",
+    "nivel": 2,
+    "popularidad": 155
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g2100",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G2100",
+    "nivel": 2,
+    "popularidad": 154
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g2110",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G2110",
+    "nivel": 2,
+    "popularidad": 153
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g3100",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G3100",
+    "nivel": 2,
+    "popularidad": 152
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g3110",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G3110",
+    "nivel": 2,
+    "popularidad": 151
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g4100",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G4100",
+    "nivel": 2,
+    "popularidad": 150
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g4110",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G4110",
+    "nivel": 2,
+    "popularidad": 149
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g5010",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G5010",
+    "nivel": 2,
+    "popularidad": 148
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g6010",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G6010",
+    "nivel": 1,
+    "popularidad": 147
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g7010",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G7010",
+    "nivel": 2,
+    "popularidad": 146
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l1110",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L1110",
+    "nivel": 2,
+    "popularidad": 145
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l120",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L120",
+    "nivel": 2,
+    "popularidad": 144
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l121",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L121",
+    "nivel": 2,
+    "popularidad": 143
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l1210",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L1210",
+    "nivel": 2,
+    "popularidad": 142
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l1250",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L1250",
+    "nivel": 1,
+    "popularidad": 141
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l1300",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L1300",
+    "nivel": 2,
+    "popularidad": 140
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l1800",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L1800",
+    "nivel": 2,
+    "popularidad": 139
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l200",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L200",
+    "nivel": 2,
+    "popularidad": 138
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l210",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L210",
+    "nivel": 2,
+    "popularidad": 137
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l300",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L300",
+    "nivel": 2,
+    "popularidad": 136
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3060",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3060",
+    "nivel": 2,
+    "popularidad": 135
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3110",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3110",
+    "nivel": 2,
+    "popularidad": 134
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3115",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3115",
+    "nivel": 2,
+    "popularidad": 133
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3150",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3150",
+    "nivel": 2,
+    "popularidad": 132
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3160",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3160",
+    "nivel": 2,
+    "popularidad": 131
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3210",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3210",
+    "nivel": 2,
+    "popularidad": 130
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3250",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3250",
+    "nivel": 2,
+    "popularidad": 129
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3260",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3260",
+    "nivel": 2,
+    "popularidad": 128
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l350",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L350",
+    "nivel": 2,
+    "popularidad": 127
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l355",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L355",
+    "nivel": 2,
+    "popularidad": 126
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l360",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L360",
+    "nivel": 2,
+    "popularidad": 125
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l365",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L365",
+    "nivel": 2,
+    "popularidad": 124
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l375",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L375",
+    "nivel": 2,
+    "popularidad": 123
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l380",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L380",
+    "nivel": 2,
+    "popularidad": 122
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l382",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L382",
+    "nivel": 2,
+    "popularidad": 121
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l395",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L395",
+    "nivel": 2,
+    "popularidad": 120
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l396",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L396",
+    "nivel": 2,
+    "popularidad": 119
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l4150",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L4150",
+    "nivel": 2,
+    "popularidad": 118
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l4160",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L4160",
+    "nivel": 2,
+    "popularidad": 117
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l4260",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L4260",
+    "nivel": 2,
+    "popularidad": 116
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l455",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L455",
+    "nivel": 2,
+    "popularidad": 115
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l475",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L475",
+    "nivel": 2,
+    "popularidad": 114
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l495",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L495",
+    "nivel": 2,
+    "popularidad": 113
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l5190",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L5190",
+    "nivel": 2,
+    "popularidad": 112
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l5290",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L5290",
+    "nivel": 2,
+    "popularidad": 111
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l555",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L555",
+    "nivel": 2,
+    "popularidad": 110
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l5590",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L5590",
+    "nivel": 2,
+    "popularidad": 109
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l565",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L565",
+    "nivel": 2,
+    "popularidad": 108
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l575",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L575",
+    "nivel": 2,
+    "popularidad": 107
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l605",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L605",
+    "nivel": 2,
+    "popularidad": 106
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l606",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L606",
+    "nivel": 2,
+    "popularidad": 105
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l655",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L655",
+    "nivel": 2,
+    "popularidad": 104
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l656",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L656",
+    "nivel": 2,
+    "popularidad": 103
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l800",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L800",
+    "nivel": 2,
+    "popularidad": 102
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l805",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L805",
+    "nivel": 2,
+    "popularidad": 101
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l810",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L810",
+    "nivel": 2,
+    "popularidad": 100
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l850",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L850",
+    "nivel": 2,
+    "popularidad": 99
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "m1100",
+    "nombreMarca": "Epson",
+    "nombreModelo": "M1100",
+    "nivel": 2,
+    "popularidad": 98
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "m1120",
+    "nombreMarca": "Epson",
+    "nombreModelo": "M1120",
+    "nivel": 2,
+    "popularidad": 97
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "m2100",
+    "nombreMarca": "Epson",
+    "nombreModelo": "M2100",
+    "nivel": 2,
+    "popularidad": 96
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "m2120",
+    "nombreMarca": "Epson",
+    "nombreModelo": "M2120",
+    "nivel": 2,
+    "popularidad": 95
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb2010",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB2010",
+    "nivel": 2,
+    "popularidad": 94
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb2110",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB2110",
+    "nivel": 2,
+    "popularidad": 93
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb2710",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB2710",
+    "nivel": 2,
+    "popularidad": 92
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb2720",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB2720",
+    "nivel": 2,
+    "popularidad": 91
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb5110",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB5110",
+    "nivel": 2,
+    "popularidad": 90
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb5310",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB5310",
+    "nivel": 2,
+    "popularidad": 89
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb5410",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB5410",
+    "nivel": 2,
+    "popularidad": 88
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "ts-700",
+    "nombreMarca": "Canon",
+    "nombreModelo": "TS-700",
+    "nivel": 2,
+    "popularidad": 87
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "artisan-1430",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ARTISAN-1430",
+    "nivel": 2,
+    "popularidad": 86
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "p600",
+    "nombreMarca": "Epson",
+    "nombreModelo": "P600",
+    "nivel": 2,
+    "popularidad": 85
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "sp-1390",
+    "nombreMarca": "Epson",
+    "nombreModelo": "SP-1390",
+    "nivel": 2,
+    "popularidad": 84
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "sp-1410",
+    "nombreMarca": "Epson",
+    "nombreModelo": "SP-1410",
+    "nivel": 2,
+    "popularidad": 83
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2520",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2520",
+    "nivel": 2,
+    "popularidad": 82
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2530",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2530",
+    "nivel": 2,
+    "popularidad": 81
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2540",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2540",
+    "nivel": 2,
+    "popularidad": 80
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2630",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2630",
+    "nivel": 2,
+    "popularidad": 79
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2650",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2650",
+    "nivel": 2,
+    "popularidad": 78
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2660",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2660",
+    "nivel": 2,
+    "popularidad": 77
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2750",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2750",
+    "nivel": 2,
+    "popularidad": 76
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-2760",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-2760",
+    "nivel": 2,
+    "popularidad": 75
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-3720",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-3720",
+    "nivel": 2,
+    "popularidad": 74
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-3730",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-3730",
+    "nivel": 2,
+    "popularidad": 73
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-3733",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-3733",
+    "nivel": 2,
+    "popularidad": 72
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-645",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-645",
+    "nivel": 2,
+    "popularidad": 71
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-200",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-200",
+    "nivel": 2,
+    "popularidad": 70
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-201",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-201",
+    "nivel": 2,
+    "popularidad": 69
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-204",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-204",
+    "nivel": 2,
+    "popularidad": 68
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2100",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2100",
+    "nivel": 2,
+    "popularidad": 67
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2101",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2101",
+    "nivel": 2,
+    "popularidad": 66
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2105",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2105",
+    "nivel": 2,
+    "popularidad": 65
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-211",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-211",
+    "nivel": 2,
+    "popularidad": 64
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2150",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2150",
+    "nivel": 2,
+    "popularidad": 63
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2155",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2155",
+    "nivel": 2,
+    "popularidad": 62
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2200",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2200",
+    "nivel": 2,
+    "popularidad": 61
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-2205",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-2205",
+    "nivel": 2,
+    "popularidad": 59
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-225",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-225",
+    "nivel": 2,
+    "popularidad": 58
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-231",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-231",
+    "nivel": 2,
+    "popularidad": 57
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-235",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-235",
+    "nivel": 2,
+    "popularidad": 56
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-240",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-240",
+    "nivel": 2,
+    "popularidad": 55
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-241",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-241",
+    "nivel": 2,
+    "popularidad": 54
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-243",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-243",
+    "nivel": 2,
+    "popularidad": 53
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-245",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-245",
+    "nivel": 2,
+    "popularidad": 52
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-255",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-255",
+    "nivel": 2,
+    "popularidad": 51
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-257",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-257",
+    "nivel": 2,
+    "popularidad": 50
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-300",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-300",
+    "nivel": 2,
+    "popularidad": 49
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-310",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-310",
+    "nivel": 2,
+    "popularidad": 48
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-320",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-320",
+    "nivel": 2,
+    "popularidad": 47
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-340",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-340",
+    "nivel": 2,
+    "popularidad": 46
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-345",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-345",
+    "nivel": 2,
+    "popularidad": 45
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-352",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-352",
+    "nivel": 2,
+    "popularidad": 44
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-355",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-355",
+    "nivel": 2,
+    "popularidad": 43
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-400",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-400",
+    "nivel": 2,
+    "popularidad": 42
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-401",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-401",
+    "nivel": 2,
+    "popularidad": 41
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-410",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-410",
+    "nivel": 2,
+    "popularidad": 40
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-411",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-411",
+    "nivel": 2,
+    "popularidad": 39
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-420",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-420",
+    "nivel": 2,
+    "popularidad": 38
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-431",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-431",
+    "nivel": 2,
+    "popularidad": 37
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-432",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-432",
+    "nivel": 2,
+    "popularidad": 36
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-440",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-440",
+    "nivel": 2,
+    "popularidad": 35
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-445",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-445",
+    "nivel": 2,
+    "popularidad": 34
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-452",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-452",
+    "nivel": 2,
+    "popularidad": 33
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-455",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-455",
+    "nivel": 2,
+    "popularidad": 32
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-620",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-620",
+    "nivel": 2,
+    "popularidad": 31
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f570",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F570",
+    "nivel": 2,
+    "popularidad": 30
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f571",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F571",
+    "nivel": 2,
+    "popularidad": 29
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f6070",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F6070",
+    "nivel": 2,
+    "popularidad": 28
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f6200",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F6200",
+    "nivel": 2,
+    "popularidad": 27
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f7070",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F7070",
+    "nivel": 2,
+    "popularidad": 26
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f7170",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F7170",
+    "nivel": 2,
+    "popularidad": 25
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f7200",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F7200",
+    "nivel": 2,
+    "popularidad": 24
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "f9300",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "F9300",
+    "nivel": 2,
+    "popularidad": 23
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "p7500",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "P7500",
+    "nivel": 2,
+    "popularidad": 22
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "p9500",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "P9500",
+    "nivel": 2,
+    "popularidad": 21
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3100",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3100",
+    "nivel": 2,
+    "popularidad": 20
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3100m",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3100M",
+    "nivel": 2,
+    "popularidad": 19
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3100x",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3100X",
+    "nivel": 2,
+    "popularidad": 17
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3170",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3170",
+    "nivel": 2,
+    "popularidad": 16
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3170m",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3170M",
+    "nivel": 2,
+    "popularidad": 15
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3170x",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3170X",
+    "nivel": 2,
+    "popularidad": 14
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3400",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3400",
+    "nivel": 2,
+    "popularidad": 13
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t3475",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T3475",
+    "nivel": 2,
+    "popularidad": 11
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t5170",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T5170",
+    "nivel": 2,
+    "popularidad": 7
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t5170m",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T5170M",
+    "nivel": 2,
+    "popularidad": 6
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t5470",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T5470",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t5470m",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T5470M",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "t5475",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "T5475",
+    "nivel": 2,
+    "popularidad": 1
+  }
+]

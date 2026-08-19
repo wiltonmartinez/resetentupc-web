@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import ModeloPage from "../../../../components/pages/ModeloPage.astro";
+import { t } from "../../../../i18n/utils";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
+import modelos from "../../../../data/modelos-muestra.json";
+
+export function getStaticPaths() {
+  const locales = SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE);
+  return locales.flatMap((locale) =>
+    modelos.map((modelo) => ({
+      params: { locale, marca: modelo.marcaSlug, modelo: modelo.modeloSlug },
+      props: { modeloData: modelo },
+    }))
+  );
+}
+
+const locale = Astro.params.locale as Locale;
+const { modeloData } = Astro.props;
+
+const title = t(locale, "modelo.titleTemplate")
+  .replaceAll("{marca}", modeloData.nombreMarca)
+  .replaceAll("{modelo}", modeloData.nombreModelo);
+const description = t(locale, "modelo.descriptionTemplate")
+  .replaceAll("{marca}", modeloData.nombreMarca)
+  .replaceAll("{modelo}", modeloData.nombreModelo);
+const path = `/reset/${modeloData.marcaSlug}/${modeloData.modeloSlug}/`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  locale={locale}
+  path={path}
+  marcaDefault={modeloData.nombreMarca}
+  modeloDefault={modeloData.nombreModelo}
+>
+  <ModeloPage locale={locale} modeloData={modeloData} />
+</BaseLayout>

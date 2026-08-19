@@ -1,0 +1,137 @@
+---
+interface FlowStep {
+  titulo: string;
+  descripcion: string;
+  icono: "revision" | "pago" | "reset" | "certificado";
+}
+
+interface Props {
+  titulo: string;
+  introTexto?: string;
+  pasos: FlowStep[];
+}
+
+const { titulo, introTexto, pasos } = Astro.props;
+---
+
+<div class="service-flow">
+  <h2 class="service-flow-titulo">{titulo}</h2>
+  {introTexto && <p class="service-flow-intro">{introTexto}</p>}
+
+  <ol class="service-flow-list">
+    {
+      pasos.map((paso, index) => (
+        <li class="service-flow-item">
+          <div class="service-flow-icon">
+            {paso.icono === "revision" && (
+              <svg viewBox="0 0 20 20" width="26" height="26" fill="none" aria-hidden="true">
+                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6" />
+                <path d="M16.5 16.5l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              </svg>
+            )}
+            {paso.icono === "pago" && (
+              <svg viewBox="0 0 20 20" width="26" height="26" fill="none" aria-hidden="true">
+                <rect x="2.5" y="5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.6" />
+                <path d="M2.5 8.5h15" stroke="currentColor" stroke-width="1.6" />
+                <path d="M5.5 12h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              </svg>
+            )}
+            {paso.icono === "reset" && (
+              <svg viewBox="0 0 20 20" width="26" height="26" fill="none" aria-hidden="true">
+                <path d="M15.5 10a5.5 5.5 0 11-2-4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                <path d="M15.5 3.5v3.3h-3.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            )}
+            {paso.icono === "certificado" && (
+              <svg viewBox="0 0 20 20" width="26" height="26" fill="none" aria-hidden="true">
+                <path
+                  d="M6 2.5h8l2 2v11.5a1 1 0 01-1 1H5a1 1 0 01-1-1V4.5l2-2Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linejoin="round"
+                />
+                <path d="M6.5 8h7M6.5 11h7M6.5 14h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              </svg>
+            )}
+          </div>
+          <span class="service-flow-numero" aria-hidden="true">{index + 1}</span>
+          <h3>{paso.titulo}</h3>
+          <p>{paso.descripcion}</p>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .service-flow {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .service-flow-titulo {
+    margin: 0;
+  }
+
+  .service-flow-intro {
+    margin: 0 0 0.25rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .service-flow-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .service-flow-item {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem 1.25rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    position: relative;
+  }
+
+  .service-flow-icon {
+    color: var(--color-primary);
+  }
+
+  .service-flow-numero {
+    position: absolute;
+    top: 1rem;
+    right: 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-subtle);
+  }
+
+  .service-flow-item h3 {
+    margin: 0.3rem 0 0;
+    font-size: 1.15rem;
+  }
+
+  .service-flow-item p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 780px) {
+    .service-flow-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 460px) {
+    .service-flow-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "epson",
+    "nombre": "Epson"
+  },
+  {
+    "slug": "canon",
+    "nombre": "Canon"
+  },
+  {
+    "slug": "epson-sc",
+    "nombre": "Epson SC"
+  }
+]

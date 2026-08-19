@@ -1,0 +1,107 @@
+---
+import { t } from "../../i18n/utils";
+import InfoCard from "../ui/InfoCard.astro";
+import ServiceFlow from "../ui/ServiceFlow.astro";
+import ProcessSteps from "../ui/ProcessSteps.astro";
+import Tabs from "../ui/Tabs.astro";
+import AyudaCTA from "../AyudaCTA.astro";
+import TrustpilotWidget from "../TrustpilotWidget.astro";
+import { getProcesoImage } from "../../lib/proceso-images.js";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const pasosFlujoServicio = [
+  {
+    titulo: t(locale, "flujoServicio.revisionTitulo"),
+    descripcion: t(locale, "flujoServicio.revisionTexto"),
+    icono: "revision" as const,
+  },
+  {
+    titulo: t(locale, "flujoServicio.pagoTitulo"),
+    descripcion: t(locale, "flujoServicio.pagoTexto"),
+    icono: "pago" as const,
+  },
+  {
+    titulo: t(locale, "flujoServicio.resetTitulo"),
+    descripcion: t(locale, "flujoServicio.resetTexto"),
+    icono: "reset" as const,
+  },
+  {
+    titulo: t(locale, "flujoServicio.certificadoTitulo"),
+    descripcion: t(locale, "flujoServicio.certificadoTexto"),
+    icono: "certificado" as const,
+  },
+];
+
+const pasosProceso = [
+  {
+    titulo: t(locale, "proceso.paso1Titulo"),
+    descripcion: t(locale, "proceso.paso1Texto"),
+    icono: "monitor" as const,
+    enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
+    imagen: getProcesoImage("paso1-preparar") ?? undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso2Titulo"),
+    descripcion: t(locale, "proceso.paso2Texto"),
+    icono: "conectar" as const,
+    destacado: `Technician ID: ${TECHNICIAN_ID}`,
+    imagen: getProcesoImage("paso2-conectar") ?? undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso3Titulo"),
+    descripcion: t(locale, "proceso.paso3Texto"),
+    icono: "usb" as const,
+    imagen: getProcesoImage("paso3-usb") ?? undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso4Titulo"),
+    descripcion: t(locale, "proceso.paso4Texto"),
+    icono: "whatsapp" as const,
+  },
+];
+---
+
+<article class="como-funciona">
+  <h1>{t(locale, "comoFunciona.heading")}</h1>
+
+  <InfoCard tone="muted">
+    <Tabs
+      tabs={[
+        { id: "servicio", label: t(locale, "comoFunciona.tabServicio") },
+        { id: "proceso", label: t(locale, "comoFunciona.tabProceso") },
+      ]}
+    >
+      <div data-tab-panel="servicio">
+        <ServiceFlow
+          titulo={t(locale, "flujoServicio.titulo")}
+          introTexto={t(locale, "flujoServicio.introTexto")}
+          pasos={pasosFlujoServicio}
+        />
+      </div>
+      <div data-tab-panel="proceso" hidden>
+        <ProcessSteps
+          titulo={t(locale, "proceso.titulo")}
+          introTexto={t(locale, "proceso.introTexto")}
+          pasos={pasosProceso}
+          marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
+        >
+          <TrustpilotWidget />
+          <AyudaCTA sourceId="como-funciona-proceso" label={t(locale, "proceso.ctaContinuar")} />
+        </ProcessSteps>
+      </div>
+    </Tabs>
+  </InfoCard>
+</article>
+
+<style>
+  .como-funciona {
+    display: grid;
+    gap: var(--space-sm);
+  }
+</style>

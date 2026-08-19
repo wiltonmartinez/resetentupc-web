@@ -1,0 +1,279 @@
+---
+import { Image } from "astro:assets";
+
+interface Paso {
+  titulo: string;
+  descripcion: string;
+  icono?: "monitor" | "conectar" | "usb" | "whatsapp";
+  destacado?: string;
+  enlace?: { href: string; label: string };
+  imagen?: ImageMetadata;
+}
+
+interface Props {
+  titulo: string;
+  introTexto?: string;
+  pasos: Paso[];
+  pasoFinalTexto?: string;
+  marcarRevisadoLabel?: string;
+}
+
+const { titulo, introTexto, pasos, pasoFinalTexto, marcarRevisadoLabel = "Marcar paso como revisado" } = Astro.props;
+---
+
+<div class="process-steps">
+  <h3 class="process-steps-titulo">{titulo}</h3>
+  {introTexto && <p class="process-steps-intro">{introTexto}</p>}
+
+  <ol class="process-steps-list">
+    {
+      pasos.map((paso, index) => (
+        <li class="process-step">
+          <button
+            type="button"
+            class="process-step-numero"
+            data-step-toggle
+            aria-pressed="false"
+            aria-label={`${marcarRevisadoLabel} ${index + 1}`}
+          >
+            <span class="process-step-numero-text" aria-hidden="true">{index + 1}</span>
+            <svg class="process-step-numero-check" viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M4 10.5l3.5 3.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div class="process-step-body">
+            <h4>
+              {paso.icono === "monitor" && (
+                <svg class="process-step-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+                  <rect x="2.5" y="4" width="15" height="10" rx="1.2" stroke="currentColor" stroke-width="1.6" />
+                  <path d="M7 17h6M10 14v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+              )}
+              {paso.icono === "conectar" && (
+                <svg class="process-step-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+                  <path
+                    d="M8 12l4-4M7 9l-1.5 1.5a2.5 2.5 0 003.5 3.5L10.5 12M13 8l1.5-1.5a2.5 2.5 0 00-3.5-3.5L9.5 4.5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              )}
+              {paso.icono === "usb" && (
+                <svg class="process-step-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+                  <path d="M10 3v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                  <circle cx="10" cy="3" r="1.4" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M6.5 8.5L10 12l3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="6.5" cy="15.2" r="1.4" stroke="currentColor" stroke-width="1.4" />
+                  <circle cx="13.5" cy="15.2" r="1.4" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M10 12v1.2M7.6 14.3L9.2 13M12.4 14.3L10.8 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+              )}
+              {paso.icono === "whatsapp" && (
+                <svg class="process-step-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+                  <path
+                    d="M4 17l1.05-3.6A6.97 6.97 0 013 10a7 7 0 1112.5 4.33A7 7 0 014 17Z"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M7.3 8.9c.35 2 1.9 3.55 3.9 3.9.4.07.9-.2 1-.6l.15-.6a.55.55 0 00-.3-.65l-1.15-.5a.55.55 0 00-.6.13l-.3.3a4.1 4.1 0 01-2.1-2.1l.3-.3a.55.55 0 00.13-.6l-.5-1.15a.55.55 0 00-.65-.3l-.6.15c-.4.1-.67.6-.6 1Z"
+                    stroke="currentColor"
+                    stroke-width="1.1"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              )}
+              <span>{paso.titulo}</span>
+            </h4>
+            <p>{paso.descripcion}</p>
+            {paso.imagen && (
+              <Image
+                src={paso.imagen}
+                alt={paso.titulo}
+                width={paso.imagen.width}
+                height={paso.imagen.height}
+                loading="lazy"
+                class="process-step-imagen"
+              />
+            )}
+            {paso.destacado && <code class="process-step-destacado">{paso.destacado}</code>}
+            {paso.enlace && (
+              <a class="process-step-enlace" href={paso.enlace.href} target="_blank" rel="noopener noreferrer">
+                {paso.enlace.label}
+              </a>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {pasoFinalTexto && <p class="process-steps-final">{pasoFinalTexto}</p>}
+
+  <div class="process-steps-cta">
+    <slot />
+  </div>
+</div>
+
+<script>
+  import { playFeedback } from "../../lib/sound-manager.js";
+
+  document.querySelectorAll("[data-step-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nowRevisado = button.getAttribute("aria-pressed") !== "true";
+      button.setAttribute("aria-pressed", String(nowRevisado));
+      if (nowRevisado) playFeedback("progress");
+    });
+  });
+</script>
+
+<style>
+  .process-steps {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .process-steps-titulo {
+    margin: 0;
+  }
+
+  .process-steps-intro {
+    margin: 0 0 0.25rem;
+    color: var(--color-text-muted);
+  }
+
+  .process-steps-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .process-step {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.9rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .process-step:last-child {
+    padding-bottom: 0;
+  }
+
+  .process-step-numero {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    flex: none;
+    padding: 0;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+  }
+
+  .process-step-numero:hover {
+    box-shadow: 0 0 0 3px var(--color-bg-card);
+  }
+
+  .process-step-numero:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .process-step-numero-check {
+    display: none;
+  }
+
+  .process-step-numero[aria-pressed="true"] .process-step-numero-text {
+    display: none;
+  }
+
+  .process-step-numero[aria-pressed="true"] .process-step-numero-check {
+    display: block;
+  }
+
+  .process-step-numero[aria-pressed="true"] {
+    background: var(--color-primary-dark);
+  }
+
+  .process-step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 2.25rem;
+    left: 1.1rem;
+    width: 2px;
+    height: calc(100% - 2rem);
+    background: var(--color-border);
+  }
+
+  .process-step-body {
+    min-width: 0;
+  }
+
+  .process-step-body h4 {
+    margin: 0 0 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .process-step-icon {
+    flex: none;
+    color: var(--color-primary);
+  }
+
+  .process-step-body p {
+    margin: 0;
+  }
+
+  .process-step-imagen {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-top: 0.6rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .process-step-destacado {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.4rem 0.7rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+
+  .process-step-enlace {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .process-steps-final {
+    margin: 0.25rem 0 0;
+    font-weight: 600;
+  }
+
+  .process-steps-cta:empty {
+    display: none;
+  }
+</style>

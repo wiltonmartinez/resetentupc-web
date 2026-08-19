@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildLocalizedPath } from "../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title="Página no encontrada | ResetEnLinea"
+  description="La página que buscas no existe o fue movida."
+  locale={locale}
+  path="/404/"
+  noindex
+>
+  <section class="not-found">
+    <h1>Página no encontrada</h1>
+    <p>La página que buscas no existe o fue movida.</p>
+    <a href={buildLocalizedPath(locale, "/")}>Volver al inicio</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>

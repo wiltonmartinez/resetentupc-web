@@ -1,0 +1,139 @@
+---
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+interface Props {
+  archivo: string;
+  label: string;
+  posterArchivo?: string;
+}
+
+const { archivo, label, posterArchivo } = Astro.props;
+
+const publicVideoPath = fileURLToPath(new URL(`../../../public/video/${archivo}`, import.meta.url));
+const existe = existsSync(publicVideoPath);
+
+const videoId = `video-${archivo.replace(/[^a-z0-9]/gi, "-")}`;
+---
+
+{
+  existe && (
+    <div class="video-modal" data-video-modal>
+      <button type="button" class="video-modal-trigger" data-sound="select" aria-haspopup="dialog">
+        {posterArchivo && <img src={`/video/${posterArchivo}`} alt="" loading="lazy" />}
+        <span class="video-modal-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M8 5v14l11-7Z" />
+          </svg>
+        </span>
+        <span class="video-modal-label">{label}</span>
+      </button>
+
+      <dialog class="video-modal-dialog" id={videoId}>
+        <button type="button" class="video-modal-close" data-sound="select" aria-label="Cerrar video">
+          ×
+        </button>
+        <video controls preload="none" src={`/video/${archivo}`} />
+      </dialog>
+    </div>
+  )
+}
+
+<script>
+  document.querySelectorAll("[data-video-modal]").forEach((wrapper) => {
+    const trigger = wrapper.querySelector(".video-modal-trigger");
+    const dialog = wrapper.querySelector("dialog");
+    const closeBtn = wrapper.querySelector(".video-modal-close");
+    const video = wrapper.querySelector("video");
+    if (!trigger || !dialog || !closeBtn || !video) return;
+
+    trigger.addEventListener("click", () => {
+      dialog.showModal();
+      video.play().catch(() => {});
+    });
+
+    const close = () => {
+      video.pause();
+      dialog.close();
+    };
+
+    closeBtn.addEventListener("click", close);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+    dialog.addEventListener("cancel", () => video.pause());
+  });
+</script>
+
+<style>
+  .video-modal-trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: left;
+  }
+
+  .video-modal-trigger img {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    flex: none;
+  }
+
+  .video-modal-play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    flex: none;
+  }
+
+  .video-modal-dialog {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0;
+    max-width: min(90vw, 720px);
+    background: black;
+  }
+
+  .video-modal-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .video-modal-dialog video {
+    display: block;
+    width: 100%;
+    max-height: 80vh;
+  }
+
+  .video-modal-close {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.6rem;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+</style>

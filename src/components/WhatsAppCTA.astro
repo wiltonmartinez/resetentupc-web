@@ -1,0 +1,39 @@
+---
+import { buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
+import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+
+interface Props {
+  marca?: string;
+  modelo?: string;
+  error?: string;
+  sourceId: string;
+  urlPath: string;
+  locale: Locale;
+  label: string;
+}
+
+const { marca, modelo, error, sourceId, urlPath, locale, label } = Astro.props;
+
+const urlOrigen = `${SITE_URL}${urlPath}`;
+const message = buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen });
+const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
+---
+
+<a class="whatsapp-cta" href={href} data-source-id={sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer">
+  {label}
+</a>
+
+<style>
+  .whatsapp-cta {
+    display: inline-block;
+    background: #25d366;
+    color: #062f1a;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .whatsapp-cta:hover {
+    background: #1fb958;
+  }
+</style>

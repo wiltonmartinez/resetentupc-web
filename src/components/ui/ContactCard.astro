@@ -1,0 +1,108 @@
+---
+import { buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
+import { SITE_URL, type Locale } from "../../config/site";
+
+interface Props {
+  nombre: string;
+  rol: string;
+  whatsapp: string;
+  recipientKey: "wilton" | "diana";
+  sourceId: string;
+  urlPath: string;
+  locale: Locale;
+  whatsappLabel: string;
+  mensajeLabel: string;
+}
+
+const { nombre, rol, whatsapp, recipientKey, sourceId, urlPath, locale, whatsappLabel, mensajeLabel } = Astro.props;
+
+const urlOrigen = `${SITE_URL}${urlPath}`;
+const message = buildWhatsAppMessage({ locale, urlOrigen });
+const waLink = buildWhatsAppLink(whatsapp, message);
+---
+
+<div class="contact-card">
+  <h3>{nombre}</h3>
+  <p class="contact-card-rol">{rol}</p>
+  <div class="contact-card-links">
+    <a class="contact-card-whatsapp" href={waLink} data-source-id={sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+        <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z" />
+      </svg>
+      {whatsappLabel}
+    </a>
+    <button type="button" class="contact-card-mensaje" data-abrir-formulario-contacto={recipientKey} data-sound="select">
+      <svg viewBox="0 0 20 20" width="15" height="15" fill="none" aria-hidden="true">
+        <rect x="2.5" y="4" width="15" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+        <path d="M3.5 5.5 10 10.5l6.5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      {mensajeLabel}
+    </button>
+  </div>
+</div>
+
+<style>
+  .contact-card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .contact-card h3 {
+    margin: 0;
+  }
+
+  .contact-card-rol {
+    margin: 0 0 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-text-subtle);
+  }
+
+  .contact-card-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .contact-card-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-whatsapp-dark);
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .contact-card-whatsapp:hover {
+    text-decoration: underline;
+  }
+
+  .contact-card-mensaje {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .contact-card-mensaje:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+</style>

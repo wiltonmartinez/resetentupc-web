@@ -1,0 +1,30 @@
+---
+interface Props {
+  sourceId: string;
+  label: string;
+}
+
+const { sourceId, label } = Astro.props;
+---
+
+<button type="button" class="ayuda-cta" data-abrir-formulario-contacto="" data-source-id={sourceId} data-sound="select">
+  {label}
+</button>
+
+<style>
+  .ayuda-cta {
+    display: inline-block;
+    background: white;
+    color: var(--color-primary-dark);
+    font: inherit;
+    font-weight: 700;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  }
+  .ayuda-cta:hover {
+    background: var(--color-primary-light);
+  }
+</style>

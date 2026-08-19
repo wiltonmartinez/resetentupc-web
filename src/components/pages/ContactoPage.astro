@@ -1,0 +1,95 @@
+---
+import { t, buildStaticPagePath } from "../../i18n/utils";
+import AyudaCTA from "../AyudaCTA.astro";
+import TrustpilotWidget from "../TrustpilotWidget.astro";
+import InfoCard from "../ui/InfoCard.astro";
+import ContactCard from "../ui/ContactCard.astro";
+import ContactForm from "../ui/ContactForm.astro";
+import type { Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const path = buildStaticPagePath(locale, "contacto");
+const whatsappLabel = t(locale, "common.whatsappButton");
+const mensajeLabel = t(locale, "contacto.enviarMensaje");
+---
+
+<article class="contacto-page">
+  <h1>{t(locale, "contacto.heading")}</h1>
+  <InfoCard tone="accent">
+    <p>{t(locale, "contacto.text")}</p>
+    <TrustpilotWidget />
+    <AyudaCTA sourceId="contacto-cta" label={t(locale, "contacto.cta")} />
+  </InfoCard>
+
+  <InfoCard tone="muted">
+    <h2>{t(locale, "contactForm.tituloModal")}</h2>
+    <ContactForm locale={locale} idPrefix="cf-contacto" />
+  </InfoCard>
+
+  <InfoCard tone="muted">
+    <h2>{t(locale, "contacto.equipoTitulo")}</h2>
+    <div class="contacto-equipo">
+      <ContactCard
+        nombre="Wilton Martínez Escorcia"
+        rol={t(locale, "contacto.rolWilton")}
+        whatsapp="573016928346"
+        recipientKey="wilton"
+        sourceId="contacto-equipo-wilton"
+        urlPath={path}
+        locale={locale}
+        whatsappLabel={whatsappLabel}
+        mensajeLabel={mensajeLabel}
+      />
+      <ContactCard
+        nombre="Diana Cabana Orozco"
+        rol={t(locale, "contacto.rolDiana")}
+        whatsapp="573006279131"
+        recipientKey="diana"
+        sourceId="contacto-equipo-diana"
+        urlPath={path}
+        locale={locale}
+        whatsappLabel={whatsappLabel}
+        mensajeLabel={mensajeLabel}
+      />
+    </div>
+    <p class="contacto-ubicacion">
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
+        <path
+          d="M10 18s6-5.2 6-9.8a6 6 0 10-12 0C4 12.8 10 18 10 18Z"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+        />
+        <circle cx="10" cy="8.2" r="2.2" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+      {t(locale, "contacto.ubicacion")}
+    </p>
+  </InfoCard>
+</article>
+
+<style>
+  .contacto-page {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .contacto-equipo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .contacto-ubicacion {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.75rem 0 0;
+    font-size: 0.88rem;
+    color: var(--color-text-subtle);
+  }
+</style>

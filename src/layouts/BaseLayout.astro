@@ -1,0 +1,209 @@
+---
+import { HREFLANG_BY_LOCALE, SITE_URL, type Locale, type StaticPageKey } from "../config/site";
+import { buildCanonicalUrl, buildHreflangLinks, buildStaticPageCanonical, buildStaticPageHreflangLinks } from "../i18n/utils";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import LanguageBanner from "../components/LanguageBanner.astro";
+import FloatingContactButton from "../components/FloatingContactButton.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  locale: Locale;
+  path: string;
+  pageKey?: StaticPageKey;
+  ogImage?: string;
+  noindex?: boolean;
+  marcaDefault?: string;
+  modeloDefault?: string;
+  ocultarBotonContacto?: boolean;
+}
+
+const {
+  title,
+  description,
+  locale,
+  path,
+  pageKey,
+  ogImage = "/og-image.png",
+  noindex = false,
+  marcaDefault,
+  modeloDefault,
+  ocultarBotonContacto = false,
+} = Astro.props;
+
+const canonicalUrl = pageKey ? buildStaticPageCanonical(locale, pageKey) : buildCanonicalUrl(locale, path);
+const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(pageKey) : buildHreflangLinks(path);
+---
+
+<!doctype html>
+<html lang={HREFLANG_BY_LOCALE[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? (
+      <meta name="robots" content="noindex, follow" />
+    ) : (
+      <>
+        <link rel="canonical" href={canonicalUrl} />
+        {hreflangLinks.map((link) => (
+          <link rel="alternate" hreflang={link.hreflang} href={link.href} />
+        ))}
+      </>
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(ogImage, SITE_URL).toString()} />
+    <meta property="og:locale" content={HREFLANG_BY_LOCALE[locale]} />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ResetEnLinea",
+      "url": SITE_URL,
+      "description": "Servicio de reset asistido y remoto para impresoras Epson, Canon y Epson SC, con acompañamiento profesional de principio a fin.",
+      "areaServed": "Worldwide",
+      "availableLanguage": ["es", "en", "pt", "fr", "it"],
+    })} />
+    <!-- TrustBox script -->
+    <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+    <!-- End TrustBox script -->
+  </head>
+  <body>
+    <Header locale={locale} path={path} pageKey={pageKey} />
+    <LanguageBanner locale={locale} path={path} pageKey={pageKey} />
+    <main>
+      <slot />
+    </main>
+    <Footer locale={locale} />
+    {!ocultarBotonContacto && (
+      <FloatingContactButton locale={locale} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
+    )}
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light dark;
+
+    /* Paleta */
+    --color-bg: #ffffff;
+    --color-bg-muted: #f8fafc;
+    --color-bg-card: #ffffff;
+    --color-border: #e2e8f0;
+    --color-text: #0f172a;
+    --color-text-muted: #475569;
+    --color-text-subtle: #64748b;
+
+    --color-primary: #0f766e;
+    --color-primary-dark: #0b5c56;
+    --color-primary-light: #ccfbf1;
+
+    --color-whatsapp: #25d366;
+    --color-whatsapp-dark: #1fb958;
+    --color-whatsapp-ink: #062f1a;
+
+    --color-warning-bg: #fff7ed;
+    --color-warning-border: #fed7aa;
+    --color-warning-text: #9a3412;
+
+    /* Escala */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.875rem;
+    --radius-lg: 1.25rem;
+    --radius-full: 999px;
+
+    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    --shadow-floating: 0 12px 28px rgba(15, 23, 42, 0.18);
+
+    --space-xs: 0.5rem;
+    --space-sm: 0.875rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    --space-xl: 4rem;
+
+    --content-width: 720px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family:
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    line-height: 1.6;
+    color: var(--color-text);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: var(--space-md) var(--space-md) var(--space-xl);
+    display: grid;
+    gap: var(--space-lg);
+    overflow-x: hidden;
+  }
+
+  /* Evita que los hijos de un grid (ej. un <select> con opciones largas)
+     fuercen un ancho mayor al del contenedor y desborden en móvil. */
+  main > *,
+  .info-card {
+    min-width: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--color-text-muted);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  ::selection {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+  }
+
+  @media (max-width: 640px) {
+    main {
+      padding: var(--space-sm) var(--space-sm) var(--space-lg);
+      gap: var(--space-md);
+    }
+  }
+</style>

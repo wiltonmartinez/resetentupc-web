@@ -1,0 +1,191 @@
+---
+import { Image } from "astro:assets";
+import { getErrorImage } from "../../lib/error-images.js";
+import { getSolucionImage } from "../../lib/solucion-images.js";
+import { getModeloImage } from "../../lib/model-images.js";
+
+interface Props {
+  errorId: string;
+  modeloSlug: string;
+  nombreMarca: string;
+  nombreModelo: string;
+  errorCaption: string;
+  solucionCaption: string;
+  flipHint: string;
+}
+
+const { errorId, modeloSlug, nombreMarca, nombreModelo, errorCaption, solucionCaption, flipHint } = Astro.props;
+
+const errorImg = getErrorImage(errorId) ?? getErrorImage(modeloSlug);
+const solucionImg = getSolucionImage(errorId) ?? getSolucionImage(modeloSlug);
+const modeloImgFallback = !solucionImg ? getModeloImage(modeloSlug) : null;
+
+const traseraDisponible = solucionImg || modeloImgFallback;
+---
+
+{
+  errorImg && (
+    <div class="evidence-flip">
+      {traseraDisponible ? (
+        <button type="button" class="evidence-flip-trigger" aria-pressed="false" data-sound="select">
+          <span class="evidence-flip-inner">
+            <span class="evidence-face evidence-face-front">
+              <span class="evidence-imagen">
+                <Image src={errorImg} alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`} width={errorImg.width} height={errorImg.height} loading="lazy" />
+              </span>
+              <p class="evidence-caption">{errorCaption}</p>
+              <span class="evidence-flip-hint">↻ {flipHint}</span>
+            </span>
+
+            <span class="evidence-face evidence-face-back">
+              <span class="evidence-imagen">
+                {solucionImg ? (
+                  <Image src={solucionImg} alt="Así queda una vez resuelto" width={solucionImg.width} height={solucionImg.height} loading="lazy" />
+                ) : (
+                  <>
+                    <Image src={modeloImgFallback} alt={`${nombreMarca} ${nombreModelo} funcionando correctamente`} width={modeloImgFallback.width} height={modeloImgFallback.height} loading="lazy" />
+                    <span class="evidence-check" aria-hidden="true">✅</span>
+                  </>
+                )}
+              </span>
+              <p class="evidence-caption">{solucionCaption}</p>
+            </span>
+          </span>
+        </button>
+      ) : (
+        <div class="evidence-static">
+          <span class="evidence-imagen">
+            <Image src={errorImg} alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`} width={errorImg.width} height={errorImg.height} loading="lazy" />
+          </span>
+          <p class="evidence-caption">{errorCaption}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script>
+  document.querySelectorAll(".evidence-flip-trigger").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const flipped = btn.getAttribute("aria-pressed") === "true";
+      btn.setAttribute("aria-pressed", String(!flipped));
+    });
+  });
+</script>
+
+<style>
+  .evidence-flip {
+    width: 100%;
+    max-width: 480px;
+    margin: 0.25rem auto 0;
+  }
+
+  .evidence-flip-trigger {
+    all: unset;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    perspective: 1200px;
+  }
+
+  .evidence-flip-inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+  }
+
+  .evidence-flip-trigger[aria-pressed="true"] .evidence-flip-inner {
+    transform: rotateY(180deg);
+  }
+
+  .evidence-flip-trigger:focus-visible .evidence-flip-inner {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  .evidence-face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 0.35rem;
+    backface-visibility: hidden;
+  }
+
+  .evidence-face-back {
+    transform: rotateY(180deg);
+  }
+
+  .evidence-static,
+  .evidence-face {
+    text-align: center;
+  }
+
+  .evidence-static {
+    max-width: 480px;
+    margin: 0.25rem auto 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .evidence-imagen {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+  }
+
+  .evidence-static .evidence-imagen {
+    aspect-ratio: 4 / 3;
+  }
+
+  .evidence-imagen :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .evidence-check {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.9rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  }
+
+  .evidence-caption {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+  }
+
+  .evidence-flip-hint {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    background: rgba(15, 23, 42, 0.72);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .evidence-flip-inner {
+      transition: none;
+    }
+  }
+</style>

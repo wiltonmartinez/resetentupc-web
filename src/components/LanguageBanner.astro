@@ -1,0 +1,90 @@
+---
+import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale, type StaticPageKey } from "../config/site";
+import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
+
+interface Props {
+  locale: Locale;
+  path: string;
+  pageKey?: StaticPageKey;
+}
+
+const { locale, path, pageKey } = Astro.props;
+
+const alternates = SUPPORTED_LOCALES.filter((l) => l !== locale).map((l) => ({
+  locale: l,
+  label: LOCALE_LABELS[l],
+  href: pageKey ? buildStaticPagePath(l, pageKey) : buildLocalizedPath(l, path),
+}));
+
+const bannerText = t(locale, "common.languageSuggestionText");
+const acceptLabel = t(locale, "common.languageSuggestionAccept");
+const dismissLabel = t(locale, "common.languageSuggestionDismiss");
+---
+
+<div
+  id="language-banner"
+  class="language-banner"
+  hidden
+  data-current-locale={locale}
+  data-text={bannerText}
+  data-accept={acceptLabel}
+  data-dismiss={dismissLabel}
+  data-alternates={JSON.stringify(alternates)}
+></div>
+
+<script>
+  const STORAGE_KEY = "resetenlinea_locale_preference";
+
+  const banner = document.getElementById("language-banner");
+  if (banner) {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) {
+      const currentLocale = banner.dataset.currentLocale;
+      const alternates = JSON.parse(banner.dataset.alternates || "[]");
+      const browserLang = navigator.language.slice(0, 2).toLowerCase();
+      const match = alternates.find((alt) => alt.locale === browserLang);
+
+      if (match && browserLang !== currentLocale) {
+        const text = (banner.dataset.text || "").replace("{language}", match.label);
+        banner.innerHTML = `
+          <span>${text}</span>
+          <a href="${match.href}" id="language-banner-accept">${banner.dataset.accept}</a>
+          <button type="button" id="language-banner-dismiss">${banner.dataset.dismiss}</button>
+        `;
+        banner.hidden = false;
+
+        document.getElementById("language-banner-accept")?.addEventListener("click", () => {
+          localStorage.setItem(STORAGE_KEY, match.locale);
+        });
+        document.getElementById("language-banner-dismiss")?.addEventListener("click", () => {
+          localStorage.setItem(STORAGE_KEY, currentLocale || "");
+          banner.hidden = true;
+        });
+      }
+    }
+  }
+</script>
+
+<style>
+  .language-banner {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  .language-banner button,
+  .language-banner a {
+    cursor: pointer;
+  }
+  .language-banner button {
+    background: none;
+    border: 1px solid #94a3b8;
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+  }
+</style>

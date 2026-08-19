@@ -1,0 +1,1475 @@
+---
+import { t, resolveErroresParaModelo } from "../../i18n/utils";
+import modelos from "../../data/modelos-muestra.json";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+  marcaDefault?: string;
+  modeloDefault?: string;
+  idPrefix?: string;
+}
+
+const { locale, marcaDefault = "", modeloDefault = "", idPrefix = "cf" } = Astro.props;
+
+const marcasUnicas = Array.from(
+  modelos.reduce((map, m) => (map.has(m.marcaSlug) ? map : map.set(m.marcaSlug, m.nombreMarca)), new Map<string, string>())
+)
+  .map(([slug, nombre]) => ({ slug, nombre }))
+  .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+const modelosPorMarca = modelos.reduce<Record<string, { slug: string; nombre: string }[]>>((acc, m) => {
+  if (!acc[m.marcaSlug]) acc[m.marcaSlug] = [];
+  acc[m.marcaSlug].push({ slug: m.modeloSlug, nombre: m.nombreModelo });
+  return acc;
+}, {});
+
+// Errores reales confirmados por modelo — el mismo dato que ya usa la página de cada modelo
+// (resolveErroresParaModelo), así el desplegable de Error solo muestra lo que de verdad aplica
+// a la Marca+Modelo elegidos, sin inventar ni duplicar una segunda lista de errores.
+const erroresPorModelo = modelos.reduce<Record<string, { value: string; advertencia: boolean }[]>>((acc, m) => {
+  const id = `${m.marcaSlug}:${m.modeloSlug}`;
+  const resueltos = resolveErroresParaModelo(m.marcaSlug, m.modeloSlug, locale);
+  acc[id] = resueltos.map((r) => ({
+    value: r.codigo || r.nombre,
+    advertencia: r.estado_servicio === "requiere_revision",
+  }));
+  return acc;
+}, {});
+
+const SERVICIOS = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({
+  id: `servicio${n}`,
+  nombre: t(locale, `contactForm.servicio${n}Nombre`),
+  detalle: t(locale, `contactForm.servicio${n}Detalle`),
+  recomendado: n === 1,
+}));
+
+const marcaDefaultSlug = marcasUnicas.find((m) => m.nombre === marcaDefault)?.slug ?? "";
+const id = (nombre: string) => `${idPrefix}-${nombre}`;
+---
+
+<form
+  class="contact-form"
+  id={id("form")}
+  data-contact-form
+  data-locale={locale}
+  data-modelos={JSON.stringify(modelosPorMarca)}
+  data-errores={JSON.stringify(erroresPorModelo)}
+  data-marca-default={marcaDefaultSlug}
+  data-modelo-default={modeloDefault}
+  data-texto-marca-placeholder={t(locale, "contactForm.marcaPlaceholder")}
+  data-texto-modelo-placeholder={t(locale, "contactForm.modeloPlaceholder")}
+  data-texto-error-placeholder={t(locale, "contactForm.errorPlaceholder")}
+  data-texto-otro-error={t(locale, "contactForm.errorOtro")}
+  data-texto-requiere-revision={t(locale, "contactForm.requiereRevision")}
+  data-texto-enviando={t(locale, "contactForm.enviando")}
+  data-texto-exito={t(locale, "contactForm.exito")}
+  data-texto-error-generico={t(locale, "contactForm.errorGenerico")}
+  data-texto-error-antibot={t(locale, "contactForm.errorAntibot")}
+  data-texto-error-email-invalido={t(locale, "contactForm.errorEmailInvalido")}
+  data-texto-verificando-correo={t(locale, "contactForm.verificandoCorreo")}
+  data-texto-error-correo-no-real={t(locale, "contactForm.errorCorreoNoReal")}
+  data-texto-error-bloqueado={t(locale, "contactForm.errorBloqueado")}
+  data-texto-enviar-correo={t(locale, "contactForm.enviarCorreo")}
+  data-texto-whatsapp-saludo={t(locale, "contactForm.whatsappSaludo")}
+  data-texto-email-ayuda={t(locale, "contactForm.emailPrimeroAyuda")}
+  data-texto-mensaje-no-enviado={t(locale, "contactForm.mensajeNoEnviado")}
+  data-texto-razon-insultos={t(locale, "contactForm.razonInsultos")}
+  data-texto-razon-codigo={t(locale, "contactForm.razonCodigo")}
+  data-texto-razon-basura={t(locale, "contactForm.razonBasura")}
+  data-texto-servicio-label={t(locale, "contactForm.servicioLabel")}
+  data-texto-servicio-label-prueba={t(locale, "contactForm.servicioLabelPrueba")}
+  data-texto-servicio-label-compra={t(locale, "contactForm.servicioLabelCompra")}
+  data-texto-campo-requerido={t(locale, "contactForm.campoObligatorio")}
+  data-label-tipo={t(locale, "contactForm.checklistTipo")}
+  data-label-servicio={t(locale, "contactForm.checklistServicio")}
+  data-label-garantia-dato={t(locale, "contactForm.garantiaDatoLabel")}
+  data-label-cupon-ruleta={t(locale, "contactForm.checklistCupon")}
+  data-label-marca={t(locale, "contactForm.marcaLabel")}
+  data-label-modelo={t(locale, "contactForm.modeloLabel")}
+  data-label-error={t(locale, "contactForm.checklistError")}
+  data-label-so={t(locale, "contactForm.soLabel")}
+  data-label-conexion={t(locale, "contactForm.checklistConexion")}
+  data-label-modulo-descargado={t(locale, "contactForm.checklistModulo")}
+  data-label-nombre={t(locale, "contactForm.nombreLabel")}
+  data-label-email={t(locale, "contactForm.emailLabel")}
+  data-label-whatsapp={t(locale, "contactForm.whatsappLabel")}
+  data-label-nota={t(locale, "contactForm.notaLabel")}
+  data-label-pagina-origen={t(locale, "contactForm.paginaOrigen")}
+  data-recipient-wilton-whatsapp="573016928346"
+  data-recipient-diana-whatsapp="573006279131"
+>
+  <div class="contact-form-topbar">
+    <button type="button" class="contact-form-atras" data-atras hidden>
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
+        <path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      {t(locale, "contactForm.atras")}
+    </button>
+    <div class="contact-form-progreso" aria-hidden="true">
+      <div class="contact-form-progreso-barra" data-progreso-barra></div>
+    </div>
+  </div>
+
+  <!-- PASO: destinatario -->
+  <fieldset class="contact-form-paso" data-paso="para">
+    <legend>{t(locale, "contactForm.paraLabel")}</legend>
+    <div class="contact-form-opciones">
+      <label class="contact-form-opcion">
+        <input type="radio" name="recipient" value="wilton" checked required />
+        <span>{t(locale, "contactForm.paraWilton")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="recipient" value="diana" />
+        <span>{t(locale, "contactForm.paraDiana")}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- PASO: tipo de solicitud -->
+  <fieldset class="contact-form-paso" data-paso="tipo" hidden>
+    <legend>{t(locale, "contactForm.tipoLabel")}</legend>
+    <div class="contact-form-opciones">
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="tipo" value={t(locale, "contactForm.tipoCotizacion")} data-tipo-valor="cotizacion" required />
+        <span>💰 {t(locale, "contactForm.tipoCotizacion")}</span>
+      </label>
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="tipo" value={t(locale, "contactForm.tipoGarantia")} data-tipo-valor="garantia" />
+        <span>🛡️ {t(locale, "contactForm.tipoGarantia")}</span>
+      </label>
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="tipo" value={t(locale, "contactForm.tipoPrueba")} data-tipo-valor="prueba" />
+        <span>🎁 {t(locale, "contactForm.tipoPrueba")}</span>
+      </label>
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="tipo" value={t(locale, "contactForm.tipoCompra")} data-tipo-valor="compra" />
+        <span>⚡ {t(locale, "contactForm.tipoCompra")}</span>
+      </label>
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="tipo" value={t(locale, "contactForm.tipoRuleta")} data-tipo-valor="ruleta" />
+        <span>🎡 {t(locale, "contactForm.tipoRuleta")}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- PASO: servicio (reusado por Cotización / Prueba gratuita / Compra inmediata) -->
+  <fieldset class="contact-form-paso" data-paso="servicio" hidden>
+    <legend data-servicio-legend>{t(locale, "contactForm.servicioLabel")}</legend>
+    <p class="contact-form-ayuda" data-servicio-aviso hidden>{t(locale, "contactForm.pruebaAviso")}</p>
+    <div class="contact-form-opciones contact-form-opciones-lista">
+      {SERVICIOS.map((s) => (
+        <label class="contact-form-opcion contact-form-opcion-servicio">
+          <input type="radio" name="servicio" value={s.nombre} required />
+          <span class="contact-form-opcion-servicio-texto">
+            <span class="contact-form-opcion-servicio-nombre">
+              {s.nombre}
+              {s.recomendado && <span class="contact-form-badge contact-form-badge-recomendado">{t(locale, "contactForm.servicioRecomendado")}</span>}
+            </span>
+            <span class="contact-form-opcion-servicio-detalle">{s.detalle}</span>
+          </span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <!-- PASO: dato de garantía -->
+  <div class="contact-form-paso" data-paso="garantiaDato" hidden>
+    <label for={id("garantiaDato")}>{t(locale, "contactForm.garantiaDatoLabel")}</label>
+    <input
+      type="text"
+      id={id("garantiaDato")}
+      name="garantiaDato"
+      placeholder={t(locale, "contactForm.garantiaDatoPlaceholder")}
+      data-enter-continuar
+    />
+    <p class="contact-form-ayuda">{t(locale, "contactForm.garantiaDatoAyuda")}</p>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: jugar la ruleta (solo tipo=ruleta) -->
+  <div class="contact-form-paso" data-paso="ruletaJuego" hidden>
+    <label>{t(locale, "contactForm.ruletaJuegoTitulo")}</label>
+    <p class="contact-form-ayuda">{t(locale, "contactForm.ruletaJuegoAyuda")}</p>
+    <div class="contact-form-ruleta-embed">
+      <iframe data-src="https://ruleta.resetenlinea.com" title={t(locale, "contactForm.ruletaJuegoTitulo")} loading="lazy"></iframe>
+    </div>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: número de cupón obtenido en la ruleta -->
+  <div class="contact-form-paso" data-paso="ruletaCupon" hidden>
+    <label for={id("cuponRuleta")}>{t(locale, "contactForm.cuponLabel")}</label>
+    <input
+      type="text"
+      id={id("cuponRuleta")}
+      name="cuponRuleta"
+      placeholder={t(locale, "contactForm.cuponPlaceholder")}
+      required
+      data-enter-continuar
+    />
+    <p class="contact-form-ayuda">{t(locale, "contactForm.cuponAyuda")}</p>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: marca -->
+  <div class="contact-form-paso" data-paso="marca" hidden>
+    <label for={id("marca")}>{t(locale, "contactForm.marcaLabel")}</label>
+    <select id={id("marca")} name="marca" required>
+      <option value="">{t(locale, "contactForm.marcaPlaceholder")}</option>
+      {marcasUnicas.map((m) => (
+        <option value={m.nombre} data-slug={m.slug} selected={m.slug === marcaDefaultSlug}>{m.nombre}</option>
+      ))}
+    </select>
+  </div>
+
+  <!-- PASO: modelo -->
+  <div class="contact-form-paso" data-paso="modelo" hidden>
+    <label for={id("modelo")}>{t(locale, "contactForm.modeloLabel")}</label>
+    <select id={id("modelo")} name="modelo" required disabled={!marcaDefaultSlug}>
+      <option value="">{t(locale, "contactForm.modeloPlaceholder")}</option>
+    </select>
+  </div>
+
+  <!-- PASO: error -->
+  <div class="contact-form-paso" data-paso="error" hidden>
+    <label for={id("error")}>{t(locale, "contactForm.errorLabel")}</label>
+    <select id={id("error")} name="error" required>
+      <option value="">{t(locale, "contactForm.errorPlaceholder")}</option>
+    </select>
+  </div>
+
+  <!-- PASO: conexión -->
+  <fieldset class="contact-form-paso" data-paso="conexion" hidden>
+    <legend>{t(locale, "contactForm.conexionLabel")}</legend>
+    <div class="contact-form-opciones">
+      <label class="contact-form-opcion">
+        <input type="radio" name="conexion" value={t(locale, "contactForm.conexionUsb")} required />
+        <span>{t(locale, "contactForm.conexionUsb")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="conexion" value={t(locale, "contactForm.conexionWifi")} />
+        <span>{t(locale, "contactForm.conexionWifi")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="conexion" value={t(locale, "contactForm.conexionOtra")} />
+        <span>{t(locale, "contactForm.conexionOtra")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="conexion" value={t(locale, "contactForm.conexionNoConectada")} />
+        <span>{t(locale, "contactForm.conexionNoConectada")}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- PASO: sistema operativo -->
+  <fieldset class="contact-form-paso" data-paso="so" hidden>
+    <legend>{t(locale, "contactForm.soLabel")}</legend>
+    <div class="contact-form-opciones contact-form-opciones-grid">
+      {["Windows 11", "Windows 10", "Windows 8", "Windows 7", "Windows XP"].map((so) => (
+        <label class="contact-form-opcion">
+          <input type="radio" name="so" value={so} required />
+          <span>{so}</span>
+        </label>
+      ))}
+      <label class="contact-form-opcion">
+        <input type="radio" name="so" value={t(locale, "contactForm.soMacos")} />
+        <span>{t(locale, "contactForm.soMacos")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="so" value={t(locale, "contactForm.soLinux")} />
+        <span>{t(locale, "contactForm.soLinux")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="so" value={t(locale, "contactForm.soNoTengoPc")} />
+        <span>{t(locale, "contactForm.soNoTengoPc")}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- PASO: método de respuesta -->
+  <fieldset class="contact-form-paso" data-paso="metodoRespuesta" hidden>
+    <legend>{t(locale, "contactForm.canalLabel")}</legend>
+    <div class="contact-form-opciones">
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="metodoRespuesta" value={t(locale, "contactForm.canalWhatsapp")} data-metodo-valor="whatsapp" required />
+        <span>🟢 {t(locale, "contactForm.canalWhatsapp")}</span>
+      </label>
+      <label class="contact-form-opcion contact-form-opcion-grande">
+        <input type="radio" name="metodoRespuesta" value={t(locale, "contactForm.canalCorreo")} data-metodo-valor="correo" />
+        <span>✉️ {t(locale, "contactForm.canalCorreo")}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- PASO: WhatsApp -->
+  <div class="contact-form-paso" data-paso="whatsappNumero" hidden>
+    <label for={id("whatsapp")}>{t(locale, "contactForm.whatsappLabel")}</label>
+    <input type="tel" id={id("whatsapp")} name="whatsapp" autocomplete="tel" data-telefono-input data-enter-continuar />
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: correo -->
+  <div class="contact-form-paso" data-paso="correoEmail" hidden>
+    <label for={id("email")}>{t(locale, "contactForm.emailLabel")}</label>
+    <input type="email" id={id("email")} name="email" autocomplete="email" />
+    <p class="contact-form-ayuda" data-email-estado>{t(locale, "contactForm.emailPrimeroAyuda")}</p>
+  </div>
+
+  <!-- PASO: nombre -->
+  <div class="contact-form-paso" data-paso="nombre" hidden>
+    <label for={id("nombre")}>{t(locale, "contactForm.nombreLabel")}</label>
+    <input type="text" id={id("nombre")} name="nombre" autocomplete="name" data-enter-continuar />
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: conexión 1/3 — PC + WhatsApp + descargar módulo -->
+  <div class="contact-form-paso" data-paso="conexionPaso1" hidden>
+    <label>📌 {t(locale, "contactForm.conexionTitulo")}</label>
+    <p class="contact-form-conexion-paso-titulo">1️⃣ {t(locale, "contactForm.conexionPaso1Titulo")}</p>
+    <p>💻 {t(locale, "contactForm.conexionPaso1Pc")}</p>
+    <p>📱 {t(locale, "contactForm.conexionPaso1Whatsapp")}</p>
+    <p>🔌 {t(locale, "contactForm.conexionPaso1Usb")}</p>
+    <p>⬇️ {t(locale, "contactForm.conexionPaso1Descarga")}</p>
+    <a class="contact-form-conexion-descarga" href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" data-sound="select">
+      ⬇️ {t(locale, "contactForm.conexionDescargarBoton")}
+    </a>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: conexión 2/3 — conectarse con el Technician ID -->
+  <div class="contact-form-paso" data-paso="conexionPaso2" hidden>
+    <label>2️⃣ {t(locale, "contactForm.conexionPaso2Titulo")}</label>
+    <p class="contact-form-ayuda">{t(locale, "contactForm.conexionPaso2Intro")}</p>
+    <p>🔹 {t(locale, "contactForm.conexionPaso2TechnicianIdLabel")}<br />👉 <strong>{TECHNICIAN_ID}</strong></p>
+    <p>🔹 {t(locale, "contactForm.conexionPaso2InfoLabel")}<br />👉 {t(locale, "contactForm.conexionPaso2InfoValor")}</p>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: conexión 3/3 — desconectar y reconectar el USB -->
+  <div class="contact-form-paso" data-paso="conexionPaso3" hidden>
+    <label>3️⃣ {t(locale, "contactForm.conexionPaso3Titulo")}</label>
+    <p>🔌 {t(locale, "contactForm.conexionPaso3Desconectar")}</p>
+    <p>⏳ {t(locale, "contactForm.conexionPaso3Esperar")}</p>
+    <p>🔌 {t(locale, "contactForm.conexionPaso3Reconectar")}</p>
+    <p class="contact-form-ayuda">📢 {t(locale, "contactForm.conexionAviso")}</p>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: confirmar cómo aparece la conexión -->
+  <fieldset class="contact-form-paso" data-paso="infoAdicional" hidden>
+    <legend>{t(locale, "contactForm.infoAdicionalTitulo")}</legend>
+    <p class="contact-form-ayuda">{t(locale, "contactForm.moduloAyuda")}</p>
+    <div class="contact-form-opciones">
+      <label class="contact-form-opcion">
+        <input type="radio" name="moduloDescargado" value={t(locale, "contactForm.moduloSi")} data-modulo-valor="si" required />
+        <span>{t(locale, "contactForm.moduloSi")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="moduloDescargado" value={t(locale, "contactForm.moduloNo")} data-modulo-valor="no" />
+        <span>{t(locale, "contactForm.moduloNo")}</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <!-- PASO final: nota opcional + confirmación + envío -->
+  <div class="contact-form-paso contact-form-paso-final" data-paso="final" hidden>
+    <div>
+      <label for={id("nota")}>
+        {t(locale, "contactForm.notaLabel")}
+        <span class="contact-form-badge">{t(locale, "contactForm.opcionalBadge")}</span>
+      </label>
+      <textarea id={id("nota")} name="nota" rows="3"></textarea>
+    </div>
+
+    <label class="contact-form-antibot">
+      <input type="checkbox" name="antibot" required />
+      {t(locale, "contactForm.antibotLabel")}
+    </label>
+
+    <!-- Honeypot: invisible para humanos, un bot que autollena formularios sí lo llena. -->
+    <div class="contact-form-honeypot" aria-hidden="true">
+      <label for={id("website")}>Website</label>
+      <input type="text" id={id("website")} name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <p class="contact-form-mensaje" data-contact-form-mensaje role="status" aria-live="polite"></p>
+
+    <div class="contact-form-acciones">
+      <button type="button" class="contact-form-boton contact-form-boton-whatsapp" data-accion="whatsapp" data-sound="select" hidden>
+        {t(locale, "contactForm.continuarWhatsapp")}
+      </button>
+      <button type="submit" class="contact-form-boton contact-form-boton-correo" data-accion="correo" data-sound="confirm" hidden>
+        {t(locale, "contactForm.enviarCorreo")}
+      </button>
+    </div>
+  </div>
+</form>
+
+<script>
+  import { construirCuerpoMensaje, construirAsunto } from "../../lib/contact-message.js";
+  import { revisarContenido } from "../../lib/contact-moderation.js";
+  import { buildWhatsAppLink } from "../../i18n/utils";
+  import { CONTACT_FORM_EMAIL_ENDPOINT, CONTACT_FORM_SECRET } from "../../config/site";
+  import { playFeedback } from "../../lib/sound-manager.js";
+  import { lanzarConfeti } from "../../lib/confetti.js";
+
+  const ORIGEN = "resetenlinea-site-contacto";
+
+  // Debe coincidir con $DESTINATARIOS_PERMITIDOS en send-email.php. Se manda también aquí
+  // (además de "recipient") para que el formulario funcione incluso mientras el servidor
+  // remoto todavía no tenga subida la versión actualizada del PHP.
+  const DESTINATARIOS = {
+    wilton: { email: "info@resetenlinea.com", nombre: "Wilton Martínez Escorcia" },
+    diana: { email: "anaidcaba@hotmail.com", nombre: "Diana Cabana Orozco" },
+  };
+
+  // Secuencia intermedia según el tipo de solicitud elegido en el paso 2. "para" y "tipo" van
+  // siempre primero; "metodoRespuesta" → (whatsappNumero|correoEmail) → nombre → final van
+  // siempre al final. Esto es lo único que cambia el recorrido: cada respuesta adapta lo que
+  // sigue sin tener que repetir código de validación/envío, que sigue siendo el mismo de siempre.
+  const SECUENCIAS_MEDIO = {
+    cotizacion: ["servicio", "marca", "modelo", "error", "conexion", "so"],
+    garantia: ["garantiaDato", "marca", "modelo"],
+    prueba: ["servicio"],
+    compra: ["servicio", "marca", "modelo"],
+    ruleta: ["ruletaJuego", "ruletaCupon"],
+  };
+
+  // Carga perezosa de intl-tel-input (solo cuando el usuario llega al paso de WhatsApp, así no
+  // afecta el peso ni la velocidad del resto del sitio).
+  let cargaLibreriaTelefono = null;
+  function cargarLibreriaTelefono() {
+    if (cargaLibreriaTelefono) return cargaLibreriaTelefono;
+    cargaLibreriaTelefono = new Promise((resolve) => {
+      if (window.intlTelInput) {
+        resolve();
+        return;
+      }
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/css/intlTelInput.css";
+      document.head.appendChild(link);
+
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/intl-tel-input@23.8.0/build/js/intlTelInputWithUtils.min.js";
+      script.onload = () => resolve();
+      script.onerror = () => resolve(); // si falla la CDN, el campo sigue funcionando como texto normal
+      document.head.appendChild(script);
+    });
+    return cargaLibreriaTelefono;
+  }
+
+  function emailValido(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  document.querySelectorAll("[data-contact-form]").forEach((formEl) => {
+    const form = formEl;
+    form.dataset.renderedAt = String(Date.now());
+
+    const modelosPorMarca = JSON.parse(form.dataset.modelos || "{}");
+    const erroresPorModelo = JSON.parse(form.dataset.errores || "{}");
+    const marcaSelect = form.querySelector('select[name="marca"]');
+    const modeloSelect = form.querySelector('select[name="modelo"]');
+    const errorSelect = form.querySelector('select[name="error"]');
+    const emailInput = form.querySelector('input[name="email"]');
+    const emailEstado = form.querySelector("[data-email-estado]");
+    const nombreInput = form.querySelector('input[name="nombre"]');
+    const garantiaDatoInput = form.querySelector('input[name="garantiaDato"]');
+    const cuponInput = form.querySelector('input[name="cuponRuleta"]');
+    const ruletaIframe = form.querySelector('[data-paso="ruletaJuego"] iframe');
+    const mensajeEl = form.querySelector("[data-contact-form-mensaje]");
+    const telefonoInput = form.querySelector("[data-telefono-input]");
+    const botonCorreo = form.querySelector('[data-accion="correo"]');
+    const botonWhatsapp = form.querySelector('[data-accion="whatsapp"]');
+    const botonAtras = form.querySelector("[data-atras]");
+    const barraProgreso = form.querySelector("[data-progreso-barra]");
+    const servicioLegend = form.querySelector("[data-servicio-legend]");
+    const servicioAviso = form.querySelector("[data-servicio-aviso]");
+    const opcionesServicio = form.querySelectorAll(".contact-form-opcion-servicio");
+
+    // ---------- Motor de pasos ----------
+    let historial = [];
+    let pasoActual = "para";
+    let defaultsPendientes = Boolean(form.dataset.marcaDefault);
+    // Se completan desde afuera (ej. un botón "Escribir por WhatsApp" en otra parte del sitio)
+    // vía el listener de [data-abrir-formulario-contacto]: si ya sabemos que el usuario quiere
+    // WhatsApp, o ya sabemos el error exacto que eligió, el formulario no vuelve a preguntarlo.
+    let defaultsMetodoPendiente = "";
+    let defaultsErrorPendiente = "";
+
+    function elPaso(idPaso) {
+      return form.querySelector(`[data-paso="${idPaso}"]`);
+    }
+
+    // Un paso oculto (saltado por la rama actual, o aún no alcanzado) nunca debe poder
+    // bloquear el envío vía validación nativa del navegador: sus campos "required" se
+    // desactivan mientras está oculto y se reactivan solo cuando vuelve a mostrarse.
+    function desactivarRequeridos(el) {
+      el?.querySelectorAll("[required]").forEach((campo) => {
+        campo.dataset.requeridoOriginal = "true";
+        campo.removeAttribute("required");
+      });
+    }
+
+    function activarRequeridos(el) {
+      el?.querySelectorAll('[data-requerido-original="true"]').forEach((campo) => {
+        campo.setAttribute("required", "");
+      });
+    }
+
+    form.querySelectorAll("[data-paso]").forEach((paso) => {
+      if (paso.dataset.paso !== pasoActual) desactivarRequeridos(paso);
+    });
+
+    function valorRadio(nombreCampo) {
+      return form.querySelector(`input[name="${nombreCampo}"]:checked`)?.value || "";
+    }
+
+    function tipoActual() {
+      const radio = form.querySelector('input[name="tipo"]:checked');
+      return radio ? radio.dataset.tipoValor : "";
+    }
+
+    function metodoActual() {
+      const radio = form.querySelector('input[name="metodoRespuesta"]:checked');
+      return radio ? radio.dataset.metodoValor : "";
+    }
+
+    function siguientePaso(actual) {
+      const secuencia = SECUENCIAS_MEDIO[tipoActual()] || [];
+
+      if (actual === "para") return "tipo";
+      if (actual === "tipo") return secuencia[0] || "metodoRespuesta";
+
+      const indice = secuencia.indexOf(actual);
+      if (indice !== -1) return secuencia[indice + 1] || "metodoRespuesta";
+
+      if (actual === "metodoRespuesta") return metodoActual() === "correo" ? "correoEmail" : "whatsappNumero";
+      if (actual === "correoEmail" || actual === "whatsappNumero") return "nombre";
+      if (actual === "nombre") return "conexionPaso1";
+      if (actual === "conexionPaso1") return "conexionPaso2";
+      if (actual === "conexionPaso2") return "conexionPaso3";
+      if (actual === "conexionPaso3") return "infoAdicional";
+      if (actual === "infoAdicional") return "final";
+      return null;
+    }
+
+    function longitudTotalEstimada() {
+      const secuencia = SECUENCIAS_MEDIO[tipoActual()] || SECUENCIAS_MEDIO.cotizacion;
+      // para+tipo + secuencia intermedia + metodoRespuesta+contacto+nombre+3 pasos de
+      // conexión+infoAdicional+final
+      return 2 + secuencia.length + 8;
+    }
+
+    function actualizarProgreso() {
+      if (!barraProgreso) return;
+      const porcentaje = Math.min(100, Math.round(((historial.length + 1) / longitudTotalEstimada()) * 100));
+      barraProgreso.style.width = `${porcentaje}%`;
+    }
+
+    function prepararPaso(idPaso) {
+      if (idPaso === "servicio" && servicioLegend) {
+        const tipo = tipoActual();
+        if (tipo === "prueba") servicioLegend.textContent = form.dataset.textoServicioLabelPrueba;
+        else if (tipo === "compra") servicioLegend.textContent = form.dataset.textoServicioLabelCompra;
+        else servicioLegend.textContent = form.dataset.textoServicioLabel;
+        if (servicioAviso) servicioAviso.hidden = tipo !== "prueba";
+        // Prueba gratuita solo aplica al Reset Asistido 100% Remoto por USB (el primero de la
+        // lista): el resto de modalidades se ocultan, el usuario no puede elegir otra.
+        opcionesServicio.forEach((opcion, indice) => {
+          opcion.hidden = tipo === "prueba" && indice !== 0;
+        });
+      }
+      if (idPaso === "final") {
+        const metodo = metodoActual();
+        if (botonWhatsapp) botonWhatsapp.hidden = metodo === "correo";
+        if (botonCorreo) botonCorreo.hidden = metodo !== "correo";
+      }
+    }
+
+    function mostrarPaso(idPaso, retrocediendo = false) {
+      const nuevoEl = elPaso(idPaso);
+      if (!nuevoEl) return;
+      prepararPaso(idPaso);
+      const actualEl = elPaso(pasoActual);
+      if (actualEl && actualEl !== nuevoEl) {
+        actualEl.hidden = true;
+        desactivarRequeridos(actualEl);
+      }
+      nuevoEl.hidden = false;
+      activarRequeridos(nuevoEl);
+      nuevoEl.classList.remove("contact-form-paso-animada");
+      void nuevoEl.offsetWidth;
+      nuevoEl.classList.add("contact-form-paso-animada");
+      pasoActual = idPaso;
+      // Los auto-saltos solo aplican avanzando: si el usuario presiona "Atrás" para revisar
+      // un paso que se saltó, debe poder verlo (y seguir retrocediendo), no rebotar de nuevo
+      // hacia adelante.
+      if (!retrocediendo) {
+        if (idPaso === "servicio") aplicarServicioPruebaSiCorresponde();
+        if (idPaso === "marca") aplicarDefaultsSiCorresponde();
+        if (idPaso === "error") aplicarErrorDefaultSiCorresponde();
+        if (idPaso === "metodoRespuesta") aplicarMetodoDefaultSiCorresponde();
+      }
+      if (idPaso === "ruletaJuego") cargarRuletaSiCorresponde();
+      if (botonAtras) botonAtras.hidden = idPaso === "para";
+      actualizarProgreso();
+      const enfocable = nuevoEl.querySelector(
+        'input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]), select, textarea'
+      );
+      requestAnimationFrame(() => {
+        nuevoEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        enfocable?.focus({ preventScroll: true });
+      });
+    }
+
+    function avanzar() {
+      const siguiente = siguientePaso(pasoActual);
+      if (!siguiente) return;
+      historial.push(pasoActual);
+      mostrarPaso(siguiente);
+    }
+
+    function retroceder() {
+      const anterior = historial.pop();
+      if (!anterior) return;
+      mostrarPaso(anterior, true);
+    }
+
+    botonAtras?.addEventListener("click", retroceder);
+
+    // ---------- Grupos de radios: avanzan automáticamente al elegir una opción ----------
+    ["recipient", "tipo", "servicio", "conexion", "so", "metodoRespuesta", "moduloDescargado"].forEach((nombreCampo) => {
+      form.querySelectorAll(`input[name="${nombreCampo}"]`).forEach((radio) => {
+        radio.addEventListener("change", avanzar);
+      });
+    });
+
+    // ---------- Marca → Modelo → Error: cascada real, reutilizada tal cual ----------
+    function poblarModelos(marcaSlugSeleccionado, modeloNombreDefault) {
+      if (!modeloSelect) return;
+      const opciones = modelosPorMarca[marcaSlugSeleccionado] || [];
+      modeloSelect.innerHTML = `<option value="">${form.dataset.textoModeloPlaceholder}</option>`;
+      opciones.forEach((m) => {
+        const opt = document.createElement("option");
+        opt.value = m.nombre;
+        opt.dataset.slug = m.slug;
+        opt.textContent = m.nombre;
+        if (modeloNombreDefault && m.nombre === modeloNombreDefault) opt.selected = true;
+        modeloSelect.appendChild(opt);
+      });
+      modeloSelect.disabled = opciones.length === 0;
+    }
+
+    function poblarErrores(marcaSlugSeleccionado, modeloSlugSeleccionado) {
+      if (!errorSelect) return;
+      const clave = `${marcaSlugSeleccionado}:${modeloSlugSeleccionado}`;
+      const opciones = erroresPorModelo[clave] || [];
+      errorSelect.innerHTML = `<option value="">${form.dataset.textoErrorPlaceholder}</option>`;
+      opciones.forEach((o) => {
+        const opt = document.createElement("option");
+        opt.value = o.advertencia ? `${o.value} (${form.dataset.textoRequiereRevision})` : o.value;
+        opt.textContent = o.advertencia ? `⚠️ ${o.value}` : o.value;
+        errorSelect.appendChild(opt);
+      });
+      const otro = document.createElement("option");
+      otro.value = form.dataset.textoOtroError;
+      otro.textContent = form.dataset.textoOtroError;
+      errorSelect.appendChild(otro);
+    }
+
+    marcaSelect?.addEventListener("change", () => {
+      const opcionElegida = marcaSelect.options[marcaSelect.selectedIndex];
+      const slug = opcionElegida ? opcionElegida.dataset.slug : "";
+      poblarModelos(slug || "");
+      if (marcaSelect.value) avanzar();
+    });
+
+    modeloSelect?.addEventListener("change", () => {
+      const marcaOpcion = marcaSelect?.options[marcaSelect.selectedIndex];
+      const marcaSlug = marcaOpcion ? marcaOpcion.dataset.slug : "";
+      const modeloOpcion = modeloSelect.options[modeloSelect.selectedIndex];
+      const modeloSlug = modeloOpcion ? modeloOpcion.dataset.slug : "";
+      if (marcaSlug && modeloSlug) {
+        poblarErrores(marcaSlug, modeloSlug);
+        avanzar();
+      }
+    });
+
+    errorSelect?.addEventListener("change", () => {
+      if (errorSelect.value) avanzar();
+    });
+
+    // Si el formulario ya viene con Marca/Modelo precargados (una página de modelo), no tiene
+    // sentido volver a preguntarlos: se autocompletan y el flujo salta directo a lo que sigue
+    // la primera vez que el paso "marca" se muestra.
+    function aplicarDefaultsSiCorresponde() {
+      if (!defaultsPendientes || !marcaSelect) return;
+      defaultsPendientes = false;
+      const marcaDefaultSlug = form.dataset.marcaDefault || "";
+      const modeloDefault = form.dataset.modeloDefault || "";
+      if (!marcaDefaultSlug) return;
+      poblarModelos(marcaDefaultSlug, modeloDefault);
+      const modeloEncontrado = (modelosPorMarca[marcaDefaultSlug] || []).find((m) => m.nombre === modeloDefault);
+      if (modeloEncontrado) {
+        poblarErrores(marcaDefaultSlug, modeloEncontrado.slug);
+        avanzar(); // de "marca" a "modelo"
+        avanzar(); // de "modelo" a "error" (ya con ambos precargados)
+      }
+    }
+
+    // Si quien abrió el formulario ya indicó el error exacto (ej. una tarjeta de error
+    // específica en la página del modelo), no tiene sentido volver a preguntarlo.
+    function aplicarErrorDefaultSiCorresponde() {
+      if (!defaultsErrorPendiente || !errorSelect) return;
+      const valor = defaultsErrorPendiente;
+      defaultsErrorPendiente = "";
+      const opcion = Array.from(errorSelect.options).find((o) => o.value === valor);
+      if (opcion) {
+        errorSelect.value = opcion.value;
+        avanzar(); // de "error" a "conexion"
+      }
+    }
+
+    // La ruleta es un sitio externo pesado (script de la rueda + confeti): no tiene sentido
+    // cargarla en cada visita al formulario, solo la primera vez que se llega a este paso.
+    let ruletaCargada = false;
+    function cargarRuletaSiCorresponde() {
+      if (ruletaCargada || !ruletaIframe || !ruletaIframe.dataset.src) return;
+      ruletaCargada = true;
+      ruletaIframe.src = ruletaIframe.dataset.src;
+    }
+
+    // Prueba gratuita solo existe para el Reset Asistido 100% Remoto por USB: no hay otra
+    // modalidad que elegir, así que se fija automáticamente y se avanza sin preguntar.
+    function aplicarServicioPruebaSiCorresponde() {
+      if (tipoActual() !== "prueba") return;
+      const primerServicio = form.querySelector('input[name="servicio"]');
+      if (primerServicio && !primerServicio.checked) primerServicio.checked = true;
+      avanzar(); // de "servicio" a "marca"
+    }
+
+    // Si quien abrió el formulario ya es un botón de WhatsApp, no tiene sentido volver a
+    // preguntar el método de respuesta: ya se sabe que es WhatsApp.
+    function aplicarMetodoDefaultSiCorresponde() {
+      if (!defaultsMetodoPendiente) return;
+      const metodo = defaultsMetodoPendiente;
+      defaultsMetodoPendiente = "";
+      const radio = form.querySelector(`input[name="metodoRespuesta"][data-metodo-valor="${metodo}"]`);
+      if (radio) {
+        radio.checked = true;
+        avanzar(); // de "metodoRespuesta" a whatsappNumero/correoEmail
+      }
+    }
+
+    // ---------- Campos de texto: Enter o el botón "Continuar" avanzan ----------
+    function continuarDesdeCampo(inputEl) {
+      const pasoEl = inputEl.closest("[data-paso]");
+      if (!pasoEl) return;
+      if (pasoEl.dataset.paso === "nombre" && !nombreInput.value.trim()) {
+        mostrarRequerido(nombreInput);
+        return;
+      }
+      if (pasoEl.dataset.paso === "whatsappNumero" && !telefonoInput.value.trim()) {
+        mostrarRequerido(telefonoInput);
+        return;
+      }
+      if (pasoEl.dataset.paso === "ruletaCupon" && !cuponInput.value.trim()) {
+        mostrarRequerido(cuponInput);
+        return;
+      }
+      avanzar();
+    }
+
+    function mostrarRequerido(inputEl) {
+      inputEl.setCustomValidity(form.dataset.textoCampoRequerido || "Campo obligatorio");
+      inputEl.reportValidity();
+      inputEl.addEventListener("input", () => inputEl.setCustomValidity(""), { once: true });
+    }
+
+    form.querySelectorAll("[data-enter-continuar]").forEach((inputEl) => {
+      inputEl.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          continuarDesdeCampo(inputEl);
+        }
+      });
+    });
+
+    form.querySelectorAll("[data-continuar]").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const pasoEl = boton.closest("[data-paso]");
+        const campo = pasoEl?.querySelector("input, textarea");
+        if (campo) continuarDesdeCampo(campo);
+        else avanzar();
+      });
+    });
+
+    // ---------- Correo: verificación en vivo (misma lógica de siempre) ----------
+    let emailTimer = null;
+    let emailVerificacionId = 0;
+    let emailBloqueado = false;
+    let emailVerificado = false;
+
+    async function verificarCorreoEnServidor(val, idVerificacion) {
+      emailEstado.textContent = form.dataset.textoVerificandoCorreo;
+      emailEstado.dataset.tipo = "";
+      try {
+        const res = await fetch(CONTACT_FORM_EMAIL_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            secret: CONTACT_FORM_SECRET,
+            origen: ORIGEN,
+            action: "verificar_correo",
+            email: val,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (idVerificacion !== emailVerificacionId) return; // el usuario ya siguió escribiendo, esta respuesta quedó vieja
+
+        if (data && data.ok) {
+          emailVerificado = true;
+          emailEstado.textContent = form.dataset.textoEmailAyuda;
+          emailEstado.dataset.tipo = "";
+          avanzar();
+          return;
+        }
+
+        if (data && data.bloqueado) {
+          emailBloqueado = true;
+          emailEstado.textContent = form.dataset.textoErrorBloqueado;
+          emailEstado.dataset.tipo = "error";
+          if (botonCorreo) botonCorreo.disabled = true;
+          if (botonWhatsapp) botonWhatsapp.disabled = true;
+          return;
+        }
+
+        // Si el servidor todavía no tiene desplegada la acción "verificar_correo" (versión
+        // vieja del PHP), responde con este mismo error genérico de "to" vacío. En ese caso
+        // no podemos verificar de verdad — dejamos pasar en vez de arriesgarnos a bloquear
+        // a alguien real por un chequeo que el servidor ni siquiera está haciendo.
+        const servidorSinDesplegar = data && data.error === "Correo destino inválido" && !("bloqueado" in data);
+        if (servidorSinDesplegar) {
+          emailVerificado = true;
+          emailEstado.textContent = form.dataset.textoEmailAyuda;
+          emailEstado.dataset.tipo = "";
+          avanzar();
+          return;
+        }
+
+        emailEstado.textContent = form.dataset.textoErrorCorreoNoReal;
+        emailEstado.dataset.tipo = "error";
+      } catch {
+        if (idVerificacion !== emailVerificacionId) return;
+        // Si el chequeo en vivo falla por red, no bloqueamos al usuario — la validación
+        // final (server-side) igual se hace al enviar.
+        emailVerificado = true;
+        emailEstado.textContent = form.dataset.textoEmailAyuda;
+        emailEstado.dataset.tipo = "";
+        avanzar();
+      }
+    }
+
+    function dispararVerificacionCorreo() {
+      if (emailBloqueado) return;
+      const val = emailInput.value.trim();
+      if (!val || !emailValido(val)) return;
+      clearTimeout(emailTimer);
+      emailVerificacionId++;
+      verificarCorreoEnServidor(val, emailVerificacionId);
+    }
+
+    emailInput?.addEventListener("input", () => {
+      if (emailBloqueado) return;
+      emailVerificado = false;
+      clearTimeout(emailTimer);
+      emailVerificacionId++;
+      const idActual = emailVerificacionId;
+      const val = emailInput.value.trim();
+      if (!val) {
+        emailEstado.textContent = form.dataset.textoEmailAyuda;
+        emailEstado.dataset.tipo = "";
+        return;
+      }
+      if (!emailValido(val)) {
+        emailEstado.textContent = form.dataset.textoErrorEmailInvalido;
+        emailEstado.dataset.tipo = "error";
+        return;
+      }
+      emailTimer = setTimeout(() => verificarCorreoEnServidor(val, idActual), 500);
+    });
+
+    emailInput?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (emailVerificado) avanzar();
+        else dispararVerificacionCorreo();
+      }
+    });
+
+    // ---------- Teléfono internacional (carga perezosa, solo al llegar a ese paso) ----------
+    let telefonoWidget = null;
+    telefonoInput?.addEventListener(
+      "focus",
+      async () => {
+        await cargarLibreriaTelefono();
+        if (window.intlTelInput) {
+          telefonoWidget = window.intlTelInput(telefonoInput, {
+            initialCountry: "co",
+            separateDialCode: true,
+          });
+        }
+      },
+      { once: true }
+    );
+
+    function mostrarMensaje(texto, tipo) {
+      if (!mensajeEl) return;
+      mensajeEl.textContent = texto;
+      mensajeEl.dataset.tipo = tipo || "";
+    }
+
+    function textoDeTipo() {
+      const radio = form.querySelector('input[name="tipo"]:checked');
+      return radio ? radio.value : "";
+    }
+
+    function datosDelFormulario() {
+      const fd = new FormData(form);
+      return {
+        recipient: fd.get("recipient") || "",
+        tipo: textoDeTipo(),
+        servicio: fd.get("servicio") || "",
+        garantiaDato: fd.get("garantiaDato") || "",
+        cuponRuleta: fd.get("cuponRuleta") || "",
+        marca: fd.get("marca") || "",
+        modelo: fd.get("modelo") || "",
+        error: fd.get("error") || "",
+        sistemaOperativo: fd.get("so") || "",
+        conexion: fd.get("conexion") || "",
+        moduloDescargado: valorRadio("moduloDescargado"),
+        nombre: fd.get("nombre") || "",
+        email: (fd.get("email") || "").toString().trim(),
+        whatsapp: telefonoWidget ? telefonoWidget.getNumber() || fd.get("whatsapp") || "" : fd.get("whatsapp") || "",
+        nota: fd.get("nota") || "",
+        antibot: fd.get("antibot") === "on",
+        website: (fd.get("website") || "").toString(),
+      };
+    }
+
+    function labelsDelFormulario() {
+      return {
+        tipo: form.dataset.labelTipo,
+        servicio: form.dataset.labelServicio,
+        garantiaDato: form.dataset.labelGarantiaDato,
+        cuponRuleta: form.dataset.labelCuponRuleta,
+        marca: form.dataset.labelMarca,
+        modelo: form.dataset.labelModelo,
+        error: form.dataset.labelError,
+        sistemaOperativo: form.dataset.labelSo,
+        conexion: form.dataset.labelConexion,
+        moduloDescargado: form.dataset.labelModuloDescargado,
+        nombre: form.dataset.labelNombre,
+        email: form.dataset.labelEmail,
+        whatsapp: form.dataset.labelWhatsapp,
+        nota: form.dataset.labelNota,
+        paginaOrigen: form.dataset.labelPaginaOrigen,
+      };
+    }
+
+    function razonModeracionTexto(razon) {
+      if (razon === "insultos") return form.dataset.textoRazonInsultos;
+      if (razon === "codigo") return form.dataset.textoRazonCodigo;
+      return form.dataset.textoRazonBasura;
+    }
+
+    function validarComun(datos, requiereEmail) {
+      if (!datos.antibot) {
+        mostrarMensaje(form.dataset.textoErrorAntibot, "error");
+        return false;
+      }
+      if (datos.website) {
+        // Honeypot lleno: no delatamos nada, simplemente no continuamos.
+        return false;
+      }
+      if (requiereEmail && !emailValido(datos.email)) {
+        mostrarMensaje(form.dataset.textoErrorEmailInvalido, "error");
+        return false;
+      }
+      const moderacion = revisarContenido({ nombre: datos.nombre, nota: datos.nota, garantiaDato: datos.garantiaDato });
+      if (!moderacion.ok) {
+        mostrarMensaje(`${form.dataset.textoMensajeNoEnviado} — ${razonModeracionTexto(moderacion.razon)}`, "error");
+        return false;
+      }
+      return true;
+    }
+
+    async function manejarEnvioCorreo(event) {
+      event.preventDefault();
+      const datos = datosDelFormulario();
+      if (!form.reportValidity()) return;
+      if (!validarComun(datos, true)) return;
+
+      const labels = labelsDelFormulario();
+      const cuerpoDatos = { ...datos, urlOrigen: window.location.href };
+      const mensaje = construirCuerpoMensaje(cuerpoDatos, labels);
+      const asunto = construirAsunto(datos.tipo, datos);
+
+      botonCorreo.disabled = true;
+      botonCorreo.textContent = form.dataset.textoEnviando;
+      mostrarMensaje("", "");
+
+      try {
+        const res = await fetch(CONTACT_FORM_EMAIL_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            secret: CONTACT_FORM_SECRET,
+            origen: ORIGEN,
+            recipient: datos.recipient,
+            to: DESTINATARIOS[datos.recipient]?.email || "",
+            to_name: DESTINATARIOS[datos.recipient]?.nombre || "",
+            subject: asunto,
+            message: mensaje,
+            reply_email: datos.email,
+            reply_name: datos.nombre,
+            website: datos.website,
+            form_rendered_at: Number(form.dataset.renderedAt),
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data && data.ok) {
+          mostrarMensaje(form.dataset.textoExito, "exito");
+          playFeedback("celebracion");
+          lanzarConfeti();
+          form.reset();
+        } else {
+          mostrarMensaje((data && data.error) || form.dataset.textoErrorGenerico, "error");
+        }
+      } catch {
+        mostrarMensaje(form.dataset.textoErrorGenerico, "error");
+      } finally {
+        botonCorreo.disabled = false;
+        botonCorreo.textContent = form.dataset.textoEnviarCorreo;
+      }
+    }
+
+    function manejarContinuarWhatsapp() {
+      const datos = datosDelFormulario();
+      if (!form.reportValidity()) return;
+      if (!validarComun(datos, false)) return;
+
+      const labels = labelsDelFormulario();
+      const cuerpoDatos = { ...datos, urlOrigen: window.location.href };
+      const cuerpo = construirCuerpoMensaje(cuerpoDatos, labels);
+      const texto = `${form.dataset.textoWhatsappSaludo}\n\n${cuerpo}`;
+
+      const numero = datos.recipient === "diana" ? form.dataset.recipientDianaWhatsapp : form.dataset.recipientWiltonWhatsapp;
+      window.open(buildWhatsAppLink(numero, texto), "_blank", "noopener");
+    }
+
+    form.addEventListener("submit", manejarEnvioCorreo);
+    botonWhatsapp?.addEventListener("click", manejarContinuarWhatsapp);
+
+    // Conecta cualquier disparador externo (ej. el botón "Enviar mensaje" de las tarjetas del
+    // equipo, o cualquier botón de WhatsApp del sitio) con este formulario: si vive dentro de
+    // un <dialog> (botón flotante) lo abre, preselecciona destinatario/método/error según lo
+    // que ya sabíamos por el botón que se pulsó, y lleva el foco al formulario — sin duplicar
+    // componentes ni lógica de envío/validación, que sigue viviendo solo aquí.
+    document.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-abrir-formulario-contacto]");
+      if (!trigger) return;
+      if (document.querySelector("[data-contact-form]") !== form) return;
+
+      const recipient = trigger.dataset.abrirFormularioContacto;
+      const dialogAncestro = form.closest("dialog");
+      if (dialogAncestro && !dialogAncestro.open) dialogAncestro.showModal();
+
+      const radio = recipient ? form.querySelector(`input[name="recipient"][value="${recipient}"]`) : null;
+      if (radio) radio.checked = true;
+
+      if (trigger.dataset.metodo) defaultsMetodoPendiente = trigger.dataset.metodo;
+      if (trigger.dataset.error) defaultsErrorPendiente = trigger.dataset.error;
+
+      requestAnimationFrame(() => {
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    // Estado inicial
+    actualizarProgreso();
+  });
+</script>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .contact-form-topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .contact-form-atras[hidden] {
+    display: none;
+  }
+
+  .contact-form-atras {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex: none;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .contact-form-atras:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-subtle);
+  }
+
+  .contact-form-progreso {
+    flex: 1;
+    height: 0.35rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    overflow: hidden;
+  }
+
+  .contact-form-progreso-barra {
+    height: 100%;
+    width: 8%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.25s ease;
+  }
+
+  .contact-form-paso {
+    display: grid;
+    gap: 0.5rem;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .contact-form-paso[hidden] {
+    display: none;
+  }
+
+  @keyframes cf-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .contact-form-paso-animada {
+    animation: cf-reveal 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-form-paso-animada {
+      animation: none;
+    }
+  }
+
+  .contact-form-paso legend,
+  .contact-form-paso > label:first-child {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    padding: 0;
+  }
+
+  .contact-form input[type="text"],
+  .contact-form input[type="email"],
+  .contact-form input[type="tel"],
+  .contact-form select,
+  .contact-form textarea {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 0.95rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+  }
+
+  .contact-form input:focus-visible,
+  .contact-form select:focus-visible,
+  .contact-form textarea:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+  }
+
+  .contact-form-ayuda {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--color-text-subtle);
+  }
+
+  .contact-form-ruleta-embed {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: 520px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-muted);
+  }
+
+  .contact-form-ruleta-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .contact-form-ayuda[data-tipo="error"] {
+    color: #b42318;
+    font-weight: 600;
+  }
+
+  .contact-form-opciones {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .contact-form-opciones-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 480px) {
+    .contact-form-opciones-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .contact-form-opcion {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-text);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .contact-form-opcion:hover {
+    border-color: var(--color-primary);
+  }
+
+  .contact-form-opcion input {
+    flex: none;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--color-primary);
+  }
+
+  .contact-form-opcion:has(input:checked) {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+  }
+
+  .contact-form-opcion-grande {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .contact-form-opciones-lista {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+  }
+
+  .contact-form-opcion-servicio {
+    align-items: flex-start;
+  }
+
+  .contact-form-opcion-servicio input {
+    margin-top: 0.2rem;
+  }
+
+  .contact-form-opcion-servicio-texto {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .contact-form-opcion-servicio-nombre {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 700;
+  }
+
+  .contact-form-opcion-servicio-detalle {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-text-subtle);
+  }
+
+  .contact-form-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    color: var(--color-text-subtle);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .contact-form-badge-recomendado {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+  }
+
+  .contact-form-continuar {
+    justify-self: start;
+    padding: 0.6rem 1.3rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .contact-form-continuar:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .contact-form-antibot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .contact-form-honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .contact-form-mensaje {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-height: 1.2em;
+  }
+
+  .contact-form-mensaje[data-tipo="exito"] {
+    color: var(--color-primary-dark);
+  }
+
+  .contact-form-mensaje[data-tipo="error"] {
+    color: #b42318;
+  }
+
+  [data-paso="conexionPaso1"] p,
+  [data-paso="conexionPaso2"] p,
+  [data-paso="conexionPaso3"] p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .contact-form-conexion-paso-titulo {
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .contact-form-conexion-descarga {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+    padding: 0.55rem 1rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+
+  .contact-form-conexion-descarga:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .contact-form-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .contact-form-boton[hidden] {
+    display: none;
+  }
+
+  .contact-form-boton {
+    flex: 1 1 200px;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-full);
+    border: none;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .contact-form-boton:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .contact-form-boton-correo {
+    background: var(--color-primary);
+    color: white;
+  }
+
+  .contact-form-boton-correo:hover:not(:disabled) {
+    background: var(--color-primary-dark);
+  }
+
+  .contact-form-boton-whatsapp {
+    background: var(--color-whatsapp);
+    color: var(--color-whatsapp-ink);
+  }
+
+  .contact-form-boton-whatsapp:hover {
+    background: var(--color-whatsapp-dark);
+  }
+</style>

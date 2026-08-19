@@ -1,0 +1,32 @@
+[
+  {
+    "modeloSlug": "mg3510",
+    "conflicto": "Aparece en la familia estructurada 5b02-canon-mg (codigo 5B02) y tambien en una URL suelta que implica 5b00. No se puede determinar cual codigo es correcto sin confirmacion.",
+    "fuentes": [
+      "https://resetenlinea.com/reset/canon/5b02-canon-mg/mg3510/",
+      "https://resetenlinea.com/reset/reset-5b00-canon-mg3510/"
+    ]
+  },
+  {
+    "modeloSlug": "t5470 / t5475",
+    "conflicto": "Una URL suelta menciona 't5470'; la familia estructurada de Epson-SC-plotter solo lista 't5475'. Podria ser un error de tipeo del sitio anterior o dos modelos reales distintos.",
+    "fuentes": [
+      "https://resetenlinea.com/reset/reset-almohadillas-epson-sc-t5470/",
+      "https://resetenlinea.com/reset/epson-sc-plotter/sc-t5475/"
+    ]
+  },
+  {
+    "modeloSlug": "ts3300",
+    "conflicto": "Aparece solo en una URL suelta bajo la familia 5b00-canon-ts, pero esa familia estructurada solo confirma 'ts6120'. Modelo nuevo sin jerarquia confirmada.",
+    "fuentes": [
+      "https://resetenlinea.com/reset/reset-5b00-canon-ts3300/"
+    ]
+  },
+  {
+    "modeloSlug": "bx620fwd",
+    "conflicto": "Unica entrada de la familia 'almohadillas-cx-m-t-p-sp', un nombre de familia inusual que mezcla siglas — probablemente un artefacto de taxonomia del sitio anterior, no una familia real confirmada.",
+    "fuentes": [
+      "https://resetenlinea.com/reset/epson/almohadillas-cx-m-t-p-sp/bx620fwd/"
+    ]
+  }
+]

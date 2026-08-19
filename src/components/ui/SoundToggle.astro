@@ -1,0 +1,98 @@
+---
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const onLabel = t(locale, "common.soundOnLabel");
+const offLabel = t(locale, "common.soundOffLabel");
+---
+
+<button
+  type="button"
+  class="sound-toggle"
+  data-sound-toggle
+  data-on-label={onLabel}
+  data-off-label={offLabel}
+  aria-pressed="false"
+  aria-label={offLabel}
+>
+  <svg class="sound-icon sound-icon-on" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+    <path d="M4 7.5v5h2.8L11 16V4L6.8 7.5H4Z" fill="currentColor" />
+    <path d="M13.5 7a3.5 3.5 0 010 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M15.3 5a6 6 0 010 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+  <svg class="sound-icon sound-icon-off" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+    <path d="M4 7.5v5h2.8L11 16V4L6.8 7.5H4Z" fill="currentColor" />
+    <path d="M14 8l4 4M18 8l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+</button>
+
+<script>
+  import { isSoundEnabled, setSoundEnabled, playFeedback, onSoundPreferenceChange } from "../../lib/sound-manager.js";
+
+  document.querySelectorAll("[data-sound-toggle]").forEach((button) => {
+    const onLabel = button.getAttribute("data-on-label") || "";
+    const offLabel = button.getAttribute("data-off-label") || "";
+
+    const render = (enabled) => {
+      button.setAttribute("aria-pressed", String(enabled));
+      button.setAttribute("aria-label", enabled ? onLabel : offLabel);
+      button.classList.toggle("is-enabled", enabled);
+    };
+
+    render(isSoundEnabled());
+    onSoundPreferenceChange(render);
+
+    button.addEventListener("click", () => {
+      const next = !isSoundEnabled();
+      setSoundEnabled(next);
+      if (next) playFeedback("select");
+    });
+  });
+</script>
+
+<style>
+  .sound-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg);
+    color: var(--color-text-subtle);
+    cursor: pointer;
+    flex: none;
+  }
+
+  .sound-toggle:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .sound-icon-off {
+    display: block;
+  }
+
+  .sound-icon-on {
+    display: none;
+  }
+
+  .sound-toggle.is-enabled {
+    color: var(--color-primary);
+  }
+
+  .sound-toggle.is-enabled .sound-icon-off {
+    display: none;
+  }
+
+  .sound-toggle.is-enabled .sound-icon-on {
+    display: block;
+  }
+</style>

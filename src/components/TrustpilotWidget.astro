@@ -1,0 +1,40 @@
+---
+import { TRUSTPILOT_BUSINESSUNIT_ID, TRUSTPILOT_REVIEW_URL } from "../config/site";
+---
+
+<div class="trustpilot-wrapper">
+  <!-- TrustBox widget - Micro Review Count -->
+  <div
+    class="trustpilot-widget"
+    data-locale="es-ES"
+    data-template-id="5419b6a8b0d04a076446a9ad"
+    data-businessunit-id={TRUSTPILOT_BUSINESSUNIT_ID}
+    data-style-height="24px"
+    data-style-width="100%"
+    data-theme="dark"
+    data-token="4ab02a52-9578-4f0f-ad52-0fed468d8cc8"
+    data-min-review-count="0"
+    data-style-alignment="center"
+  >
+    <a href={TRUSTPILOT_REVIEW_URL} target="_blank" rel="noopener">Trustpilot</a>
+  </div>
+  <!-- End TrustBox widget -->
+</div>
+
+<style>
+  .trustpilot-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: var(--space-xs) 0;
+  }
+  .trustpilot-widget {
+    /* El widget usa data-theme="dark" (valor provisto por Trustpilot, no se modifica): se
+       envuelve en un fondo oscuro propio para que el texto/estrellas sean siempre legibles,
+       sin importar si la sección donde se coloca es clara u oscura. */
+    max-width: 320px;
+    width: 100%;
+    background: #191919;
+    border-radius: var(--radius-full);
+    padding: 0.35rem 0.75rem;
+  }
+</style>

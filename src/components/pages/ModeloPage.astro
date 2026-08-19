@@ -1,0 +1,495 @@
+---
+import { t, buildLocalizedPath, buildCanonicalUrl, resolveErroresParaModelo } from "../../i18n/utils";
+import WhatsAppCTA from "../WhatsAppCTA.astro";
+import ErrorSelector from "../ErrorSelector.astro";
+import FloatingWhatsApp from "../FloatingWhatsApp.astro";
+import Breadcrumb from "../Breadcrumb.astro";
+import InfoCard from "../ui/InfoCard.astro";
+import ChecklistItem from "../ui/ChecklistItem.astro";
+import FaqAccordion from "../ui/FaqAccordion.astro";
+import ProcessSteps from "../ui/ProcessSteps.astro";
+import ModeloImage from "../ui/ModeloImage.astro";
+import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
+import ServiceFlow from "../ui/ServiceFlow.astro";
+import EvidenceCard from "../ui/EvidenceCard.astro";
+import VideoModal from "../ui/VideoModal.astro";
+import TrustpilotWidget from "../TrustpilotWidget.astro";
+import { getProcesoImage } from "../../lib/proceso-images.js";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, SITE_URL, type Locale } from "../../config/site";
+
+interface ModeloData {
+  marcaSlug: string;
+  modeloSlug: string;
+  nombreMarca: string;
+  nombreModelo: string;
+  nivel: number;
+}
+
+interface Props {
+  locale: Locale;
+  modeloData: ModeloData;
+}
+
+const { locale, modeloData } = Astro.props;
+const { marcaSlug, modeloSlug, nombreMarca, nombreModelo } = modeloData;
+
+const path = `/reset/${marcaSlug}/${modeloSlug}/`;
+const localizedPath = buildLocalizedPath(locale, path);
+const sourceIdBase = `${marcaSlug}-${modeloSlug}`;
+
+const erroresResueltos = resolveErroresParaModelo(marcaSlug, modeloSlug, locale);
+const erroresCompatibles = erroresResueltos.filter((e) => e.estado_servicio === "compatible");
+const erroresOtros = erroresResueltos.filter((e) => e.estado_servicio !== "compatible");
+
+const unCompatible = erroresCompatibles.length === 1 ? erroresCompatibles[0] : undefined;
+const variosCompatibles = erroresCompatibles.length > 1;
+const hayOtros = erroresOtros.length > 0;
+const sinErrores = erroresCompatibles.length === 0 && !hayOtros;
+const errorPrincipal = erroresCompatibles[0];
+
+const tituloConPrefijo = `${t(locale, "modelo.prefijoTitulo")} ${nombreMarca} ${nombreModelo}`;
+
+const modeloId = `${marcaSlug}:${modeloSlug}`;
+const nombreCompleto = `${nombreMarca} ${nombreModelo}`;
+const labelFavoritoAgregar = t(locale, "home.favoritoAgregar").replace("{nombre}", nombreCompleto);
+const labelFavoritoQuitar = t(locale, "home.favoritoQuitar").replace("{nombre}", nombreCompleto);
+
+const reconocimiento = t(locale, "modelo.reconocimiento")
+  .replaceAll("{marca}", nombreMarca)
+  .replaceAll("{modelo}", nombreModelo);
+const errorSectionText = t(locale, "modelo.errorSectionText")
+  .replaceAll("{marca}", nombreMarca)
+  .replaceAll("{modelo}", nombreModelo);
+
+const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
+const faqConfianza = faqItems.slice(0, 3);
+
+const canonicalUrl = buildCanonicalUrl(locale, path);
+const homeUrl = buildCanonicalUrl(locale, "/");
+
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Reset asistido de impresora",
+  name: tituloConPrefijo,
+  description: t(locale, "modelo.descriptionTemplate")
+    .replaceAll("{marca}", nombreMarca)
+    .replaceAll("{modelo}", nombreModelo),
+  provider: { "@type": "Organization", name: "ResetEnLinea", url: SITE_URL },
+  areaServed: "Worldwide",
+  url: canonicalUrl,
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.pregunta,
+    acceptedAnswer: { "@type": "Answer", text: item.respuesta },
+  })),
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: t(locale, "nav.home"), item: homeUrl },
+    { "@type": "ListItem", position: 2, name: tituloConPrefijo, item: canonicalUrl },
+  ],
+};
+
+const pasosFlujoServicio = [
+  {
+    titulo: t(locale, "flujoServicio.revisionTitulo"),
+    descripcion: t(locale, "flujoServicio.revisionTexto"),
+    icono: "revision" as const,
+  },
+  {
+    titulo: t(locale, "flujoServicio.pagoTitulo"),
+    descripcion: t(locale, "flujoServicio.pagoTexto"),
+    icono: "pago" as const,
+  },
+  {
+    titulo: t(locale, "flujoServicio.resetTitulo"),
+    descripcion: t(locale, "flujoServicio.resetTexto"),
+    icono: "reset" as const,
+  },
+  {
+    titulo: t(locale, "flujoServicio.certificadoTitulo"),
+    descripcion: t(locale, "flujoServicio.certificadoTexto"),
+    icono: "certificado" as const,
+  },
+];
+
+const pasosProceso = [
+  {
+    titulo: t(locale, "proceso.paso1Titulo"),
+    descripcion: t(locale, "proceso.paso1Texto"),
+    icono: "monitor" as const,
+    enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
+    imagen: getProcesoImage("paso1-preparar") ?? undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso2Titulo"),
+    descripcion: t(locale, "proceso.paso2Texto"),
+    icono: "conectar" as const,
+    destacado: `Technician ID: ${TECHNICIAN_ID}`,
+    imagen: getProcesoImage("paso2-conectar") ?? undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso3Titulo"),
+    descripcion: t(locale, "proceso.paso3Texto"),
+    icono: "usb" as const,
+    imagen: getProcesoImage("paso3-usb") ?? undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso4Titulo"),
+    descripcion: t(locale, "proceso.paso4Texto"),
+    icono: "whatsapp" as const,
+  },
+];
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} />
+<script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+
+<Breadcrumb
+  items={[
+    { label: t(locale, "nav.home"), href: buildLocalizedPath(locale, "/") },
+    { label: tituloConPrefijo },
+  ]}
+/>
+
+<article class="modelo-page">
+  <!-- 1. Reconocimiento inmediato -->
+  <header class="modelo-hero">
+    <ModeloImage modeloSlug={modeloSlug} nombreMarca={nombreMarca} nombreModelo={nombreModelo} eager />
+    <div class="modelo-hero-text">
+      <h1 class="modelo-hero-titulo" data-label-agregar={labelFavoritoAgregar} data-label-quitar={labelFavoritoQuitar}>
+        <span>{tituloConPrefijo}</span>
+        <FavoritoEstrella modeloId={modeloId} variante="titulo" ariaLabel={labelFavoritoAgregar} />
+      </h1>
+      <p class="modelo-hero-modalidad">{t(locale, "proceso.titulo")}</p>
+      <p class="modelo-hero-pregunta">{reconocimiento}</p>
+    </div>
+  </header>
+
+  <!-- 2. Confirmación del problema -->
+  {sinErrores ? (
+    <InfoCard>
+      <div class="seccion-header">
+        <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
+          <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6" />
+          <path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <h2>{t(locale, "modelo.errorSectionTitle")}</h2>
+      </div>
+      <p>{errorSectionText}</p>
+    </InfoCard>
+  ) : (
+    <InfoCard>
+      <div class="seccion-header">
+        <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
+          <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6" />
+          <path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <h2>{t(locale, "modelo.errorConfirmadoTitle")}</h2>
+      </div>
+
+      {unCompatible && (
+        <>
+          <p>{unCompatible.descripcion}</p>
+          <EvidenceCard
+            errorId={unCompatible.error_id}
+            modeloSlug={modeloSlug}
+            nombreMarca={nombreMarca}
+            nombreModelo={nombreModelo}
+            errorCaption={t(locale, "modelo.evidenciaErrorCaption")}
+            solucionCaption={t(locale, "modelo.evidenciaSolucionCaption")}
+            flipHint={t(locale, "modelo.evidenciaFlipHint")}
+          />
+          <VideoModal archivo="reset-demo.mp4" label={t(locale, "modelo.videoResetLabel")} />
+        </>
+      )}
+
+      {variosCompatibles && (
+        <ErrorSelector
+          errores={erroresCompatibles}
+          marca={nombreMarca}
+          modelo={nombreModelo}
+          modeloSlug={modeloSlug}
+          locale={locale}
+          urlPath={localizedPath}
+          sourceIdBase={sourceIdBase}
+        />
+      )}
+    </InfoCard>
+  )}
+
+  {(unCompatible || variosCompatibles) && (
+    <p class="opcion-secundaria">
+      <WhatsAppCTA
+        marca={nombreMarca}
+        modelo={nombreModelo}
+        sourceId={`${sourceIdBase}-otro-error`}
+        urlPath={localizedPath}
+        locale={locale}
+        label={t(locale, "modelo.ctaOtroError")}
+      />
+    </p>
+  )}
+
+  {hayOtros && (
+    <InfoCard tone="warning">
+      <div class="seccion-header seccion-header-warning">
+        <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
+          <path d="M10 2.5l8 14H2l8-14Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+          <path d="M10 8v3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+          <circle cx="10" cy="14" r="0.9" fill="currentColor" />
+        </svg>
+        <h2>{t(locale, "modelo.errorRequiereRevisionTitle")}</h2>
+      </div>
+      <p>{t(locale, "modelo.revisionTexto")}</p>
+      <ul class="lista-simple">
+        {erroresOtros.map((err) => (
+          <li>{err.descripcion}</li>
+        ))}
+      </ul>
+      <WhatsAppCTA
+        marca={nombreMarca}
+        modelo={nombreModelo}
+        sourceId={`${sourceIdBase}-requiere-revision`}
+        urlPath={localizedPath}
+        locale={locale}
+        label={t(locale, "modelo.ctaConsultarCaso")}
+      />
+    </InfoCard>
+  )}
+
+  <!-- 3. Flujo del servicio: reforzar que es asistido, no autónomo -->
+  <InfoCard tone="muted">
+    <ServiceFlow
+      titulo={t(locale, "flujoServicio.titulo")}
+      introTexto={t(locale, "flujoServicio.introTexto")}
+      pasos={pasosFlujoServicio}
+    />
+  </InfoCard>
+
+  <!-- 3b. Comprensión de la solución: el proceso real del servicio -->
+  <InfoCard tone="muted">
+    <ProcessSteps
+      titulo={t(locale, "proceso.titulo")}
+      introTexto={t(locale, "proceso.introTexto")}
+      pasos={pasosProceso}
+      marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
+    >
+      {!variosCompatibles && (
+        <WhatsAppCTA
+          marca={nombreMarca}
+          modelo={nombreModelo}
+          error={unCompatible?.descripcion}
+          sourceId={`${sourceIdBase}-proceso`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={t(locale, "proceso.ctaContinuar")}
+        />
+      )}
+    </ProcessSteps>
+    <VideoModal archivo="proceso-demo.mp4" label={t(locale, "proceso.videoProcesoLabel")} />
+  </InfoCard>
+
+  <!-- 4. Confianza y reducción de fricción -->
+  <InfoCard tone="muted">
+    <div class="seccion-header">
+      <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
+        <path
+          d="M2.5 5.5a2 2 0 012-2h11a2 2 0 012 2v6a2 2 0 01-2 2H8l-3.5 3v-3H4.5a2 2 0 01-2-2v-6Z"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <h2>{t(locale, "faq.heading")}</h2>
+    </div>
+    <div class="confianza-checklist">
+      {faqConfianza.map((item) => (
+        <ChecklistItem tone="check">
+          <strong>{item.pregunta}</strong> — {item.respuesta}
+        </ChecklistItem>
+      ))}
+    </div>
+    <FaqAccordion items={faqItems.slice(3)} />
+    <TrustpilotWidget />
+  </InfoCard>
+
+  <!-- 5. Acción -->
+  <InfoCard tone="accent">
+    <div class="seccion-header">
+      <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
+        <path d="M3 17l1.6-4.8A7 7 0 1110 17a7 7 0 01-4.6-1.7L3 17Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+      </svg>
+      <h2>{t(locale, "modelo.cierreTitulo")}</h2>
+    </div>
+    <p>{t(locale, "modelo.cierreTexto")}</p>
+    <WhatsAppCTA
+      marca={nombreMarca}
+      modelo={nombreModelo}
+      error={errorPrincipal?.descripcion}
+      sourceId={`${sourceIdBase}-cierre`}
+      urlPath={localizedPath}
+      locale={locale}
+      label={t(locale, "common.whatsappButton")}
+    />
+  </InfoCard>
+</article>
+
+<FloatingWhatsApp
+  marca={nombreMarca}
+  modelo={nombreModelo}
+  error={errorPrincipal?.descripcion}
+  sourceId={`${sourceIdBase}-flotante`}
+  urlPath={localizedPath}
+  locale={locale}
+  label={t(locale, "common.whatsappButton")}
+/>
+
+<script>
+  import { esFavorito, alternarFavorito } from "../../lib/favoritos.js";
+  import { playFeedback } from "../../lib/sound-manager.js";
+
+  function actualizarBoton(boton, esFav) {
+    const contenedor = boton.closest("[data-label-agregar]");
+    const etiqueta = contenedor ? (esFav ? contenedor.dataset.labelQuitar : contenedor.dataset.labelAgregar) : null;
+    boton.setAttribute("aria-pressed", String(esFav));
+    if (etiqueta) boton.setAttribute("aria-label", etiqueta);
+  }
+
+  document.querySelectorAll("[data-favorito-toggle]").forEach((boton) => {
+    const id = boton.getAttribute("data-modelo-id") || "";
+    if (!id) return;
+    actualizarBoton(boton, esFavorito(id));
+  });
+
+  document.addEventListener("click", (event) => {
+    const boton = event.target.closest("[data-favorito-toggle]");
+    if (!boton) return;
+    const id = boton.getAttribute("data-modelo-id") || "";
+    if (!id) return;
+    const esFavoritoAhora = alternarFavorito(id);
+    document.querySelectorAll(`[data-favorito-toggle][data-modelo-id="${CSS.escape(id)}"]`).forEach((b) => {
+      actualizarBoton(b, esFavoritoAhora);
+    });
+    playFeedback(esFavoritoAhora ? "favoritoAgregar" : "favoritoQuitar");
+  });
+</script>
+
+<style>
+  .modelo-page {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .modelo-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .modelo-hero-text {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .modelo-hero-titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 480px) {
+    .modelo-hero {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+
+  .modelo-hero-modalidad {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    margin: 0.1rem 0 0;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .modelo-hero-pregunta {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .seccion-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .seccion-header h2 {
+    margin: 0;
+  }
+
+  .seccion-icon {
+    flex: none;
+    color: var(--color-primary);
+  }
+
+  .seccion-header-warning .seccion-icon {
+    color: var(--color-warning-text);
+  }
+
+  .lista-simple {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.4rem;
+    color: var(--color-warning-text);
+  }
+
+  .confianza-checklist {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .opcion-secundaria {
+    margin: -0.5rem 0 0;
+    text-align: center;
+  }
+
+  .opcion-secundaria :global(.whatsapp-cta) {
+    background: none;
+    color: var(--color-text-subtle);
+    text-decoration: underline;
+    font-weight: 500;
+    padding: 0.25rem;
+  }
+
+  .opcion-secundaria :global(.whatsapp-cta:hover) {
+    background: none;
+    color: var(--color-text);
+  }
+</style>

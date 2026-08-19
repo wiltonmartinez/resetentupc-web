@@ -1,0 +1,96 @@
+---
+interface Props {
+  modeloId: string;
+  variante: "flotante" | "titulo";
+  ariaLabel: string;
+}
+
+const { modeloId, variante, ariaLabel } = Astro.props;
+const tamano = variante === "flotante" ? 20 : 26;
+---
+
+<button
+  type="button"
+  class={`favorito-estrella favorito-estrella-${variante}`}
+  data-favorito-toggle
+  data-modelo-id={modeloId}
+  aria-pressed="false"
+  aria-label={ariaLabel}
+>
+  <svg viewBox="0 0 20 20" width={tamano} height={tamano} aria-hidden="true">
+    <path
+      d="M10 2.6l2.24 4.54 5.01.73-3.63 3.53.86 4.99L10 13.98l-4.48 2.41.86-4.99-3.63-3.53 5.01-.73L10 2.6Z"
+      stroke="currentColor"
+      stroke-width="1.4"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
+
+<style>
+  .favorito-estrella {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--color-text-subtle);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .favorito-estrella svg {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+  }
+
+  .favorito-estrella svg path {
+    fill: none;
+    transition: fill 0.2s ease;
+  }
+
+  .favorito-estrella:hover svg {
+    transform: scale(1.12);
+  }
+
+  .favorito-estrella:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .favorito-estrella[aria-pressed="true"] {
+    color: #f5a623;
+  }
+
+  .favorito-estrella[aria-pressed="true"] svg {
+    transform: scale(1.15);
+  }
+
+  .favorito-estrella[aria-pressed="true"] svg path {
+    fill: currentColor;
+  }
+
+  .favorito-estrella-flotante {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .favorito-estrella-titulo {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: var(--radius-full);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .favorito-estrella svg {
+      transition: none;
+    }
+  }
+</style>

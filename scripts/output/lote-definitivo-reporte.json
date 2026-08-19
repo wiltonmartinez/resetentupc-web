@@ -1,0 +1,1845 @@
+{
+  "conservados": [
+    "epson/l1250",
+    "canon/g6010",
+    "epson-sc/t3170",
+    "canon/mb5310",
+    "canon/g1110",
+    "canon/g3100",
+    "canon/g2110",
+    "canon/g1100",
+    "canon/g4110",
+    "canon/g3110",
+    "canon/g2100",
+    "canon/mb2710",
+    "canon/mb5110",
+    "canon/mb5410",
+    "canon/mb2720",
+    "canon/g5010",
+    "canon/mb2010",
+    "canon/mb2100",
+    "canon/g4100",
+    "epson/l365",
+    "epson/l1110",
+    "epson/et-1810",
+    "epson/l3150",
+    "epson/et-2850",
+    "epson/l396",
+    "epson/l3110",
+    "epson/et-2400",
+    "epson/et-2650",
+    "epson/l121",
+    "epson/wf-3720",
+    "epson/wf-2760",
+    "epson/l395",
+    "epson/xp-310",
+    "epson/et-4800",
+    "epson/l810",
+    "epson/l475",
+    "epson/et-4550",
+    "epson/et-2500",
+    "epson/l4150",
+    "epson/xp-440",
+    "epson/l656",
+    "epson/et-2803",
+    "epson/et-2760",
+    "epson/xp-340",
+    "epson/l200",
+    "epson/l3160",
+    "epson/wf-2750",
+    "epson/l606",
+    "epson/l380",
+    "epson/xp-240",
+    "epson/l4260",
+    "epson/l375",
+    "epson/xp-255",
+    "epson/l300",
+    "epson/l800",
+    "epson/et-2720",
+    "epson/et-2550",
+    "epson/l3260",
+    "epson/xp-235",
+    "epson/l5290",
+    "epson/l3250",
+    "epson/xp-400",
+    "epson/l555",
+    "epson/l1300",
+    "epson/l455",
+    "epson/l805",
+    "epson/l1800",
+    "epson/l5590",
+    "epson/xp-300",
+    "epson/l4160",
+    "epson/et-2800",
+    "epson/l5190",
+    "epson/l565",
+    "epson/xp-241",
+    "epson/l1210",
+    "epson/et-2610",
+    "epson/xp-620",
+    "epson/wf-545",
+    "epson/l350",
+    "epson/wf-3730",
+    "epson/xp-201",
+    "epson/wf-2630",
+    "epson/xp-2150",
+    "epson/l850",
+    "epson/xp-2100",
+    "epson/et-2810",
+    "epson/l575",
+    "epson/l655",
+    "epson/l355",
+    "epson/l3210",
+    "epson/xp-320",
+    "epson/xp-211",
+    "epson/et-2600",
+    "epson/xp-2200",
+    "epson/l360",
+    "epson/wf-2660",
+    "epson/l605",
+    "epson/l382",
+    "epson/et-3600",
+    "epson/xp-243",
+    "epson/et-4700",
+    "epson/l495",
+    "epson/wf-2530",
+    "epson/xp-2155",
+    "epson/xp-2105",
+    "epson/l3060",
+    "epson/l3115",
+    "epson/wf-2520",
+    "epson/xp-420",
+    "epson/wf-3733"
+  ],
+  "eliminados": [
+    "canon/mb5150",
+    "canon/ts6120",
+    "canon/g5050",
+    "canon/g6050",
+    "canon/mb2120",
+    "canon/g750",
+    "canon/mb2750",
+    "canon/ip8770",
+    "canon/g6020",
+    "canon/mx530",
+    "canon/g1200",
+    "canon/mb2000",
+    "canon/g3000",
+    "canon/g2000",
+    "canon/g3200",
+    "canon/ip4910",
+    "canon/g4200",
+    "canon/g650",
+    "canon/g2200",
+    "canon/mx860",
+    "canon/g1000",
+    "canon/g4000",
+    "canon/mx455",
+    "canon/mg3540",
+    "canon/g850",
+    "canon/mb2020",
+    "epson/wf-2538",
+    "epson/et-2705",
+    "epson/et-2723",
+    "epson/et-2814",
+    "epson/et-2724",
+    "epson/wf-2635",
+    "epson/et-2712",
+    "epson/l3215",
+    "epson/et-2811",
+    "epson/xp-214",
+    "epson/et-2812",
+    "epson/l485",
+    "epson/l4266",
+    "epson/l3258",
+    "epson/et-2715",
+    "epson/l3158",
+    "epson/l3050",
+    "epson/l4265",
+    "epson/l358",
+    "epson/et-2713",
+    "epson/et-2718",
+    "epson/et-2820",
+    "epson/wf-2531",
+    "epson/wf-2651",
+    "epson/l4261",
+    "epson/l220",
+    "epson/xp-103",
+    "epson/et-2714",
+    "epson/l5298",
+    "epson/l3251",
+    "epson/et-2726",
+    "epson/l111",
+    "epson/l222",
+    "epson/l3267",
+    "epson/wf-2655",
+    "epson/l353",
+    "epson/l105",
+    "epson/xp-102",
+    "epson/l3266",
+    "epson/et-2828",
+    "epson/l385",
+    "epson/et-3700",
+    "epson/wf-2541",
+    "epson/et-2711",
+    "epson/l3253",
+    "epson/et-2404",
+    "epson/et-2851",
+    "epson/et-2855",
+    "epson/l3218",
+    "epson/l3280",
+    "epson/wf-2521",
+    "epson/l301",
+    "epson/wf-3723",
+    "epson/l4269",
+    "epson/et-2808",
+    "epson/et-2703",
+    "epson/et-2716",
+    "epson/et-2822",
+    "epson/et-2821",
+    "epson/l3211",
+    "epson/l3217",
+    "epson/et-2721",
+    "epson/l3156",
+    "epson/xp-242",
+    "epson/et-2408",
+    "epson/et-2405",
+    "epson/et-2700",
+    "epson/l4263",
+    "epson/et-2701",
+    "epson/l3259",
+    "epson/et-2804",
+    "epson/wf-3725",
+    "epson/l4152",
+    "epson/xp-247",
+    "epson/et-4500",
+    "epson/xp-311",
+    "epson/l3151",
+    "epson/xp-301",
+    "epson/l405",
+    "epson/et-2813",
+    "epson/l3152",
+    "epson/et-2805",
+    "epson/l3166",
+    "epson/bx635fwd",
+    "epson/l3283",
+    "epson/l3153",
+    "epson/wf-2631",
+    "epson/et-2406",
+    "epson/l3213",
+    "epson/xp-100",
+    "epson/l211",
+    "epson/l5296",
+    "epson/et-2818",
+    "epson/l3111",
+    "epson/l3289",
+    "epson/wf-2528",
+    "epson/wf-3735",
+    "epson/et-2806",
+    "epson/et-2853",
+    "epson/xp-205",
+    "epson/l3269",
+    "epson/et-2815",
+    "epson/l3285",
+    "epson/l310",
+    "epson/et-2826",
+    "epson/et-2402",
+    "epson/l3257",
+    "epson/et-2824",
+    "epson/et-2802",
+    "epson/et-2852",
+    "epson/l3263",
+    "epson/l3216",
+    "epson/l3286",
+    "epson/l303"
+  ],
+  "nuevosConEvidencia": [
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f570",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-f570/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f571",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-f571/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3170m",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-t3170m/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3170x",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-t3170x/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5475",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-t5475/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f6200",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-f6200/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f7070",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-f7070/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f7200",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-f7200/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "p7500",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-p7500/"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "p9500",
+      "familia": null,
+      "fuente": "https://resetenlinea.com/reset/epson-sc-plotter/sc-p9500/"
+    }
+  ],
+  "nuevosSinEvidencia": [
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "l120",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "l210",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2710",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2750",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2860",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2870",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2862",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "m1100",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "m1120",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "m2100",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "m2120",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "p600",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "artisan-1430",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "sp-1390",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "sp-1410",
+      "motivo": "Coincide con registro previamente documentado en catalogo-incompleto.json (otras-epson)"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-645",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2540",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2650",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-101",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-200",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-204",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-225",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-231",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-245",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-257",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-345",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-352",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-355",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-401",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-410",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-411",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-431",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-432",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-445",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-452",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-455",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-2101",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-2201",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-2205",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "g1111",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "g2111",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "g3111",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "g4111",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "g7010",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "gm2010",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2110",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "canon",
+      "modeloSlug": "ts700",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f500",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3100",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3100m",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3100n",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3100x",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3400",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3400n",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t3475",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5100",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5100m",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5100n",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5170",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5170m",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5400",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5400m",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5470",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "t5470m",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f6070",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f7170",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    },
+    {
+      "marcaSlug": "epson-sc",
+      "modeloSlug": "f9300",
+      "motivo": "Sin evidencia estructural en ninguna fuente real analizada; integrado por autoridad explicita de la lista del usuario"
+    }
+  ],
+  "relacionesEliminadas": [
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2538",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2705",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2723",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2814",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2724",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2635",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2712",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3215",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2811",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-214",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2812",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l485",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l4266",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3258",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2715",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3158",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3050",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l4265",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l358",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2713",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2718",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2820",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2531",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2651",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l4261",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l220",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-103",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2714",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l5298",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3251",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2726",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l111",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l222",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3267",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2655",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l353",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l105",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-102",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3266",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2828",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l385",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-3700",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2541",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2711",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3253",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2404",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2851",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2855",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3218",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3280",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2521",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l301",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-3723",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l4269",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2808",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2703",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2716",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2822",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2821",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3211",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3217",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2721",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3156",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-242",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2408",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2405",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2700",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l4263",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2701",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3259",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2804",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-3725",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l4152",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-247",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-4500",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-311",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3151",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-301",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l405",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2813",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3152",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2805",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3166",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "bx635fwd",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3283",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3153",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2631",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2406",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3213",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-100",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l211",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l5296",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2818",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3111",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3289",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-2528",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "wf-3735",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-wf (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2806",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2853",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "xp-205",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-xp (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3269",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2815",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3285",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l310",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2826",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2402",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3257",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2824",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2802",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "et-2852",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-et (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3263",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3216",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l3286",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "epson-almohadillas",
+      "tipo": "concepto",
+      "marcaSlug": "epson",
+      "modeloSlug": "l303",
+      "fuente": "Categorización real del sitio anterior: familia almohadillas-l (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb5150",
+      "fuente": "URL indexada real /reset/canon/5b00-canon-mb/mb5150/ (Google Search Console)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "ts6120",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-ts (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g5050",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g6050",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2120",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g750",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2750",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "ip8770",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-ip (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g6020",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mx530",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mx (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g1200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g3000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g2000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g3200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "ip4910",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-ip (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g4200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g650",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g2200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mx860",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mx (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g1000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g4000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mx455",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mx (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mg3540",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mg (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "g850",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "concepto",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2020",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb5150",
+      "fuente": "URL indexada real /reset/canon/5b00-canon-mb/mb5150/ (Google Search Console)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "ts6120",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-ts (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g5050",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g6050",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2120",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g750",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2750",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "ip8770",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-ip (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g6020",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mx530",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mx (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g1200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g3000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g2000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g3200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "ip4910",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-ip (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g4200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g650",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g2200",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mx860",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mx (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g1000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g4000",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mx455",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mx (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mg3540",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mg (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "g850",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-g (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    },
+    {
+      "error_id": "canon-5b00",
+      "tipo": "codigo",
+      "codigo": "5b00",
+      "marcaSlug": "canon",
+      "modeloSlug": "mb2020",
+      "fuente": "Categorización real del sitio anterior: familia 5b00-canon-mb (evidencia estructural — ver Bloque 3, catalogo-candidato.json)"
+    }
+  ]
+}

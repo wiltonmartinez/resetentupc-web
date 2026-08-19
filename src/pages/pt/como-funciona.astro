@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ComoFuncionaPage from "../../components/pages/ComoFuncionaPage.astro";
+import { t, buildStaticPagePath } from "../../i18n/utils";
+
+const locale = "pt" as const;
+---
+
+<BaseLayout
+  title={t(locale, "comoFunciona.title")}
+  description={t(locale, "comoFunciona.description")}
+  locale={locale}
+  path={buildStaticPagePath(locale, "comoFunciona")}
+  pageKey="comoFunciona"
+>
+  <ComoFuncionaPage locale={locale} />
+</BaseLayout>

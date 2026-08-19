@@ -1,0 +1,51 @@
+---
+interface Props {
+  tone?: "default" | "muted" | "warning" | "accent";
+}
+
+const { tone = "default" } = Astro.props;
+---
+
+<div class:list={["info-card", `info-card-${tone}`]}>
+  <slot />
+</div>
+
+<style>
+  .info-card {
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .info-card-default {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .info-card-muted {
+    background: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  .info-card-warning {
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
+  }
+
+  .info-card-accent {
+    background: var(--color-primary);
+    border: 1px solid var(--color-primary-dark);
+    color: white;
+  }
+
+  .info-card-accent :global(h2),
+  .info-card-accent :global(h3) {
+    color: white;
+  }
+
+  .info-card-accent :global(p) {
+    color: rgba(255, 255, 255, 0.85);
+  }
+</style>

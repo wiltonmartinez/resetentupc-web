@@ -1,0 +1,108 @@
+---
+import { Image } from "astro:assets";
+import type { Locale, StaticPageKey } from "../config/site";
+import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
+import { TRUSTPILOT_REVIEW_URL, RULETA_URL } from "../config/site";
+import LanguageSelector from "./LanguageSelector.astro";
+import SoundToggle from "./ui/SoundToggle.astro";
+import { getLogo } from "../lib/branding.js";
+
+interface Props {
+  locale: Locale;
+  path: string;
+  pageKey?: StaticPageKey;
+}
+
+const { locale, path, pageKey } = Astro.props;
+const logo = getLogo();
+---
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-logo" href={buildLocalizedPath(locale, "/")}>
+      {logo ? (
+        <Image src={logo} alt="ResetEnLinea" width={28} height={28} class="site-logo-imagen" />
+      ) : (
+        <span class="site-logo-mark" aria-hidden="true">R</span>
+      )}
+      ResetEnLinea
+    </a>
+    <nav class="site-nav" aria-label={t(locale, "nav.home")}>
+      <a href={buildLocalizedPath(locale, "/")}>{t(locale, "nav.home")}</a>
+      <a href={buildStaticPagePath(locale, "comoFunciona")}>{t(locale, "nav.comoFunciona")}</a>
+      <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
+      <a href={buildStaticPagePath(locale, "contacto")}>{t(locale, "nav.contacto")}</a>
+      <a href={TRUSTPILOT_REVIEW_URL} target="_blank" rel="noopener noreferrer">{t(locale, "nav.pruebaSocial")}</a>
+      <a href={RULETA_URL} target="_blank" rel="noopener noreferrer">{t(locale, "nav.ruleta")}</a>
+    </nav>
+    <div class="site-header-controls">
+      <LanguageSelector locale={locale} path={path} pageKey={pageKey} />
+      <SoundToggle locale={locale} />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  .site-header-inner {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem var(--space-md);
+  }
+  .site-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: var(--color-text);
+  }
+  .site-logo-imagen {
+    width: 1.75rem;
+    height: 1.75rem;
+    object-fit: contain;
+    flex: none;
+  }
+  .site-logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.9rem;
+  }
+  .site-nav {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .site-nav a {
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .site-nav a:hover {
+    color: var(--color-primary);
+  }
+  .site-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+  }
+</style>
