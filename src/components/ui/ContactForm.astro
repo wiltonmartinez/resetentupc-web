@@ -1,6 +1,7 @@
 ---
 import { t } from "../../i18n/utils";
 import modelos from "../../data/modelos-muestra.json";
+import pagosData from "../../data/pagos.json";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
 interface Props {
@@ -29,6 +30,8 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
 
 const marcaDefaultSlug = marcasUnicas.find((m) => m.nombre === marcaDefault)?.slug ?? "";
 const id = (nombre: string) => `${idPrefix}-${nombre}`;
+
+const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }));
 ---
 
 <form
@@ -37,11 +40,13 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   data-contact-form
   data-locale={locale}
   data-errores-por-marca={JSON.stringify(ERRORES_POR_MARCA)}
+  data-pagos={JSON.stringify(pagosData.paises)}
   data-marca-default={marcaDefaultSlug}
   data-modelo-default={modeloDefault}
   data-texto-otro-error={t(locale, "contactForm.errorOtro")}
   data-texto-enviando={t(locale, "contactForm.enviando")}
   data-texto-exito={t(locale, "contactForm.exito")}
+  data-texto-exito-whatsapp={t(locale, "contactForm.exitoWhatsapp")}
   data-texto-error-generico={t(locale, "contactForm.errorGenerico")}
   data-texto-error-antibot={t(locale, "contactForm.errorAntibot")}
   data-texto-error-email-invalido={t(locale, "contactForm.errorEmailInvalido")}
@@ -65,6 +70,10 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   data-servicio-remoto-usb-mac={t(locale, "contactForm.servicioRemotoUsbMac")}
   data-servicio-local-usb-asistido={t(locale, "contactForm.servicioLocalUsbAsistido")}
   data-servicio-autonomo-local-usb={t(locale, "contactForm.servicioAutonomoLocalUsb")}
+  data-plan-esencial={t(locale, "contactForm.planEsencial")}
+  data-plan-profesional={t(locale, "contactForm.planProfesional")}
+  data-plan-elite={t(locale, "contactForm.planElite")}
+  data-texto-precios-no-disponibles={t(locale, "contactForm.textoPreciosNoDisponibles")}
   data-label-tipo={t(locale, "contactForm.checklistTipo")}
   data-label-garantia-dato={t(locale, "contactForm.checklistGarantiaDato")}
   data-label-cupon-ruleta={t(locale, "contactForm.checklistCupon")}
@@ -76,6 +85,8 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   data-label-rol={t(locale, "contactForm.checklistRol")}
   data-label-cerca={t(locale, "contactForm.checklistCerca")}
   data-label-necesita={t(locale, "contactForm.checklistNecesita")}
+  data-label-pais={t(locale, "contactForm.checklistPais")}
+  data-label-metodo-pago={t(locale, "contactForm.checklistMetodoPago")}
   data-label-servicio-final={t(locale, "contactForm.checklistServicioFinal")}
   data-label-modulo-descargado={t(locale, "contactForm.checklistModulo")}
   data-label-nombre={t(locale, "contactForm.nombreLabel")}
@@ -87,7 +98,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   data-recipient-diana-whatsapp="573006279131"
 >
   <div class="contact-form-topbar">
-    <button type="button" class="contact-form-atras" data-atras hidden>
+    <button type="button" class="contact-form-atras" data-atras data-sound="select" hidden>
       <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
         <path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
@@ -98,24 +109,8 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     </div>
   </div>
 
-  <!-- PASO: destinatario -->
-  <fieldset class="contact-form-paso" data-paso="para">
-    <legend>{t(locale, "contactForm.paraLabel")}</legend>
-    <div class="contact-form-opciones">
-      <label class="contact-form-opcion">
-        <input type="radio" name="recipient" value="wilton" checked required />
-        <span>{t(locale, "contactForm.paraWilton")}</span>
-      </label>
-      <label class="contact-form-opcion">
-        <input type="radio" name="recipient" value="diana" />
-        <span>{t(locale, "contactForm.paraDiana")}</span>
-      </label>
-    </div>
-    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
-  </fieldset>
-
-  <!-- PASO: tipo de solicitud -->
-  <fieldset class="contact-form-paso" data-paso="tipo" hidden>
+  <!-- PASO: tipo de solicitud (primera pregunta del asistente) -->
+  <fieldset class="contact-form-paso" data-paso="tipo">
     <legend>{t(locale, "contactForm.tipoLabel")}</legend>
     <div class="contact-form-opciones">
       <label class="contact-form-opcion contact-form-opcion-grande">
@@ -125,10 +120,6 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       <label class="contact-form-opcion contact-form-opcion-grande">
         <input type="radio" name="tipo" value={t(locale, "contactForm.tipoGarantia")} data-tipo-valor="garantia" />
         <span>🛡️ {t(locale, "contactForm.tipoGarantia")}</span>
-      </label>
-      <label class="contact-form-opcion contact-form-opcion-grande">
-        <input type="radio" name="tipo" value={t(locale, "contactForm.tipoCompra")} data-tipo-valor="compra" />
-        <span>⚡ {t(locale, "contactForm.tipoCompra")}</span>
       </label>
       <label class="contact-form-opcion contact-form-opcion-grande">
         <input type="radio" name="tipo" value={t(locale, "contactForm.tipoRuleta")} data-tipo-valor="ruleta" />
@@ -156,7 +147,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   <!-- PASO: marca -->
   <div class="contact-form-paso" data-paso="marca" hidden>
     <label for={id("marca")}>{t(locale, "contactForm.marcaLabel")}</label>
-    <select id={id("marca")} name="marca" required>
+    <select id={id("marca")} name="marca" required data-sound="select">
       <option value="">{t(locale, "contactForm.marcaPlaceholder")}</option>
       {marcasUnicas.map((m) => (
         <option value={m.nombre} data-slug={m.slug} selected={m.slug === marcaDefaultSlug}>{m.nombre}</option>
@@ -198,7 +189,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   <!-- PASO: conexión (menú desplegable) -->
   <div class="contact-form-paso" data-paso="conexion" hidden>
     <label for={id("conexion")}>{t(locale, "contactForm.conexionLabel")}</label>
-    <select id={id("conexion")} name="conexion" required>
+    <select id={id("conexion")} name="conexion" required data-sound="select">
       <option value="">{t(locale, "contactForm.seleccionaOpcion")}</option>
       <option value={t(locale, "contactForm.conexionUsb")} data-conexion-valor="usb">{t(locale, "contactForm.conexionUsb")}</option>
       <option value={t(locale, "contactForm.conexionWifi")} data-conexion-valor="wifi">{t(locale, "contactForm.conexionWifi")}</option>
@@ -312,6 +303,34 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
   </div>
 
+  <!-- PASO: país (solo tipo=cotizacion, ahora fusionado con "compra") -->
+  <div class="contact-form-paso" data-paso="pais" hidden>
+    <label for={id("pais")}>{t(locale, "contactForm.paisLabel")}</label>
+    <select id={id("pais")} name="pais" required data-sound="select">
+      <option value="">{t(locale, "contactForm.paisPlaceholder")}</option>
+      {PAISES.map((p) => (
+        <option value={p.nombre} data-slug={p.slug}>{p.nombre}</option>
+      ))}
+    </select>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: método de pago (opciones generadas por JS según el país elegido) -->
+  <fieldset class="contact-form-paso" data-paso="metodoPago" hidden>
+    <legend>{t(locale, "contactForm.metodoPagoLabel")}</legend>
+    <div class="contact-form-opciones" data-metodo-pago-opciones></div>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </fieldset>
+
+  <!-- PASO: precio + datos del método de pago elegido (solo lectura) -->
+  <div class="contact-form-paso" data-paso="preciosPago" hidden>
+    <label>{t(locale, "contactForm.preciosTitulo")}</label>
+    <p class="contact-form-ayuda">{t(locale, "contactForm.preciosAyuda")}</p>
+    <div class="contact-form-precios" data-precios-contenido></div>
+    <p class="contact-form-ayuda contact-form-aviso-compra">{t(locale, "contactForm.avisoContactoCompra")}</p>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
   <!-- PASO: jugar la ruleta (solo tipo=ruleta) -->
   <div class="contact-form-paso" data-paso="ruletaJuego" hidden>
     <label>{t(locale, "contactForm.ruletaJuegoTitulo")}</label>
@@ -417,11 +436,37 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
   </div>
 
-  <!-- PASO: correo -->
+  <!-- PASO: correo (siempre se pregunta, sin importar el canal preferido, para poder enviar
+       siempre una copia de la solicitud al propio cliente) -->
   <div class="contact-form-paso" data-paso="correoEmail" hidden>
     <label for={id("email")}>{t(locale, "contactForm.emailLabel")}</label>
     <input type="email" id={id("email")} name="email" autocomplete="email" />
     <p class="contact-form-ayuda" data-email-estado>{t(locale, "contactForm.emailPrimeroAyuda")}</p>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </div>
+
+  <!-- PASO: destinatario (al final del asistente, justo antes del resumen) -->
+  <fieldset class="contact-form-paso" data-paso="para" hidden>
+    <legend>{t(locale, "contactForm.paraLabel")}</legend>
+    <div class="contact-form-opciones">
+      <label class="contact-form-opcion">
+        <input type="radio" name="recipient" value="wilton" checked required />
+        <span>{t(locale, "contactForm.paraWilton")}</span>
+      </label>
+      <label class="contact-form-opcion">
+        <input type="radio" name="recipient" value="diana" />
+        <span>{t(locale, "contactForm.paraDiana")}</span>
+      </label>
+    </div>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+  </fieldset>
+
+  <!-- PASO: resumen antes de enviar -->
+  <div class="contact-form-paso" data-paso="resumen" hidden>
+    <label>{t(locale, "contactForm.resumenTitulo")}</label>
+    <p class="contact-form-ayuda">{t(locale, "contactForm.resumenAyuda")}</p>
+    <div class="contact-form-resumen" data-resumen-contenido></div>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.resumenContinuar")}</button>
   </div>
 
   <!-- PASO final: nota opcional + confirmación + envío -->
@@ -468,6 +513,10 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
 
   const ORIGEN = "resetenlinea-site-contacto";
 
+  // cc_email/cc_name: pide a send-email.php que envíe una copia del mismo mensaje al propio
+  // cliente (no solo al técnico). Si esa versión del PHP todavía no reconoce el campo, lo
+  // ignora sin romper nada — mismo patrón defensivo que el resto de acciones nuevas del backend.
+
   // Debe coincidir con $DESTINATARIOS_PERMITIDOS en send-email.php. Se manda también aquí
   // (además de "recipient") para que el formulario funcione incluso mientras el servidor
   // remoto todavía no tenga subida la versión actualizada del PHP.
@@ -476,18 +525,17 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     diana: { email: "anaidcaba@hotmail.com", nombre: "Diana Cabana Orozco" },
   };
 
-  // Secuencia intermedia según el tipo de solicitud elegido en el paso 2. "para" y "tipo" van
-  // siempre primero. Cotización/Compra/Ruleta comparten el mismo recorrido largo (marca hasta
-  // el servicio calculado + nombre); Ruleta además juega la ruleta antes de seguir. Garantía
-  // tiene su propio camino corto. Lo que sigue después de la secuencia (instructivo de
-  // conexión si aplica, método de respuesta, contacto, final) es igual para todos — ver
-  // siguientePaso().
-  const SECUENCIA_LARGA = ["marca", "modelo", "error", "conexion", "so", "rol", "cercaImpresora", "necesita", "servicioCalculado", "nombre"];
+  // Secuencia intermedia según el tipo de solicitud elegido en el primer paso ("tipo"). Todas
+  // comparten los datos técnicos base (marca hasta el servicio calculado). Cotización/Compra
+  // (fusionadas en una sola opción) suman después país + método de pago + precio; Ruleta suma
+  // el juego de la ruleta; Garantía tiene su propio camino corto. Lo que sigue después de la
+  // secuencia (instructivo de conexión si aplica, método de respuesta, contacto, "para quién
+  // es" y resumen) es igual para todos — ver siguientePaso().
+  const SECUENCIA_BASE = ["marca", "modelo", "error", "conexion", "so", "rol", "cercaImpresora", "necesita", "servicioCalculado"];
   const SECUENCIAS_MEDIO = {
-    cotizacion: SECUENCIA_LARGA,
+    cotizacion: [...SECUENCIA_BASE, "pais", "metodoPago", "preciosPago", "nombre"],
     garantia: ["garantiaVerificar", "nombre"],
-    compra: SECUENCIA_LARGA,
-    ruleta: [...SECUENCIA_LARGA, "ruletaJuego", "ruletaCupon"],
+    ruleta: [...SECUENCIA_BASE, "nombre", "ruletaJuego", "ruletaCupon"],
   };
 
   // Carga perezosa de intl-tel-input (solo cuando el usuario llega al paso de WhatsApp, así no
@@ -523,12 +571,18 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     form.dataset.renderedAt = String(Date.now());
 
     const erroresPorMarca = JSON.parse(form.dataset.erroresPorMarca || "{}");
+    const pagosPorPais = JSON.parse(form.dataset.pagos || "[]");
+    const paisesPorSlug = Object.fromEntries(pagosPorPais.map((p) => [p.slug, p]));
     const marcaSelect = form.querySelector('select[name="marca"]');
     const modeloInput = form.querySelector('input[name="modelo"]');
     const conexionSelect = form.querySelector('select[name="conexion"]');
+    const paisSelect = form.querySelector('select[name="pais"]');
+    const metodoPagoContenedor = form.querySelector("[data-metodo-pago-opciones]");
+    const preciosContenido = form.querySelector("[data-precios-contenido]");
     const errorOpcionesContenedor = form.querySelector("[data-error-opciones]");
     const errorOtroInput = form.querySelector("[data-error-otro-input]");
     const servicioResultadoEl = form.querySelector("[data-servicio-resultado]");
+    const resumenContenedor = form.querySelector("[data-resumen-contenido]");
     const servicioFinalInput = form.querySelector("[data-servicio-final-input]");
     const garantiaInput = form.querySelector('input[name="garantiaDato"]');
     const garantiaEstadoEl = form.querySelector("[data-garantia-estado]");
@@ -546,7 +600,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
 
     // ---------- Motor de pasos ----------
     let historial = [];
-    let pasoActual = "para";
+    let pasoActual = "tipo";
     let defaultsPendientes = Boolean(form.dataset.marcaDefault);
     // Se completan desde afuera (ej. un botón "Escribir por WhatsApp" en otra parte del sitio)
     // vía el listener de [data-abrir-formulario-contacto]: si ya sabemos que el usuario quiere
@@ -578,6 +632,14 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       if (paso.dataset.paso !== pasoActual) desactivarRequeridos(paso);
     });
 
+    // Sonido en cada clic del asistente: botones Continuar/Atrás y cada tarjeta de opción
+    // (radios/checkbox) se marcan con data-sound="select" de una sola vez acá, en vez de
+    // repetir el atributo en cada fieldset del markup. Las opciones de "error" se generan
+    // aparte en construirOpcionesError() y se marcan ahí mismo.
+    form.querySelectorAll(".contact-form-continuar, .contact-form-opcion, .contact-form-antibot").forEach((el) => {
+      if (!el.dataset.sound) el.dataset.sound = "select";
+    });
+
     function valorRadio(nombreCampo) {
       return form.querySelector(`input[name="${nombreCampo}"]:checked`)?.value || "";
     }
@@ -597,6 +659,21 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       return opcion ? opcion.dataset.slug || "" : "";
     }
 
+    function paisSlugActual() {
+      const opcion = paisSelect?.options[paisSelect.selectedIndex];
+      return opcion ? opcion.dataset.slug || "" : "";
+    }
+
+    function paisActual() {
+      return paisesPorSlug[paisSlugActual()] || null;
+    }
+
+    // Epson-SC es la única marca de formato grande (plotter) del catálogo; el resto de marcas
+    // usa la tarifa normal de "impresora".
+    function tipoEquipoActual() {
+      return marcaSlugActual() === "epson-sc" ? "plotter" : "impresora";
+    }
+
     // El instructivo de conexión (descargar módulo + Technician ID) solo aplica cuando el
     // servicio calculado implica de verdad una conexión remota por USB — para los demás
     // resultados (local por WiFi, o instalación de programa) no hace falta ese instructivo.
@@ -608,7 +685,6 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     function siguientePaso(actual) {
       const secuencia = SECUENCIAS_MEDIO[tipoActual()] || [];
 
-      if (actual === "para") return "tipo";
       if (actual === "tipo") return secuencia[0] || "metodoRespuesta";
 
       const indice = secuencia.indexOf(actual);
@@ -623,14 +699,19 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       if (actual === "conexionPaso3") return "infoAdicional";
       if (actual === "infoAdicional") return "metodoRespuesta";
       if (actual === "metodoRespuesta") return metodoActual() === "correo" ? "correoEmail" : "whatsappNumero";
-      if (actual === "correoEmail" || actual === "whatsappNumero") return "final";
+      // El correo siempre se pregunta (incluso si el canal preferido es WhatsApp), para poder
+      // enviar siempre una copia de la solicitud al propio cliente.
+      if (actual === "whatsappNumero") return "correoEmail";
+      if (actual === "correoEmail") return "para";
+      if (actual === "para") return "resumen";
+      if (actual === "resumen") return "final";
       return null;
     }
 
     function longitudTotalEstimada() {
       const secuencia = SECUENCIAS_MEDIO[tipoActual()] || SECUENCIAS_MEDIO.cotizacion;
-      // para+tipo + secuencia + (posibles 4 pasos de conexión) + metodoRespuesta+contacto+final
-      return 2 + secuencia.length + 4;
+      // tipo + secuencia + (posibles 4 pasos de conexión) + metodoRespuesta+whatsapp+correo+para+resumen+final
+      return 1 + secuencia.length + 6;
     }
 
     function actualizarProgreso() {
@@ -647,6 +728,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       codigos.forEach((codigo) => {
         const label = document.createElement("label");
         label.className = "contact-form-opcion";
+        label.dataset.sound = "select";
         const input = document.createElement("input");
         input.type = "radio";
         input.name = "error";
@@ -660,6 +742,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       });
       const labelOtro = document.createElement("label");
       labelOtro.className = "contact-form-opcion";
+      labelOtro.dataset.sound = "select";
       const inputOtro = document.createElement("input");
       inputOtro.type = "radio";
       inputOtro.name = "error";
@@ -693,6 +776,89 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       });
     }
 
+    // ---------- Método de pago: opciones generadas según el país elegido ----------
+    function construirOpcionesMetodoPago() {
+      if (!metodoPagoContenedor) return;
+      const pais = paisActual();
+      metodoPagoContenedor.innerHTML = "";
+      (pais?.metodosPago || []).forEach((metodo) => {
+        const label = document.createElement("label");
+        label.className = "contact-form-opcion";
+        label.dataset.sound = "select";
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "metodoPago";
+        input.value = metodo.nombre;
+        input.required = true;
+        label.appendChild(input);
+        const span = document.createElement("span");
+        span.textContent = metodo.nombre;
+        label.appendChild(span);
+        metodoPagoContenedor.appendChild(label);
+        input.addEventListener("change", avanzar);
+      });
+    }
+
+    function formatoMoneda(numero, moneda) {
+      return `${Number(numero).toLocaleString("es-CO")} ${moneda}`;
+    }
+
+    // ---------- Precio + datos del método de pago elegido (solo lectura) ----------
+    function mostrarPreciosPago() {
+      if (!preciosContenido) return;
+      preciosContenido.innerHTML = "";
+      const pais = paisActual();
+      if (!pais) return;
+
+      const precios = pais.precios?.[tipoEquipoActual()];
+      const tabla = document.createElement("div");
+      tabla.className = "contact-form-precios-tabla";
+      if (precios) {
+        [
+          ["esencial", form.dataset.planEsencial],
+          ["profesional", form.dataset.planProfesional],
+          ["elite", form.dataset.planElite],
+        ].forEach(([clave, etiqueta]) => {
+          if (precios[clave] == null) return;
+          const fila = document.createElement("div");
+          fila.className = "contact-form-precios-fila";
+          const nombre = document.createElement("span");
+          nombre.textContent = etiqueta;
+          const valor = document.createElement("strong");
+          valor.textContent = formatoMoneda(precios[clave], pais.moneda);
+          fila.append(nombre, valor);
+          tabla.appendChild(fila);
+        });
+      } else {
+        const aviso = document.createElement("p");
+        aviso.className = "contact-form-ayuda";
+        aviso.textContent = form.dataset.textoPreciosNoDisponibles;
+        tabla.appendChild(aviso);
+      }
+      preciosContenido.appendChild(tabla);
+
+      const metodoNombre = valorRadio("metodoPago");
+      const metodo = (pais.metodosPago || []).find((m) => m.nombre === metodoNombre);
+      if (metodo) {
+        const bloqueMetodo = document.createElement("div");
+        bloqueMetodo.className = "contact-form-precios-metodo";
+        const titulo = document.createElement("strong");
+        titulo.textContent = metodo.nombre;
+        const detalle = document.createElement("p");
+        detalle.className = "contact-form-ayuda";
+        detalle.textContent = metodo.detalle;
+        bloqueMetodo.append(titulo, detalle);
+        preciosContenido.appendChild(bloqueMetodo);
+      }
+
+      if (pais.nota) {
+        const nota = document.createElement("p");
+        nota.className = "contact-form-ayuda";
+        nota.textContent = pais.nota;
+        preciosContenido.appendChild(nota);
+      }
+    }
+
     // ---------- Servicio calculado, según conexión + sistema operativo + qué necesita ----------
     function calcularServicioFinal() {
       const necesitaRadio = form.querySelector('input[name="necesita"]:checked');
@@ -714,6 +880,31 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       const resultado = calcularServicioFinal();
       if (servicioResultadoEl) servicioResultadoEl.textContent = resultado;
       if (servicioFinalInput) servicioFinalInput.value = resultado;
+    }
+
+    // ---------- Resumen final: reutiliza el mismo checklist que arma el cuerpo del mensaje,
+    // así lo que el usuario revisa acá es exactamente lo que va a recibir el técnico. ----------
+    function mostrarResumen() {
+      if (!resumenContenedor) return;
+      const datos = datosDelFormulario();
+      const labels = labelsDelFormulario();
+      const texto = construirCuerpoMensaje(datos, labels);
+      resumenContenedor.innerHTML = "";
+      texto.split("\n").forEach((linea) => {
+        if (!linea) return;
+        const p = document.createElement("p");
+        p.className = "contact-form-resumen-linea";
+        const idx = linea.indexOf(":");
+        if (idx > -1) {
+          const strong = document.createElement("strong");
+          strong.textContent = linea.slice(0, idx + 1);
+          p.appendChild(strong);
+          p.appendChild(document.createTextNode(` ${linea.slice(idx + 1).trim()}`));
+        } else {
+          p.textContent = linea;
+        }
+        resumenContenedor.appendChild(p);
+      });
     }
 
     function prepararPaso(idPaso) {
@@ -747,12 +938,15 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
         if (!retrocediendo) aplicarErrorDefaultSiCorresponde();
       }
       if (idPaso === "servicioCalculado") mostrarServicioCalculado();
+      if (idPaso === "metodoPago") construirOpcionesMetodoPago();
+      if (idPaso === "preciosPago") mostrarPreciosPago();
+      if (idPaso === "resumen") mostrarResumen();
       if (!retrocediendo) {
         if (idPaso === "marca") aplicarDefaultsSiCorresponde();
         if (idPaso === "metodoRespuesta") aplicarMetodoDefaultSiCorresponde();
       }
       if (idPaso === "ruletaJuego") cargarRuletaSiCorresponde();
-      if (botonAtras) botonAtras.hidden = idPaso === "para";
+      if (botonAtras) botonAtras.hidden = idPaso === "tipo";
       actualizarProgreso();
       const enfocable = nuevoEl.querySelector(
         'input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]), select, textarea'
@@ -791,6 +985,10 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
 
     conexionSelect?.addEventListener("change", () => {
       if (conexionSelect.value) avanzar();
+    });
+
+    paisSelect?.addEventListener("change", () => {
+      if (paisSelect.value) avanzar();
     });
 
     // Si el formulario ya viene con Marca/Modelo precargados (una página de modelo), no tiene
@@ -917,6 +1115,35 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       if (pasoEl.dataset.paso === "modelo" && !modeloInput.value.trim()) {
         mostrarRequerido(modeloInput);
         return;
+      }
+      if (pasoEl.dataset.paso === "marca" && !marcaSelect.value) {
+        mostrarRequerido(marcaSelect);
+        return;
+      }
+      if (pasoEl.dataset.paso === "pais" && !paisSelect.value) {
+        mostrarRequerido(paisSelect);
+        return;
+      }
+      if (pasoEl.dataset.paso === "correoEmail") {
+        const val = emailInput.value.trim();
+        if (!val || !emailValido(val)) {
+          mostrarRequerido(emailInput);
+          return;
+        }
+        if (emailVerificado) {
+          avanzar();
+          return;
+        }
+        dispararVerificacionCorreo();
+        return; // avanzar() se llama dentro, tras la verificación
+      }
+      if (pasoEl.dataset.paso === "metodoPago") {
+        const seleccionado = form.querySelector('input[name="metodoPago"]:checked');
+        if (!seleccionado) {
+          const primero = pasoEl.querySelector('input[name="metodoPago"]');
+          if (primero) mostrarRequerido(primero);
+          return;
+        }
       }
       if (pasoEl.dataset.paso === "error") {
         const seleccionado = pasoEl.querySelector('input[name="error"]:checked');
@@ -1109,6 +1336,8 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
         cercaImpresora: fd.get("cercaImpresora") || "",
         necesita: fd.get("necesita") || "",
         servicioFinal: fd.get("servicioFinal") || "",
+        pais: fd.get("pais") || "",
+        metodoPago: valorRadio("metodoPago"),
         moduloDescargado: valorRadio("moduloDescargado"),
         nombre: fd.get("nombre") || "",
         email: (fd.get("email") || "").toString().trim(),
@@ -1133,6 +1362,8 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
         cercaImpresora: form.dataset.labelCerca,
         necesita: form.dataset.labelNecesita,
         servicioFinal: form.dataset.labelServicioFinal,
+        pais: form.dataset.labelPais,
+        metodoPago: form.dataset.labelMetodoPago,
         moduloDescargado: form.dataset.labelModuloDescargado,
         nombre: form.dataset.labelNombre,
         email: form.dataset.labelEmail,
@@ -1198,6 +1429,8 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
             message: mensaje,
             reply_email: datos.email,
             reply_name: datos.nombre,
+            cc_email: datos.email,
+            cc_name: datos.nombre,
             website: datos.website,
             form_rendered_at: Number(form.dataset.renderedAt),
           }),
@@ -1222,15 +1455,48 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     function manejarContinuarWhatsapp() {
       const datos = datosDelFormulario();
       if (!form.reportValidity()) return;
-      if (!validarComun(datos, false)) return;
+      // El correo ahora siempre es obligatorio (se pide en todos los canales), así que aquí
+      // también se exige válido — es lo que permite enviarle siempre copia al cliente.
+      if (!validarComun(datos, true)) return;
 
       const labels = labelsDelFormulario();
       const cuerpoDatos = { ...datos, urlOrigen: window.location.href };
       const cuerpo = construirCuerpoMensaje(cuerpoDatos, labels);
+      const asunto = construirAsunto(datos.tipo, datos);
       const texto = `${form.dataset.textoWhatsappSaludo}\n\n${cuerpo}`;
 
       const numero = datos.recipient === "diana" ? form.dataset.recipientDianaWhatsapp : form.dataset.recipientWiltonWhatsapp;
+      // window.open debe llamarse sincrónicamente dentro del clic para que el navegador no lo
+      // bloquee como popup — por eso el envío de la copia por correo (más abajo) va después,
+      // sin esperar su respuesta.
       window.open(buildWhatsAppLink(numero, texto), "_blank", "noopener");
+
+      mostrarMensaje(form.dataset.textoExitoWhatsapp, "exito");
+      playFeedback("celebracion");
+      lanzarConfeti();
+
+      // Copia de la solicitud al correo del cliente, en segundo plano (no bloquea ni retrasa
+      // la apertura de WhatsApp): mismo endpoint y patrón defensivo que el envío por correo.
+      fetch(CONTACT_FORM_EMAIL_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: CONTACT_FORM_SECRET,
+          origen: ORIGEN,
+          recipient: datos.recipient,
+          to: DESTINATARIOS[datos.recipient]?.email || "",
+          to_name: DESTINATARIOS[datos.recipient]?.nombre || "",
+          subject: asunto,
+          message: cuerpo,
+          reply_email: datos.email,
+          reply_name: datos.nombre,
+          cc_email: datos.email,
+          cc_name: datos.nombre,
+          website: datos.website,
+          form_rendered_at: Number(form.dataset.renderedAt),
+          canal: "whatsapp",
+        }),
+      }).catch(() => {});
     }
 
     form.addEventListener("submit", manejarEnvioCorreo);
@@ -1388,6 +1654,70 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     color: var(--color-text-subtle);
   }
 
+  .contact-form-resumen {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+  }
+
+  /* :global() en las clases de abajo: sus elementos se crean en tiempo de ejecución con
+     document.createElement (construirOpcionesError/construirOpcionesMetodoPago/mostrarResumen/
+     mostrarPreciosPago), así que nunca llevan el atributo data-astro-cid-* que Astro usa para
+     aplicar el scoping de estilos — sin :global() estas reglas simplemente no harían nada. */
+  :global(.contact-form-resumen-linea) {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text);
+  }
+
+  :global(.contact-form-resumen-linea) strong {
+    color: var(--color-text-subtle);
+    font-weight: 600;
+  }
+
+  .contact-form-precios {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  :global(.contact-form-precios-tabla) {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-light);
+  }
+
+  :global(.contact-form-precios-fila) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-primary-dark);
+  }
+
+  :global(.contact-form-precios-fila) strong {
+    font-size: 1rem;
+  }
+
+  :global(.contact-form-precios-metodo) {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+  }
+
+  .contact-form-aviso-compra {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
   .contact-form-servicio-resultado {
     margin: 0;
     padding: 0.9rem 1rem;
@@ -1439,7 +1769,9 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     }
   }
 
-  .contact-form-opcion {
+  /* :global(): las opciones de "error" y "método de pago" se crean con document.createElement
+     (ver nota más arriba), así que esta clase base necesita quedar fuera del scoping. */
+  :global(.contact-form-opcion) {
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -1453,18 +1785,18 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
 
-  .contact-form-opcion:hover {
+  :global(.contact-form-opcion):hover {
     border-color: var(--color-primary);
   }
 
-  .contact-form-opcion input {
+  :global(.contact-form-opcion) input {
     flex: none;
     width: 1.1rem;
     height: 1.1rem;
     accent-color: var(--color-primary);
   }
 
-  .contact-form-opcion:has(input:checked) {
+  :global(.contact-form-opcion):has(input:checked) {
     border-color: var(--color-primary);
     background: var(--color-primary-light);
   }

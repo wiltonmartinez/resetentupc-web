@@ -20,12 +20,12 @@ const logo = getLogo();
   <div class="site-header-inner">
     <a class="site-logo" href={buildLocalizedPath(locale, "/")}>
       {logo ? (
-        <Image src={logo} alt="ResetEnLinea" width={28} height={28} class="site-logo-imagen" />
+        <Image src={logo} alt="ResetEnLinea.com" width={28} height={28} class="site-logo-imagen" />
       ) : (
         <span class="site-logo-mark" aria-hidden="true">R</span>
       )}
       <span class="site-logo-texto">
-        ResetEnLinea
+        ResetEnLinea.com
         <span class="site-logo-eslogan">{t(locale, "nav.eslogan")}</span>
       </span>
     </a>

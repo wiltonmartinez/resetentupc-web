@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea"
+    "siteName": "ResetEnLinea.com"
   },
   "nav": {
     "home": "Home",
@@ -20,7 +20,7 @@
     "soundOffLabel": "Sound off. Tap to turn on."
   },
   "home": {
-    "title": "Professional assisted printer reset | ResetEnLinea",
+    "title": "Professional assisted printer reset | ResetEnLinea.com",
     "description": "Reset pad and ink counter service for Epson and Canon printers, with professional remote assistance. Clear diagnosis before any procedure.",
     "heroTitle": "Professional printer reset, without the risk",
     "heroSubtitle": "Clear diagnosis, remote assistance, and real support for your brand and model.",
@@ -55,7 +55,7 @@
     "verModelo": "View model"
   },
   "modelo": {
-    "titleTemplate": "{marca} {modelo} Reset — Assisted Service | ResetEnLinea",
+    "titleTemplate": "{marca} {modelo} Reset — Assisted Service | ResetEnLinea.com",
     "descriptionTemplate": "Assisted, remote reset service for your {marca} {modelo}. Not a download or self-service tool: a real technician guides you securely via WhatsApp.",
     "intro": "We'll help you resolve the reset of your {marca} {modelo} safely, with professional guidance at every step.",
     "errorSectionTitle": "What error is your printer showing?",
@@ -108,7 +108,7 @@
     "videoProcesoLabel": "Watch full process video"
   },
   "comoFunciona": {
-    "title": "How the service works | ResetEnLinea",
+    "title": "How the service works | ResetEnLinea.com",
     "description": "Learn about our diagnosis process, compatibility check, and remote assistance for resetting your printer.",
     "heading": "How it works",
     "tabServicio": "Our service",
@@ -122,7 +122,7 @@
     ]
   },
   "faq": {
-    "title": "Frequently asked questions | ResetEnLinea",
+    "title": "Frequently asked questions | ResetEnLinea.com",
     "description": "We answer the most common questions about printer resets and our assistance process.",
     "heading": "Frequently asked questions",
     "items": [
@@ -137,7 +137,7 @@
     ]
   },
   "contacto": {
-    "title": "Contact | ResetEnLinea",
+    "title": "Contact | ResetEnLinea.com",
     "description": "Tell us what you need and get quick guidance on the right service for your printer.",
     "heading": "Get the solution for your printer",
     "text": "Tell us what you need and get quick guidance on the right service.",
@@ -294,6 +294,6 @@
   },
   "footer": {
     "rights": "All rights reserved.",
-    "disclaimer": "ResetEnLinea provides independent professional assistance for printer resets. Mentioned brands belong to their respective owners."
+    "disclaimer": "ResetEnLinea.com provides independent professional assistance for printer resets. Mentioned brands belong to their respective owners."
   }
 }
