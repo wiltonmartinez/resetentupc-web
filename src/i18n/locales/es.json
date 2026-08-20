@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea"
+    "siteName": "ResetEnLinea.com"
   },
   "nav": {
     "home": "Inicio",
@@ -13,13 +13,13 @@
     "eslogan": "Reset profesional, seguro y rápido."
   },
   "ruletaPage": {
-    "title": "Ruleta | ResetEnLinea",
+    "title": "Ruleta | ResetEnLinea.com",
     "description": "Juega y obtén un cupón de descuento para tu servicio de reset.",
     "heading": "Gira la ruleta",
     "texto": "Juega y obtén tu cupón de descuento. Cuando termines, puedes escribirnos para usarlo."
   },
   "pruebaSocialPage": {
-    "title": "Prueba Social | ResetEnLinea",
+    "title": "Prueba Social | ResetEnLinea.com",
     "description": "Reseñas reales de clientes que ya usaron nuestro servicio de reset asistido.",
     "heading": "Lo que dicen nuestros clientes",
     "texto": "Reseñas reales verificadas en Trustpilot."
@@ -34,7 +34,7 @@
     "soundOffLabel": "Sonido desactivado. Pulsa para activar."
   },
   "home": {
-    "title": "Reset de impresoras asistido y profesional | ResetEnLinea",
+    "title": "Reset de impresoras asistido y profesional | ResetEnLinea.com",
     "description": "Reset de almohadillas y contadores de tinta para impresoras Epson y Canon, con asistencia remota profesional. Diagnóstico claro antes de cualquier procedimiento.",
     "heroTagline": "Reset profesional, seguro y rápido, con garantía reutilizable desde cualquier PC.",
     "heroCta": "Encuentra la solución para tu impresora",
@@ -68,7 +68,7 @@
     "verModelo": "Ver modelo"
   },
   "modelo": {
-    "titleTemplate": "Reset {marca} {modelo} — Servicio Asistido | ResetEnLinea",
+    "titleTemplate": "Reset {marca} {modelo} — Servicio Asistido | ResetEnLinea.com",
     "descriptionTemplate": "Servicio de reset asistido y remoto para tu {marca} {modelo}. No es una descarga ni autoservicio: un técnico real te guía por WhatsApp, de forma segura.",
     "intro": "Te ayudamos a resolver el reset de tu {marca} {modelo} de forma segura, con acompañamiento profesional en cada paso.",
     "errorSectionTitle": "¿Qué error presenta tu impresora?",
@@ -122,7 +122,7 @@
     "videoProcesoLabel": "Ver video del proceso completo"
   },
   "comoFunciona": {
-    "title": "Cómo funciona el servicio | ResetEnLinea",
+    "title": "Cómo funciona el servicio | ResetEnLinea.com",
     "description": "Conoce el proceso de diagnóstico, evaluación de compatibilidad y asistencia remota para el reset de tu impresora.",
     "heading": "Cómo funciona",
     "tabServicio": "Nuestro servicio",
@@ -136,7 +136,7 @@
     ]
   },
   "faq": {
-    "title": "Preguntas frecuentes | ResetEnLinea",
+    "title": "Preguntas frecuentes | ResetEnLinea.com",
     "description": "Resolvemos las dudas más comunes sobre el reset de impresoras y nuestro proceso de asistencia.",
     "heading": "Preguntas frecuentes",
     "items": [
@@ -151,7 +151,7 @@
     ]
   },
   "contacto": {
-    "title": "Contacto | ResetEnLinea",
+    "title": "Contacto | ResetEnLinea.com",
     "description": "Cuéntanos qué necesitas y recibe orientación rápida sobre el servicio adecuado para tu impresora.",
     "heading": "Obtén la solución para tu impresora",
     "text": "Cuéntanos qué necesitas y recibe orientación rápida sobre el servicio adecuado.",
@@ -213,6 +213,10 @@
     "continuarWhatsapp": "Continuar por WhatsApp",
     "enviando": "Enviando…",
     "exito": "¡Listo! Tu mensaje fue enviado, te responderemos pronto.",
+    "exitoWhatsapp": "¡Listo! Se abrió WhatsApp con tu mensaje.",
+    "resumenTitulo": "Resumen de tu solicitud",
+    "resumenAyuda": "Revisa que todo esté correcto antes de enviar.",
+    "resumenContinuar": "Confirmar y continuar",
     "errorGenerico": "No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.",
     "errorAntibot": "Confirma que no eres un robot",
     "errorEmailRequerido": "Escribe tu correo para poder responderte",
@@ -311,6 +315,6 @@
   },
   "footer": {
     "rights": "Todos los derechos reservados.",
-    "disclaimer": "ResetEnLinea ofrece asistencia profesional independiente para el reset de impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios."
+    "disclaimer": "ResetEnLinea.com ofrece asistencia profesional independiente para el reset de impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios."
   }
 }

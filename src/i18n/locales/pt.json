@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea"
+    "siteName": "ResetEnLinea.com"
   },
   "nav": {
     "home": "Início",
@@ -20,7 +20,7 @@
     "soundOffLabel": "Som desativado. Toque para ativar."
   },
   "home": {
-    "title": "Reset assistido e profissional de impressoras | ResetEnLinea",
+    "title": "Reset assistido e profissional de impressoras | ResetEnLinea.com",
     "description": "Reset de almofadas e contador de tinta para impressoras Epson e Canon, com assistência remota profissional. Diagnóstico claro antes de qualquer procedimento.",
     "heroTitle": "Reset profissional da sua impressora, sem riscos",
     "heroSubtitle": "Diagnóstico claro, assistência remota e suporte real para sua marca e modelo.",
@@ -55,7 +55,7 @@
     "verModelo": "Ver modelo"
   },
   "modelo": {
-    "titleTemplate": "Reset {marca} {modelo} — Serviço Assistido | ResetEnLinea",
+    "titleTemplate": "Reset {marca} {modelo} — Serviço Assistido | ResetEnLinea.com",
     "descriptionTemplate": "Serviço de reset assistido e remoto para sua {marca} {modelo}. Não é download nem autosserviço: um técnico real te acompanha com segurança pelo WhatsApp.",
     "intro": "Ajudamos você a resolver o reset da sua {marca} {modelo} com segurança, com acompanhamento profissional em cada etapa.",
     "errorSectionTitle": "Qual erro sua impressora está apresentando?",
@@ -108,7 +108,7 @@
     "videoProcesoLabel": "Ver vídeo do processo completo"
   },
   "comoFunciona": {
-    "title": "Como funciona o serviço | ResetEnLinea",
+    "title": "Como funciona o serviço | ResetEnLinea.com",
     "description": "Conheça o processo de diagnóstico, avaliação de compatibilidade e assistência remota para o reset da sua impressora.",
     "heading": "Como funciona",
     "tabServicio": "Nosso serviço",
@@ -122,7 +122,7 @@
     ]
   },
   "faq": {
-    "title": "Perguntas frequentes | ResetEnLinea",
+    "title": "Perguntas frequentes | ResetEnLinea.com",
     "description": "Respondemos às dúvidas mais comuns sobre o reset de impressoras e nosso processo de assistência.",
     "heading": "Perguntas frequentes",
     "items": [
@@ -137,7 +137,7 @@
     ]
   },
   "contacto": {
-    "title": "Contato | ResetEnLinea",
+    "title": "Contato | ResetEnLinea.com",
     "description": "Conte-nos o que você precisa e receba orientação rápida sobre o serviço adequado para sua impressora.",
     "heading": "Obtenha a solução para sua impressora",
     "text": "Conte-nos o que você precisa e receba orientação rápida sobre o serviço adequado.",
@@ -294,6 +294,6 @@
   },
   "footer": {
     "rights": "Todos os direitos reservados.",
-    "disclaimer": "A ResetEnLinea oferece assistência profissional independente para o reset de impressoras. As marcas mencionadas pertencem a seus respectivos proprietários."
+    "disclaimer": "A ResetEnLinea.com oferece assistência profissional independente para o reset de impressoras. As marcas mencionadas pertencem a seus respectivos proprietários."
   }
 }

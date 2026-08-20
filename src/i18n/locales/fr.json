@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea"
+    "siteName": "ResetEnLinea.com"
   },
   "nav": {
     "home": "Accueil",
@@ -20,7 +20,7 @@
     "soundOffLabel": "Son désactivé. Appuyez pour activer."
   },
   "home": {
-    "title": "Réinitialisation d'imprimante assistée et professionnelle | ResetEnLinea",
+    "title": "Réinitialisation d'imprimante assistée et professionnelle | ResetEnLinea.com",
     "description": "Service de réinitialisation des tampons et compteurs d'encre pour imprimantes Epson et Canon, avec assistance à distance professionnelle. Diagnostic clair avant toute intervention.",
     "heroTitle": "Réinitialisation professionnelle de votre imprimante, sans risque",
     "heroSubtitle": "Diagnostic clair, assistance à distance et véritable support pour votre marque et modèle.",
@@ -55,7 +55,7 @@
     "verModelo": "Voir le modèle"
   },
   "modelo": {
-    "titleTemplate": "Réinitialisation {marca} {modelo} — Service Assisté | ResetEnLinea",
+    "titleTemplate": "Réinitialisation {marca} {modelo} — Service Assisté | ResetEnLinea.com",
     "descriptionTemplate": "Service de réinitialisation assisté et à distance pour votre {marca} {modelo}. Ni téléchargement ni auto-dépannage : un technicien réel vous accompagne en sécurité sur WhatsApp.",
     "intro": "Nous vous aidons à résoudre la réinitialisation de votre {marca} {modelo} en toute sécurité, avec un accompagnement professionnel à chaque étape.",
     "errorSectionTitle": "Quelle erreur affiche votre imprimante ?",
@@ -108,7 +108,7 @@
     "videoProcesoLabel": "Voir la vidéo du processus complet"
   },
   "comoFunciona": {
-    "title": "Comment fonctionne le service | ResetEnLinea",
+    "title": "Comment fonctionne le service | ResetEnLinea.com",
     "description": "Découvrez notre processus de diagnostic, d'évaluation de compatibilité et d'assistance à distance pour la réinitialisation de votre imprimante.",
     "heading": "Comment ça marche",
     "tabServicio": "Notre service",
@@ -122,7 +122,7 @@
     ]
   },
   "faq": {
-    "title": "Questions fréquentes | ResetEnLinea",
+    "title": "Questions fréquentes | ResetEnLinea.com",
     "description": "Nous répondons aux questions les plus courantes sur la réinitialisation des imprimantes et notre processus d'assistance.",
     "heading": "Questions fréquentes",
     "items": [
@@ -137,7 +137,7 @@
     ]
   },
   "contacto": {
-    "title": "Contact | ResetEnLinea",
+    "title": "Contact | ResetEnLinea.com",
     "description": "Dites-nous ce dont vous avez besoin et recevez rapidement des conseils sur le service adapté à votre imprimante.",
     "heading": "Obtenez la solution pour votre imprimante",
     "text": "Dites-nous ce dont vous avez besoin et recevez rapidement des conseils sur le service adapté.",
@@ -294,6 +294,6 @@
   },
   "footer": {
     "rights": "Tous droits réservés.",
-    "disclaimer": "ResetEnLinea propose une assistance professionnelle indépendante pour la réinitialisation d'imprimantes. Les marques mentionnées appartiennent à leurs propriétaires respectifs."
+    "disclaimer": "ResetEnLinea.com propose une assistance professionnelle indépendante pour la réinitialisation d'imprimantes. Les marques mentionnées appartiennent à leurs propriétaires respectifs."
   }
 }

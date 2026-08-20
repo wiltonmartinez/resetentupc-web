@@ -42,6 +42,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   data-texto-otro-error={t(locale, "contactForm.errorOtro")}
   data-texto-enviando={t(locale, "contactForm.enviando")}
   data-texto-exito={t(locale, "contactForm.exito")}
+  data-texto-exito-whatsapp={t(locale, "contactForm.exitoWhatsapp")}
   data-texto-error-generico={t(locale, "contactForm.errorGenerico")}
   data-texto-error-antibot={t(locale, "contactForm.errorAntibot")}
   data-texto-error-email-invalido={t(locale, "contactForm.errorEmailInvalido")}
@@ -87,7 +88,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   data-recipient-diana-whatsapp="573006279131"
 >
   <div class="contact-form-topbar">
-    <button type="button" class="contact-form-atras" data-atras hidden>
+    <button type="button" class="contact-form-atras" data-atras data-sound="select" hidden>
       <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
         <path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
@@ -156,7 +157,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   <!-- PASO: marca -->
   <div class="contact-form-paso" data-paso="marca" hidden>
     <label for={id("marca")}>{t(locale, "contactForm.marcaLabel")}</label>
-    <select id={id("marca")} name="marca" required>
+    <select id={id("marca")} name="marca" required data-sound="select">
       <option value="">{t(locale, "contactForm.marcaPlaceholder")}</option>
       {marcasUnicas.map((m) => (
         <option value={m.nombre} data-slug={m.slug} selected={m.slug === marcaDefaultSlug}>{m.nombre}</option>
@@ -198,7 +199,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
   <!-- PASO: conexión (menú desplegable) -->
   <div class="contact-form-paso" data-paso="conexion" hidden>
     <label for={id("conexion")}>{t(locale, "contactForm.conexionLabel")}</label>
-    <select id={id("conexion")} name="conexion" required>
+    <select id={id("conexion")} name="conexion" required data-sound="select">
       <option value="">{t(locale, "contactForm.seleccionaOpcion")}</option>
       <option value={t(locale, "contactForm.conexionUsb")} data-conexion-valor="usb">{t(locale, "contactForm.conexionUsb")}</option>
       <option value={t(locale, "contactForm.conexionWifi")} data-conexion-valor="wifi">{t(locale, "contactForm.conexionWifi")}</option>
@@ -424,6 +425,14 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     <p class="contact-form-ayuda" data-email-estado>{t(locale, "contactForm.emailPrimeroAyuda")}</p>
   </div>
 
+  <!-- PASO: resumen antes de enviar -->
+  <div class="contact-form-paso" data-paso="resumen" hidden>
+    <label>{t(locale, "contactForm.resumenTitulo")}</label>
+    <p class="contact-form-ayuda">{t(locale, "contactForm.resumenAyuda")}</p>
+    <div class="contact-form-resumen" data-resumen-contenido></div>
+    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.resumenContinuar")}</button>
+  </div>
+
   <!-- PASO final: nota opcional + confirmación + envío -->
   <div class="contact-form-paso contact-form-paso-final" data-paso="final" hidden>
     <div>
@@ -529,6 +538,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     const errorOpcionesContenedor = form.querySelector("[data-error-opciones]");
     const errorOtroInput = form.querySelector("[data-error-otro-input]");
     const servicioResultadoEl = form.querySelector("[data-servicio-resultado]");
+    const resumenContenedor = form.querySelector("[data-resumen-contenido]");
     const servicioFinalInput = form.querySelector("[data-servicio-final-input]");
     const garantiaInput = form.querySelector('input[name="garantiaDato"]');
     const garantiaEstadoEl = form.querySelector("[data-garantia-estado]");
@@ -578,6 +588,14 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       if (paso.dataset.paso !== pasoActual) desactivarRequeridos(paso);
     });
 
+    // Sonido en cada clic del asistente: botones Continuar/Atrás y cada tarjeta de opción
+    // (radios/checkbox) se marcan con data-sound="select" de una sola vez acá, en vez de
+    // repetir el atributo en cada fieldset del markup. Las opciones de "error" se generan
+    // aparte en construirOpcionesError() y se marcan ahí mismo.
+    form.querySelectorAll(".contact-form-continuar, .contact-form-opcion, .contact-form-antibot").forEach((el) => {
+      if (!el.dataset.sound) el.dataset.sound = "select";
+    });
+
     function valorRadio(nombreCampo) {
       return form.querySelector(`input[name="${nombreCampo}"]:checked`)?.value || "";
     }
@@ -623,14 +641,15 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       if (actual === "conexionPaso3") return "infoAdicional";
       if (actual === "infoAdicional") return "metodoRespuesta";
       if (actual === "metodoRespuesta") return metodoActual() === "correo" ? "correoEmail" : "whatsappNumero";
-      if (actual === "correoEmail" || actual === "whatsappNumero") return "final";
+      if (actual === "correoEmail" || actual === "whatsappNumero") return "resumen";
+      if (actual === "resumen") return "final";
       return null;
     }
 
     function longitudTotalEstimada() {
       const secuencia = SECUENCIAS_MEDIO[tipoActual()] || SECUENCIAS_MEDIO.cotizacion;
-      // para+tipo + secuencia + (posibles 4 pasos de conexión) + metodoRespuesta+contacto+final
-      return 2 + secuencia.length + 4;
+      // para+tipo + secuencia + (posibles 4 pasos de conexión) + metodoRespuesta+contacto+resumen+final
+      return 2 + secuencia.length + 5;
     }
 
     function actualizarProgreso() {
@@ -647,6 +666,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       codigos.forEach((codigo) => {
         const label = document.createElement("label");
         label.className = "contact-form-opcion";
+        label.dataset.sound = "select";
         const input = document.createElement("input");
         input.type = "radio";
         input.name = "error";
@@ -660,6 +680,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       });
       const labelOtro = document.createElement("label");
       labelOtro.className = "contact-form-opcion";
+      labelOtro.dataset.sound = "select";
       const inputOtro = document.createElement("input");
       inputOtro.type = "radio";
       inputOtro.name = "error";
@@ -716,6 +737,31 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
       if (servicioFinalInput) servicioFinalInput.value = resultado;
     }
 
+    // ---------- Resumen final: reutiliza el mismo checklist que arma el cuerpo del mensaje,
+    // así lo que el usuario revisa acá es exactamente lo que va a recibir el técnico. ----------
+    function mostrarResumen() {
+      if (!resumenContenedor) return;
+      const datos = datosDelFormulario();
+      const labels = labelsDelFormulario();
+      const texto = construirCuerpoMensaje(datos, labels);
+      resumenContenedor.innerHTML = "";
+      texto.split("\n").forEach((linea) => {
+        if (!linea) return;
+        const p = document.createElement("p");
+        p.className = "contact-form-resumen-linea";
+        const idx = linea.indexOf(":");
+        if (idx > -1) {
+          const strong = document.createElement("strong");
+          strong.textContent = linea.slice(0, idx + 1);
+          p.appendChild(strong);
+          p.appendChild(document.createTextNode(` ${linea.slice(idx + 1).trim()}`));
+        } else {
+          p.textContent = linea;
+        }
+        resumenContenedor.appendChild(p);
+      });
+    }
+
     function prepararPaso(idPaso) {
       if (idPaso === "final") {
         const metodo = metodoActual();
@@ -747,6 +793,7 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
         if (!retrocediendo) aplicarErrorDefaultSiCorresponde();
       }
       if (idPaso === "servicioCalculado") mostrarServicioCalculado();
+      if (idPaso === "resumen") mostrarResumen();
       if (!retrocediendo) {
         if (idPaso === "marca") aplicarDefaultsSiCorresponde();
         if (idPaso === "metodoRespuesta") aplicarMetodoDefaultSiCorresponde();
@@ -1231,6 +1278,10 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
 
       const numero = datos.recipient === "diana" ? form.dataset.recipientDianaWhatsapp : form.dataset.recipientWiltonWhatsapp;
       window.open(buildWhatsAppLink(numero, texto), "_blank", "noopener");
+
+      mostrarMensaje(form.dataset.textoExitoWhatsapp, "exito");
+      playFeedback("celebracion");
+      lanzarConfeti();
     }
 
     form.addEventListener("submit", manejarEnvioCorreo);
@@ -1386,6 +1437,26 @@ const id = (nombre: string) => `${idPrefix}-${nombre}`;
     margin: 0;
     font-size: 0.78rem;
     color: var(--color-text-subtle);
+  }
+
+  .contact-form-resumen {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+  }
+
+  .contact-form-resumen-linea {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text);
+  }
+
+  .contact-form-resumen-linea strong {
+    color: var(--color-text-subtle);
+    font-weight: 600;
   }
 
   .contact-form-servicio-resultado {
