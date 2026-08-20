@@ -6,15 +6,19 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "npm run build && wrangler dev",
     "astro": "astro",
     "convert:webp": "node scripts/convert-to-webp.mjs",
-    "watch:assets": "node scripts/watch-assets.mjs"
+    "watch:assets": "node scripts/watch-assets.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "12",
     "astro": "^5.0.0"
   },
   "devDependencies": {
-    "sharp": "^0.33.0"
+    "sharp": "^0.33.0",
+    "wrangler": "^4.124.0"
   }
 }

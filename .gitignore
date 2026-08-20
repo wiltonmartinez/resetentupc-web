@@ -17,3 +17,9 @@ npm-debug.log*
 
 # estado local de sesión (no es config del proyecto)
 .claude/scheduled_tasks.lock
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

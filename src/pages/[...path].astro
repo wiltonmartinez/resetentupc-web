@@ -1,0 +1,36 @@
+---
+// Catch-all: cualquier ruta que no coincida con ninguna página real cae aquí.
+// Existe para que el middleware (que corre solo en rutas que Astro logra
+// "matchear") se ejecute también en URLs viejas de WordPress que ya no
+// corresponden a ningún patrón de ruta actual — de lo contrario Astro las
+// resuelve directo a 404 sin pasar por el middleware.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildLocalizedPath } from "../i18n/utils";
+
+export const prerender = false;
+
+Astro.response.status = 404;
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title="Página no encontrada | ResetEnLinea"
+  description="La página que buscas no existe o fue movida."
+  locale={locale}
+  path="/404/"
+  noindex
+>
+  <section class="not-found">
+    <h1>Página no encontrada</h1>
+    <p>La página que buscas no existe o fue movida.</p>
+    <a href={buildLocalizedPath(locale, "/")}>Volver al inicio</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>

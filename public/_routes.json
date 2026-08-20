@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/_astro/*",
+    "/favicon-192.png",
+    "/favicon-32.png",
+    "/favicon.svg",
+    "/apple-touch-icon.png",
+    "/og-image.png",
+    "/robots.txt",
+    "/.assetsignore"
+  ]
+}

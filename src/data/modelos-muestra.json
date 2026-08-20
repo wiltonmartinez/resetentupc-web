@@ -1358,5 +1358,661 @@
     "nombreModelo": "T5475",
     "nivel": 2,
     "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3251",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3251",
+    "nivel": 2,
+    "popularidad": 494
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l220",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L220",
+    "nivel": 2,
+    "popularidad": 292
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2814",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2814",
+    "nivel": 2,
+    "popularidad": 78
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "cx-5600",
+    "nombreMarca": "Epson",
+    "nombreModelo": "CX-5600",
+    "nivel": 2,
+    "popularidad": 61
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "t1110",
+    "nombreMarca": "Epson",
+    "nombreModelo": "T1110",
+    "nivel": 2,
+    "popularidad": 44
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2714",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2714",
+    "nivel": 2,
+    "popularidad": 36
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2820",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2820",
+    "nivel": 2,
+    "popularidad": 32
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2811",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2811",
+    "nivel": 2,
+    "popularidad": 24
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l105",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L105",
+    "nivel": 2,
+    "popularidad": 18
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2711",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2711",
+    "nivel": 2,
+    "popularidad": 17
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2812",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2812",
+    "nivel": 2,
+    "popularidad": 16
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2712",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2712",
+    "nivel": 2,
+    "popularidad": 16
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-3700",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-3700",
+    "nivel": 2,
+    "popularidad": 16
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2821",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2821",
+    "nivel": 2,
+    "popularidad": 13
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2826",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2826",
+    "nivel": 2,
+    "popularidad": 12
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2815",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2815",
+    "nivel": 2,
+    "popularidad": 12
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l385",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L385",
+    "nivel": 2,
+    "popularidad": 11
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-247",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-247",
+    "nivel": 2,
+    "popularidad": 10
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2726",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2726",
+    "nivel": 2,
+    "popularidad": 9
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb2750",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB2750",
+    "nivel": 2,
+    "popularidad": 9
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg2500",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG2500",
+    "nivel": 2,
+    "popularidad": 8
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2700",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2700",
+    "nivel": 2,
+    "popularidad": 8
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2721",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2721",
+    "nivel": 2,
+    "popularidad": 8
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l310",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L310",
+    "nivel": 2,
+    "popularidad": 7
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3280",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3280",
+    "nivel": 2,
+    "popularidad": 7
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g6050",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G6050",
+    "nivel": 2,
+    "popularidad": 6
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3218",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3218",
+    "nivel": 2,
+    "popularidad": 6
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-214",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-214",
+    "nivel": 2,
+    "popularidad": 6
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g6020",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G6020",
+    "nivel": 2,
+    "popularidad": 5
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-100",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-100",
+    "nivel": 2,
+    "popularidad": 5
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g1200",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G1200",
+    "nivel": 2,
+    "popularidad": 5
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "pm-g4500",
+    "nombreMarca": "Epson",
+    "nombreModelo": "PM-G4500",
+    "nivel": 2,
+    "popularidad": 5
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3050",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3050",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2851",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2851",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3151",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3151",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l222",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L222",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3258",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3258",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "p400",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "P400",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-205",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-205",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-4500",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-4500",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-545",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-545",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3111",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3111",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-102",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-102",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2715",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2715",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g3000",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G3000",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g1000",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G1000",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l353",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L353",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3211",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3211",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l5298",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L5298",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2804",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2804",
+    "nivel": 2,
+    "popularidad": 2
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g4000",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G4000",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g2000",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G2000",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg5750",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG5750",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3259",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3259",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g3200",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G3200",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l485",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L485",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3215",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3215",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l3158",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L3158",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g2200",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G2200",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l4261",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L4261",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2828",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2828",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mx455",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MX455",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg3510",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG3510",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb5150",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB5150",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-2402",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-2402",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "ip2700",
+    "nombreMarca": "Canon",
+    "nombreModelo": "IP2700",
+    "nivel": 2,
+    "popularidad": 15
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "ix6810",
+    "nombreMarca": "Canon",
+    "nombreModelo": "IX6810",
+    "nivel": 2,
+    "popularidad": 14
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "stylus-photo-1390",
+    "nombreMarca": "Epson",
+    "nombreModelo": "STYLUS-PHOTO-1390",
+    "nivel": 2,
+    "popularidad": 5
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg3600",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG3600",
+    "nivel": 2,
+    "popularidad": 4
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "l405",
+    "nombreMarca": "Epson",
+    "nombreModelo": "L405",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg3650",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG3650",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "et-3710",
+    "nombreMarca": "Epson",
+    "nombreModelo": "ET-3710",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mb2150",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MB2150",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson-sc",
+    "modeloSlug": "p1430",
+    "nombreMarca": "Epson SC",
+    "nombreModelo": "P1430",
+    "nivel": 2,
+    "popularidad": 3
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "wf-3723",
+    "nombreMarca": "Epson",
+    "nombreModelo": "WF-3723",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg2900",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG2900",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "xp-216",
+    "nombreMarca": "Epson",
+    "nombreModelo": "XP-216",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "ip4700",
+    "nombreMarca": "Canon",
+    "nombreModelo": "IP4700",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "ts8120",
+    "nombreMarca": "Canon",
+    "nombreModelo": "TS8120",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "epson",
+    "modeloSlug": "sp-1500w",
+    "nombreMarca": "Epson",
+    "nombreModelo": "SP-1500W",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "g3010",
+    "nombreMarca": "Canon",
+    "nombreModelo": "G3010",
+    "nivel": 2,
+    "popularidad": 1
+  },
+  {
+    "marcaSlug": "canon",
+    "modeloSlug": "mg2400",
+    "nombreMarca": "Canon",
+    "nombreModelo": "MG2400",
+    "nivel": 2,
+    "popularidad": 1
   }
 ]
