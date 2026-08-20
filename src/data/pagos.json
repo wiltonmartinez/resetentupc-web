@@ -1,0 +1,206 @@
+{
+  "paises": [
+    {
+      "slug": "colombia",
+      "nombre": "Colombia",
+      "moneda": "COP",
+      "metodosPago": [
+        { "nombre": "Bancolombia (Ahorros)", "detalle": "Cuenta: 91 666 743 992 · Titular: Wilton Martinez Escorcia · Llave: 85476479" },
+        { "nombre": "Nequi / Bre-B", "detalle": "Número: 318 389 5328 · Titular: Jesús David Martinez Cabana" },
+        { "nombre": "Daviplata / Bre-B", "detalle": "Número: 301 692 8346 · Llave: 3016928346 · Titular: Wilton Martinez Escorcia" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 36000, "profesional": 49000, "elite": 72000 },
+        "plotter": { "esencial": 120000, "profesional": 196000, "elite": 276000 }
+      }
+    },
+    {
+      "slug": "chile",
+      "nombre": "Chile",
+      "moneda": "CLP",
+      "metodosPago": [
+        { "nombre": "BancoEstado", "detalle": "Titular: Rodrigo Del Valle Espinoza Lopez · RUT: 22038368-7 · Cuenta RUT: 22038368" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 12700, "profesional": 18900, "elite": 20300 },
+        "plotter": { "esencial": 29000, "profesional": 47400, "elite": 66700 }
+      }
+    },
+    {
+      "slug": "brasil",
+      "nombre": "Brasil",
+      "moneda": "BRL",
+      "metodosPago": [
+        { "nombre": "PIX", "detalle": "Chave: 94991099248 · Titular: Cassio Alter Vinicius Alves Teixeira" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 80, "profesional": 100, "elite": 120 },
+        "plotter": { "esencial": 172, "profesional": 282, "elite": 395 }
+      }
+    },
+    {
+      "slug": "ecuador",
+      "nombre": "Ecuador",
+      "moneda": "USD",
+      "metodosPago": [
+        { "nombre": "Banco Pichincha", "detalle": "Cuenta de ahorros: 4274590300 · Titular: Oscar Avilés Jiménez · Cédula: 0922960448" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 13, "profesional": 19, "elite": 21 },
+        "plotter": { "esencial": 30, "profesional": 49, "elite": 69 }
+      }
+    },
+    {
+      "slug": "el-salvador",
+      "nombre": "El Salvador",
+      "moneda": "USD",
+      "metodosPago": [
+        { "nombre": "Banco Agrícola (Cta. corriente)", "detalle": "311 4092 632 · Titular: Elmer Geovany Rodríguez Orellana" },
+        { "nombre": "Banco Agrícola (Cta. ahorro)", "detalle": "35090083351 · Titular: Carlos Alberto Rivas" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 13, "profesional": 19, "elite": 21 },
+        "plotter": { "esencial": 30, "profesional": 49, "elite": 69 }
+      }
+    },
+    {
+      "slug": "panama",
+      "nombre": "Panamá",
+      "moneda": "USD",
+      "metodosPago": [
+        { "nombre": "Banco General", "detalle": "Cuenta de ahorros: 04-30-99-914502-8 · Titular: Cesar Huang" },
+        { "nombre": "Caja de Ahorros", "detalle": "Cuenta de ahorros: 48 000 14 628 · Titular: Cesar Huang" },
+        { "nombre": "Banistmo", "detalle": "Cuenta de ahorros: 011 380 20 61 · Titular: Elias Huang" },
+        { "nombre": "YAPPY / NEQUI", "detalle": "Número: 6518-0202 · Titular: Cesar Huang / Elias Huang" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 13, "profesional": 19, "elite": 21 },
+        "plotter": { "esencial": 30, "profesional": 49, "elite": 69 }
+      }
+    },
+    {
+      "slug": "guatemala",
+      "nombre": "Guatemala",
+      "moneda": "GTQ",
+      "metodosPago": [
+        { "nombre": "BANRURAL", "detalle": "Cuenta de ahorros: 04913610265429 · Titular: Anacleto Beza Beltran" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 110, "profesional": 170, "elite": 180 },
+        "plotter": { "esencial": 270, "profesional": 420, "elite": 550 }
+      }
+    },
+    {
+      "slug": "honduras",
+      "nombre": "Honduras",
+      "moneda": "HNL",
+      "metodosPago": [
+        { "nombre": "Banco Occidente", "detalle": "Cuentas de ahorros: 211140100391 / 211140182088 · Titular: Brallan Amilcar Pacheco" },
+        { "nombre": "Banco Banpaís", "detalle": "Cuenta de ahorros: 211000026776 · Titular: Brallan Amilcar Pacheco" },
+        { "nombre": "Banco BAC", "detalle": "Cuenta de ahorros: 750896291 · Titular: Brallan Amilcar Pacheco · ID: 0406199300368" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 360, "profesional": 540, "elite": 570 },
+        "plotter": { "esencial": 750, "profesional": 1220, "elite": 1710 }
+      }
+    },
+    {
+      "slug": "mexico",
+      "nombre": "México",
+      "moneda": "MXN",
+      "metodosPago": [
+        { "nombre": "Santander", "detalle": "Tarjeta: 5579 0701 4066 3355 · Titular: Edgar Adair Alarcón Bello" },
+        { "nombre": "BBVA (Bancomer)", "detalle": "Tarjeta: 4152 3138 5005 4888 · Titular: Francisco Javier Proo Brito" },
+        { "nombre": "Banamex", "detalle": "Tarjeta: 5204 1604 0359 3309 · Titular: Edgar Adair Alarcón Bello" },
+        { "nombre": "Spin by OXXO", "detalle": "Tarjeta: 4217 4701 5981 6558 · Titular: Francisco Javier Proo Brito" },
+        { "nombre": "Mercado Pago", "detalle": "CLABE: 722969010901262217 · Titular: Edgar Adair Alarcón Bello" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 310, "profesional": 450, "elite": 490 },
+        "plotter": { "esencial": 560, "profesional": 920, "elite": 1290 }
+      }
+    },
+    {
+      "slug": "nicaragua",
+      "nombre": "Nicaragua",
+      "moneda": "NIO",
+      "metodosPago": [
+        { "nombre": "BANPRO", "detalle": "Cuenta corriente: 100 20 1000 643 48 · Titular: Aleyda Alegría" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 510, "profesional": 640, "elite": 670 },
+        "plotter": { "esencial": 1130, "profesional": 1840, "elite": 2590 }
+      }
+    },
+    {
+      "slug": "peru",
+      "nombre": "Perú",
+      "moneda": "PEN",
+      "metodosPago": [
+        { "nombre": "Yape / Plin", "detalle": "Número: 916 942 359 · Titular: Luis Alberto Quispe Rojas" },
+        { "nombre": "Banco BCP", "detalle": "Cuenta: 19190040155050 · CCI: 00219119004015505054 · Titular: Luis Alberto Quispe Rojas" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 49, "profesional": 79, "elite": 89 },
+        "plotter": { "esencial": 109, "profesional": 179, "elite": 259 }
+      }
+    },
+    {
+      "slug": "paraguay",
+      "nombre": "Paraguay",
+      "moneda": "PYG",
+      "metodosPago": [
+        { "nombre": "Tu Financiera", "detalle": "Cuenta: 119 87617 · Titular: María Evangelina Ramírez · Cédula: 4.827.361" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 99700, "profesional": 149700, "elite": 159700 },
+        "plotter": null
+      }
+    },
+    {
+      "slug": "venezuela",
+      "nombre": "Venezuela",
+      "moneda": "COP",
+      "nota": "Venezuela no tiene cuenta propia en bolívares: los pagos se procesan con las cuentas de Colombia (COP), o mediante pago internacional en USD.",
+      "metodosPago": [
+        { "nombre": "Bancolombia (Ahorros)", "detalle": "Cuenta: 91 666 743 992 · Titular: Wilton Martinez Escorcia · Llave: 85476479" },
+        { "nombre": "Nequi / Bre-B", "detalle": "Número: 318 389 5328 · Titular: Jesús David Martinez Cabana" },
+        { "nombre": "Daviplata / Bre-B", "detalle": "Número: 301 692 8346 · Llave: 3016928346 · Titular: Wilton Martinez Escorcia" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 36000, "profesional": 49000, "elite": 72000 },
+        "plotter": { "esencial": 120000, "profesional": 196000, "elite": 276000 }
+      }
+    },
+    {
+      "slug": "argentina",
+      "nombre": "Argentina",
+      "moneda": "USD",
+      "nota": "Argentina no tiene tarifa propia en pesos: se cobra en USD (pago internacional) o mediante las cuentas de Colombia (COP).",
+      "metodosPago": [
+        { "nombre": "PayPal", "detalle": "paypal.me/dianacabana (indica el monto en USD) · Titular: Diana Cabana" },
+        { "nombre": "Binance Pay", "detalle": "ID: 408440000 · Titular: Wilton Martinez Escorcia" },
+        { "nombre": "Western Union", "detalle": "Nombre: Wilton Antonio Martínez Escorcia · Documento: 85.476.479 · Ciudad: Santa Marta, Colombia" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 13, "profesional": 19, "elite": 21 },
+        "plotter": { "esencial": 30, "profesional": 49, "elite": 69 }
+      }
+    },
+    {
+      "slug": "otro",
+      "nombre": "Otro país / Internacional",
+      "moneda": "USD",
+      "metodosPago": [
+        { "nombre": "PayPal", "detalle": "paypal.me/dianacabana (indica el monto en USD) · Titular: Diana Cabana" },
+        { "nombre": "Binance Pay", "detalle": "ID: 408440000 · Titular: Wilton Martinez Escorcia" },
+        { "nombre": "Whop (Tarjeta débito/crédito)", "detalle": "El link de pago se genera según tu plan al confirmar la cotización" },
+        { "nombre": "Western Union", "detalle": "Nombre: Wilton Antonio Martínez Escorcia · Documento: 85.476.479 · Ciudad: Santa Marta, Colombia" }
+      ],
+      "precios": {
+        "impresora": { "esencial": 13, "profesional": 19, "elite": 21 },
+        "plotter": { "esencial": 30, "profesional": 49, "elite": 69 }
+      }
+    }
+  ]
+}

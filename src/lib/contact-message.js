@@ -21,6 +21,8 @@ export function construirCuerpoMensaje(datos, labels) {
   agregar(labels.cercaImpresora, datos.cercaImpresora);
   agregar(labels.necesita, datos.necesita);
   agregar(labels.servicioFinal, datos.servicioFinal);
+  agregar(labels.pais, datos.pais);
+  agregar(labels.metodoPago, datos.metodoPago);
   agregar(labels.cuponRuleta, datos.cuponRuleta);
 
   const opcionales = [];
