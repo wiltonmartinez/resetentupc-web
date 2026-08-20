@@ -13,7 +13,7 @@ export const WHATSAPP_NUMBER = "573016928346";
  * verificación de tiempo mínimo de llenado). Aun así, cambia este valor (y el del PHP)
  * por una clave propia — nunca dejes el valor de plantilla.
  */
-export const CONTACT_FORM_EMAIL_ENDPOINT = "https://atajos.resetenlinea.com/send-email.php";
+export const CONTACT_FORM_EMAIL_ENDPOINT = "https://atajos.resetalmohadillas.com/send-email.php";
 export const CONTACT_FORM_SECRET = "CAMBIA-ESTA-CLAVE-2026";
 
 export const USB_REDIRECTOR_DOWNLOAD_URL =
@@ -24,7 +24,7 @@ export const TECHNICIAN_ID = "1017 4278 1017";
 export const TRUSTPILOT_REVIEW_URL = "https://es.trustpilot.com/review/resetokey.com";
 export const TRUSTPILOT_BUSINESSUNIT_ID = "632f593c4989634d7385bfd6";
 
-export const RULETA_URL = "https://ruleta.resetenlinea.com";
+export const RULETA_URL = "https://ruleta.resetalmohadillas.com";
 
 export const DEFAULT_LOCALE = "es";
 

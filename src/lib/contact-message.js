@@ -11,14 +11,17 @@ export function construirCuerpoMensaje(datos, labels) {
   };
 
   agregar(labels.tipo, datos.tipo);
-  agregar(labels.servicio, datos.servicio);
   agregar(labels.garantiaDato, datos.garantiaDato);
-  agregar(labels.cuponRuleta, datos.cuponRuleta);
   agregar(labels.marca, datos.marca);
   agregar(labels.modelo, datos.modelo);
   agregar(labels.error, datos.error);
-  agregar(labels.sistemaOperativo, datos.sistemaOperativo);
   agregar(labels.conexion, datos.conexion);
+  agregar(labels.sistemaOperativo, datos.sistemaOperativo);
+  agregar(labels.rol, datos.rol);
+  agregar(labels.cercaImpresora, datos.cercaImpresora);
+  agregar(labels.necesita, datos.necesita);
+  agregar(labels.servicioFinal, datos.servicioFinal);
+  agregar(labels.cuponRuleta, datos.cuponRuleta);
 
   const opcionales = [];
   if (datos.nombre) opcionales.push(`${labels.nombre}: ${datos.nombre}`);
@@ -49,7 +52,7 @@ export function construirCuerpoMensaje(datos, labels) {
 /** Asunto final = tipo de solicitud — servicio — marca modelo — error. País se agrega server-side (correo). */
 export function construirAsunto(asuntoBase, datos) {
   const partes = [asuntoBase];
-  if (datos.servicio) partes.push(datos.servicio);
+  if (datos.servicioFinal) partes.push(datos.servicioFinal);
   const detalle = [datos.marca, datos.modelo].filter(Boolean).join(" ");
   if (detalle) partes.push(detalle);
   if (datos.error) partes.push(datos.error);

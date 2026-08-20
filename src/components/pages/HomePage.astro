@@ -4,8 +4,9 @@ import AyudaCTA from "../AyudaCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
-import modelos from "../../data/modelos-muestra.json";
+import modelosCompletos from "../../data/modelos-muestra.json";
 import { obtenerPopularidad } from "../../lib/popularidad.js";
+import { getModeloImage } from "../../lib/model-images.js";
 import type { Locale } from "../../config/site";
 
 interface Props {
@@ -54,6 +55,17 @@ const GRUPOS_ERROR = [
 function serieDeModelo(nombreModelo: string): string {
   return nombreModelo.match(/^[A-Za-z]+/)?.[0] ?? "";
 }
+
+// Modelos agregados por tráfico/SEO que todavía no tienen foto de portada ni error
+// confirmado no se listan en la grilla pública (evita tarjetas vacías/genéricas), pero
+// su página /reset/{marca}/{modelo}/ sigue existiendo (getStaticPaths usa modelosCompletos
+// sin filtrar) para no romper las redirecciones que apuntan a ellos. En cuanto se les
+// agregue imagen o un error confirmado, reaparecen solos — no es una lista manual.
+const modelos = modelosCompletos.filter(
+  (modelo) =>
+    getModeloImage(modelo.modeloSlug) !== null ||
+    findErroresConfirmadosForModelo(modelo.marcaSlug, modelo.modeloSlug).length > 0
+);
 
 const modelosConGrupos = modelos.map((modelo) => {
   const idsModelo = new Set(findErroresConfirmadosForModelo(modelo.marcaSlug, modelo.modeloSlug).map((c) => c.error_id));
@@ -154,7 +166,6 @@ const seriesDisponibles = Array.from(
         ))}
       </select>
       <select id="filtro-orden" aria-label={t(locale, "home.filtrarPorLabel")}>
-        <option value="popularidad">{t(locale, "home.ordenPopularidad")}</option>
         <option value="az">{t(locale, "home.ordenAZ")}</option>
         <option value="za">{t(locale, "home.ordenZA")}</option>
         <option value="favoritos">{t(locale, "home.ordenFavoritos")}</option>
@@ -270,7 +281,7 @@ const seriesDisponibles = Array.from(
     let currentMatches = [];
 
     function ordenActual() {
-      return filtroOrden ? filtroOrden.value : "popularidad";
+      return filtroOrden ? filtroOrden.value : "az";
     }
 
     function matchesFiltros(c) {
@@ -289,7 +300,7 @@ const seriesDisponibles = Array.from(
       if (orden === "az") return a.modelo.localeCompare(b.modelo);
       if (orden === "za") return b.modelo.localeCompare(a.modelo);
       if (orden === "favoritos") return a.modelo.localeCompare(b.modelo);
-      return b.popularidad - a.popularidad || a.modelo.localeCompare(b.modelo);
+      return a.modelo.localeCompare(b.modelo);
     }
 
     function aplicarOrdenGrid() {

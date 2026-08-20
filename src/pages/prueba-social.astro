@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TrustpilotWidget from "../components/TrustpilotWidget.astro";
+import { t } from "../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title={t(locale, "pruebaSocialPage.title")}
+  description={t(locale, "pruebaSocialPage.description")}
+  locale={locale}
+  path="/prueba-social/"
+  noindex
+>
+  <section class="prueba-social-page">
+    <h1>{t(locale, "pruebaSocialPage.heading")}</h1>
+    <p>{t(locale, "pruebaSocialPage.texto")}</p>
+    <div class="prueba-social-page-widget">
+      <TrustpilotWidget />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prueba-social-page {
+    display: grid;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .prueba-social-page-widget {
+    margin-top: 1rem;
+  }
+</style>
