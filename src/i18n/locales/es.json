@@ -36,6 +36,16 @@
     "ctaTitulo": "¿Necesitas realizar un reset?",
     "ctaBoton": "Contactar por WhatsApp"
   },
+  "resetRealizadosPage": {
+    "title": "Resets Realizados | ResetEnLinea.com",
+    "description": "Evidencia en video de servicios de reset realizados remotamente por ResetEnLinea.",
+    "heading": "Resets Realizados"
+  },
+  "clienteSatisfechoPage": {
+    "title": "Cliente Satisfecho | ResetEnLinea.com",
+    "description": "Conversaciones reales con clientes que ya usaron nuestro servicio de reset asistido.",
+    "heading": "Cliente Satisfecho"
+  },
   "common": {
     "whatsappButton": "Escribir por WhatsApp",
     "selectLanguage": "Idioma",

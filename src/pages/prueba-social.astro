@@ -3,13 +3,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import TrustpilotWidget from "../components/TrustpilotWidget.astro";
 import InfoCard from "../components/ui/InfoCard.astro";
 import AyudaCTA from "../components/AyudaCTA.astro";
-import Tabs from "../components/ui/Tabs.astro";
-import ConversationGallery from "../components/ui/ConversationGallery.astro";
-import YouTubeGallery from "../components/ui/YouTubeGallery.astro";
-import { CONVERSACIONES, VIDEOS } from "../data/prueba-social";
 import { t } from "../i18n/utils";
 
 const locale = "es" as const;
+
+const categorias = [
+  {
+    href: "/prueba-social/cliente-satisfecho/",
+    titulo: t(locale, "pruebaSocialPage.conversacionesTitulo"),
+    texto: t(locale, "pruebaSocialPage.conversacionesTexto"),
+  },
+  {
+    href: "/prueba-social/reset-realizados/",
+    titulo: t(locale, "pruebaSocialPage.resetsTitulo"),
+    texto: t(locale, "pruebaSocialPage.resetsTexto"),
+  },
+];
 ---
 
 <BaseLayout
@@ -25,29 +34,15 @@ const locale = "es" as const;
     <TrustpilotWidget />
   </section>
 
-  <InfoCard tone="muted">
-    <Tabs
-      tabs={[
-        { id: "conversaciones", label: t(locale, "pruebaSocialPage.tabConversaciones") },
-        { id: "resets", label: t(locale, "pruebaSocialPage.tabResets") },
-      ]}
-    >
-      <div role="tabpanel" data-tab-panel="conversaciones" aria-labelledby="tab-conversaciones" id="panel-conversaciones">
-        <h2>{t(locale, "pruebaSocialPage.conversacionesTitulo")}</h2>
-        <p>{t(locale, "pruebaSocialPage.conversacionesTexto")}</p>
-        <ConversationGallery
-          conversaciones={CONVERSACIONES}
-          ampliarLabel={t(locale, "pruebaSocialPage.ampliarConversacion")}
-          cerrarLabel={t(locale, "pruebaSocialPage.cerrarModal")}
-        />
-      </div>
-      <div role="tabpanel" data-tab-panel="resets" aria-labelledby="tab-resets" id="panel-resets" hidden>
-        <h2>{t(locale, "pruebaSocialPage.resetsTitulo")}</h2>
-        <p>{t(locale, "pruebaSocialPage.resetsTexto")}</p>
-        <YouTubeGallery videos={VIDEOS} reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")} />
-      </div>
-    </Tabs>
-  </InfoCard>
+  <section class="prueba-social-categorias">
+    {categorias.map((categoria) => (
+      <a class="prueba-social-categoria" href={categoria.href}>
+        <h2>{categoria.titulo}</h2>
+        <p>{categoria.texto}</p>
+        <span class="prueba-social-categoria-enlace" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </section>
 
   <InfoCard tone="accent">
     <h2>{t(locale, "pruebaSocialPage.ctaTitulo")}</h2>
@@ -62,17 +57,42 @@ const locale = "es" as const;
     text-align: center;
   }
 
-  [data-tab-panel] {
+  .prueba-social-categorias {
     display: grid;
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
   }
 
-  [data-tab-panel] h2 {
-    margin: 0;
+  .prueba-social-categoria {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
   }
 
-  [data-tab-panel] > p {
+  .prueba-social-categoria:hover {
+    border-color: var(--color-primary);
+  }
+
+  .prueba-social-categoria h2 {
     margin: 0;
-    max-width: 60ch;
+    font-size: 1.1rem;
+  }
+
+  .prueba-social-categoria p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .prueba-social-categoria-enlace {
+    color: var(--color-primary);
+    font-weight: 700;
   }
 </style>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import ConversationGallery from "../../../components/ui/ConversationGallery.astro";
+import { CONVERSACIONES } from "../../../data/prueba-social";
+import { t } from "../../../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title={t(locale, "clienteSatisfechoPage.title")}
+  description={t(locale, "clienteSatisfechoPage.description")}
+  locale={locale}
+  path="/prueba-social/cliente-satisfecho/"
+  noindex
+>
+  <Breadcrumb
+    items={[
+      { label: t(locale, "nav.home"), href: "/" },
+      { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
+      { label: t(locale, "clienteSatisfechoPage.heading") },
+    ]}
+  />
+  <h1>{t(locale, "clienteSatisfechoPage.heading")}</h1>
+  <p>{t(locale, "pruebaSocialPage.conversacionesTexto")}</p>
+  <ConversationGallery
+    conversaciones={CONVERSACIONES}
+    ampliarLabel={t(locale, "pruebaSocialPage.ampliarConversacion")}
+    cerrarLabel={t(locale, "pruebaSocialPage.cerrarModal")}
+  />
+</BaseLayout>

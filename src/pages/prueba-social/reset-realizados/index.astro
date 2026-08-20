@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import YouTubeGallery from "../../../components/ui/YouTubeGallery.astro";
+import { VIDEOS } from "../../../data/prueba-social";
+import { t } from "../../../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title={t(locale, "resetRealizadosPage.title")}
+  description={t(locale, "resetRealizadosPage.description")}
+  locale={locale}
+  path="/prueba-social/reset-realizados/"
+  noindex
+>
+  <Breadcrumb
+    items={[
+      { label: t(locale, "nav.home"), href: "/" },
+      { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
+      { label: t(locale, "resetRealizadosPage.heading") },
+    ]}
+  />
+  <h1>{t(locale, "resetRealizadosPage.heading")}</h1>
+  <p>{t(locale, "pruebaSocialPage.resetsTexto")}</p>
+  <YouTubeGallery videos={VIDEOS} reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")} />
+</BaseLayout>
