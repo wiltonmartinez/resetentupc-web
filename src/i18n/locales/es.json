@@ -21,8 +21,20 @@
   "pruebaSocialPage": {
     "title": "Prueba Social | ResetEnLinea.com",
     "description": "Reseñas reales de clientes que ya usaron nuestro servicio de reset asistido.",
-    "heading": "Lo que dicen nuestros clientes",
-    "texto": "Reseñas reales verificadas en Trustpilot."
+    "heading": "Prueba Social",
+    "texto": "Reseñas reales verificadas en Trustpilot.",
+    "introTexto": "Aquí reunimos experiencias y evidencias reales de clientes y servicios realizados por ResetEnLinea.",
+    "tabConversaciones": "Conversaciones Reales",
+    "tabResets": "Resets Realizados",
+    "conversacionesTitulo": "Conversaciones Reales",
+    "conversacionesTexto": "Experiencias y conversaciones reales con nuestros clientes. Para proteger su privacidad, los datos personales han sido ocultados.",
+    "ampliarConversacion": "Ampliar conversación",
+    "cerrarModal": "Cerrar",
+    "resetsTitulo": "Resets Realizados",
+    "resetsTexto": "Evidencia en video de servicios de reset realizados remotamente.",
+    "reproducirVideo": "Reproducir video",
+    "ctaTitulo": "¿Necesitas realizar un reset?",
+    "ctaBoton": "Contactar por WhatsApp"
   },
   "common": {
     "whatsappButton": "Escribir por WhatsApp",

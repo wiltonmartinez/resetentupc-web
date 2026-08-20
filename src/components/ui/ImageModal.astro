@@ -1,0 +1,84 @@
+---
+/**
+ * Visor modal genérico y reutilizable: un único <dialog> que cualquier
+ * galería en la página puede abrir disparando el evento "image-modal:open"
+ * con { detail: { src, alt } } — evita crear un <dialog> por cada tarjeta.
+ */
+interface Props {
+  cerrarLabel: string;
+}
+
+const { cerrarLabel } = Astro.props;
+---
+
+<dialog class="image-modal" id="image-modal">
+  <button type="button" class="image-modal-close" data-image-modal-close aria-label={cerrarLabel}>×</button>
+  <img class="image-modal-img" alt="" data-image-modal-img />
+</dialog>
+
+<script>
+  const dialog = document.getElementById("image-modal") as HTMLDialogElement | null;
+  const img = dialog?.querySelector<HTMLImageElement>("[data-image-modal-img]");
+  const closeBtn = dialog?.querySelector<HTMLButtonElement>("[data-image-modal-close]");
+
+  if (dialog && img && closeBtn) {
+    document.addEventListener("image-modal:open", (event) => {
+      const { src, alt } = (event as CustomEvent<{ src: string; alt: string }>).detail;
+      img.src = src;
+      img.alt = alt;
+      dialog.showModal();
+    });
+
+    const cerrar = () => dialog.close();
+    closeBtn.addEventListener("click", cerrar);
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) cerrar();
+    });
+    dialog.addEventListener("close", () => {
+      img.src = "";
+    });
+  }
+</script>
+
+<style>
+  .image-modal {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0;
+    max-width: min(92vw, 480px);
+    max-height: 92vh;
+    background: var(--color-bg-card);
+  }
+
+  .image-modal::backdrop {
+    background: rgba(15, 23, 42, 0.78);
+  }
+
+  .image-modal-img {
+    display: block;
+    width: 100%;
+    max-height: 92vh;
+    object-fit: contain;
+  }
+
+  .image-modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .image-modal-close:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+</style>

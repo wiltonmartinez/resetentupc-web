@@ -1,0 +1,41 @@
+---
+import ConversationCard from "./ConversationCard.astro";
+import ImageModal from "./ImageModal.astro";
+import type { ConversacionEvidencia } from "../../data/prueba-social";
+
+interface Props {
+  conversaciones: ConversacionEvidencia[];
+  ampliarLabel: string;
+  cerrarLabel: string;
+}
+
+const { conversaciones, ampliarLabel, cerrarLabel } = Astro.props;
+---
+
+<div class="conversation-gallery">
+  {conversaciones.map((conversacion) => (
+    <ConversationCard conversacion={conversacion} ampliarLabel={ampliarLabel} />
+  ))}
+</div>
+
+<ImageModal cerrarLabel={cerrarLabel} />
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-conversation-trigger]").forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      document.dispatchEvent(
+        new CustomEvent("image-modal:open", {
+          detail: { src: trigger.dataset.fullSrc, alt: trigger.dataset.fullAlt },
+        }),
+      );
+    });
+  });
+</script>
+
+<style>
+  .conversation-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.85rem;
+  }
+</style>

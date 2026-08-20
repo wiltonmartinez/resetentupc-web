@@ -1,0 +1,111 @@
+---
+/**
+ * "Facade" de YouTube: solo pinta la miniatura (servida por el propio CDN de
+ * YouTube, sin costo) + un botón de play. El <iframe> real de YouTube —
+ * pesado y con su propio JS — se crea recién al hacer click, así el video
+ * nunca afecta la carga inicial de la página ni los Core Web Vitals.
+ */
+interface Props {
+  youtubeId: string;
+  titulo: string;
+  descripcion?: string;
+  reproducirLabel: string;
+}
+
+const { youtubeId, titulo, descripcion, reproducirLabel } = Astro.props;
+const miniatura = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+---
+
+<figure class="youtube-card">
+  <button
+    type="button"
+    class="youtube-card-trigger"
+    data-youtube-trigger
+    data-youtube-id={youtubeId}
+    aria-label={`${reproducirLabel}: ${titulo}`}
+  >
+    <img src={miniatura} alt="" loading="lazy" width="480" height="270" />
+    <span class="youtube-card-play" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="white"><path d="M8 5v14l11-7Z" /></svg>
+    </span>
+  </button>
+  <figcaption class="youtube-card-caption">
+    <span class="youtube-card-titulo">{titulo}</span>
+    {descripcion && <span class="youtube-card-descripcion">{descripcion}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .youtube-card {
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .youtube-card-trigger {
+    all: unset;
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+  }
+
+  .youtube-card-trigger:hover {
+    border-color: var(--color-primary);
+  }
+
+  .youtube-card-trigger:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .youtube-card-trigger img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .youtube-card-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .youtube-card-play::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.28);
+  }
+
+  .youtube-card-play svg {
+    position: relative;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+  }
+
+  .youtube-card-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .youtube-card-titulo {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--color-text);
+  }
+
+  .youtube-card-descripcion {
+    font-size: 0.82rem;
+    color: var(--color-text-subtle);
+  }
+</style>

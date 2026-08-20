@@ -45,10 +45,10 @@ const logo = getLogo();
       <nav class="site-nav" aria-label={t(locale, "nav.home")}>
         <a href={buildLocalizedPath(locale, "/")}>{t(locale, "nav.home")}</a>
         <a href={buildStaticPagePath(locale, "comoFunciona")}>{t(locale, "nav.comoFunciona")}</a>
-        <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
-        <a href={buildStaticPagePath(locale, "contacto")}>{t(locale, "nav.contacto")}</a>
         <a href="/prueba-social/">{t(locale, "nav.pruebaSocial")}</a>
+        <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
         <a href="/ruleta/">{t(locale, "nav.ruleta")}</a>
+        <a href={buildStaticPagePath(locale, "contacto")} class="site-nav-contacto">{t(locale, "nav.contacto")}</a>
       </nav>
       <div class="site-header-controls">
         <LanguageSelector locale={locale} path={path} pageKey={pageKey} />
@@ -146,6 +146,18 @@ const logo = getLogo();
   }
   .site-nav a:hover {
     color: var(--color-primary);
+  }
+
+  /* Contacto es el destino final del recorrido (punto de conversión hacia
+     WhatsApp) — se distingue con el color y peso ya usados en el sitio para
+     énfasis (ver .process-step-enlace), sin convertirlo en un botón. */
+  .site-nav a.site-nav-contacto {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  .site-nav a.site-nav-contacto:hover {
+    color: var(--color-primary-dark);
   }
   .site-header-controls {
     display: flex;

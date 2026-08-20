@@ -1,0 +1,51 @@
+---
+import YouTubeFacade from "./YouTubeFacade.astro";
+import type { VideoEvidencia } from "../../data/prueba-social";
+
+interface Props {
+  videos: VideoEvidencia[];
+  reproducirLabel: string;
+}
+
+const { videos, reproducirLabel } = Astro.props;
+---
+
+<div class="youtube-gallery">
+  {videos.map((video) => (
+    <YouTubeFacade youtubeId={video.youtubeId} titulo={video.titulo} descripcion={video.descripcion} reproducirLabel={reproducirLabel} />
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-youtube-trigger]").forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      const youtubeId = trigger.dataset.youtubeId;
+      if (!youtubeId) return;
+
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`;
+      iframe.title = trigger.getAttribute("aria-label") ?? "YouTube video";
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      iframe.allowFullscreen = true;
+      iframe.loading = "lazy";
+      iframe.className = "youtube-gallery-iframe";
+
+      trigger.replaceWith(iframe);
+    });
+  });
+</script>
+
+<style>
+  .youtube-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .youtube-gallery :global(.youtube-gallery-iframe) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+</style>

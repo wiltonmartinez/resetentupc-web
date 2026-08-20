@@ -1,0 +1,91 @@
+---
+import { Image } from "astro:assets";
+import { getConversacionImage } from "../../lib/conversacion-images.js";
+import type { ConversacionEvidencia } from "../../data/prueba-social";
+
+interface Props {
+  conversacion: ConversacionEvidencia;
+  ampliarLabel: string;
+}
+
+const { conversacion, ampliarLabel } = Astro.props;
+const imagen = getConversacionImage(conversacion.archivo);
+---
+
+{
+  imagen && (
+    <figure class="conversation-card">
+      <button
+        type="button"
+        class="conversation-card-trigger"
+        data-conversation-trigger
+        data-full-src={imagen.src}
+        data-full-alt={conversacion.alt}
+        aria-label={ampliarLabel}
+      >
+        <Image src={imagen} alt={conversacion.alt} width={imagen.width} height={imagen.height} loading="lazy" />
+      </button>
+      {(conversacion.modelo || conversacion.servicio) && (
+        <figcaption class="conversation-card-caption">
+          {conversacion.modelo && <span class="conversation-card-modelo">{conversacion.modelo}</span>}
+          {conversacion.servicio && <span class="conversation-card-servicio">{conversacion.servicio}</span>}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+<style>
+  .conversation-card {
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .conversation-card-trigger {
+    all: unset;
+    display: block;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+  }
+
+  .conversation-card-trigger:hover {
+    border-color: var(--color-primary);
+  }
+
+  .conversation-card-trigger:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .conversation-card-trigger :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* contain (no cover): las capturas reales pueden no ser 9:16 exactas
+       según el teléfono — nunca se recorta contenido de la conversación. */
+    object-fit: contain;
+  }
+
+  .conversation-card-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.82rem;
+  }
+
+  .conversation-card-modelo {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .conversation-card-servicio {
+    color: var(--color-text-subtle);
+  }
+</style>
