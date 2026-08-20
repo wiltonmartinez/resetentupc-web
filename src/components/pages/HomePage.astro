@@ -101,9 +101,8 @@ const seriesDisponibles = Array.from(
 ---
 
 <section class="hero">
-  <h1>{t(locale, "home.heroTitle")}</h1>
-  <p class="hero-modalidad">{t(locale, "proceso.titulo")}</p>
-  <p>{t(locale, "home.heroSubtitle")}</p>
+  <h1>{t(locale, "proceso.titulo")}</h1>
+  <p class="hero-tagline"><em>{t(locale, "home.heroTagline")}</em></p>
   <TrustpilotWidget />
   <AyudaCTA sourceId="home-hero" label={t(locale, "home.heroCta")} />
 </section>
@@ -530,25 +529,15 @@ const seriesDisponibles = Array.from(
   }
 
   .hero h1 {
-    max-width: 32ch;
+    max-width: 36ch;
+    font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+    line-height: 1.15;
   }
 
-  .hero-modalidad {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-full);
-    background: var(--color-primary-light);
-    color: var(--color-primary-dark);
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  .hero p {
+  .hero-tagline {
     max-width: 48ch;
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
   }
 
   .modelos h2 {

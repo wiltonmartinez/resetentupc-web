@@ -1,0 +1,28 @@
+---
+// Enlace corto de WhatsApp: /wa/{marca}-{modelo}-{errorCorto}?v={idVideoYoutube}
+//
+// Existe para no tener que escribir/mantener el numero de WhatsApp en cada video o
+// publicacion (queda oculto y se puede cambiar en un solo lugar, WHATSAPP_NUMBER),
+// y para no tener que crear una pagina fija por cada combinacion marca/modelo/error:
+// cualquier slug con guiones sirve, se arma el mensaje al vuelo. El parametro "v"
+// (el ID del video de YouTube) queda registrado en el mensaje que recibe el tecnico,
+// asi se sabe de que video vino el cliente sin necesitar analytics aparte.
+export const prerender = false;
+
+import { WHATSAPP_NUMBER } from "../../config/site";
+
+const { slug } = Astro.params;
+const videoId = Astro.url.searchParams.get("v") || "";
+
+const textoModelo = (slug || "").split("-").join(" ").trim();
+
+let mensaje = `Hola, necesito reset para ${textoModelo}.`;
+if (videoId) {
+  mensaje += ` Vi el video https://youtu.be/${videoId}.`;
+}
+
+const textoCodificado = encodeURIComponent(mensaje).replace(/%20/g, "+");
+const destino = `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${textoCodificado}&type=phone_number&app_absent=0`;
+
+return Astro.redirect(destino, 302);
+---

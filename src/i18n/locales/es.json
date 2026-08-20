@@ -8,7 +8,9 @@
     "preguntasFrecuentes": "Preguntas frecuentes",
     "contacto": "Contacto",
     "pruebaSocial": "Prueba Social",
-    "ruleta": "Ruleta"
+    "ruleta": "Ruleta",
+    "abrirMenu": "Abrir menú",
+    "eslogan": "Reset profesional, seguro y rápido."
   },
   "ruletaPage": {
     "title": "Ruleta | ResetEnLinea",
@@ -34,8 +36,7 @@
   "home": {
     "title": "Reset de impresoras asistido y profesional | ResetEnLinea",
     "description": "Reset de almohadillas y contadores de tinta para impresoras Epson y Canon, con asistencia remota profesional. Diagnóstico claro antes de cualquier procedimiento.",
-    "heroTitle": "Reset profesional de tu impresora, sin riesgos",
-    "heroSubtitle": "Diagnóstico claro, asistencia remota y soporte real para tu marca y modelo.",
+    "heroTagline": "Reset profesional, seguro y rápido, con garantía reutilizable desde cualquier PC.",
     "heroCta": "Encuentra la solución para tu impresora",
     "modelosTitle": "Modelos con asistencia disponible",
     "buscadorPlaceholder": "Busca tu marca o modelo (ej. Epson L1250)",

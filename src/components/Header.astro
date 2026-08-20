@@ -24,22 +24,56 @@ const logo = getLogo();
       ) : (
         <span class="site-logo-mark" aria-hidden="true">R</span>
       )}
-      ResetEnLinea
+      <span class="site-logo-texto">
+        ResetEnLinea
+        <span class="site-logo-eslogan">{t(locale, "nav.eslogan")}</span>
+      </span>
     </a>
-    <nav class="site-nav" aria-label={t(locale, "nav.home")}>
-      <a href={buildLocalizedPath(locale, "/")}>{t(locale, "nav.home")}</a>
-      <a href={buildStaticPagePath(locale, "comoFunciona")}>{t(locale, "nav.comoFunciona")}</a>
-      <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
-      <a href={buildStaticPagePath(locale, "contacto")}>{t(locale, "nav.contacto")}</a>
-      <a href="/prueba-social/">{t(locale, "nav.pruebaSocial")}</a>
-      <a href="/ruleta/">{t(locale, "nav.ruleta")}</a>
-    </nav>
-    <div class="site-header-controls">
-      <LanguageSelector locale={locale} path={path} pageKey={pageKey} />
-      <SoundToggle locale={locale} />
+    <button
+      type="button"
+      class="site-nav-toggle"
+      id="site-nav-toggle"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      aria-label={t(locale, "nav.abrirMenu")}
+    >
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="site-nav-panel" id="site-nav">
+      <nav class="site-nav" aria-label={t(locale, "nav.home")}>
+        <a href={buildLocalizedPath(locale, "/")}>{t(locale, "nav.home")}</a>
+        <a href={buildStaticPagePath(locale, "comoFunciona")}>{t(locale, "nav.comoFunciona")}</a>
+        <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
+        <a href={buildStaticPagePath(locale, "contacto")}>{t(locale, "nav.contacto")}</a>
+        <a href="/prueba-social/">{t(locale, "nav.pruebaSocial")}</a>
+        <a href="/ruleta/">{t(locale, "nav.ruleta")}</a>
+      </nav>
+      <div class="site-header-controls">
+        <LanguageSelector locale={locale} path={path} pageKey={pageKey} />
+        <SoundToggle locale={locale} />
+      </div>
     </div>
   </div>
 </header>
+
+<script>
+  const navToggle = document.getElementById("site-nav-toggle");
+  const nav = document.getElementById("site-nav");
+  if (navToggle && nav) {
+    navToggle.addEventListener("click", () => {
+      const abierto = nav.classList.toggle("site-nav-abierto");
+      navToggle.setAttribute("aria-expanded", String(abierto));
+    });
+    nav.querySelectorAll("a").forEach((enlace) => {
+      enlace.addEventListener("click", () => {
+        nav.classList.remove("site-nav-abierto");
+        navToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+</script>
 
 <style>
   .site-header {
@@ -73,6 +107,18 @@ const logo = getLogo();
     object-fit: contain;
     flex: none;
   }
+  .site-logo-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .site-logo-eslogan {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--color-text-subtle);
+    text-transform: none;
+    letter-spacing: normal;
+  }
   .site-logo-mark {
     display: inline-flex;
     align-items: center;
@@ -83,6 +129,9 @@ const logo = getLogo();
     background: var(--color-primary);
     color: white;
     font-size: 0.9rem;
+  }
+  .site-nav-panel {
+    display: contents;
   }
   .site-nav {
     display: flex;
@@ -103,5 +152,56 @@ const logo = getLogo();
     align-items: center;
     gap: 0.75rem;
     margin-left: auto;
+  }
+  .site-nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-left: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  @media (max-width: 720px) {
+    .site-header-inner {
+      flex-wrap: nowrap;
+    }
+    .site-nav-toggle {
+      display: inline-flex;
+    }
+    .site-nav-panel {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-floating);
+      padding: 0.5rem var(--space-md) 1rem;
+    }
+    .site-nav-panel.site-nav-abierto {
+      display: flex;
+    }
+    .site-nav {
+      flex-direction: column;
+      gap: 0;
+    }
+    .site-nav a {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 1rem;
+    }
+    .site-header-controls {
+      margin: 0.75rem 0 0;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--color-border);
+    }
   }
 </style>
