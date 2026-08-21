@@ -23,13 +23,13 @@ const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
     title={`${titulo} | ResetEnLinea.com`}
     description={evidencia.descripcion || titulo}
     locale={locale}
-    path={`/prueba-social/reset-realizados/${evidencia.slug}/`}
+    path={`/prueba-social/reset-evidencia/${evidencia.slug}/`}
   >
     <Breadcrumb
       items={[
         { label: t(locale, "nav.home"), href: "/" },
         { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
-        { label: t(locale, "resetRealizadosPage.heading"), href: "/prueba-social/reset-realizados/" },
+        { label: t(locale, "resetRealizadosPage.heading"), href: "/prueba-social/reset-evidencia/" },
         { label: titulo },
       ]}
     />
@@ -48,7 +48,7 @@ const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
       {evidencia.duracion_video && <div><dt>{t(locale, "resetRealizadosPage.duracion")}</dt><dd>{evidencia.duracion_video}</dd></div>}
     </dl>
     <p class="rr-volver">
-      <a href="/prueba-social/reset-realizados/">{t(locale, "resetRealizadosPage.volverLink")}</a>
+      <a href="/prueba-social/reset-evidencia/">{t(locale, "resetRealizadosPage.volverLink")}</a>
     </p>
   </BaseLayout>
 ) : (
@@ -56,13 +56,13 @@ const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
     title="Página no encontrada | ResetEnLinea.com"
     description="La página que buscas no existe o fue movida."
     locale={locale}
-    path="/prueba-social/reset-realizados/no-encontrado/"
+    path="/prueba-social/reset-evidencia/no-encontrado/"
     noindex
   >
     <section class="not-found">
       <h1>Página no encontrada</h1>
       <p>La página que buscas no existe o fue movida.</p>
-      <a href={buildLocalizedPath(locale, "/prueba-social/reset-realizados/")}>{t(locale, "resetRealizadosPage.volverLink")}</a>
+      <a href={buildLocalizedPath(locale, "/prueba-social/reset-evidencia/")}>{t(locale, "resetRealizadosPage.volverLink")}</a>
     </section>
   </BaseLayout>
 )}

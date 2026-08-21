@@ -30,23 +30,23 @@
     "conversacionesTexto": "Experiencias y conversaciones reales con nuestros clientes. Para proteger su privacidad, los datos personales han sido ocultados.",
     "ampliarConversacion": "Ampliar conversación",
     "cerrarModal": "Cerrar",
-    "resetsTitulo": "Resets Realizados",
+    "resetsTitulo": "Reset Evidencia",
     "resetsTexto": "Evidencia en video de servicios de reset realizados remotamente.",
     "reproducirVideo": "Reproducir video",
     "ctaTitulo": "¿Necesitas realizar un reset?",
     "ctaBoton": "Contactar por WhatsApp"
   },
   "resetRealizadosPage": {
-    "title": "Resets Realizados | ResetEnLinea.com",
+    "title": "Reset Evidencia | ResetEnLinea.com",
     "description": "Evidencia en video de servicios de reset realizados remotamente por ResetEnLinea.",
-    "heading": "Resets Realizados",
+    "heading": "Reset Evidencia",
     "marca": "Marca",
     "modelo": "Modelo",
     "error": "Error",
     "pais": "País",
     "duracion": "Duración",
     "segundos": "segundos",
-    "volverLink": "← Volver a Resets Realizados",
+    "volverLink": "← Volver a Reset Evidencia",
     "sinRegistros": "Todavía no hay resets publicados."
   },
   "clienteSatisfechoPage": {

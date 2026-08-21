@@ -18,7 +18,7 @@ const { data: resets, meta } = await listarResetRealizados(pagina, 12);
   title={t(locale, "resetRealizadosPage.title")}
   description={t(locale, "resetRealizadosPage.description")}
   locale={locale}
-  path="/prueba-social/reset-realizados/"
+  path="/prueba-social/reset-evidencia/"
 >
   <Breadcrumb
     items={[
@@ -42,9 +42,9 @@ const { data: resets, meta } = await listarResetRealizados(pagina, 12);
 
   {meta.total_pages > 1 && (
     <nav class="rr-index-paginacion" aria-label="Paginación">
-      {meta.page > 1 && <a href={`/prueba-social/reset-realizados/?page=${meta.page - 1}`}>{t(locale, "common.paginaAnterior")}</a>}
+      {meta.page > 1 && <a href={`/prueba-social/reset-evidencia/?page=${meta.page - 1}`}>{t(locale, "common.paginaAnterior")}</a>}
       <span>{meta.page} / {meta.total_pages}</span>
-      {meta.page < meta.total_pages && <a href={`/prueba-social/reset-realizados/?page=${meta.page + 1}`}>{t(locale, "common.paginaSiguiente")}</a>}
+      {meta.page < meta.total_pages && <a href={`/prueba-social/reset-evidencia/?page=${meta.page + 1}`}>{t(locale, "common.paginaSiguiente")}</a>}
     </nav>
   )}
 </BaseLayout>

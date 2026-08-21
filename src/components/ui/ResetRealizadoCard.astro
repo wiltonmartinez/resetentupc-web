@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { evidencia } = Astro.props;
-const href = `/prueba-social/reset-realizados/${evidencia.slug}/`;
+const href = `/prueba-social/reset-evidencia/${evidencia.slug}/`;
 const titulo = tituloConRespaldo(evidencia);
 const resumen = [evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais].join(" · ");
 ---
