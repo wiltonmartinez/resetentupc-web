@@ -52,20 +52,13 @@ const imagenes: Imagen[] = testimonios.flatMap((testimonio) => {
 
 <style>
   .testimonios-grid {
-    columns: 2;
-    column-gap: 0.85rem;
-  }
-
-  @media (min-width: 640px) {
-    .testimonios-grid {
-      columns: 3;
-    }
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .testimonios-item {
     display: block;
-    margin-bottom: 0.85rem;
-    break-inside: avoid;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid var(--color-border);
