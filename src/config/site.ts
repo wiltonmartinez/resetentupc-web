@@ -35,7 +35,7 @@ export const NUCLEO_API_BASE_URL = "https://nucleo.resetalmohadillas.com";
 
 export const DEFAULT_LOCALE = "es";
 
-export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it"] as const;
+export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it", "de", "ru"] as const;
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
@@ -45,6 +45,8 @@ export const LOCALE_PATH_PREFIX: Record<Locale, string> = {
   pt: "/pt",
   fr: "/fr",
   it: "/it",
+  de: "/de",
+  ru: "/ru",
 };
 
 export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
@@ -53,6 +55,8 @@ export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
   pt: "pt",
   fr: "fr",
   it: "it",
+  de: "de",
+  ru: "ru",
 };
 
 export const X_DEFAULT_LOCALE: Locale = "es";
@@ -63,6 +67,8 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   pt: "Português",
   fr: "Français",
   it: "Italiano",
+  de: "Deutsch",
+  ru: "Русский",
 };
 
 export const PAGE_SLUGS = {
@@ -72,6 +78,8 @@ export const PAGE_SLUGS = {
     pt: "como-funciona",
     fr: "comment-ca-marche",
     it: "come-funziona",
+    de: "wie-es-funktioniert",
+    ru: "kak-eto-rabotaet",
   },
   preguntasFrecuentes: {
     es: "preguntas-frecuentes",
@@ -79,6 +87,8 @@ export const PAGE_SLUGS = {
     pt: "perguntas-frequentes",
     fr: "questions-frequentes",
     it: "domande-frequenti",
+    de: "haeufige-fragen",
+    ru: "chasto-zadavaemye-voprosy",
   },
   contacto: {
     es: "contacto",
@@ -86,6 +96,8 @@ export const PAGE_SLUGS = {
     pt: "contato",
     fr: "contact",
     it: "contatto",
+    de: "kontakt",
+    ru: "kontakty",
   },
 } as const satisfies Record<string, Record<Locale, string>>;
 
