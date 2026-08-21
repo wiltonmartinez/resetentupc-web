@@ -25,7 +25,7 @@ const duracion = evidencia ? evidencia.duracion_video : "";
 // Mismos datos del título, tejidos en el cuerpo de la página (evita que el
 // contenido visible quede "vacío" de las palabras clave del título/slug).
 const resumenContenido = evidencia
-  ? t(locale, "resetRealizadosPage.resumenContenido")
+  ? t(locale, duracion ? "resetRealizadosPage.resumenContenido" : "resetRealizadosPage.resumenContenidoSinDuracion")
       .replaceAll("{marca}", evidencia.marca)
       .replaceAll("{modelo}", evidencia.modelo)
       .replaceAll("{error}", evidencia.error)

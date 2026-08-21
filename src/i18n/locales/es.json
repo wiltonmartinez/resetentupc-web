@@ -48,7 +48,8 @@
     "segundos": "segundos",
     "volverLink": "← Volver a Reset Evidencia",
     "sinRegistros": "Todavía no hay resets publicados.",
-    "resumenContenido": "Video real del reset de una impresora {marca} {modelo} — {error} — en {pais}, con una duración de {duracion}."
+    "resumenContenido": "Video real del reset de una impresora {marca} {modelo} — {error} — en {pais}, con una duración de {duracion}.",
+    "resumenContenidoSinDuracion": "Video real del reset de una impresora {marca} {modelo} — {error} — en {pais}."
   },
   "clienteSatisfechoPage": {
     "title": "Cliente Satisfecho | ResetEnLinea.com",
