@@ -41,7 +41,9 @@
     "resetsTexto": "Evidencia en video de servicios de reset realizados remotamente.",
     "reproducirVideo": "Reproducir video",
     "ctaTitulo": "¿Necesitas realizar un reset?",
-    "ctaBoton": "Contactar por WhatsApp"
+    "ctaBoton": "Contactar por WhatsApp",
+    "testimoniosTitulo": "Testimonios Trustpilot",
+    "testimoniosTexto": "Capturas reales de reseñas de clientes en Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Reset Evidencia | ResetEnLinea.com",
@@ -183,14 +185,38 @@
     "description": "Resolvemos las dudas más comunes sobre el reset de impresoras y nuestro proceso de asistencia.",
     "heading": "Preguntas frecuentes",
     "items": [
-      { "pregunta": "¿Este sitio ofrece un programa gratuito para resetear mi impresora yo mismo?", "respuesta": "No. No distribuimos programas de reset gratuitos ni herramientas de autoservicio. Es un servicio 100% asistido: un técnico real te acompaña por WhatsApp durante todo el proceso." },
-      { "pregunta": "¿Es seguro hacer el reset de mi impresora?", "respuesta": "Sí. Trabajamos con un diagnóstico previo y acompañamiento profesional en cada procedimiento." },
-      { "pregunta": "¿Es seguro compartir la conexión USB de mi impresora?", "respuesta": "Sí. Solo compartimos la conexión USB de tu impresora: nunca vemos tu pantalla, no accedemos a tus archivos ni controlamos tu computador. Tú mantienes el control en todo momento." },
-      { "pregunta": "¿Necesito desactivar el antivirus?", "respuesta": "No. No solicitamos desactivar el antivirus ni ningún sistema de seguridad de tu equipo." },
-      { "pregunta": "¿Qué necesito para la asistencia remota?", "respuesta": "Una conexión a internet estable y tu impresora conectada por USB a tu computador." },
-      { "pregunta": "¿Cuándo se realiza el pago del servicio?", "respuesta": "Primero evaluamos tu caso y confirmamos que tu modelo y error son compatibles. Solo después de esa confirmación te indicamos el valor y coordinamos el pago." },
-      { "pregunta": "¿Recibo algún comprobante del servicio?", "respuesta": "Sí. Al finalizar el reset recibes un certificado de garantía del servicio realizado." },
-      { "pregunta": "¿Qué pasa si mi equipo no cumple los requisitos?", "respuesta": "Evaluamos alternativas, incluyendo un procedimiento local guiado por conexión USB." }
+      {
+        "pregunta": "¿Este sitio ofrece un programa gratuito para resetear mi impresora yo mismo?",
+        "respuesta": "No. No distribuimos programas de reset gratuitos ni herramientas de autoservicio. Es un servicio 100% asistido: un técnico real te acompaña por WhatsApp durante todo el proceso."
+      },
+      {
+        "pregunta": "¿Es seguro hacer el reset de mi impresora?",
+        "respuesta": "Sí. Trabajamos con un diagnóstico previo y acompañamiento profesional en cada procedimiento."
+      },
+      {
+        "pregunta": "¿Es seguro compartir la conexión USB de mi impresora?",
+        "respuesta": "Sí. Solo compartimos la conexión USB de tu impresora: nunca vemos tu pantalla, no accedemos a tus archivos ni controlamos tu computador. Tú mantienes el control en todo momento."
+      },
+      {
+        "pregunta": "¿Necesito desactivar el antivirus?",
+        "respuesta": "No. No solicitamos desactivar el antivirus ni ningún sistema de seguridad de tu equipo."
+      },
+      {
+        "pregunta": "¿Qué necesito para la asistencia remota?",
+        "respuesta": "Una conexión a internet estable y tu impresora conectada por USB a tu computador."
+      },
+      {
+        "pregunta": "¿Cuándo se realiza el pago del servicio?",
+        "respuesta": "Primero evaluamos tu caso y confirmamos que tu modelo y error son compatibles. Solo después de esa confirmación te indicamos el valor y coordinamos el pago."
+      },
+      {
+        "pregunta": "¿Recibo algún comprobante del servicio?",
+        "respuesta": "Sí. Al finalizar el reset recibes un certificado de garantía del servicio realizado."
+      },
+      {
+        "pregunta": "¿Qué pasa si mi equipo no cumple los requisitos?",
+        "respuesta": "Evaluamos alternativas, incluyendo un procedimiento local guiado por conexión USB."
+      }
     ]
   },
   "contacto": {
@@ -371,5 +397,12 @@
   "footer": {
     "rights": "Todos los derechos reservados.",
     "disclaimer": "ResetEnLinea.com ofrece asistencia profesional independiente para el reset de impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios."
+  },
+  "testimoniosTruspilotPage": {
+    "title": "Testimonios Trustpilot | ResetEnLinea.com",
+    "description": "Galería de reseñas y capturas reales de clientes en Trustpilot.",
+    "heading": "Testimonios Trustpilot",
+    "texto": "Capturas reales de reseñas y calificaciones de nuestros clientes en Trustpilot.",
+    "sinRegistros": "Todavía no hay testimonios publicados."
   }
 }

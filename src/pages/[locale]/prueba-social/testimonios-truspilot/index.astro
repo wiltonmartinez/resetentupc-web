@@ -1,0 +1,54 @@
+---
+/**
+ * Igual que la versión "es" (sin prefijo) pero para en/pt/fr/it/de/ru — datos
+ * en vivo desde la API pública de Núcleo, así que no puede ser prerenderizada.
+ */
+export const prerender = false;
+
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import TestimoniosTruspilotPage from "../../../../components/pages/TestimoniosTruspilotPage.astro";
+import { listarTestimonios } from "../../../../lib/nucleo-api";
+import { t } from "../../../../i18n/utils";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
+
+const localeParam = Astro.params.locale ?? "";
+const localeValida = SUPPORTED_LOCALES.includes(localeParam as Locale) && localeParam !== DEFAULT_LOCALE;
+if (!localeValida) {
+  Astro.response.status = 404;
+}
+const locale = (localeValida ? localeParam : DEFAULT_LOCALE) as Locale;
+
+const testimonios = localeValida ? await listarTestimonios() : [];
+---
+
+{localeValida ? (
+  <BaseLayout
+    title={t(locale, "testimoniosTruspilotPage.title")}
+    description={t(locale, "testimoniosTruspilotPage.description")}
+    locale={locale}
+    path="/prueba-social/testimonios-truspilot/"
+  >
+    <TestimoniosTruspilotPage locale={locale} testimonios={testimonios} />
+  </BaseLayout>
+) : (
+  <BaseLayout
+    title="Página no encontrada | ResetEnLinea.com"
+    description="La página que buscas no existe o fue movida."
+    locale={locale}
+    path="/404/"
+    noindex
+  >
+    <section class="not-found">
+      <h1>Página no encontrada</h1>
+      <p>La página que buscas no existe o fue movida.</p>
+      <a href="/">Volver al inicio</a>
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>

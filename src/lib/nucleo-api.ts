@@ -32,6 +32,20 @@ export interface ClienteSatisfechoPublico {
   fecha_publicacion: string;
 }
 
+/**
+ * Galería pura de imágenes (capturas de Trustpilot) — sin slug, sin título,
+ * sin página individual. `/api/public/testimonios/` devuelve TODO en un
+ * único llamado (sin paginación).
+ */
+export interface TestimonioPublico {
+  url_trustpilot_foto: string;
+  url_resena: string;
+  marca: string;
+  modelo: string;
+  pais: string;
+  fecha_publicacion: string;
+}
+
 export interface ApiMeta {
   page: number;
   per_page: number;
@@ -78,6 +92,11 @@ export async function listarClienteSatisfecho(pagina = 1, porPagina = 12): Promi
 
 export async function obtenerClienteSatisfechoPorSlug(slug: string): Promise<ClienteSatisfechoPublico | null> {
   return obtenerJson<ClienteSatisfechoPublico>(`/api/public/cliente-satisfecho/?slug=${encodeURIComponent(slug)}`);
+}
+
+export async function listarTestimonios(): Promise<TestimonioPublico[]> {
+  const resultado = await obtenerJson<{ data: TestimonioPublico[] }>(`/api/public/testimonios/`);
+  return resultado?.data ?? [];
 }
 
 /** Título de respaldo cuando `titulo` viene vacío (campo no se llena desde el admin todavía). */

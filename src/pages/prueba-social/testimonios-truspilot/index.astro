@@ -1,0 +1,21 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TestimoniosTruspilotPage from "../../../components/pages/TestimoniosTruspilotPage.astro";
+import { listarTestimonios } from "../../../lib/nucleo-api";
+import { t } from "../../../i18n/utils";
+
+const locale = "es" as const;
+
+const testimonios = await listarTestimonios();
+---
+
+<BaseLayout
+  title={t(locale, "testimoniosTruspilotPage.title")}
+  description={t(locale, "testimoniosTruspilotPage.description")}
+  locale={locale}
+  path="/prueba-social/testimonios-truspilot/"
+>
+  <TestimoniosTruspilotPage locale={locale} testimonios={testimonios} />
+</BaseLayout>

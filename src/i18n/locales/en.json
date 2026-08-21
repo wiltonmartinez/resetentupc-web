@@ -408,7 +408,9 @@
     "resetsTexto": "Video evidence of reset services performed remotely.",
     "reproducirVideo": "Play video",
     "ctaTitulo": "Need a reset?",
-    "ctaBoton": "Contact us on WhatsApp"
+    "ctaBoton": "Contact us on WhatsApp",
+    "testimoniosTitulo": "Trustpilot Testimonials",
+    "testimoniosTexto": "Real screenshots of customer reviews on Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Reset Evidence | ResetEnLinea.com",
@@ -431,5 +433,12 @@
     "heading": "Happy Customer",
     "volverLink": "← Back to Happy Customer",
     "sinRegistros": "There are no published conversations yet."
+  },
+  "testimoniosTruspilotPage": {
+    "title": "Trustpilot Testimonials | ResetEnLinea.com",
+    "description": "Gallery of real customer reviews and screenshots on Trustpilot.",
+    "heading": "Trustpilot Testimonials",
+    "texto": "Real screenshots of reviews and ratings from our customers on Trustpilot.",
+    "sinRegistros": "There are no testimonials published yet."
   }
 }

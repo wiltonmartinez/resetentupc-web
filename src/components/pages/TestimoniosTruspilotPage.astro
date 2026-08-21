@@ -1,0 +1,85 @@
+---
+/**
+ * Galería pura de imágenes — sin slug, sin título ni descripción por item,
+ * sin página de detalle. Cada testimonio puede aportar 0, 1 o 2 imágenes
+ * (foto + reseña), independientes entre sí; se filtran los campos vacíos.
+ */
+import Breadcrumb from "../Breadcrumb.astro";
+import { buildLocalizedPath, t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+import type { TestimonioPublico } from "../../lib/nucleo-api";
+
+interface Props {
+  locale: Locale;
+  testimonios: TestimonioPublico[];
+}
+
+const { locale, testimonios } = Astro.props;
+
+interface Imagen {
+  url: string;
+  alt: string;
+}
+
+const imagenes: Imagen[] = testimonios.flatMap((testimonio) => {
+  const alt = [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · ");
+  const urls = [testimonio.url_trustpilot_foto, testimonio.url_resena].filter((url) => url && url.trim() !== "");
+  return urls.map((url) => ({ url, alt }));
+});
+---
+
+<Breadcrumb
+  items={[
+    { label: t(locale, "nav.home"), href: buildLocalizedPath(locale, "/") },
+    { label: t(locale, "nav.pruebaSocial"), href: buildLocalizedPath(locale, "/prueba-social/") },
+    { label: t(locale, "testimoniosTruspilotPage.heading") },
+  ]}
+/>
+<h1>{t(locale, "testimoniosTruspilotPage.heading")}</h1>
+<p>{t(locale, "testimoniosTruspilotPage.texto")}</p>
+
+{imagenes.length > 0 ? (
+  <div class="testimonios-grid">
+    {imagenes.map((imagen) => (
+      <a class="testimonios-item" href={imagen.url} target="_blank" rel="noopener noreferrer">
+        <img src={imagen.url} alt={imagen.alt} loading="lazy" />
+      </a>
+    ))}
+  </div>
+) : (
+  <p class="testimonios-vacio">{t(locale, "testimoniosTruspilotPage.sinRegistros")}</p>
+)}
+
+<style>
+  .testimonios-grid {
+    columns: 2;
+    column-gap: 0.85rem;
+  }
+
+  @media (min-width: 640px) {
+    .testimonios-grid {
+      columns: 3;
+    }
+  }
+
+  .testimonios-item {
+    display: block;
+    margin-bottom: 0.85rem;
+    break-inside: avoid;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .testimonios-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .testimonios-vacio {
+    text-align: center;
+    color: var(--color-text-subtle);
+  }
+</style>

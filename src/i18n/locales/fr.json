@@ -408,7 +408,9 @@
     "resetsTexto": "Preuves vidéo de services de réinitialisation effectués à distance.",
     "reproducirVideo": "Lire la vidéo",
     "ctaTitulo": "Besoin d'une réinitialisation ?",
-    "ctaBoton": "Contacter sur WhatsApp"
+    "ctaBoton": "Contacter sur WhatsApp",
+    "testimoniosTitulo": "Témoignages Trustpilot",
+    "testimoniosTexto": "Captures réelles d'avis clients sur Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Preuves de Réinitialisation | ResetEnLinea.com",
@@ -431,5 +433,12 @@
     "heading": "Client Satisfait",
     "volverLink": "← Retour à Client Satisfait",
     "sinRegistros": "Il n'y a pas encore de conversations publiées."
+  },
+  "testimoniosTruspilotPage": {
+    "title": "Témoignages Trustpilot | ResetEnLinea.com",
+    "description": "Galerie d'avis et de captures réelles de clients sur Trustpilot.",
+    "heading": "Témoignages Trustpilot",
+    "texto": "Captures réelles d'avis et de notes de nos clients sur Trustpilot.",
+    "sinRegistros": "Aucun témoignage publié pour le moment."
   }
 }

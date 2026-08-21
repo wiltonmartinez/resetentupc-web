@@ -41,7 +41,9 @@
     "resetsTexto": "Video-Beweise von aus der Ferne durchgeführten Reset-Services.",
     "reproducirVideo": "Video abspielen",
     "ctaTitulo": "Brauchst du einen Reset?",
-    "ctaBoton": "Über WhatsApp kontaktieren"
+    "ctaBoton": "Über WhatsApp kontaktieren",
+    "testimoniosTitulo": "Trustpilot-Erfahrungen",
+    "testimoniosTexto": "Echte Screenshots von Kundenbewertungen auf Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Reset-Beweise | ResetEnLinea.com",
@@ -183,14 +185,38 @@
     "description": "Wir beantworten die häufigsten Fragen zum Drucker-Reset und unserem Unterstützungsprozess.",
     "heading": "Häufige Fragen",
     "items": [
-      { "pregunta": "Bietet diese Website ein kostenloses Programm an, um meinen Drucker selbst zurückzusetzen?", "respuesta": "Nein. Wir verbreiten keine kostenlosen Reset-Programme oder Selbstbedienungs-Tools. Es ist ein 100 % assistierter Service: Ein echter Techniker begleitet dich über WhatsApp während des gesamten Prozesses." },
-      { "pregunta": "Ist es sicher, den Reset meines Druckers durchzuführen?", "respuesta": "Ja. Wir arbeiten mit einer vorherigen Diagnose und professioneller Begleitung bei jedem Vorgang." },
-      { "pregunta": "Ist es sicher, die USB-Verbindung meines Druckers zu teilen?", "respuesta": "Ja. Wir teilen nur die USB-Verbindung deines Druckers: Wir sehen niemals deinen Bildschirm, greifen nicht auf deine Dateien zu und steuern nicht deinen Computer. Du behältst jederzeit die Kontrolle." },
-      { "pregunta": "Muss ich das Antivirenprogramm deaktivieren?", "respuesta": "Nein. Wir verlangen nicht, dass du das Antivirenprogramm oder ein anderes Sicherheitssystem deines Geräts deaktivierst." },
-      { "pregunta": "Was benötige ich für die Fernunterstützung?", "respuesta": "Eine stabile Internetverbindung und deinen per USB an den Computer angeschlossenen Drucker." },
-      { "pregunta": "Wann erfolgt die Zahlung für den Service?", "respuesta": "Zuerst prüfen wir deinen Fall und bestätigen, dass dein Modell und der Fehler kompatibel sind. Erst nach dieser Bestätigung nennen wir dir den Preis und vereinbaren die Zahlung." },
-      { "pregunta": "Erhalte ich einen Beleg für den Service?", "respuesta": "Ja. Nach Abschluss des Resets erhältst du ein Garantiezertifikat für den durchgeführten Service." },
-      { "pregunta": "Was passiert, wenn mein Gerät die Anforderungen nicht erfüllt?", "respuesta": "Wir prüfen Alternativen, einschließlich eines lokalen, von uns begleiteten Verfahrens über USB-Verbindung." }
+      {
+        "pregunta": "Bietet diese Website ein kostenloses Programm an, um meinen Drucker selbst zurückzusetzen?",
+        "respuesta": "Nein. Wir verbreiten keine kostenlosen Reset-Programme oder Selbstbedienungs-Tools. Es ist ein 100 % assistierter Service: Ein echter Techniker begleitet dich über WhatsApp während des gesamten Prozesses."
+      },
+      {
+        "pregunta": "Ist es sicher, den Reset meines Druckers durchzuführen?",
+        "respuesta": "Ja. Wir arbeiten mit einer vorherigen Diagnose und professioneller Begleitung bei jedem Vorgang."
+      },
+      {
+        "pregunta": "Ist es sicher, die USB-Verbindung meines Druckers zu teilen?",
+        "respuesta": "Ja. Wir teilen nur die USB-Verbindung deines Druckers: Wir sehen niemals deinen Bildschirm, greifen nicht auf deine Dateien zu und steuern nicht deinen Computer. Du behältst jederzeit die Kontrolle."
+      },
+      {
+        "pregunta": "Muss ich das Antivirenprogramm deaktivieren?",
+        "respuesta": "Nein. Wir verlangen nicht, dass du das Antivirenprogramm oder ein anderes Sicherheitssystem deines Geräts deaktivierst."
+      },
+      {
+        "pregunta": "Was benötige ich für die Fernunterstützung?",
+        "respuesta": "Eine stabile Internetverbindung und deinen per USB an den Computer angeschlossenen Drucker."
+      },
+      {
+        "pregunta": "Wann erfolgt die Zahlung für den Service?",
+        "respuesta": "Zuerst prüfen wir deinen Fall und bestätigen, dass dein Modell und der Fehler kompatibel sind. Erst nach dieser Bestätigung nennen wir dir den Preis und vereinbaren die Zahlung."
+      },
+      {
+        "pregunta": "Erhalte ich einen Beleg für den Service?",
+        "respuesta": "Ja. Nach Abschluss des Resets erhältst du ein Garantiezertifikat für den durchgeführten Service."
+      },
+      {
+        "pregunta": "Was passiert, wenn mein Gerät die Anforderungen nicht erfüllt?",
+        "respuesta": "Wir prüfen Alternativen, einschließlich eines lokalen, von uns begleiteten Verfahrens über USB-Verbindung."
+      }
     ]
   },
   "contacto": {
@@ -371,5 +397,12 @@
   "footer": {
     "rights": "Alle Rechte vorbehalten.",
     "disclaimer": "ResetEnLinea.com bietet unabhängige professionelle Unterstützung für den Reset von Druckern. Die genannten Marken gehören ihren jeweiligen Eigentümern."
+  },
+  "testimoniosTruspilotPage": {
+    "title": "Trustpilot-Erfahrungen | ResetEnLinea.com",
+    "description": "Galerie echter Kundenbewertungen und Screenshots auf Trustpilot.",
+    "heading": "Trustpilot-Erfahrungen",
+    "texto": "Echte Screenshots von Bewertungen und Sternen unserer Kunden auf Trustpilot.",
+    "sinRegistros": "Es sind noch keine Erfahrungsberichte veröffentlicht."
   }
 }
