@@ -88,7 +88,10 @@
     "videoResetLabel": "Ver vídeo do reset",
     "evidenciaErrorCaption": "Assim se vê o erro",
     "evidenciaSolucionCaption": "Assim fica depois de resolvido",
-    "evidenciaFlipHint": "Toque para ver a solução"
+    "evidenciaFlipHint": "Toque para ver a solução",
+    "sensorUbicacionTitulo": "Localização do sensor de tinta",
+    "sensorLimpioTitulo": "Sensor limpo",
+    "sensorSucioTitulo": "Sensor sujo"
   },
   "flujoServicio": {
     "titulo": "Veja como funciona nosso serviço, do início ao fim",

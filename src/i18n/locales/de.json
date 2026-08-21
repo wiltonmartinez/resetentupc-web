@@ -134,7 +134,10 @@
     "videoResetLabel": "Reset-Video ansehen",
     "evidenciaErrorCaption": "So sieht der Fehler aus",
     "evidenciaSolucionCaption": "So sieht es gelöst aus",
-    "evidenciaFlipHint": "Tippen, um die Lösung zu sehen"
+    "evidenciaFlipHint": "Tippen, um die Lösung zu sehen",
+    "sensorUbicacionTitulo": "Position des Tintensensors",
+    "sensorLimpioTitulo": "Sauberer Sensor",
+    "sensorSucioTitulo": "Verschmutzter Sensor"
   },
   "flujoServicio": {
     "titulo": "So läuft unser Service ab, von Anfang bis Ende",

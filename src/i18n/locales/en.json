@@ -88,7 +88,10 @@
     "videoResetLabel": "Watch reset video",
     "evidenciaErrorCaption": "What the error looks like",
     "evidenciaSolucionCaption": "What it looks like once fixed",
-    "evidenciaFlipHint": "Tap to see the solution"
+    "evidenciaFlipHint": "Tap to see the solution",
+    "sensorUbicacionTitulo": "Ink sensor location",
+    "sensorLimpioTitulo": "Clean sensor",
+    "sensorSucioTitulo": "Dirty sensor"
   },
   "flujoServicio": {
     "titulo": "Here's how our service works, start to finish",

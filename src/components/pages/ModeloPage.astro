@@ -14,6 +14,9 @@ import ServiceFlow from "../ui/ServiceFlow.astro";
 import EvidenceCard from "../ui/EvidenceCard.astro";
 import VideoModal from "../ui/VideoModal.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
+import SensorLocation from "../ui/SensorLocation.astro";
+import SensorConditionComparison from "../ui/SensorConditionComparison.astro";
+import { getSensorTintaParaMarca } from "../../data/sensor-tinta";
 import { getProcesoImage } from "../../lib/proceso-images.js";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, SITE_URL, type Locale } from "../../config/site";
 
@@ -60,6 +63,8 @@ const reconocimiento = t(locale, "modelo.reconocimiento")
 const errorSectionText = t(locale, "modelo.errorSectionText")
   .replaceAll("{marca}", nombreMarca)
   .replaceAll("{modelo}", nombreModelo);
+
+const tieneSensorTinta = getSensorTintaParaMarca(marcaSlug) !== null;
 
 const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
 const faqConfianza = faqItems.slice(0, 3);
@@ -264,6 +269,23 @@ const pasosProceso = [
         urlPath={localizedPath}
         locale={locale}
         label={t(locale, "modelo.ctaConsultarCaso")}
+      />
+    </InfoCard>
+  )}
+
+  <!-- 2b. Sensor de tinta: solo para la familia Epson-SC (large-format) -->
+  {tieneSensorTinta && (
+    <InfoCard tone="muted">
+      <SensorLocation marcaSlug={marcaSlug} nombreMarca={nombreMarca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
+    </InfoCard>
+  )}
+
+  {tieneSensorTinta && (
+    <InfoCard tone="muted">
+      <SensorConditionComparison
+        marcaSlug={marcaSlug}
+        tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
+        tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
       />
     </InfoCard>
   )}

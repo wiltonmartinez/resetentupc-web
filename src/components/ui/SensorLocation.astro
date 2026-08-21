@@ -1,0 +1,70 @@
+---
+/**
+ * "Ubicación del sensor" — reutilizable por marca (no por modelo). Los
+ * datos (qué imágenes corresponden a qué marca) viven en
+ * src/data/sensor-tinta.ts; este componente solo presenta lo que esa data
+ * le entregue, así que agregar otra marca no requiere tocar este archivo.
+ */
+import { Image } from "astro:assets";
+import { getSensorUbicacionImages } from "../../lib/sensor-images.js";
+
+interface Props {
+  marcaSlug: string;
+  titulo: string;
+  nombreMarca: string;
+}
+
+const { marcaSlug, titulo, nombreMarca } = Astro.props;
+const imagenes = getSensorUbicacionImages(marcaSlug);
+---
+
+{imagenes.length > 0 && (
+  <div class="sensor-location">
+    <h2>{titulo}</h2>
+    <div class="sensor-location-grid">
+      {imagenes.map((imagen, indice) => (
+        <div class="sensor-location-imagen">
+          <Image
+            src={imagen}
+            alt={`Ubicación del sensor de tinta en impresoras ${nombreMarca} — referencia ${indice + 1}`}
+            width={imagen.width}
+            height={imagen.height}
+            loading={indice === 0 ? "eager" : "lazy"}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+  .sensor-location {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .sensor-location-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  @media (min-width: 640px) {
+    .sensor-location-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .sensor-location-imagen {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-bg-card);
+  }
+
+  .sensor-location-imagen :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

@@ -134,7 +134,10 @@
     "videoResetLabel": "Смотреть видео сброса",
     "evidenciaErrorCaption": "Так выглядит ошибка",
     "evidenciaSolucionCaption": "Так выглядит решение",
-    "evidenciaFlipHint": "Нажмите, чтобы увидеть решение"
+    "evidenciaFlipHint": "Нажмите, чтобы увидеть решение",
+    "sensorUbicacionTitulo": "Расположение датчика чернил",
+    "sensorLimpioTitulo": "Чистый датчик",
+    "sensorSucioTitulo": "Грязный датчик"
   },
   "flujoServicio": {
     "titulo": "Вот как проходит наш сервис, от начала до конца",

@@ -1,0 +1,110 @@
+---
+/**
+ * "Sensor limpio vs Sensor sucio" — dos tarjetas de contraste, reutilizable
+ * por marca (no por modelo). Datos en src/data/sensor-tinta.ts.
+ * Desktop: lado a lado. Móvil: apiladas.
+ */
+import { Image } from "astro:assets";
+import { getSensorLimpioImages, getSensorSucioImages } from "../../lib/sensor-images.js";
+
+interface Props {
+  marcaSlug: string;
+  tituloLimpio: string;
+  tituloSucio: string;
+}
+
+const { marcaSlug, tituloLimpio, tituloSucio } = Astro.props;
+const imagenesLimpio = getSensorLimpioImages(marcaSlug);
+const imagenesSucio = getSensorSucioImages(marcaSlug);
+---
+
+{(imagenesLimpio.length > 0 || imagenesSucio.length > 0) && (
+  <div class="sensor-comparacion">
+    <div class="sensor-comparacion-tarjeta">
+      <h3>{tituloLimpio}</h3>
+      <div class="sensor-comparacion-grid">
+        {imagenesLimpio.map((imagen, indice) => (
+          <div class="sensor-comparacion-imagen">
+            <Image
+              src={imagen}
+              alt={`${tituloLimpio} — referencia ${indice + 1}`}
+              width={imagen.width}
+              height={imagen.height}
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="sensor-comparacion-tarjeta sensor-comparacion-tarjeta-sucio">
+      <h3>{tituloSucio}</h3>
+      <div class="sensor-comparacion-grid">
+        {imagenesSucio.map((imagen, indice) => (
+          <div class="sensor-comparacion-imagen">
+            <Image
+              src={imagen}
+              alt={`${tituloSucio} — referencia ${indice + 1}`}
+              width={imagen.width}
+              height={imagen.height}
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .sensor-comparacion {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .sensor-comparacion {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .sensor-comparacion-tarjeta {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+  }
+
+  .sensor-comparacion-tarjeta h3 {
+    margin: 0;
+    text-align: center;
+    color: var(--color-primary-dark);
+  }
+
+  .sensor-comparacion-tarjeta-sucio h3 {
+    color: var(--color-warning-text);
+  }
+
+  .sensor-comparacion-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .sensor-comparacion-imagen {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .sensor-comparacion-imagen :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+  }
+</style>

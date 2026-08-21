@@ -88,7 +88,10 @@
     "videoResetLabel": "Voir la vidéo du reset",
     "evidenciaErrorCaption": "À quoi ressemble l'erreur",
     "evidenciaSolucionCaption": "À quoi ça ressemble une fois résolu",
-    "evidenciaFlipHint": "Touchez pour voir la solution"
+    "evidenciaFlipHint": "Touchez pour voir la solution",
+    "sensorUbicacionTitulo": "Emplacement du capteur d'encre",
+    "sensorLimpioTitulo": "Capteur propre",
+    "sensorSucioTitulo": "Capteur sale"
   },
   "flujoServicio": {
     "titulo": "Voici comment fonctionne notre service, de bout en bout",
