@@ -19,7 +19,7 @@ const message = buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen }
 const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
 ---
 
-<a class="whatsapp-cta" href={href} data-source-id={sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer">
+<a class="whatsapp-cta" href={href} data-source-id={sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer nofollow">
   {label}
 </a>
 

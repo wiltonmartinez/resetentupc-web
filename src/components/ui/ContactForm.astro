@@ -371,7 +371,7 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
     <p>📱 {t(locale, "contactForm.conexionPaso1Whatsapp")}</p>
     <p>🔌 {t(locale, "contactForm.conexionPaso1Usb")}</p>
     <p>⬇️ {t(locale, "contactForm.conexionPaso1Descarga")}</p>
-    <a class="contact-form-conexion-descarga" href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" data-sound="select">
+    <a class="contact-form-conexion-descarga" href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
       ⬇️ {t(locale, "contactForm.conexionDescargarBoton")}
     </a>
     <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>

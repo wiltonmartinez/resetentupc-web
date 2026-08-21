@@ -101,7 +101,7 @@ const { titulo, introTexto, pasos, pasoFinalTexto, marcarRevisadoLabel = "Marcar
             )}
             {paso.destacado && <code class="process-step-destacado">{paso.destacado}</code>}
             {paso.enlace && (
-              <a class="process-step-enlace" href={paso.enlace.href} target="_blank" rel="noopener noreferrer">
+              <a class="process-step-enlace" href={paso.enlace.href} target="_blank" rel="noopener noreferrer nofollow">
                 {paso.enlace.label}
               </a>
             )}

@@ -47,7 +47,7 @@ for (let i = evidencias.length - 1; i > 0; i--) {
 {evidencias.length > 0 ? (
   <div class="testimonios-grid">
     {evidencias.map((evidencia) => (
-      <a href={evidencia.destino} target="_blank" rel="noopener noreferrer" class="testimonios-item">
+      <a href={evidencia.destino} target="_blank" rel="noopener noreferrer nofollow" class="testimonios-item">
         <img src={evidencia.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
       </a>
     ))}
