@@ -25,6 +25,13 @@ const evidencias = testimonios
     imagen: testimonio.url_imgur,
     destino: testimonio.url_trustpilot_review?.trim() || testimonio.url_imgur,
   }));
+
+// Orden aleatorio en cada visita (Fisher-Yates) — página SSR, así que se
+// recalcula por request, no queda fijo entre visitas.
+for (let i = evidencias.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [evidencias[i], evidencias[j]] = [evidencias[j], evidencias[i]];
+}
 ---
 
 <Breadcrumb
