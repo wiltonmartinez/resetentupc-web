@@ -2,22 +2,23 @@
 /**
  * Tarjeta liviana para el ÍNDICE de Resets Realizados: solo texto (mismo
  * estilo de caja que ClienteSatisfechoCard, para que ambos índices se vean
- * consistentes) — el video (iframe/thumbnail) solo se carga en la página
- * de detalle de cada slug.
+ * consistentes) — el video (iframe/thumbnail) solo se carga en la página de
+ * detalle de cada slug.
  */
-import type { ResetRealizadoEvidencia } from "../../data/reset-realizados";
+import { tituloConRespaldo, type ResetRealizadoPublico } from "../../lib/nucleo-api";
 
 interface Props {
-  evidencia: ResetRealizadoEvidencia;
+  evidencia: ResetRealizadoPublico;
 }
 
 const { evidencia } = Astro.props;
 const href = `/prueba-social/reset-realizados/${evidencia.slug}/`;
+const titulo = tituloConRespaldo(evidencia);
 const resumen = [evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais].join(" · ");
 ---
 
 <a class="rr-card" href={href}>
-  <h3 class="rr-card-titulo">{evidencia.titulo}</h3>
+  <h3 class="rr-card-titulo">{titulo}</h3>
   <p class="rr-card-resumen">{resumen}</p>
 </a>
 

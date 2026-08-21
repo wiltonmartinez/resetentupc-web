@@ -26,6 +26,13 @@ export const TRUSTPILOT_BUSINESSUNIT_ID = "632f593c4989634d7385bfd6";
 
 export const RULETA_URL = "https://ruleta.resetalmohadillas.com";
 
+/**
+ * API pública de solo lectura de Núcleo (`/api/public/*`) que alimenta
+ * "Prueba Social" (reset-realizados y cliente-satisfecho) — sin sesión ni
+ * datos privados, CORS ya habilitado para este origen en el propio Núcleo.
+ */
+export const NUCLEO_API_BASE_URL = "https://nucleo.resetalmohadillas.com";
+
 export const DEFAULT_LOCALE = "es";
 
 export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it"] as const;

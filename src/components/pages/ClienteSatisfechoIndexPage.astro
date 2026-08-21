@@ -1,21 +1,24 @@
 ---
 /**
- * Cuerpo de la página de índice de Cliente Satisfecho, independiente del
- * idioma — el archivo de ruta (uno para "es" sin prefijo, otro para
- * en/pt/fr/it bajo /[locale]/) solo pasa el locale. Los valores de las
- * evidencias (marca/modelo/país/medioPago) no se traducen por idioma.
+ * Cuerpo de la página de índice de Cliente Satisfecho. Recibe la página ya
+ * resuelta por la ruta SSR (fetch a la API pública de Núcleo) — este
+ * componente no sabe nada de fetch ni de paginación por querystring, solo
+ * pinta lo que le pasan.
  */
 import Breadcrumb from "../Breadcrumb.astro";
 import ClienteSatisfechoCard from "../ui/ClienteSatisfechoCard.astro";
-import { CLIENTES_SATISFECHOS } from "../../data/cliente-satisfecho";
+import type { ClienteSatisfechoPublico, ApiMeta } from "../../lib/nucleo-api";
 import { buildLocalizedPath, t } from "../../i18n/utils";
 import type { Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
+  evidencias: ClienteSatisfechoPublico[];
+  meta: ApiMeta;
 }
 
-const { locale } = Astro.props;
+const { locale, evidencias, meta } = Astro.props;
+const baseHref = buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/");
 ---
 
 <Breadcrumb
@@ -27,16 +30,52 @@ const { locale } = Astro.props;
 />
 <h1>{t(locale, "clienteSatisfechoPage.heading")}</h1>
 <p>{t(locale, "pruebaSocialPage.conversacionesTexto")}</p>
-<div class="cs-index-grid">
-  {CLIENTES_SATISFECHOS.map((evidencia) => (
-    <ClienteSatisfechoCard evidencia={evidencia} locale={locale} />
-  ))}
-</div>
+
+{evidencias.length > 0 ? (
+  <div class="cs-index-grid">
+    {evidencias.map((evidencia) => (
+      <ClienteSatisfechoCard evidencia={evidencia} locale={locale} />
+    ))}
+  </div>
+) : (
+  <p class="cs-index-vacio">{t(locale, "clienteSatisfechoPage.sinRegistros")}</p>
+)}
+
+{meta.total_pages > 1 && (
+  <nav class="cs-index-paginacion" aria-label="Paginación">
+    {meta.page > 1 && (
+      <a href={`${baseHref}?page=${meta.page - 1}`}>{t(locale, "common.paginaAnterior")}</a>
+    )}
+    <span>{meta.page} / {meta.total_pages}</span>
+    {meta.page < meta.total_pages && (
+      <a href={`${baseHref}?page=${meta.page + 1}`}>{t(locale, "common.paginaSiguiente")}</a>
+    )}
+  </nav>
+)}
 
 <style>
   .cs-index-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 0.85rem;
+  }
+
+  .cs-index-vacio {
+    text-align: center;
+    color: var(--color-text-subtle);
+  }
+
+  .cs-index-paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .cs-index-paginacion a {
+    text-decoration: none;
+    color: var(--color-primary);
+    font-weight: 600;
   }
 </style>

@@ -1,55 +1,71 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
 import YouTubeFacade from "../../../components/ui/YouTubeFacade.astro";
-import { RESETS_REALIZADOS } from "../../../data/reset-realizados";
-import { t } from "../../../i18n/utils";
-
-export function getStaticPaths() {
-  return RESETS_REALIZADOS.map((evidencia) => ({
-    params: { slug: evidencia.slug },
-    props: { evidencia },
-  }));
-}
+import { obtenerResetRealizadoPorSlug, tituloConRespaldo } from "../../../lib/nucleo-api";
+import { buildLocalizedPath, t } from "../../../i18n/utils";
 
 const locale = "es" as const;
-const { evidencia } = Astro.props;
-const duracionTexto = `${evidencia.duracionSegundos} ${t(locale, "resetRealizadosPage.segundos")}`;
+const { slug } = Astro.params;
+const evidencia = slug ? await obtenerResetRealizadoPorSlug(slug) : null;
+
+if (!evidencia) {
+  Astro.response.status = 404;
+}
+
+const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
 ---
 
-<BaseLayout
-  title={`${evidencia.titulo} | ResetEnLinea.com`}
-  description={evidencia.descripcion ?? evidencia.titulo}
-  locale={locale}
-  path={`/prueba-social/reset-realizados/${evidencia.slug}/`}
-  noindex
->
-  <Breadcrumb
-    items={[
-      { label: t(locale, "nav.home"), href: "/" },
-      { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
-      { label: t(locale, "resetRealizadosPage.heading"), href: "/prueba-social/reset-realizados/" },
-      { label: evidencia.titulo },
-    ]}
-  />
-  <h1>{evidencia.titulo}</h1>
-  <YouTubeFacade
-    youtubeId={evidencia.youtubeId}
-    titulo={evidencia.titulo}
-    descripcion={evidencia.descripcion}
-    reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
-  />
-  <dl class="rr-detalle-datos">
-    <div><dt>{t(locale, "resetRealizadosPage.marca")}</dt><dd>{evidencia.marca}</dd></div>
-    <div><dt>{t(locale, "resetRealizadosPage.modelo")}</dt><dd>{evidencia.modelo}</dd></div>
-    <div><dt>{t(locale, "resetRealizadosPage.error")}</dt><dd>{evidencia.error}</dd></div>
-    <div><dt>{t(locale, "resetRealizadosPage.pais")}</dt><dd>{evidencia.pais}</dd></div>
-    <div><dt>{t(locale, "resetRealizadosPage.duracion")}</dt><dd>{duracionTexto}</dd></div>
-  </dl>
-  <p class="rr-volver">
-    <a href="/prueba-social/reset-realizados/">{t(locale, "resetRealizadosPage.volverLink")}</a>
-  </p>
-</BaseLayout>
+{evidencia ? (
+  <BaseLayout
+    title={`${titulo} | ResetEnLinea.com`}
+    description={evidencia.descripcion || titulo}
+    locale={locale}
+    path={`/prueba-social/reset-realizados/${evidencia.slug}/`}
+  >
+    <Breadcrumb
+      items={[
+        { label: t(locale, "nav.home"), href: "/" },
+        { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
+        { label: t(locale, "resetRealizadosPage.heading"), href: "/prueba-social/reset-realizados/" },
+        { label: titulo },
+      ]}
+    />
+    <h1>{titulo}</h1>
+    <YouTubeFacade
+      youtubeId={evidencia.youtube_id}
+      titulo={titulo}
+      descripcion={evidencia.descripcion}
+      reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+    />
+    <dl class="rr-detalle-datos">
+      <div><dt>{t(locale, "resetRealizadosPage.marca")}</dt><dd>{evidencia.marca}</dd></div>
+      <div><dt>{t(locale, "resetRealizadosPage.modelo")}</dt><dd>{evidencia.modelo}</dd></div>
+      <div><dt>{t(locale, "resetRealizadosPage.error")}</dt><dd>{evidencia.error}</dd></div>
+      <div><dt>{t(locale, "resetRealizadosPage.pais")}</dt><dd>{evidencia.pais}</dd></div>
+      {evidencia.duracion_video && <div><dt>{t(locale, "resetRealizadosPage.duracion")}</dt><dd>{evidencia.duracion_video}</dd></div>}
+    </dl>
+    <p class="rr-volver">
+      <a href="/prueba-social/reset-realizados/">{t(locale, "resetRealizadosPage.volverLink")}</a>
+    </p>
+  </BaseLayout>
+) : (
+  <BaseLayout
+    title="Página no encontrada | ResetEnLinea.com"
+    description="La página que buscas no existe o fue movida."
+    locale={locale}
+    path="/prueba-social/reset-realizados/no-encontrado/"
+    noindex
+  >
+    <section class="not-found">
+      <h1>Página no encontrada</h1>
+      <p>La página que buscas no existe o fue movida.</p>
+      <a href={buildLocalizedPath(locale, "/prueba-social/reset-realizados/")}>{t(locale, "resetRealizadosPage.volverLink")}</a>
+    </section>
+  </BaseLayout>
+)}
 
 <style>
   .rr-detalle-datos {
@@ -79,5 +95,10 @@ const duracionTexto = `${evidencia.duracionSegundos} ${t(locale, "resetRealizado
 
   .rr-volver {
     text-align: center;
+  }
+
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
   }
 </style>

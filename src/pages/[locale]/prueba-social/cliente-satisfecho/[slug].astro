@@ -1,35 +1,59 @@
 ---
+/**
+ * Igual que la versión "es" (sin prefijo) pero para en/pt/fr/it — datos en
+ * vivo desde la API pública de Núcleo (ver esa versión para el porqué de
+ * prerender = false).
+ */
+export const prerender = false;
+
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import ClienteSatisfechoDetailPage from "../../../../components/pages/ClienteSatisfechoDetailPage.astro";
-import {
-  CLIENTES_SATISFECHOS,
-  tituloClienteSatisfecho,
-  slugClienteSatisfecho,
-} from "../../../../data/cliente-satisfecho";
+import { obtenerClienteSatisfechoPorSlug, tituloConRespaldo } from "../../../../lib/nucleo-api";
+import { buildLocalizedPath, t } from "../../../../i18n/utils";
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
 
-export function getStaticPaths() {
-  const locales = SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE);
-  return locales.flatMap((locale) =>
-    CLIENTES_SATISFECHOS.map((evidencia) => ({
-      params: { locale, slug: slugClienteSatisfecho(evidencia) },
-      props: { evidencia },
-    }))
-  );
+const localeParam = Astro.params.locale ?? "";
+const localeValida = SUPPORTED_LOCALES.includes(localeParam as Locale) && localeParam !== DEFAULT_LOCALE;
+const locale = (localeValida ? localeParam : DEFAULT_LOCALE) as Locale;
+
+const { slug } = Astro.params;
+const evidencia = localeValida && slug ? await obtenerClienteSatisfechoPorSlug(slug) : null;
+
+if (!evidencia) {
+  Astro.response.status = 404;
 }
 
-const locale = Astro.params.locale as Locale;
-const { evidencia } = Astro.props;
-const titulo = tituloClienteSatisfecho(evidencia);
-const slug = slugClienteSatisfecho(evidencia);
+const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
 ---
 
-<BaseLayout
-  title={`${titulo} | ResetEnLinea.com`}
-  description={evidencia.previewTexto}
-  locale={locale}
-  path={`/prueba-social/cliente-satisfecho/${slug}/`}
-  noindex
->
-  <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
-</BaseLayout>
+{evidencia ? (
+  <BaseLayout
+    title={`${titulo} | ResetEnLinea.com`}
+    description={titulo}
+    locale={locale}
+    path={`/prueba-social/cliente-satisfecho/${evidencia.slug}/`}
+  >
+    <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
+  </BaseLayout>
+) : (
+  <BaseLayout
+    title="Página no encontrada | ResetEnLinea.com"
+    description="La página que buscas no existe o fue movida."
+    locale={locale}
+    path="/prueba-social/cliente-satisfecho/no-encontrado/"
+    noindex
+  >
+    <section class="not-found">
+      <h1>Página no encontrada</h1>
+      <p>La página que buscas no existe o fue movida.</p>
+      <a href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}>{t(locale, "clienteSatisfechoPage.volverLink")}</a>
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>

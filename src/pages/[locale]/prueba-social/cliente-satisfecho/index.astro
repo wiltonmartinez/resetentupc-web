@@ -1,24 +1,57 @@
 ---
+/**
+ * Igual que la versión "es" (sin prefijo) pero para en/pt/fr/it — datos en
+ * vivo desde la API pública de Núcleo, así que no puede ser prerenderizada
+ * (necesitaría rebuild para reflejar cada cambio de estado en Núcleo).
+ */
+export const prerender = false;
+
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import ClienteSatisfechoIndexPage from "../../../../components/pages/ClienteSatisfechoIndexPage.astro";
+import { listarClienteSatisfecho } from "../../../../lib/nucleo-api";
 import { t } from "../../../../i18n/utils";
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
 
-export function getStaticPaths() {
-  return SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => ({
-    params: { locale },
-  }));
+const localeParam = Astro.params.locale ?? "";
+const localeValida = SUPPORTED_LOCALES.includes(localeParam as Locale) && localeParam !== DEFAULT_LOCALE;
+if (!localeValida) {
+  Astro.response.status = 404;
 }
+const locale = (localeValida ? localeParam : DEFAULT_LOCALE) as Locale;
 
-const locale = Astro.params.locale as Locale;
+const paginaSolicitada = Number.parseInt(Astro.url.searchParams.get("page") ?? "1", 10);
+const pagina = Number.isFinite(paginaSolicitada) && paginaSolicitada > 0 ? paginaSolicitada : 1;
+const { data: evidencias, meta } = localeValida ? await listarClienteSatisfecho(pagina, 12) : { data: [], meta: { page: 1, per_page: 0, total: 0, total_pages: 0 } };
 ---
 
-<BaseLayout
-  title={t(locale, "clienteSatisfechoPage.title")}
-  description={t(locale, "clienteSatisfechoPage.description")}
-  locale={locale}
-  path="/prueba-social/cliente-satisfecho/"
-  noindex
->
-  <ClienteSatisfechoIndexPage locale={locale} />
-</BaseLayout>
+{localeValida ? (
+  <BaseLayout
+    title={t(locale, "clienteSatisfechoPage.title")}
+    description={t(locale, "clienteSatisfechoPage.description")}
+    locale={locale}
+    path="/prueba-social/cliente-satisfecho/"
+  >
+    <ClienteSatisfechoIndexPage locale={locale} evidencias={evidencias} meta={meta} />
+  </BaseLayout>
+) : (
+  <BaseLayout
+    title="Página no encontrada | ResetEnLinea.com"
+    description="La página que buscas no existe o fue movida."
+    locale={locale}
+    path="/404/"
+    noindex
+  >
+    <section class="not-found">
+      <h1>Página no encontrada</h1>
+      <p>La página que buscas no existe o fue movida.</p>
+      <a href="/">Volver al inicio</a>
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>

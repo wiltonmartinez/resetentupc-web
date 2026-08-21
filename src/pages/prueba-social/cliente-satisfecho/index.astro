@@ -1,9 +1,16 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ClienteSatisfechoIndexPage from "../../../components/pages/ClienteSatisfechoIndexPage.astro";
+import { listarClienteSatisfecho } from "../../../lib/nucleo-api";
 import { t } from "../../../i18n/utils";
 
 const locale = "es" as const;
+
+const paginaSolicitada = Number.parseInt(Astro.url.searchParams.get("page") ?? "1", 10);
+const pagina = Number.isFinite(paginaSolicitada) && paginaSolicitada > 0 ? paginaSolicitada : 1;
+const { data: evidencias, meta } = await listarClienteSatisfecho(pagina, 12);
 ---
 
 <BaseLayout
@@ -11,7 +18,6 @@ const locale = "es" as const;
   description={t(locale, "clienteSatisfechoPage.description")}
   locale={locale}
   path="/prueba-social/cliente-satisfecho/"
-  noindex
 >
-  <ClienteSatisfechoIndexPage locale={locale} />
+  <ClienteSatisfechoIndexPage locale={locale} evidencias={evidencias} meta={meta} />
 </BaseLayout>

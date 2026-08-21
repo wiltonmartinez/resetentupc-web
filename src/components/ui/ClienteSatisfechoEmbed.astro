@@ -1,20 +1,22 @@
 ---
 /**
- * Embebe UNA conversación real como HTML renderizado (no imagen), aislada
- * dentro de un <iframe sandbox srcdoc> — nunca inline en el DOM del sitio,
- * así el HTML de Núcleo no puede romper el layout ni el CSS de la página,
- * y viceversa. Contenedor 9:16 fijo por fuera del iframe.
+ * Embebe UNA conversación real ya renderizada por Núcleo (URL externa, no
+ * HTML pegado) dentro de un <iframe> — nunca inline en el DOM del sitio, así
+ * el contenido de Núcleo no puede romper el layout ni el CSS de la página, y
+ * viceversa. Contenedor 9:16 fijo por fuera del iframe. Sin
+ * "allow-same-origin" (dominio externo real, no srcdoc) para que el sandbox
+ * siga aislando de verdad.
  */
 interface Props {
-  html: string;
+  url: string;
   titulo: string;
 }
 
-const { html, titulo } = Astro.props;
+const { url, titulo } = Astro.props;
 ---
 
 <div class="cliente-satisfecho-embed">
-  <iframe sandbox="allow-same-origin" srcdoc={html} title={titulo} loading="lazy" />
+  <iframe src={url} sandbox="allow-scripts allow-popups" title={titulo} loading="lazy" referrerpolicy="no-referrer" />
 </div>
 
 <style>

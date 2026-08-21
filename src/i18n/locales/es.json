@@ -46,13 +46,15 @@
     "pais": "País",
     "duracion": "Duración",
     "segundos": "segundos",
-    "volverLink": "← Volver a Resets Realizados"
+    "volverLink": "← Volver a Resets Realizados",
+    "sinRegistros": "Todavía no hay resets publicados."
   },
   "clienteSatisfechoPage": {
     "title": "Cliente Satisfecho | ResetEnLinea.com",
     "description": "Conversaciones reales con clientes que ya usaron nuestro servicio de reset asistido.",
     "heading": "Cliente Satisfecho",
-    "volverLink": "← Volver a Cliente Satisfecho"
+    "volverLink": "← Volver a Cliente Satisfecho",
+    "sinRegistros": "Todavía no hay conversaciones publicadas."
   },
   "common": {
     "whatsappButton": "Escribir por WhatsApp",
@@ -61,7 +63,9 @@
     "languageSuggestionAccept": "Sí, cambiar",
     "languageSuggestionDismiss": "No, gracias",
     "soundOnLabel": "Sonido activado. Pulsa para desactivar.",
-    "soundOffLabel": "Sonido desactivado. Pulsa para activar."
+    "soundOffLabel": "Sonido desactivado. Pulsa para activar.",
+    "paginaAnterior": "← Anterior",
+    "paginaSiguiente": "Siguiente →"
   },
   "home": {
     "title": "Reset de impresoras asistido y profesional | ResetEnLinea.com",

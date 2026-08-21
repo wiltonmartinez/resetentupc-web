@@ -1,26 +1,22 @@
 ---
 /**
  * Tarjeta liviana para el ÍNDICE de Cliente Satisfecho: solo el título,
- * centrado — nunca el HTML/iframe completo — eso solo se carga en la
- * página de detalle de cada slug, para que el índice aguante cientos/miles
- * de registros sin pesar.
+ * centrado — nunca el iframe completo — eso solo se carga en la página de
+ * detalle de cada slug, para que el índice aguante cientos/miles de
+ * registros sin pesar.
  */
-import {
-  tituloClienteSatisfecho,
-  slugClienteSatisfecho,
-  type ClienteSatisfechoEvidencia,
-} from "../../data/cliente-satisfecho";
+import { tituloConRespaldo, type ClienteSatisfechoPublico } from "../../lib/nucleo-api";
 import { buildLocalizedPath } from "../../i18n/utils";
 import type { Locale } from "../../config/site";
 
 interface Props {
-  evidencia: ClienteSatisfechoEvidencia;
+  evidencia: ClienteSatisfechoPublico;
   locale: Locale;
 }
 
 const { evidencia, locale } = Astro.props;
-const titulo = tituloClienteSatisfecho(evidencia);
-const href = buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${slugClienteSatisfecho(evidencia)}/`);
+const titulo = tituloConRespaldo(evidencia);
+const href = buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${evidencia.slug}/`);
 ---
 
 <a class="cs-card" href={href}>

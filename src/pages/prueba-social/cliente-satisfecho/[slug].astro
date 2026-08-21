@@ -1,31 +1,50 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ClienteSatisfechoDetailPage from "../../../components/pages/ClienteSatisfechoDetailPage.astro";
-import {
-  CLIENTES_SATISFECHOS,
-  tituloClienteSatisfecho,
-  slugClienteSatisfecho,
-} from "../../../data/cliente-satisfecho";
-
-export function getStaticPaths() {
-  return CLIENTES_SATISFECHOS.map((evidencia) => ({
-    params: { slug: slugClienteSatisfecho(evidencia) },
-    props: { evidencia },
-  }));
-}
+import { obtenerClienteSatisfechoPorSlug, tituloConRespaldo } from "../../../lib/nucleo-api";
+import { buildLocalizedPath, t } from "../../../i18n/utils";
 
 const locale = "es" as const;
-const { evidencia } = Astro.props;
-const titulo = tituloClienteSatisfecho(evidencia);
-const slug = slugClienteSatisfecho(evidencia);
+const { slug } = Astro.params;
+const evidencia = slug ? await obtenerClienteSatisfechoPorSlug(slug) : null;
+
+if (!evidencia) {
+  Astro.response.status = 404;
+}
+
+const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
 ---
 
-<BaseLayout
-  title={`${titulo} | ResetEnLinea.com`}
-  description={evidencia.previewTexto}
-  locale={locale}
-  path={`/prueba-social/cliente-satisfecho/${slug}/`}
-  noindex
->
-  <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
-</BaseLayout>
+{evidencia ? (
+  <BaseLayout
+    title={`${titulo} | ResetEnLinea.com`}
+    description={titulo}
+    locale={locale}
+    path={`/prueba-social/cliente-satisfecho/${evidencia.slug}/`}
+  >
+    <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
+  </BaseLayout>
+) : (
+  <BaseLayout
+    title="Página no encontrada | ResetEnLinea.com"
+    description="La página que buscas no existe o fue movida."
+    locale={locale}
+    path="/prueba-social/cliente-satisfecho/no-encontrado/"
+    noindex
+  >
+    <section class="not-found">
+      <h1>Página no encontrada</h1>
+      <p>La página que buscas no existe o fue movida.</p>
+      <a href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}>{t(locale, "clienteSatisfechoPage.volverLink")}</a>
+    </section>
+  </BaseLayout>
+)}
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>
