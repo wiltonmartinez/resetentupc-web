@@ -2,6 +2,13 @@
   "meta": {
     "siteName": "ResetEnLinea.com"
   },
+  "notFound": {
+    "title": "Page introuvable | ResetEnLinea.com",
+    "description": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "heading": "Page introuvable",
+    "texto": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "volver": "Retour à l'accueil"
+  },
   "nav": {
     "home": "Accueil",
     "comoFunciona": "Comment ça marche",

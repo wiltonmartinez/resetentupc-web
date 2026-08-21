@@ -2,6 +2,13 @@
   "meta": {
     "siteName": "ResetEnLinea.com"
   },
+  "notFound": {
+    "title": "Seite nicht gefunden | ResetEnLinea.com",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "heading": "Seite nicht gefunden",
+    "texto": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "volver": "Zurück zur Startseite"
+  },
   "nav": {
     "home": "Startseite",
     "comoFunciona": "So funktioniert's",

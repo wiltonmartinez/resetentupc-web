@@ -10,6 +10,20 @@ interface Props {
 
 const { locale, path, pageKey } = Astro.props;
 const label = t(locale, "common.selectLanguage");
+
+// Secciones solo en español a propósito (el propio menú principal ya las
+// enlaza sin prefijo de idioma — ver Header.astro: "/prueba-social/" y
+// "/ruleta/" hardcodeados). Sin este chequeo, cambiar de idioma ESTANDO en
+// una de estas páginas arma un link tipo /it/prueba-social/... que no
+// existe (404) — mejor mandar a la portada de ese idioma.
+const SECCIONES_SOLO_ESPANOL = ["/prueba-social", "/ruleta", "/404"];
+const esSeccionSoloEspanol = SECCIONES_SOLO_ESPANOL.some((prefijo) => path.startsWith(prefijo));
+
+function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
+  if (pageKey) return buildStaticPagePath(l, pageKey);
+  if (esSeccionSoloEspanol) return buildLocalizedPath(l, "/");
+  return buildLocalizedPath(l, path);
+}
 ---
 
 <nav class="language-selector" aria-label={label}>
@@ -18,7 +32,7 @@ const label = t(locale, "common.selectLanguage");
     {SUPPORTED_LOCALES.map((l) => (
       <li>
         <a
-          href={pageKey ? buildStaticPagePath(l, pageKey) : buildLocalizedPath(l, path)}
+          href={hrefParaLocale(l)}
           aria-current={l === locale ? "true" : undefined}
           data-locale={l}
           class="language-selector-link"

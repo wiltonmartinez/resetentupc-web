@@ -27,6 +27,24 @@ export function t(locale: Locale, key: string): any {
   return key.split(".").reduce<any>((acc, part) => acc?.[part], dictionaries[DEFAULT_LOCALE]) ?? key;
 }
 
+/**
+ * Detecta el locale a partir del prefijo real de la URL (ej. "/de/algo" -> "de"),
+ * para que rutas que no matchean ninguna página (catch-all de 404) muestren el
+ * layout en el idioma que el visitante realmente estaba navegando, no siempre
+ * en español. Ordena por longitud de prefijo descendente para que un locale
+ * nunca sea sombreado por otro cuyo prefijo sea substring del suyo.
+ */
+export function detectLocaleFromPath(pathname: string): Locale {
+  const locales = [...SUPPORTED_LOCALES].sort(
+    (a, b) => LOCALE_PATH_PREFIX[b].length - LOCALE_PATH_PREFIX[a].length
+  );
+  for (const locale of locales) {
+    const prefix = LOCALE_PATH_PREFIX[locale];
+    if (prefix && (pathname === prefix || pathname.startsWith(`${prefix}/`))) return locale;
+  }
+  return DEFAULT_LOCALE;
+}
+
 export function buildLocalizedPath(locale: Locale, path: string): string {
   const prefix = LOCALE_PATH_PREFIX[locale];
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;

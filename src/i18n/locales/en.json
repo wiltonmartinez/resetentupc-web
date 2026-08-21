@@ -2,6 +2,13 @@
   "meta": {
     "siteName": "ResetEnLinea.com"
   },
+  "notFound": {
+    "title": "Page not found | ResetEnLinea.com",
+    "description": "The page you're looking for doesn't exist or was moved.",
+    "heading": "Page not found",
+    "texto": "The page you're looking for doesn't exist or was moved.",
+    "volver": "Back to home"
+  },
   "nav": {
     "home": "Home",
     "comoFunciona": "How it works",

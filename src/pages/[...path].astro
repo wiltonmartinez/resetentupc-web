@@ -5,26 +5,26 @@
 // corresponden a ningún patrón de ruta actual — de lo contrario Astro las
 // resuelve directo a 404 sin pasar por el middleware.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { buildLocalizedPath } from "../i18n/utils";
+import { buildLocalizedPath, detectLocaleFromPath, t } from "../i18n/utils";
 
 export const prerender = false;
 
 Astro.response.status = 404;
 
-const locale = "es" as const;
+const locale = detectLocaleFromPath(Astro.url.pathname);
 ---
 
 <BaseLayout
-  title="Página no encontrada | ResetEnLinea.com"
-  description="La página que buscas no existe o fue movida."
+  title={t(locale, "notFound.title")}
+  description={t(locale, "notFound.description")}
   locale={locale}
   path="/404/"
   noindex
 >
   <section class="not-found">
-    <h1>Página no encontrada</h1>
-    <p>La página que buscas no existe o fue movida.</p>
-    <a href={buildLocalizedPath(locale, "/")}>Volver al inicio</a>
+    <h1>{t(locale, "notFound.heading")}</h1>
+    <p>{t(locale, "notFound.texto")}</p>
+    <a href={buildLocalizedPath(locale, "/")}>{t(locale, "notFound.volver")}</a>
   </section>
 </BaseLayout>
 

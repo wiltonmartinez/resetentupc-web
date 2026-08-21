@@ -2,6 +2,13 @@
   "meta": {
     "siteName": "ResetEnLinea.com"
   },
+  "notFound": {
+    "title": "Página no encontrada | ResetEnLinea.com",
+    "description": "La página que buscas no existe o fue movida.",
+    "heading": "Página no encontrada",
+    "texto": "La página que buscas no existe o fue movida.",
+    "volver": "Volver al inicio"
+  },
   "nav": {
     "home": "Inicio",
     "comoFunciona": "Cómo funciona",
