@@ -1,0 +1,42 @@
+---
+/**
+ * Cuerpo de la página de índice de Cliente Satisfecho, independiente del
+ * idioma — el archivo de ruta (uno para "es" sin prefijo, otro para
+ * en/pt/fr/it bajo /[locale]/) solo pasa el locale. Los valores de las
+ * evidencias (marca/modelo/país/medioPago) no se traducen por idioma.
+ */
+import Breadcrumb from "../Breadcrumb.astro";
+import ClienteSatisfechoCard from "../ui/ClienteSatisfechoCard.astro";
+import { CLIENTES_SATISFECHOS } from "../../data/cliente-satisfecho";
+import { buildLocalizedPath, t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<Breadcrumb
+  items={[
+    { label: t(locale, "nav.home"), href: buildLocalizedPath(locale, "/") },
+    { label: t(locale, "nav.pruebaSocial"), href: buildLocalizedPath(locale, "/prueba-social/") },
+    { label: t(locale, "clienteSatisfechoPage.heading") },
+  ]}
+/>
+<h1>{t(locale, "clienteSatisfechoPage.heading")}</h1>
+<p>{t(locale, "pruebaSocialPage.conversacionesTexto")}</p>
+<div class="cs-index-grid">
+  {CLIENTES_SATISFECHOS.map((evidencia) => (
+    <ClienteSatisfechoCard evidencia={evidencia} locale={locale} />
+  ))}
+</div>
+
+<style>
+  .cs-index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.85rem;
+  }
+</style>

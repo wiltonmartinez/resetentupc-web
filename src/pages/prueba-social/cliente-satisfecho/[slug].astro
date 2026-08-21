@@ -1,13 +1,11 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import Breadcrumb from "../../../components/Breadcrumb.astro";
-import ClienteSatisfechoEmbed from "../../../components/ui/ClienteSatisfechoEmbed.astro";
+import ClienteSatisfechoDetailPage from "../../../components/pages/ClienteSatisfechoDetailPage.astro";
 import {
   CLIENTES_SATISFECHOS,
   tituloClienteSatisfecho,
   slugClienteSatisfecho,
 } from "../../../data/cliente-satisfecho";
-import { t } from "../../../i18n/utils";
 
 export function getStaticPaths() {
   return CLIENTES_SATISFECHOS.map((evidencia) => ({
@@ -29,23 +27,5 @@ const slug = slugClienteSatisfecho(evidencia);
   path={`/prueba-social/cliente-satisfecho/${slug}/`}
   noindex
 >
-  <Breadcrumb
-    items={[
-      { label: t(locale, "nav.home"), href: "/" },
-      { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
-      { label: t(locale, "clienteSatisfechoPage.heading"), href: "/prueba-social/cliente-satisfecho/" },
-      { label: titulo },
-    ]}
-  />
-  <h1>{titulo}</h1>
-  <ClienteSatisfechoEmbed html={evidencia.html} titulo={titulo} />
-  <p class="cs-volver">
-    <a href="/prueba-social/cliente-satisfecho/">{t(locale, "clienteSatisfechoPage.volverLink")}</a>
-  </p>
+  <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
 </BaseLayout>
-
-<style>
-  .cs-volver {
-    text-align: center;
-  }
-</style>

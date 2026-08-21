@@ -1,0 +1,47 @@
+---
+/**
+ * Cuerpo de la página de detalle de Cliente Satisfecho, independiente del
+ * idioma. El título y el slug se arman con los datos de la evidencia
+ * (marca/modelo/país/medioPago) sin traducir — igual que ya pasa con
+ * marca/modelo en las páginas de modelo. Solo la copia alrededor (breadcrumb,
+ * enlace de vuelta) se traduce según el locale.
+ */
+import Breadcrumb from "../Breadcrumb.astro";
+import ClienteSatisfechoEmbed from "../ui/ClienteSatisfechoEmbed.astro";
+import { tituloClienteSatisfecho, type ClienteSatisfechoEvidencia } from "../../data/cliente-satisfecho";
+import { buildLocalizedPath, t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+  evidencia: ClienteSatisfechoEvidencia;
+}
+
+const { locale, evidencia } = Astro.props;
+const titulo = tituloClienteSatisfecho(evidencia);
+---
+
+<Breadcrumb
+  items={[
+    { label: t(locale, "nav.home"), href: buildLocalizedPath(locale, "/") },
+    { label: t(locale, "nav.pruebaSocial"), href: buildLocalizedPath(locale, "/prueba-social/") },
+    {
+      label: t(locale, "clienteSatisfechoPage.heading"),
+      href: buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/"),
+    },
+    { label: titulo },
+  ]}
+/>
+<h1>{titulo}</h1>
+<ClienteSatisfechoEmbed html={evidencia.html} titulo={titulo} />
+<p class="cs-volver">
+  <a href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}>
+    {t(locale, "clienteSatisfechoPage.volverLink")}
+  </a>
+</p>
+
+<style>
+  .cs-volver {
+    text-align: center;
+  }
+</style>

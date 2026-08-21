@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import ClienteSatisfechoDetailPage from "../../../../components/pages/ClienteSatisfechoDetailPage.astro";
+import {
+  CLIENTES_SATISFECHOS,
+  tituloClienteSatisfecho,
+  slugClienteSatisfecho,
+} from "../../../../data/cliente-satisfecho";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
+
+export function getStaticPaths() {
+  const locales = SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE);
+  return locales.flatMap((locale) =>
+    CLIENTES_SATISFECHOS.map((evidencia) => ({
+      params: { locale, slug: slugClienteSatisfecho(evidencia) },
+      props: { evidencia },
+    }))
+  );
+}
+
+const locale = Astro.params.locale as Locale;
+const { evidencia } = Astro.props;
+const titulo = tituloClienteSatisfecho(evidencia);
+const slug = slugClienteSatisfecho(evidencia);
+---
+
+<BaseLayout
+  title={`${titulo} | ResetEnLinea.com`}
+  description={evidencia.previewTexto}
+  locale={locale}
+  path={`/prueba-social/cliente-satisfecho/${slug}/`}
+  noindex
+>
+  <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
+</BaseLayout>

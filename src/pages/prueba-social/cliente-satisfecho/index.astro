@@ -1,8 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import Breadcrumb from "../../../components/Breadcrumb.astro";
-import ClienteSatisfechoCard from "../../../components/ui/ClienteSatisfechoCard.astro";
-import { CLIENTES_SATISFECHOS } from "../../../data/cliente-satisfecho";
+import ClienteSatisfechoIndexPage from "../../../components/pages/ClienteSatisfechoIndexPage.astro";
 import { t } from "../../../i18n/utils";
 
 const locale = "es" as const;
@@ -15,26 +13,5 @@ const locale = "es" as const;
   path="/prueba-social/cliente-satisfecho/"
   noindex
 >
-  <Breadcrumb
-    items={[
-      { label: t(locale, "nav.home"), href: "/" },
-      { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
-      { label: t(locale, "clienteSatisfechoPage.heading") },
-    ]}
-  />
-  <h1>{t(locale, "clienteSatisfechoPage.heading")}</h1>
-  <p>{t(locale, "pruebaSocialPage.conversacionesTexto")}</p>
-  <div class="cs-index-grid">
-    {CLIENTES_SATISFECHOS.map((evidencia) => (
-      <ClienteSatisfechoCard evidencia={evidencia} />
-    ))}
-  </div>
+  <ClienteSatisfechoIndexPage locale={locale} />
 </BaseLayout>
-
-<style>
-  .cs-index-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.85rem;
-  }
-</style>

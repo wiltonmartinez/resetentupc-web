@@ -26,11 +26,14 @@ export function tituloClienteSatisfecho(evidencia: ClienteSatisfechoEvidencia): 
 }
 
 /**
- * Slug público = marca-modelo-errorCorto-pais-medioPago, concatenado con
- * guiones. Se calcula SIEMPRE a partir de estos mismos 5 campos (nunca se
- * escribe a mano) para que sea consistente y para que valores de varias
- * palabras (ej. "Bancolombia Ahorros") se normalicen igual en cualquier
- * entrada — sin acentos, en minúsculas, espacios y símbolos como guion.
+ * Slug publico = reset-marca-modelo-pais-medioPago, concatenado con
+ * guiones ("reset" es un prefijo fijo, no un dato). Se calcula SIEMPRE a
+ * partir de estos mismos campos (nunca se escribe a mano) para que sea
+ * consistente y para que valores de varias palabras (ej. "Bancolombia
+ * Ahorros") se normalicen igual en cualquier entrada -- sin acentos, en
+ * minusculas, espacios y simbolos como guion. Es el mismo slug en los 5
+ * idiomas: los valores (marca/modelo/pais/medioPago) no se traducen por
+ * idioma, igual que ya pasa con marca/modelo en las paginas de modelo.
  */
 function normalizarParteSlug(texto: string): string {
   return texto
@@ -42,7 +45,7 @@ function normalizarParteSlug(texto: string): string {
 }
 
 export function slugClienteSatisfecho(evidencia: ClienteSatisfechoEvidencia): string {
-  return [evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais, evidencia.medioPago]
+  return ["reset", evidencia.marca, evidencia.modelo, evidencia.pais, evidencia.medioPago]
     .map(normalizarParteSlug)
     .join("-");
 }
