@@ -1,0 +1,108 @@
+---
+/**
+ * Igual que la versión "es" (sin prefijo) pero para en/pt/fr/it/de/ru.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TrustpilotWidget from "../../components/TrustpilotWidget.astro";
+import InfoCard from "../../components/ui/InfoCard.astro";
+import AyudaCTA from "../../components/AyudaCTA.astro";
+import { t, buildLocalizedPath } from "../../i18n/utils";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../config/site";
+
+export function getStaticPaths() {
+  return SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+
+const categorias = [
+  {
+    href: buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/"),
+    titulo: t(locale, "pruebaSocialPage.conversacionesTitulo"),
+    texto: t(locale, "pruebaSocialPage.conversacionesTexto"),
+  },
+  {
+    href: buildLocalizedPath(locale, "/prueba-social/reset-evidencia/"),
+    titulo: t(locale, "pruebaSocialPage.resetsTitulo"),
+    texto: t(locale, "pruebaSocialPage.resetsTexto"),
+  },
+];
+---
+
+<BaseLayout
+  title={t(locale, "pruebaSocialPage.title")}
+  description={t(locale, "pruebaSocialPage.description")}
+  locale={locale}
+  path="/prueba-social/"
+  noindex
+>
+  <section class="prueba-social-intro">
+    <h1>{t(locale, "pruebaSocialPage.heading")}</h1>
+    <p>{t(locale, "pruebaSocialPage.introTexto")}</p>
+    <TrustpilotWidget />
+  </section>
+
+  <section class="prueba-social-categorias">
+    {categorias.map((categoria) => (
+      <a class="prueba-social-categoria" href={categoria.href}>
+        <h2>{categoria.titulo}</h2>
+        <p>{categoria.texto}</p>
+        <span class="prueba-social-categoria-enlace" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </section>
+
+  <InfoCard tone="accent">
+    <h2>{t(locale, "pruebaSocialPage.ctaTitulo")}</h2>
+    <AyudaCTA sourceId="prueba-social-cta" label={t(locale, "pruebaSocialPage.ctaBoton")} />
+  </InfoCard>
+</BaseLayout>
+
+<style>
+  .prueba-social-intro {
+    display: grid;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .prueba-social-categorias {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .prueba-social-categoria {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .prueba-social-categoria:hover {
+    border-color: var(--color-primary);
+  }
+
+  .prueba-social-categoria h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .prueba-social-categoria p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .prueba-social-categoria-enlace {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+</style>

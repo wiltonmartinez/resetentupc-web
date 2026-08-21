@@ -6,13 +6,16 @@
  * detalle de cada slug.
  */
 import { tituloConRespaldo, type ResetRealizadoPublico } from "../../lib/nucleo-api";
+import { buildLocalizedPath } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
 
 interface Props {
   evidencia: ResetRealizadoPublico;
+  locale: Locale;
 }
 
-const { evidencia } = Astro.props;
-const href = `/prueba-social/reset-evidencia/${evidencia.slug}/`;
+const { evidencia, locale } = Astro.props;
+const href = buildLocalizedPath(locale, `/prueba-social/reset-evidencia/${evidencia.slug}/`);
 const titulo = tituloConRespaldo(evidencia);
 const resumen = [evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais].join(" · ");
 ---

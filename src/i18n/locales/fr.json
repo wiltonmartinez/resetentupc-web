@@ -15,7 +15,9 @@
     "preguntasFrecuentes": "FAQ",
     "contacto": "Contact",
     "pruebaSocial": "Prueba Social",
-    "ruleta": "Ruleta"
+    "ruleta": "Ruleta",
+    "abrirMenu": "Ouvrir le menu",
+    "eslogan": "Réinitialisation professionnelle, sûre et rapide."
   },
   "common": {
     "whatsappButton": "Écrire sur WhatsApp",
@@ -24,7 +26,9 @@
     "languageSuggestionAccept": "Oui, changer",
     "languageSuggestionDismiss": "Non, merci",
     "soundOnLabel": "Son activé. Appuyez pour désactiver.",
-    "soundOffLabel": "Son désactivé. Appuyez pour activer."
+    "soundOffLabel": "Son désactivé. Appuyez pour activer.",
+    "paginaAnterior": "← Précédent",
+    "paginaSiguiente": "Suivant →"
   },
   "home": {
     "title": "Réinitialisation d'imprimante assistée et professionnelle | ResetEnLinea.com",
@@ -59,7 +63,8 @@
     "favoritoQuitar": "Retirer {nombre} des favoris",
     "favoritosVacio": "Vous n'avez pas encore ajouté d'imprimantes à vos favoris. Touchez l'étoile ⭐ sur un modèle pour l'enregistrer ici.",
     "buscadorLimpiar": "Effacer la recherche",
-    "verModelo": "Voir le modèle"
+    "verModelo": "Voir le modèle",
+    "heroTagline": "Réinitialisation professionnelle, sûre et rapide, avec une garantie réutilisable depuis n'importe quel PC."
   },
   "modelo": {
     "titleTemplate": "Réinitialisation {marca} {modelo} — Service Assisté | ResetEnLinea.com",
@@ -95,7 +100,8 @@
     "resetTitulo": "Réinitialisation assistée",
     "resetTexto": "Un technicien effectue la réinitialisation à distance, en vous guidant à chaque étape.",
     "certificadoTitulo": "Certificat de garantie",
-    "certificadoTexto": "Vous recevez un certificat de garantie pour le service effectué."
+    "certificadoTexto": "Vous recevez un certificat de garantie pour le service effectué.",
+    "cicloTexto": "Le processus se répète à chaque nouveau service"
   },
   "proceso": {
     "titulo": "Réinitialisation assistée 100 % à distance par connexion USB",
@@ -133,14 +139,38 @@
     "description": "Nous répondons aux questions les plus courantes sur la réinitialisation des imprimantes et notre processus d'assistance.",
     "heading": "Questions fréquentes",
     "items": [
-      { "pregunta": "Ce site propose-t-il un programme gratuit pour réinitialiser mon imprimante moi-même ?", "respuesta": "Non. Nous ne distribuons pas de programmes de reset gratuits ni d'outils en libre-service. C'est un service 100 % assisté : un technicien réel vous accompagne sur WhatsApp tout au long du processus." },
-      { "pregunta": "Est-il sûr de réinitialiser mon imprimante ?", "respuesta": "Oui. Nous procédons avec un diagnostic préalable et un accompagnement professionnel à chaque étape." },
-      { "pregunta": "Est-il sûr de partager la connexion USB de mon imprimante ?", "respuesta": "Oui. Nous ne partageons que la connexion USB de votre imprimante : nous ne voyons jamais votre écran, n'accédons pas à vos fichiers et ne contrôlons pas votre ordinateur. Vous gardez le contrôle à tout moment." },
-      { "pregunta": "Dois-je désactiver mon antivirus ?", "respuesta": "Non. Nous ne demandons jamais de désactiver l'antivirus ni aucun système de sécurité de votre appareil." },
-      { "pregunta": "De quoi ai-je besoin pour l'assistance à distance ?", "respuesta": "Une connexion internet stable et votre imprimante connectée en USB à votre ordinateur." },
-      { "pregunta": "Quand le paiement du service est-il effectué ?", "respuesta": "Nous évaluons d'abord votre cas et confirmons que votre modèle et votre erreur sont compatibles. Ce n'est qu'après cette confirmation que nous indiquons le prix et organisons le paiement." },
-      { "pregunta": "Est-ce que je reçois un justificatif du service ?", "respuesta": "Oui. Une fois la réinitialisation terminée, vous recevez un certificat de garantie du service effectué." },
-      { "pregunta": "Que se passe-t-il si mon appareil ne remplit pas les conditions requises ?", "respuesta": "Nous évaluons des alternatives, y compris une procédure locale guidée par connexion USB." }
+      {
+        "pregunta": "Ce site propose-t-il un programme gratuit pour réinitialiser mon imprimante moi-même ?",
+        "respuesta": "Non. Nous ne distribuons pas de programmes de reset gratuits ni d'outils en libre-service. C'est un service 100 % assisté : un technicien réel vous accompagne sur WhatsApp tout au long du processus."
+      },
+      {
+        "pregunta": "Est-il sûr de réinitialiser mon imprimante ?",
+        "respuesta": "Oui. Nous procédons avec un diagnostic préalable et un accompagnement professionnel à chaque étape."
+      },
+      {
+        "pregunta": "Est-il sûr de partager la connexion USB de mon imprimante ?",
+        "respuesta": "Oui. Nous ne partageons que la connexion USB de votre imprimante : nous ne voyons jamais votre écran, n'accédons pas à vos fichiers et ne contrôlons pas votre ordinateur. Vous gardez le contrôle à tout moment."
+      },
+      {
+        "pregunta": "Dois-je désactiver mon antivirus ?",
+        "respuesta": "Non. Nous ne demandons jamais de désactiver l'antivirus ni aucun système de sécurité de votre appareil."
+      },
+      {
+        "pregunta": "De quoi ai-je besoin pour l'assistance à distance ?",
+        "respuesta": "Une connexion internet stable et votre imprimante connectée en USB à votre ordinateur."
+      },
+      {
+        "pregunta": "Quand le paiement du service est-il effectué ?",
+        "respuesta": "Nous évaluons d'abord votre cas et confirmons que votre modèle et votre erreur sont compatibles. Ce n'est qu'après cette confirmation que nous indiquons le prix et organisons le paiement."
+      },
+      {
+        "pregunta": "Est-ce que je reçois un justificatif du service ?",
+        "respuesta": "Oui. Une fois la réinitialisation terminée, vous recevez un certificat de garantie du service effectué."
+      },
+      {
+        "pregunta": "Que se passe-t-il si mon appareil ne remplit pas les conditions requises ?",
+        "respuesta": "Nous évaluons des alternatives, y compris une procédure locale guidée par connexion USB."
+      }
     ]
   },
   "contacto": {
@@ -297,10 +327,109 @@
     "conexionPaso3Desconectar": "Débranchez le câble USB de l'imprimante.",
     "conexionPaso3Esperar": "Attendez 5 secondes.",
     "conexionPaso3Reconectar": "Rebranchez le câble USB.",
-    "conexionAviso": "Effectuez toutes les étapes et prévenez-nous quand vous êtes prêt — nous vous attendrons à l'étape #2."
+    "conexionAviso": "Effectuez toutes les étapes et prévenez-nous quand vous êtes prêt — nous vous attendrons à l'étape #2.",
+    "modeloAyuda": "Indiquez le modèle exact indiqué sur votre imprimante",
+    "errorOtroPlaceholder": "Décrivez l'erreur",
+    "exitoWhatsapp": "C'est fait ! WhatsApp s'est ouvert avec votre message.",
+    "resumenTitulo": "Résumé de votre demande",
+    "resumenAyuda": "Vérifiez que tout est correct avant d'envoyer.",
+    "resumenContinuar": "Confirmer et continuer",
+    "paisLabel": "Dans quel pays êtes-vous ?",
+    "paisPlaceholder": "Sélectionnez votre pays",
+    "checklistPais": "Pays",
+    "metodoPagoLabel": "Comment préférez-vous payer ?",
+    "checklistMetodoPago": "Méthode de paiement",
+    "preciosTitulo": "Prix et informations de paiement",
+    "preciosAyuda": "Voici le prix selon votre pays et le plan de garantie. Nous confirmerons le plan exact avec vous avant de facturer.",
+    "planEsencial": "Essentiel (garantie de moins de 6 mois)",
+    "planProfesional": "Professionnel (garantie de 6 à 11 mois)",
+    "planElite": "Elite (garantie de 12+ mois ou à vie)",
+    "textoPreciosNoDisponibles": "Nous n'avons pas encore de tarif défini pour ce type d'équipement dans votre pays — nous vous le confirmerons sur WhatsApp.",
+    "avisoContactoCompra": "Après avoir effectué le paiement, écrivez-nous pour organiser l'exécution immédiate de votre service.",
+    "seleccionaOpcion": "Sélectionnez une option",
+    "rolLabel": "Êtes-vous le propriétaire, l'utilisateur, ou le technicien ?",
+    "rolDueno": "Propriétaire",
+    "rolUsuario": "Utilisateur",
+    "rolTecnico": "Technicien",
+    "checklistRol": "Qui répond",
+    "cercaLabel": "Êtes-vous près de l'imprimante en ce moment ?",
+    "cercaSi": "Oui",
+    "cercaNo": "Non",
+    "checklistCerca": "Près de l'imprimante",
+    "necesitaLabel": "Que souhaitez-vous recevoir ?",
+    "necesitaResetAsistido": "Service de réinitialisation assistée en 1 minute",
+    "necesitaResetAsistidoDetalle": "Recommandé — sûr et rapide",
+    "necesitaInstalacionAsistida": "Installation de programme (assistée)",
+    "necesitaInstalacionAsistidaDetalle": "Nécessite de désactiver l'antivirus et de saisir AnyDesk. Un technicien vous guide dans la réinitialisation.",
+    "necesitaInstalacionAutonoma": "Installation de programme (autonome)",
+    "necesitaInstalacionAutonomaDetalle": "Nécessite de désactiver l'antivirus et de saisir AnyDesk. Il est installé, mais c'est vous qui faites la réinitialisation.",
+    "checklistNecesita": "Ce qu'il/elle doit recevoir",
+    "servicioCalculadoLabel": "Voici votre service",
+    "servicioCalculadoAyuda": "D'après ce que vous nous avez dit, voici l'option qui vous correspond.",
+    "servicioRemotoUsb": "Réinitialisation Assistée 100% à Distance par connexion USB",
+    "servicioLocalWifi": "Réinitialisation Assistée 100% Locale par connexion WIFI",
+    "servicioRemotoUsbMac": "Réinitialisation Assistée 100% à Distance par connexion USB sur MAC",
+    "servicioLocalUsbAsistido": "Réinitialisation Assistée 100% Locale par connexion USB",
+    "servicioAutonomoLocalUsb": "Réinitialisation Autonome 100% Locale par connexion USB",
+    "checklistServicioFinal": "Service",
+    "garantiaVerificarLabel": "Avec quoi vérifions-nous votre garantie ?",
+    "garantiaVerificarPlaceholder": "Votre numéro de commande ou l'e-mail utilisé pour l'achat",
+    "garantiaVerificarAyuda": "Si vous ne l'avez pas sous la main, dites-le nous quand même — nous le vérifierons avec vous",
+    "garantiaVerificarBoton": "Vérifier",
+    "garantiaVerificando": "Vérification…",
+    "garantiaVigente": "✅ Garantie valide",
+    "garantiaVencida": "⚠️ Garantie expirée",
+    "garantiaNoEncontrada": "Nous n'avons pas trouvé de garantie avec cette information — vous pouvez continuer quand même, nous vérifierons avec vous.",
+    "checklistGarantiaDato": "Information de garantie"
   },
   "footer": {
     "rights": "Tous droits réservés.",
     "disclaimer": "ResetEnLinea.com propose une assistance professionnelle indépendante pour la réinitialisation d'imprimantes. Les marques mentionnées appartiennent à leurs propriétaires respectifs."
+  },
+  "ruletaPage": {
+    "title": "Roulette | ResetEnLinea.com",
+    "description": "Jouez et obtenez un coupon de réduction pour votre service de réinitialisation.",
+    "heading": "Faites tourner la roue",
+    "texto": "Jouez et obtenez votre coupon de réduction. Une fois terminé, écrivez-nous pour l'utiliser."
+  },
+  "pruebaSocialPage": {
+    "title": "Preuve Sociale | ResetEnLinea.com",
+    "description": "Avis réels de clients ayant déjà utilisé notre service de réinitialisation assistée.",
+    "heading": "Preuve Sociale",
+    "texto": "Avis réels et vérifiés sur Trustpilot.",
+    "introTexto": "Nous rassemblons ici des expériences et des preuves réelles de clients et de services réalisés par ResetEnLinea.",
+    "tabConversaciones": "Conversations Réelles",
+    "tabResets": "Réinitialisations Effectuées",
+    "conversacionesTitulo": "Conversations Réelles",
+    "conversacionesTexto": "Expériences et conversations réelles avec nos clients. Pour protéger leur vie privée, les données personnelles ont été masquées.",
+    "ampliarConversacion": "Agrandir la conversation",
+    "cerrarModal": "Fermer",
+    "resetsTitulo": "Preuves de Réinitialisation",
+    "resetsTexto": "Preuves vidéo de services de réinitialisation effectués à distance.",
+    "reproducirVideo": "Lire la vidéo",
+    "ctaTitulo": "Besoin d'une réinitialisation ?",
+    "ctaBoton": "Contacter sur WhatsApp"
+  },
+  "resetRealizadosPage": {
+    "title": "Preuves de Réinitialisation | ResetEnLinea.com",
+    "description": "Preuves vidéo de services de réinitialisation effectués à distance par ResetEnLinea.",
+    "heading": "Preuves de Réinitialisation",
+    "marca": "Marque",
+    "modelo": "Modèle",
+    "error": "Erreur",
+    "pais": "Pays",
+    "duracion": "Durée",
+    "segundos": "secondes",
+    "volverLink": "← Retour aux Preuves de Réinitialisation",
+    "sinRegistros": "Il n'y a pas encore de réinitialisations publiées.",
+    "resumenContenido": "Vraie vidéo de la réinitialisation d'une imprimante {marca} {modelo} — {error} — en {pais}, d'une durée de {duracion}.",
+    "resumenContenidoSinDuracion": "Vraie vidéo de la réinitialisation d'une imprimante {marca} {modelo} — {error} — en {pais}."
+  },
+  "clienteSatisfechoPage": {
+    "title": "Client Satisfait | ResetEnLinea.com",
+    "description": "Conversations réelles avec des clients ayant déjà utilisé notre service de réinitialisation assistée.",
+    "heading": "Client Satisfait",
+    "volverLink": "← Retour à Client Satisfait",
+    "sinRegistros": "Il n'y a pas encore de conversations publiées."
   }
 }

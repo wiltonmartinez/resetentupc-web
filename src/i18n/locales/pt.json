@@ -15,7 +15,9 @@
     "preguntasFrecuentes": "Perguntas frequentes",
     "contacto": "Contato",
     "pruebaSocial": "Prueba Social",
-    "ruleta": "Ruleta"
+    "ruleta": "Ruleta",
+    "abrirMenu": "Abrir menu",
+    "eslogan": "Reset profissional, seguro e rápido."
   },
   "common": {
     "whatsappButton": "Falar no WhatsApp",
@@ -24,7 +26,9 @@
     "languageSuggestionAccept": "Sim, mudar",
     "languageSuggestionDismiss": "Não, obrigado",
     "soundOnLabel": "Som ativado. Toque para desativar.",
-    "soundOffLabel": "Som desativado. Toque para ativar."
+    "soundOffLabel": "Som desativado. Toque para ativar.",
+    "paginaAnterior": "← Anterior",
+    "paginaSiguiente": "Próxima →"
   },
   "home": {
     "title": "Reset assistido e profissional de impressoras | ResetEnLinea.com",
@@ -59,7 +63,8 @@
     "favoritoQuitar": "Remover {nombre} dos favoritos",
     "favoritosVacio": "Você ainda não adicionou impressoras aos favoritos. Toque na estrela ⭐ em qualquer modelo para salvá-lo aqui.",
     "buscadorLimpiar": "Limpar busca",
-    "verModelo": "Ver modelo"
+    "verModelo": "Ver modelo",
+    "heroTagline": "Reset profissional, seguro e rápido, com garantia reutilizável de qualquer PC."
   },
   "modelo": {
     "titleTemplate": "Reset {marca} {modelo} — Serviço Assistido | ResetEnLinea.com",
@@ -95,7 +100,8 @@
     "resetTitulo": "Reset assistido",
     "resetTexto": "Um técnico realiza o reset remotamente, te orientando em cada passo.",
     "certificadoTitulo": "Certificado de garantia",
-    "certificadoTexto": "Você recebe um certificado de garantia do serviço realizado."
+    "certificadoTexto": "Você recebe um certificado de garantia do serviço realizado.",
+    "cicloTexto": "O processo se repete a cada novo serviço"
   },
   "proceso": {
     "titulo": "Reset Assistido 100% Remoto por conexão USB",
@@ -133,14 +139,38 @@
     "description": "Respondemos às dúvidas mais comuns sobre o reset de impressoras e nosso processo de assistência.",
     "heading": "Perguntas frequentes",
     "items": [
-      { "pregunta": "Este site oferece um programa gratuito para resetar minha impressora sozinho?", "respuesta": "Não. Não distribuímos programas de reset gratuitos nem ferramentas de autosserviço. É um serviço 100% assistido: um técnico real te acompanha pelo WhatsApp durante todo o processo." },
-      { "pregunta": "É seguro fazer o reset da minha impressora?", "respuesta": "Sim. Trabalhamos com diagnóstico prévio e acompanhamento profissional em cada procedimento." },
-      { "pregunta": "É seguro compartilhar a conexão USB da minha impressora?", "respuesta": "Sim. Compartilhamos apenas a conexão USB da sua impressora: nunca vemos sua tela, não acessamos seus arquivos nem controlamos seu computador. Você mantém o controle o tempo todo." },
-      { "pregunta": "Preciso desativar o antivírus?", "respuesta": "Não. Não pedimos para desativar o antivírus nem nenhum sistema de segurança do seu equipamento." },
-      { "pregunta": "O que preciso para a assistência remota?", "respuesta": "Uma conexão estável à internet e sua impressora conectada por USB ao computador." },
-      { "pregunta": "Quando o pagamento do serviço é feito?", "respuesta": "Primeiro avaliamos seu caso e confirmamos que seu modelo e erro são compatíveis. Só depois dessa confirmação informamos o valor e combinamos o pagamento." },
-      { "pregunta": "Recebo algum comprovante do serviço?", "respuesta": "Sim. Ao finalizar o reset, você recebe um certificado de garantia do serviço realizado." },
-      { "pregunta": "E se meu equipamento não atender aos requisitos?", "respuesta": "Avaliamos alternativas, incluindo um procedimento local guiado por conexão USB." }
+      {
+        "pregunta": "Este site oferece um programa gratuito para resetar minha impressora sozinho?",
+        "respuesta": "Não. Não distribuímos programas de reset gratuitos nem ferramentas de autosserviço. É um serviço 100% assistido: um técnico real te acompanha pelo WhatsApp durante todo o processo."
+      },
+      {
+        "pregunta": "É seguro fazer o reset da minha impressora?",
+        "respuesta": "Sim. Trabalhamos com diagnóstico prévio e acompanhamento profissional em cada procedimento."
+      },
+      {
+        "pregunta": "É seguro compartilhar a conexão USB da minha impressora?",
+        "respuesta": "Sim. Compartilhamos apenas a conexão USB da sua impressora: nunca vemos sua tela, não acessamos seus arquivos nem controlamos seu computador. Você mantém o controle o tempo todo."
+      },
+      {
+        "pregunta": "Preciso desativar o antivírus?",
+        "respuesta": "Não. Não pedimos para desativar o antivírus nem nenhum sistema de segurança do seu equipamento."
+      },
+      {
+        "pregunta": "O que preciso para a assistência remota?",
+        "respuesta": "Uma conexão estável à internet e sua impressora conectada por USB ao computador."
+      },
+      {
+        "pregunta": "Quando o pagamento do serviço é feito?",
+        "respuesta": "Primeiro avaliamos seu caso e confirmamos que seu modelo e erro são compatíveis. Só depois dessa confirmação informamos o valor e combinamos o pagamento."
+      },
+      {
+        "pregunta": "Recebo algum comprovante do serviço?",
+        "respuesta": "Sim. Ao finalizar o reset, você recebe um certificado de garantia do serviço realizado."
+      },
+      {
+        "pregunta": "E se meu equipamento não atender aos requisitos?",
+        "respuesta": "Avaliamos alternativas, incluindo um procedimento local guiado por conexão USB."
+      }
     ]
   },
   "contacto": {
@@ -297,10 +327,109 @@
     "conexionPaso3Desconectar": "Desconecte o cabo USB da impressora.",
     "conexionPaso3Esperar": "Aguarde 5 segundos.",
     "conexionPaso3Reconectar": "Conecte o cabo USB novamente.",
-    "conexionAviso": "Realize todos os passos e avise quando estiver pronto — estaremos esperando no passo #2."
+    "conexionAviso": "Realize todos os passos e avise quando estiver pronto — estaremos esperando no passo #2.",
+    "modeloAyuda": "Escreva o modelo exato que aparece na sua impressora",
+    "errorOtroPlaceholder": "Descreva o erro",
+    "exitoWhatsapp": "Pronto! O WhatsApp foi aberto com sua mensagem.",
+    "resumenTitulo": "Resumo da sua solicitação",
+    "resumenAyuda": "Verifique se está tudo correto antes de enviar.",
+    "resumenContinuar": "Confirmar e continuar",
+    "paisLabel": "Em que país você está?",
+    "paisPlaceholder": "Selecione seu país",
+    "checklistPais": "País",
+    "metodoPagoLabel": "Como você prefere pagar?",
+    "checklistMetodoPago": "Método de pagamento",
+    "preciosTitulo": "Preço e dados de pagamento",
+    "preciosAyuda": "Este é o preço de acordo com seu país e o plano de garantia. Confirmamos o plano exato com você antes de cobrar.",
+    "planEsencial": "Essencial (garantia menor que 6 meses)",
+    "planProfesional": "Profissional (garantia de 6 a 11 meses)",
+    "planElite": "Elite (garantia de 12+ meses ou vitalícia)",
+    "textoPreciosNoDisponibles": "Ainda não temos uma tarifa definida para este tipo de equipamento no seu país — confirmamos pelo WhatsApp.",
+    "avisoContactoCompra": "Depois de realizar o pagamento, escreva para coordenarmos o despacho imediato do seu serviço.",
+    "seleccionaOpcion": "Selecione uma opção",
+    "rolLabel": "Você é o dono, usuário ou técnico?",
+    "rolDueno": "Dono",
+    "rolUsuario": "Usuário",
+    "rolTecnico": "Técnico",
+    "checklistRol": "Quem responde",
+    "cercaLabel": "Você está perto da impressora agora?",
+    "cercaSi": "Sim",
+    "cercaNo": "Não",
+    "checklistCerca": "Perto da impressora",
+    "necesitaLabel": "O que você precisa receber?",
+    "necesitaResetAsistido": "Serviço de Reset Assistido em 1 minuto",
+    "necesitaResetAsistidoDetalle": "Recomendado — seguro e rápido",
+    "necesitaInstalacionAsistida": "Instalação de programa (assistida)",
+    "necesitaInstalacionAsistidaDetalle": "Requer desativar o antivírus e inserir o AnyDesk. Um técnico te orienta no reset.",
+    "necesitaInstalacionAutonoma": "Instalação de programa (autônomo)",
+    "necesitaInstalacionAutonomaDetalle": "Requer desativar o antivírus e inserir o AnyDesk. O programa é instalado, mas você faz o reset.",
+    "checklistNecesita": "O que precisa receber",
+    "servicioCalculadoLabel": "Este é o seu serviço",
+    "servicioCalculadoAyuda": "Com base no que você nos contou, esta é a modalidade que se aplica a você.",
+    "servicioRemotoUsb": "Reset Assistido 100% Remoto por conexão USB",
+    "servicioLocalWifi": "Reset Assistido 100% Local por conexão WI-FI",
+    "servicioRemotoUsbMac": "Reset Assistido 100% Remoto por conexão USB no MAC",
+    "servicioLocalUsbAsistido": "Reset Assistido 100% Local por conexão USB",
+    "servicioAutonomoLocalUsb": "Reset Autônomo 100% Local por conexão USB",
+    "checklistServicioFinal": "Serviço",
+    "garantiaVerificarLabel": "Com o que verificamos sua garantia?",
+    "garantiaVerificarPlaceholder": "O número do seu pedido ou o e-mail com o qual comprou",
+    "garantiaVerificarAyuda": "Se não tiver à mão, nos conte mesmo assim — verificamos junto com você",
+    "garantiaVerificarBoton": "Verificar",
+    "garantiaVerificando": "Verificando…",
+    "garantiaVigente": "✅ Garantia válida",
+    "garantiaVencida": "⚠️ Garantia vencida",
+    "garantiaNoEncontrada": "Não encontramos uma garantia com esse dado — você pode continuar mesmo assim, verificamos junto com você.",
+    "checklistGarantiaDato": "Dado da garantia"
   },
   "footer": {
     "rights": "Todos os direitos reservados.",
     "disclaimer": "A ResetEnLinea.com oferece assistência profissional independente para o reset de impressoras. As marcas mencionadas pertencem a seus respectivos proprietários."
+  },
+  "ruletaPage": {
+    "title": "Roleta | ResetEnLinea.com",
+    "description": "Jogue e ganhe um cupom de desconto para o seu serviço de reset.",
+    "heading": "Gire a roleta",
+    "texto": "Jogue e ganhe seu cupom de desconto. Quando terminar, você pode nos escrever para usá-lo."
+  },
+  "pruebaSocialPage": {
+    "title": "Prova Social | ResetEnLinea.com",
+    "description": "Avaliações reais de clientes que já usaram nosso serviço de reset assistido.",
+    "heading": "Prova Social",
+    "texto": "Avaliações reais verificadas no Trustpilot.",
+    "introTexto": "Aqui reunimos experiências e evidências reais de clientes e serviços realizados pela ResetEnLinea.",
+    "tabConversaciones": "Conversas Reais",
+    "tabResets": "Resets Realizados",
+    "conversacionesTitulo": "Conversas Reais",
+    "conversacionesTexto": "Experiências e conversas reais com nossos clientes. Para proteger a privacidade deles, os dados pessoais foram ocultados.",
+    "ampliarConversacion": "Ampliar conversa",
+    "cerrarModal": "Fechar",
+    "resetsTitulo": "Evidência de Reset",
+    "resetsTexto": "Evidência em vídeo de serviços de reset realizados remotamente.",
+    "reproducirVideo": "Reproduzir vídeo",
+    "ctaTitulo": "Precisa fazer um reset?",
+    "ctaBoton": "Falar pelo WhatsApp"
+  },
+  "resetRealizadosPage": {
+    "title": "Evidência de Reset | ResetEnLinea.com",
+    "description": "Evidência em vídeo de serviços de reset realizados remotamente pela ResetEnLinea.",
+    "heading": "Evidência de Reset",
+    "marca": "Marca",
+    "modelo": "Modelo",
+    "error": "Erro",
+    "pais": "País",
+    "duracion": "Duração",
+    "segundos": "segundos",
+    "volverLink": "← Voltar para Evidência de Reset",
+    "sinRegistros": "Ainda não há resets publicados.",
+    "resumenContenido": "Vídeo real do reset de uma impressora {marca} {modelo} — {error} — em {pais}, com duração de {duracion}.",
+    "resumenContenidoSinDuracion": "Vídeo real do reset de uma impressora {marca} {modelo} — {error} — em {pais}."
+  },
+  "clienteSatisfechoPage": {
+    "title": "Cliente Satisfeito | ResetEnLinea.com",
+    "description": "Conversas reais com clientes que já usaram nosso serviço de reset assistido.",
+    "heading": "Cliente Satisfeito",
+    "volverLink": "← Voltar para Cliente Satisfeito",
+    "sinRegistros": "Ainda não há conversas publicadas."
   }
 }

@@ -1,14 +1,21 @@
 ---
+/**
+ * Igual que la versión "es" (sin prefijo) pero para en/pt/fr/it/de/ru.
+ */
 export const prerender = false;
 
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ResetEvidenciaDetailPage from "../../../components/pages/ResetEvidenciaDetailPage.astro";
-import { obtenerResetRealizadoPorSlug, tituloConRespaldo } from "../../../lib/nucleo-api";
-import { buildLocalizedPath, t } from "../../../i18n/utils";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import ResetEvidenciaDetailPage from "../../../../components/pages/ResetEvidenciaDetailPage.astro";
+import { obtenerResetRealizadoPorSlug, tituloConRespaldo } from "../../../../lib/nucleo-api";
+import { buildLocalizedPath, t } from "../../../../i18n/utils";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
 
-const locale = "es" as const;
+const localeParam = Astro.params.locale ?? "";
+const localeValida = SUPPORTED_LOCALES.includes(localeParam as Locale) && localeParam !== DEFAULT_LOCALE;
+const locale = (localeValida ? localeParam : DEFAULT_LOCALE) as Locale;
+
 const { slug } = Astro.params;
-const evidencia = slug ? await obtenerResetRealizadoPorSlug(slug) : null;
+const evidencia = localeValida && slug ? await obtenerResetRealizadoPorSlug(slug) : null;
 
 if (!evidencia) {
   Astro.response.status = 404;

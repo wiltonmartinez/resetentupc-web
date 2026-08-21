@@ -15,7 +15,9 @@
     "preguntasFrecuentes": "FAQ",
     "contacto": "Contact",
     "pruebaSocial": "Prueba Social",
-    "ruleta": "Ruleta"
+    "ruleta": "Ruleta",
+    "abrirMenu": "Open menu",
+    "eslogan": "Professional, safe and fast reset."
   },
   "common": {
     "whatsappButton": "Chat on WhatsApp",
@@ -24,7 +26,9 @@
     "languageSuggestionAccept": "Yes, switch",
     "languageSuggestionDismiss": "No, thanks",
     "soundOnLabel": "Sound on. Tap to turn off.",
-    "soundOffLabel": "Sound off. Tap to turn on."
+    "soundOffLabel": "Sound off. Tap to turn on.",
+    "paginaAnterior": "← Previous",
+    "paginaSiguiente": "Next →"
   },
   "home": {
     "title": "Professional assisted printer reset | ResetEnLinea.com",
@@ -59,7 +63,8 @@
     "favoritoQuitar": "Remove {nombre} from favorites",
     "favoritosVacio": "You haven't added any printers to favorites yet. Tap the ⭐ on any model to save it here.",
     "buscadorLimpiar": "Clear search",
-    "verModelo": "View model"
+    "verModelo": "View model",
+    "heroTagline": "Professional, safe and fast reset, with a reusable warranty from any PC."
   },
   "modelo": {
     "titleTemplate": "{marca} {modelo} Reset — Assisted Service | ResetEnLinea.com",
@@ -95,7 +100,8 @@
     "resetTitulo": "Assisted reset",
     "resetTexto": "A technician performs the reset remotely, guiding you through each step.",
     "certificadoTitulo": "Warranty certificate",
-    "certificadoTexto": "You receive a warranty certificate for the service performed."
+    "certificadoTexto": "You receive a warranty certificate for the service performed.",
+    "cicloTexto": "The process repeats with every new service"
   },
   "proceso": {
     "titulo": "100% Remote Assisted Reset via USB connection",
@@ -133,14 +139,38 @@
     "description": "We answer the most common questions about printer resets and our assistance process.",
     "heading": "Frequently asked questions",
     "items": [
-      { "pregunta": "Does this site offer a free program to reset my printer myself?", "respuesta": "No. We don't distribute free reset programs or self-service tools. This is a 100% assisted service: a real technician guides you over WhatsApp through the whole process." },
-      { "pregunta": "Is it safe to reset my printer?", "respuesta": "Yes. We work with a prior diagnosis and professional guidance throughout the procedure." },
-      { "pregunta": "Is it safe to share my printer's USB connection?", "respuesta": "Yes. We only share your printer's USB connection: we never see your screen, access your files, or control your computer. You stay in control at all times." },
-      { "pregunta": "Do I need to disable my antivirus?", "respuesta": "No. We never ask you to disable your antivirus or any security system on your device." },
-      { "pregunta": "What do I need for remote assistance?", "respuesta": "A stable internet connection and your printer connected to your computer via USB." },
-      { "pregunta": "When is the service paid?", "respuesta": "We first evaluate your case and confirm that your model and error are compatible. Only after that confirmation do we quote the price and arrange payment." },
-      { "pregunta": "Do I get any proof of the service?", "respuesta": "Yes. Once the reset is done, you receive a warranty certificate for the service performed." },
-      { "pregunta": "What if my device doesn't meet the requirements?", "respuesta": "We evaluate alternatives, including a local procedure guided over a USB connection." }
+      {
+        "pregunta": "Does this site offer a free program to reset my printer myself?",
+        "respuesta": "No. We don't distribute free reset programs or self-service tools. This is a 100% assisted service: a real technician guides you over WhatsApp through the whole process."
+      },
+      {
+        "pregunta": "Is it safe to reset my printer?",
+        "respuesta": "Yes. We work with a prior diagnosis and professional guidance throughout the procedure."
+      },
+      {
+        "pregunta": "Is it safe to share my printer's USB connection?",
+        "respuesta": "Yes. We only share your printer's USB connection: we never see your screen, access your files, or control your computer. You stay in control at all times."
+      },
+      {
+        "pregunta": "Do I need to disable my antivirus?",
+        "respuesta": "No. We never ask you to disable your antivirus or any security system on your device."
+      },
+      {
+        "pregunta": "What do I need for remote assistance?",
+        "respuesta": "A stable internet connection and your printer connected to your computer via USB."
+      },
+      {
+        "pregunta": "When is the service paid?",
+        "respuesta": "We first evaluate your case and confirm that your model and error are compatible. Only after that confirmation do we quote the price and arrange payment."
+      },
+      {
+        "pregunta": "Do I get any proof of the service?",
+        "respuesta": "Yes. Once the reset is done, you receive a warranty certificate for the service performed."
+      },
+      {
+        "pregunta": "What if my device doesn't meet the requirements?",
+        "respuesta": "We evaluate alternatives, including a local procedure guided over a USB connection."
+      }
     ]
   },
   "contacto": {
@@ -297,10 +327,109 @@
     "conexionPaso3Desconectar": "Unplug the USB cable from the printer.",
     "conexionPaso3Esperar": "Wait 5 seconds.",
     "conexionPaso3Reconectar": "Plug the USB cable back in.",
-    "conexionAviso": "Complete all the steps and let us know when you're ready — we'll be waiting at step #2."
+    "conexionAviso": "Complete all the steps and let us know when you're ready — we'll be waiting at step #2.",
+    "modeloAyuda": "Write the exact model shown on your printer",
+    "errorOtroPlaceholder": "Describe the error",
+    "exitoWhatsapp": "Done! WhatsApp opened with your message.",
+    "resumenTitulo": "Summary of your request",
+    "resumenAyuda": "Check that everything is correct before sending.",
+    "resumenContinuar": "Confirm and continue",
+    "paisLabel": "Which country are you in?",
+    "paisPlaceholder": "Select your country",
+    "checklistPais": "Country",
+    "metodoPagoLabel": "How would you prefer to pay?",
+    "checklistMetodoPago": "Payment method",
+    "preciosTitulo": "Price and payment details",
+    "preciosAyuda": "This is the price based on your country and warranty plan. We'll confirm the exact plan with you before charging.",
+    "planEsencial": "Essential (warranty under 6 months)",
+    "planProfesional": "Professional (warranty 6 to 11 months)",
+    "planElite": "Elite (warranty 12+ months or lifetime)",
+    "textoPreciosNoDisponibles": "We don't have a set price for this type of equipment in your country yet — we'll confirm it on WhatsApp.",
+    "avisoContactoCompra": "After making the payment, write to us to arrange immediate dispatch of your service.",
+    "seleccionaOpcion": "Select an option",
+    "rolLabel": "Are you the owner, user, or technician?",
+    "rolDueno": "Owner",
+    "rolUsuario": "User",
+    "rolTecnico": "Technician",
+    "checklistRol": "Who's responding",
+    "cercaLabel": "Are you near the printer right now?",
+    "cercaSi": "Yes",
+    "cercaNo": "No",
+    "checklistCerca": "Near the printer",
+    "necesitaLabel": "What do you need to receive?",
+    "necesitaResetAsistido": "Assisted Reset Service in 1 minute",
+    "necesitaResetAsistidoDetalle": "Recommended — safe and fast",
+    "necesitaInstalacionAsistida": "Program installation (assisted)",
+    "necesitaInstalacionAsistidaDetalle": "Requires disabling antivirus and entering AnyDesk. A technician guides you through the reset.",
+    "necesitaInstalacionAutonoma": "Program installation (self-service)",
+    "necesitaInstalacionAutonomaDetalle": "Requires disabling antivirus and entering AnyDesk. It's installed, but you do the reset.",
+    "checklistNecesita": "What they need to receive",
+    "servicioCalculadoLabel": "This is your service",
+    "servicioCalculadoAyuda": "Based on what you told us, this is the option that fits you.",
+    "servicioRemotoUsb": "100% Remote Assisted Reset via USB connection",
+    "servicioLocalWifi": "100% Local Assisted Reset via WIFI connection",
+    "servicioRemotoUsbMac": "100% Remote Assisted Reset via USB connection on MAC",
+    "servicioLocalUsbAsistido": "100% Local Assisted Reset via USB connection",
+    "servicioAutonomoLocalUsb": "100% Local Self-Service Reset via USB connection",
+    "checklistServicioFinal": "Service",
+    "garantiaVerificarLabel": "What should we use to verify your warranty?",
+    "garantiaVerificarPlaceholder": "Your order number or the email you used to buy",
+    "garantiaVerificarAyuda": "If you don't have it handy, tell us anyway — we'll check it together with you",
+    "garantiaVerificarBoton": "Verify",
+    "garantiaVerificando": "Verifying…",
+    "garantiaVigente": "✅ Warranty active",
+    "garantiaVencida": "⚠️ Warranty expired",
+    "garantiaNoEncontrada": "We couldn't find a warranty with that info — you can continue anyway, we'll check it together with you.",
+    "checklistGarantiaDato": "Warranty info"
   },
   "footer": {
     "rights": "All rights reserved.",
     "disclaimer": "ResetEnLinea.com provides independent professional assistance for printer resets. Mentioned brands belong to their respective owners."
+  },
+  "ruletaPage": {
+    "title": "Roulette | ResetEnLinea.com",
+    "description": "Play and get a discount coupon for your reset service.",
+    "heading": "Spin the wheel",
+    "texto": "Play and get your discount coupon. When you're done, you can write to us to use it."
+  },
+  "pruebaSocialPage": {
+    "title": "Social Proof | ResetEnLinea.com",
+    "description": "Real reviews from customers who have already used our assisted reset service.",
+    "heading": "Social Proof",
+    "texto": "Real, verified reviews on Trustpilot.",
+    "introTexto": "Here we gather real experiences and evidence from customers and services performed by ResetEnLinea.",
+    "tabConversaciones": "Real Conversations",
+    "tabResets": "Completed Resets",
+    "conversacionesTitulo": "Real Conversations",
+    "conversacionesTexto": "Real experiences and conversations with our customers. To protect their privacy, personal data has been hidden.",
+    "ampliarConversacion": "Expand conversation",
+    "cerrarModal": "Close",
+    "resetsTitulo": "Reset Evidence",
+    "resetsTexto": "Video evidence of reset services performed remotely.",
+    "reproducirVideo": "Play video",
+    "ctaTitulo": "Need a reset?",
+    "ctaBoton": "Contact us on WhatsApp"
+  },
+  "resetRealizadosPage": {
+    "title": "Reset Evidence | ResetEnLinea.com",
+    "description": "Video evidence of reset services performed remotely by ResetEnLinea.",
+    "heading": "Reset Evidence",
+    "marca": "Brand",
+    "modelo": "Model",
+    "error": "Error",
+    "pais": "Country",
+    "duracion": "Duration",
+    "segundos": "seconds",
+    "volverLink": "← Back to Reset Evidence",
+    "sinRegistros": "There are no published resets yet.",
+    "resumenContenido": "Real video of a {marca} {modelo} printer reset — {error} — in {pais}, with a duration of {duracion}.",
+    "resumenContenidoSinDuracion": "Real video of a {marca} {modelo} printer reset — {error} — in {pais}."
+  },
+  "clienteSatisfechoPage": {
+    "title": "Happy Customer | ResetEnLinea.com",
+    "description": "Real conversations with customers who have already used our assisted reset service.",
+    "heading": "Happy Customer",
+    "volverLink": "← Back to Happy Customer",
+    "sinRegistros": "There are no published conversations yet."
   }
 }

@@ -1,0 +1,71 @@
+---
+import Breadcrumb from "../Breadcrumb.astro";
+import ResetRealizadoCard from "../ui/ResetRealizadoCard.astro";
+import { buildLocalizedPath, t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+import type { ResetRealizadoPublico, ApiMeta } from "../../lib/nucleo-api";
+
+interface Props {
+  locale: Locale;
+  resets: ResetRealizadoPublico[];
+  meta: ApiMeta;
+}
+
+const { locale, resets, meta } = Astro.props;
+const rutaIndice = buildLocalizedPath(locale, "/prueba-social/reset-evidencia/");
+---
+
+<Breadcrumb
+  items={[
+    { label: t(locale, "nav.home"), href: buildLocalizedPath(locale, "/") },
+    { label: t(locale, "nav.pruebaSocial"), href: buildLocalizedPath(locale, "/prueba-social/") },
+    { label: t(locale, "resetRealizadosPage.heading") },
+  ]}
+/>
+<h1>{t(locale, "resetRealizadosPage.heading")}</h1>
+<p>{t(locale, "pruebaSocialPage.resetsTexto")}</p>
+
+{resets.length > 0 ? (
+  <div class="rr-index-grid">
+    {resets.map((evidencia) => (
+      <ResetRealizadoCard evidencia={evidencia} locale={locale} />
+    ))}
+  </div>
+) : (
+  <p class="rr-index-vacio">{t(locale, "resetRealizadosPage.sinRegistros")}</p>
+)}
+
+{meta.total_pages > 1 && (
+  <nav class="rr-index-paginacion" aria-label="Paginación">
+    {meta.page > 1 && <a href={`${rutaIndice}?page=${meta.page - 1}`}>{t(locale, "common.paginaAnterior")}</a>}
+    <span>{meta.page} / {meta.total_pages}</span>
+    {meta.page < meta.total_pages && <a href={`${rutaIndice}?page=${meta.page + 1}`}>{t(locale, "common.paginaSiguiente")}</a>}
+  </nav>
+)}
+
+<style>
+  .rr-index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .rr-index-vacio {
+    text-align: center;
+    color: var(--color-text-subtle);
+  }
+
+  .rr-index-paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .rr-index-paginacion a {
+    text-decoration: none;
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+</style>

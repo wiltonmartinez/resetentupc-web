@@ -45,9 +45,9 @@ const logo = getLogo();
       <nav class="site-nav" aria-label={t(locale, "nav.home")}>
         <a href={buildLocalizedPath(locale, "/")}>{t(locale, "nav.home")}</a>
         <a href={buildStaticPagePath(locale, "comoFunciona")}>{t(locale, "nav.comoFunciona")}</a>
-        <a href="/prueba-social/">{t(locale, "nav.pruebaSocial")}</a>
+        <a href={buildLocalizedPath(locale, "/prueba-social/")}>{t(locale, "nav.pruebaSocial")}</a>
         <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
-        <a href="/ruleta/">{t(locale, "nav.ruleta")}</a>
+        <a href={buildLocalizedPath(locale, "/ruleta/")}>{t(locale, "nav.ruleta")}</a>
         <a href={buildStaticPagePath(locale, "contacto")} class="site-nav-contacto">{t(locale, "nav.contacto")}</a>
       </nav>
       <div class="site-header-controls">

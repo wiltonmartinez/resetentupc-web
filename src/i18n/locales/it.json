@@ -15,7 +15,9 @@
     "preguntasFrecuentes": "Domande frequenti",
     "contacto": "Contatti",
     "pruebaSocial": "Prueba Social",
-    "ruleta": "Ruleta"
+    "ruleta": "Ruleta",
+    "abrirMenu": "Apri menu",
+    "eslogan": "Reset professionale, sicuro e veloce."
   },
   "common": {
     "whatsappButton": "Scrivi su WhatsApp",
@@ -24,7 +26,9 @@
     "languageSuggestionAccept": "Sì, cambia",
     "languageSuggestionDismiss": "No, grazie",
     "soundOnLabel": "Audio attivo. Tocca per disattivare.",
-    "soundOffLabel": "Audio disattivato. Tocca per attivare."
+    "soundOffLabel": "Audio disattivato. Tocca per attivare.",
+    "paginaAnterior": "← Precedente",
+    "paginaSiguiente": "Successivo →"
   },
   "home": {
     "title": "Reset assistito e professionale della stampante | ResetEnLinea.com",
@@ -59,7 +63,8 @@
     "favoritoQuitar": "Rimuovi {nombre} dai preferiti",
     "favoritosVacio": "Non hai ancora aggiunto stampanti ai preferiti. Tocca la stella ⭐ su un modello per salvarlo qui.",
     "buscadorLimpiar": "Cancella ricerca",
-    "verModelo": "Vedi modello"
+    "verModelo": "Vedi modello",
+    "heroTagline": "Reset professionale, sicuro e veloce, con garanzia riutilizzabile da qualsiasi PC."
   },
   "modelo": {
     "titleTemplate": "Reset {marca} {modelo} — Servizio Assistito | ResetEnLinea.com",
@@ -95,7 +100,8 @@
     "resetTitulo": "Reset assistito",
     "resetTexto": "Un tecnico esegue il reset da remoto, guidandoti in ogni passaggio.",
     "certificadoTitulo": "Certificato di garanzia",
-    "certificadoTexto": "Ricevi un certificato di garanzia per il servizio eseguito."
+    "certificadoTexto": "Ricevi un certificato di garanzia per il servizio eseguito.",
+    "cicloTexto": "Il processo si ripete a ogni nuovo servizio"
   },
   "proceso": {
     "titulo": "Reset assistito 100% da remoto tramite connessione USB",
@@ -133,14 +139,38 @@
     "description": "Rispondiamo alle domande più comuni sul reset delle stampanti e sul nostro processo di assistenza.",
     "heading": "Domande frequenti",
     "items": [
-      { "pregunta": "Questo sito offre un programma gratuito per resettare da solo la mia stampante?", "respuesta": "No. Non distribuiamo programmi di reset gratuiti né strumenti fai-da-te. È un servizio assistito al 100%: un tecnico reale ti segue su WhatsApp durante tutto il processo." },
-      { "pregunta": "È sicuro resettare la mia stampante?", "respuesta": "Sì. Lavoriamo con una diagnosi preliminare e assistenza professionale durante tutta la procedura." },
-      { "pregunta": "È sicuro condividere la connessione USB della mia stampante?", "respuesta": "Sì. Condividiamo solo la connessione USB della tua stampante: non vediamo mai il tuo schermo, non accediamo ai tuoi file né controlliamo il tuo computer. Mantieni il controllo in ogni momento." },
-      { "pregunta": "Devo disattivare l'antivirus?", "respuesta": "No. Non chiediamo mai di disattivare l'antivirus né alcun sistema di sicurezza del tuo dispositivo." },
-      { "pregunta": "Cosa serve per l'assistenza remota?", "respuesta": "Una connessione internet stabile e la tua stampante collegata via USB al computer." },
-      { "pregunta": "Quando viene effettuato il pagamento del servizio?", "respuesta": "Prima valutiamo il tuo caso e confermiamo che il tuo modello e l'errore siano compatibili. Solo dopo questa conferma ti comunichiamo il valore e concordiamo il pagamento." },
-      { "pregunta": "Ricevo una prova del servizio?", "respuesta": "Sì. Al termine del reset ricevi un certificato di garanzia del servizio eseguito." },
-      { "pregunta": "Cosa succede se il mio dispositivo non soddisfa i requisiti?", "respuesta": "Valutiamo alternative, inclusa una procedura locale guidata tramite connessione USB." }
+      {
+        "pregunta": "Questo sito offre un programma gratuito per resettare da solo la mia stampante?",
+        "respuesta": "No. Non distribuiamo programmi di reset gratuiti né strumenti fai-da-te. È un servizio assistito al 100%: un tecnico reale ti segue su WhatsApp durante tutto il processo."
+      },
+      {
+        "pregunta": "È sicuro resettare la mia stampante?",
+        "respuesta": "Sì. Lavoriamo con una diagnosi preliminare e assistenza professionale durante tutta la procedura."
+      },
+      {
+        "pregunta": "È sicuro condividere la connessione USB della mia stampante?",
+        "respuesta": "Sì. Condividiamo solo la connessione USB della tua stampante: non vediamo mai il tuo schermo, non accediamo ai tuoi file né controlliamo il tuo computer. Mantieni il controllo in ogni momento."
+      },
+      {
+        "pregunta": "Devo disattivare l'antivirus?",
+        "respuesta": "No. Non chiediamo mai di disattivare l'antivirus né alcun sistema di sicurezza del tuo dispositivo."
+      },
+      {
+        "pregunta": "Cosa serve per l'assistenza remota?",
+        "respuesta": "Una connessione internet stabile e la tua stampante collegata via USB al computer."
+      },
+      {
+        "pregunta": "Quando viene effettuato il pagamento del servizio?",
+        "respuesta": "Prima valutiamo il tuo caso e confermiamo che il tuo modello e l'errore siano compatibili. Solo dopo questa conferma ti comunichiamo il valore e concordiamo il pagamento."
+      },
+      {
+        "pregunta": "Ricevo una prova del servizio?",
+        "respuesta": "Sì. Al termine del reset ricevi un certificato di garanzia del servizio eseguito."
+      },
+      {
+        "pregunta": "Cosa succede se il mio dispositivo non soddisfa i requisiti?",
+        "respuesta": "Valutiamo alternative, inclusa una procedura locale guidata tramite connessione USB."
+      }
     ]
   },
   "contacto": {
@@ -297,10 +327,109 @@
     "conexionPaso3Desconectar": "Scollega il cavo USB dalla stampante.",
     "conexionPaso3Esperar": "Attendi 5 secondi.",
     "conexionPaso3Reconectar": "Ricollega il cavo USB.",
-    "conexionAviso": "Completa tutti i passaggi e avvisaci quando sei pronto: ti aspettiamo al passaggio #2."
+    "conexionAviso": "Completa tutti i passaggi e avvisaci quando sei pronto: ti aspettiamo al passaggio #2.",
+    "modeloAyuda": "Scrivi il modello esatto indicato sulla tua stampante",
+    "errorOtroPlaceholder": "Descrivi l'errore",
+    "exitoWhatsapp": "Fatto! WhatsApp si è aperto con il tuo messaggio.",
+    "resumenTitulo": "Riepilogo della tua richiesta",
+    "resumenAyuda": "Controlla che sia tutto corretto prima di inviare.",
+    "resumenContinuar": "Conferma e continua",
+    "paisLabel": "In quale paese ti trovi?",
+    "paisPlaceholder": "Seleziona il tuo paese",
+    "checklistPais": "Paese",
+    "metodoPagoLabel": "Come preferisci pagare?",
+    "checklistMetodoPago": "Metodo di pagamento",
+    "preciosTitulo": "Prezzo e dati di pagamento",
+    "preciosAyuda": "Questo è il prezzo in base al tuo paese e al piano di garanzia. Confermiamo il piano esatto con te prima di addebitare.",
+    "planEsencial": "Essenziale (garanzia inferiore a 6 mesi)",
+    "planProfesional": "Professionale (garanzia da 6 a 11 mesi)",
+    "planElite": "Elite (garanzia di 12+ mesi o a vita)",
+    "textoPreciosNoDisponibles": "Non abbiamo ancora una tariffa definita per questo tipo di apparecchiatura nel tuo paese — te la confermiamo su WhatsApp.",
+    "avisoContactoCompra": "Dopo aver effettuato il pagamento, scrivici per coordinare la spedizione immediata del tuo servizio.",
+    "seleccionaOpcion": "Seleziona un'opzione",
+    "rolLabel": "Sei il proprietario, l'utente o il tecnico?",
+    "rolDueno": "Proprietario",
+    "rolUsuario": "Utente",
+    "rolTecnico": "Tecnico",
+    "checklistRol": "Chi risponde",
+    "cercaLabel": "Sei vicino alla stampante in questo momento?",
+    "cercaSi": "Sì",
+    "cercaNo": "No",
+    "checklistCerca": "Vicino alla stampante",
+    "necesitaLabel": "Cosa hai bisogno di ricevere?",
+    "necesitaResetAsistido": "Servizio di Reset Assistito in 1 minuto",
+    "necesitaResetAsistidoDetalle": "Consigliato — sicuro e veloce",
+    "necesitaInstalacionAsistida": "Installazione del programma (assistita)",
+    "necesitaInstalacionAsistidaDetalle": "Richiede di disattivare l'antivirus e inserire AnyDesk. Un tecnico ti guida nel reset.",
+    "necesitaInstalacionAutonoma": "Installazione del programma (autonoma)",
+    "necesitaInstalacionAutonomaDetalle": "Richiede di disattivare l'antivirus e inserire AnyDesk. Viene installato, ma il reset lo fai tu.",
+    "checklistNecesita": "Cosa deve ricevere",
+    "servicioCalculadoLabel": "Questo è il tuo servizio",
+    "servicioCalculadoAyuda": "In base a quanto ci hai raccontato, questa è la modalità che ti corrisponde.",
+    "servicioRemotoUsb": "Reset Assistito 100% Remoto tramite connessione USB",
+    "servicioLocalWifi": "Reset Assistito 100% Locale tramite connessione WIFI",
+    "servicioRemotoUsbMac": "Reset Assistito 100% Remoto tramite connessione USB su MAC",
+    "servicioLocalUsbAsistido": "Reset Assistito 100% Locale tramite connessione USB",
+    "servicioAutonomoLocalUsb": "Reset Autonomo 100% Locale tramite connessione USB",
+    "checklistServicioFinal": "Servizio",
+    "garantiaVerificarLabel": "Con cosa verifichiamo la tua garanzia?",
+    "garantiaVerificarPlaceholder": "Il tuo numero d'ordine o l'email con cui hai acquistato",
+    "garantiaVerificarAyuda": "Se non ce l'hai a portata di mano, faccelo sapere comunque — lo verifichiamo insieme a te",
+    "garantiaVerificarBoton": "Verifica",
+    "garantiaVerificando": "Verifica in corso…",
+    "garantiaVigente": "✅ Garanzia valida",
+    "garantiaVencida": "⚠️ Garanzia scaduta",
+    "garantiaNoEncontrada": "Non abbiamo trovato una garanzia con questo dato — puoi continuare comunque, lo verifichiamo insieme a te.",
+    "checklistGarantiaDato": "Dato della garanzia"
   },
   "footer": {
     "rights": "Tutti i diritti riservati.",
     "disclaimer": "ResetEnLinea.com offre assistenza professionale indipendente per il reset di stampanti. I marchi citati appartengono ai rispettivi proprietari."
+  },
+  "ruletaPage": {
+    "title": "Ruota della fortuna | ResetEnLinea.com",
+    "description": "Gioca e ottieni un coupon di sconto per il tuo servizio di reset.",
+    "heading": "Gira la ruota",
+    "texto": "Gioca e ottieni il tuo coupon di sconto. Quando hai finito, scrivici per usarlo."
+  },
+  "pruebaSocialPage": {
+    "title": "Prova Sociale | ResetEnLinea.com",
+    "description": "Recensioni reali di clienti che hanno già utilizzato il nostro servizio di reset assistito.",
+    "heading": "Prova Sociale",
+    "texto": "Recensioni reali e verificate su Trustpilot.",
+    "introTexto": "Qui raccogliamo esperienze e prove reali di clienti e servizi eseguiti da ResetEnLinea.",
+    "tabConversaciones": "Conversazioni Reali",
+    "tabResets": "Reset Eseguiti",
+    "conversacionesTitulo": "Conversazioni Reali",
+    "conversacionesTexto": "Esperienze e conversazioni reali con i nostri clienti. Per proteggere la loro privacy, i dati personali sono stati nascosti.",
+    "ampliarConversacion": "Espandi conversazione",
+    "cerrarModal": "Chiudi",
+    "resetsTitulo": "Prove di Reset",
+    "resetsTexto": "Prove video di servizi di reset eseguiti da remoto.",
+    "reproducirVideo": "Riproduci video",
+    "ctaTitulo": "Hai bisogno di un reset?",
+    "ctaBoton": "Contatta su WhatsApp"
+  },
+  "resetRealizadosPage": {
+    "title": "Prove di Reset | ResetEnLinea.com",
+    "description": "Prove video di servizi di reset eseguiti da remoto da ResetEnLinea.",
+    "heading": "Prove di Reset",
+    "marca": "Marca",
+    "modelo": "Modello",
+    "error": "Errore",
+    "pais": "Paese",
+    "duracion": "Durata",
+    "segundos": "secondi",
+    "volverLink": "← Torna a Prove di Reset",
+    "sinRegistros": "Non ci sono ancora reset pubblicati.",
+    "resumenContenido": "Video reale del reset di una stampante {marca} {modelo} — {error} — in {pais}, con una durata di {duracion}.",
+    "resumenContenidoSinDuracion": "Video reale del reset di una stampante {marca} {modelo} — {error} — in {pais}."
+  },
+  "clienteSatisfechoPage": {
+    "title": "Cliente Soddisfatto | ResetEnLinea.com",
+    "description": "Conversazioni reali con clienti che hanno già utilizzato il nostro servizio di reset assistito.",
+    "heading": "Cliente Soddisfatto",
+    "volverLink": "← Torna a Cliente Soddisfatto",
+    "sinRegistros": "Non ci sono ancora conversazioni pubblicate."
   }
 }
