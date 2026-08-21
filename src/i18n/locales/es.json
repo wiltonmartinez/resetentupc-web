@@ -44,7 +44,8 @@
   "clienteSatisfechoPage": {
     "title": "Cliente Satisfecho | ResetEnLinea.com",
     "description": "Conversaciones reales con clientes que ya usaron nuestro servicio de reset asistido.",
-    "heading": "Cliente Satisfecho"
+    "heading": "Cliente Satisfecho",
+    "volverLink": "← Volver a Cliente Satisfecho"
   },
   "common": {
     "whatsappButton": "Escribir por WhatsApp",
