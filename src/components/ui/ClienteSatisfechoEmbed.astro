@@ -6,6 +6,14 @@
  * viceversa. Contenedor 9:16 fijo por fuera del iframe. Sin
  * "allow-same-origin" (dominio externo real, no srcdoc) para que el sandbox
  * siga aislando de verdad.
+ *
+ * `html_url` (ej. https://nucleo.../c/{id}) es la página "ver" completa —
+ * trae su propia barra de título, marco de teléfono y tabla de referencia,
+ * y ADEMÁS carga el chat en un <iframe> propio anidado (.../c/{id}?chat=1).
+ * Aquí se quiere solo el chat (9:16, sin ese marco extra), así que se apunta
+ * directo a ese sub-recurso — evita además que el sandbox de este iframe
+ * rompa el anidado interno de la página "ver" (origen opaco sin
+ * allow-same-origin => su iframe hijo no pasa el frame-ancestors de Núcleo).
  */
 interface Props {
   url: string;
@@ -13,10 +21,11 @@ interface Props {
 }
 
 const { url, titulo } = Astro.props;
+const urlChat = `${url}${url.includes("?") ? "&" : "?"}chat=1`;
 ---
 
 <div class="cliente-satisfecho-embed">
-  <iframe src={url} sandbox="allow-scripts allow-popups" title={titulo} loading="lazy" referrerpolicy="no-referrer" />
+  <iframe src={urlChat} sandbox="allow-scripts allow-popups" title={titulo} loading="lazy" referrerpolicy="no-referrer" />
 </div>
 
 <style>
