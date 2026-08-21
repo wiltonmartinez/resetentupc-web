@@ -439,6 +439,7 @@
     "description": "Galerie d'avis et de captures réelles de clients sur Trustpilot.",
     "heading": "Témoignages Trustpilot",
     "texto": "Captures réelles d'avis et de notes de nos clients sur Trustpilot.",
-    "sinRegistros": "Aucun témoignage publié pour le moment."
+    "sinRegistros": "Aucun témoignage publié pour le moment.",
+    "verResenaLink": "Voir l'avis sur Trustpilot ↗"
   }
 }

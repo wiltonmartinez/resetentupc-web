@@ -403,6 +403,7 @@
     "description": "Galería de reseñas y capturas reales de clientes en Trustpilot.",
     "heading": "Testimonios Trustpilot",
     "texto": "Capturas reales de reseñas y calificaciones de nuestros clientes en Trustpilot.",
-    "sinRegistros": "Todavía no hay testimonios publicados."
+    "sinRegistros": "Todavía no hay testimonios publicados.",
+    "verResenaLink": "Ver reseña en Trustpilot ↗"
   }
 }

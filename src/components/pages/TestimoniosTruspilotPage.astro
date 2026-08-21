@@ -3,10 +3,11 @@
  * Galería pura de evidencias de Trustpilot — sin slug, sin título ni
  * descripción por item, sin página de detalle. Cada testimonio aporta una
  * o dos evidencias independientes: url_imgur (captura) se pinta como
- * <img>, url_trustpilot_review (link a la reseña real) se embebe en un
- * <iframe> con una capa clicable encima (un iframe no navega por sí solo)
- * que abre esa misma URL en pestaña nueva. marca/modelo/país pueden venir
- * vacíos (un testimonio no requiere pedido real).
+ * <img>; url_trustpilot_review (link a la reseña real) se muestra como
+ * tarjeta clicable simple que abre en pestaña nueva — Trustpilot bloquea
+ * el framing (verificación anti-bot), así que un <iframe> ahí no funciona.
+ * marca/modelo/país pueden venir vacíos (un testimonio no requiere pedido
+ * real).
  */
 import Breadcrumb from "../Breadcrumb.astro";
 import { buildLocalizedPath, t } from "../../i18n/utils";
@@ -20,13 +21,13 @@ interface Props {
 
 const { locale, testimonios } = Astro.props;
 
-type Evidencia = { tipo: "imagen" | "iframe"; url: string; alt: string };
+type Evidencia = { tipo: "imagen" | "link"; url: string; alt: string };
 
 const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
   const alt = [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · ");
   const items: Evidencia[] = [];
   if (testimonio.url_imgur?.trim()) items.push({ tipo: "imagen", url: testimonio.url_imgur, alt });
-  if (testimonio.url_trustpilot_review?.trim()) items.push({ tipo: "iframe", url: testimonio.url_trustpilot_review, alt });
+  if (testimonio.url_trustpilot_review?.trim()) items.push({ tipo: "link", url: testimonio.url_trustpilot_review, alt });
   return items;
 });
 ---
@@ -49,16 +50,12 @@ const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
           <img src={evidencia.url} alt={evidencia.alt} loading="lazy" />
         </a>
       ) : (
-        <div class="testimonios-item testimonios-item-iframe">
-          <iframe src={evidencia.url} title={evidencia.alt || "Reseña en Trustpilot"} loading="lazy" />
-          <a
-            class="testimonios-item-overlay"
-            href={evidencia.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={evidencia.alt ? `${evidencia.alt} — Trustpilot` : "Ver reseña en Trustpilot"}
-          />
-        </div>
+        <a class="testimonios-item testimonios-item-link" href={evidencia.url} target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true">
+            <path d="M12 2l2.9 6.6L22 9.3l-5 4.6L18.5 21 12 17.3 5.5 21 7 13.9l-5-4.6 7.1-.7z" />
+          </svg>
+          <span>{t(locale, "testimoniosTruspilotPage.verResenaLink")}</span>
+        </a>
       )
     )}
   </div>
@@ -87,22 +84,26 @@ const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
     height: auto;
   }
 
-  .testimonios-item-iframe {
-    position: relative;
-    min-height: 360px;
+  .testimonios-item-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 140px;
+    padding: 1.5rem;
+    color: #00b67a;
+    background: var(--color-bg-card);
+    text-decoration: none;
+    font-weight: 600;
+    transition: border-color 0.15s ease;
   }
 
-  .testimonios-item-iframe iframe {
-    display: block;
-    width: 100%;
-    height: 360px;
-    border: none;
+  .testimonios-item-link:hover {
+    border-color: #00b67a;
   }
 
-  .testimonios-item-overlay {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
+  .testimonios-item-link span {
+    color: var(--color-text);
   }
 
   .testimonios-vacio {

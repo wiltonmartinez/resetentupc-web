@@ -403,6 +403,7 @@
     "description": "Галерея реальных отзывов и скриншотов клиентов на Trustpilot.",
     "heading": "Отзывы Trustpilot",
     "texto": "Реальные скриншоты отзывов и оценок наших клиентов на Trustpilot.",
-    "sinRegistros": "Пока нет опубликованных отзывов."
+    "sinRegistros": "Пока нет опубликованных отзывов.",
+    "verResenaLink": "Смотреть отзыв на Trustpilot ↗"
   }
 }

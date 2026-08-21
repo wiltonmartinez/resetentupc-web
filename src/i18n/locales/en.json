@@ -439,6 +439,7 @@
     "description": "Gallery of real customer reviews and screenshots on Trustpilot.",
     "heading": "Trustpilot Testimonials",
     "texto": "Real screenshots of reviews and ratings from our customers on Trustpilot.",
-    "sinRegistros": "There are no testimonials published yet."
+    "sinRegistros": "There are no testimonials published yet.",
+    "verResenaLink": "View review on Trustpilot ↗"
   }
 }

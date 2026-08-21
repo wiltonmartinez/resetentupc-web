@@ -439,6 +439,7 @@
     "description": "Galleria di recensioni e screenshot reali dei clienti su Trustpilot.",
     "heading": "Testimonianze Trustpilot",
     "texto": "Screenshot reali di recensioni e valutazioni dei nostri clienti su Trustpilot.",
-    "sinRegistros": "Non ci sono ancora testimonianze pubblicate."
+    "sinRegistros": "Non ci sono ancora testimonianze pubblicate.",
+    "verResenaLink": "Vedi recensione su Trustpilot ↗"
   }
 }

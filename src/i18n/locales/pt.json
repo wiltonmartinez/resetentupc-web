@@ -439,6 +439,7 @@
     "description": "Galeria de avaliações e capturas reais de clientes no Trustpilot.",
     "heading": "Depoimentos no Trustpilot",
     "texto": "Capturas reais de avaliações e notas dos nossos clientes no Trustpilot.",
-    "sinRegistros": "Ainda não há depoimentos publicados."
+    "sinRegistros": "Ainda não há depoimentos publicados.",
+    "verResenaLink": "Ver avaliação no Trustpilot ↗"
   }
 }
