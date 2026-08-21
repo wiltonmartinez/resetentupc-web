@@ -27,6 +27,17 @@ const duracion = evidencia
 const titulo = evidencia
   ? ["Reset", evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais, duracion].filter(Boolean).join(" ")
   : "";
+
+// Mismos datos del título, tejidos en el cuerpo de la página (evita que el
+// contenido visible quede "vacío" de las palabras clave del título/slug).
+const resumenContenido = evidencia
+  ? t(locale, "resetRealizadosPage.resumenContenido")
+      .replaceAll("{marca}", evidencia.marca)
+      .replaceAll("{modelo}", evidencia.modelo)
+      .replaceAll("{error}", evidencia.error)
+      .replaceAll("{pais}", evidencia.pais)
+      .replaceAll("{duracion}", duracion || "")
+  : "";
 ---
 
 {evidencia ? (
@@ -45,6 +56,7 @@ const titulo = evidencia
       ]}
     />
     <h1>{titulo}</h1>
+    <p class="rr-resumen">{resumenContenido}</p>
     <YouTubeFacade
       youtubeId={evidencia.youtube_id}
       titulo={titulo}
@@ -102,6 +114,10 @@ const titulo = evidencia
     margin: 0.15rem 0 0;
     font-weight: 600;
     color: var(--color-text);
+  }
+
+  .rr-resumen {
+    color: var(--color-text-subtle);
   }
 
   .rr-volver {
