@@ -1,0 +1,53 @@
+---
+/**
+ * Tarjeta liviana para el ÍNDICE de Resets Realizados: solo texto (mismo
+ * estilo de caja que ClienteSatisfechoCard, para que ambos índices se vean
+ * consistentes) — el video (iframe/thumbnail) solo se carga en la página
+ * de detalle de cada slug.
+ */
+import type { ResetRealizadoEvidencia } from "../../data/reset-realizados";
+
+interface Props {
+  evidencia: ResetRealizadoEvidencia;
+}
+
+const { evidencia } = Astro.props;
+const href = `/prueba-social/reset-realizados/${evidencia.slug}/`;
+const resumen = [evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais].join(" · ");
+---
+
+<a class="rr-card" href={href}>
+  <h3 class="rr-card-titulo">{evidencia.titulo}</h3>
+  <p class="rr-card-resumen">{resumen}</p>
+</a>
+
+<style>
+  .rr-card {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .rr-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .rr-card-titulo {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--color-text);
+  }
+
+  .rr-card-resumen {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-subtle);
+  }
+</style>

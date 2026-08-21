@@ -39,7 +39,14 @@
   "resetRealizadosPage": {
     "title": "Resets Realizados | ResetEnLinea.com",
     "description": "Evidencia en video de servicios de reset realizados remotamente por ResetEnLinea.",
-    "heading": "Resets Realizados"
+    "heading": "Resets Realizados",
+    "marca": "Marca",
+    "modelo": "Modelo",
+    "error": "Error",
+    "pais": "País",
+    "duracion": "Duración",
+    "segundos": "segundos",
+    "volverLink": "← Volver a Resets Realizados"
   },
   "clienteSatisfechoPage": {
     "title": "Cliente Satisfecho | ResetEnLinea.com",

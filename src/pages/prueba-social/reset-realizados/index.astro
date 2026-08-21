@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
-import YouTubeGallery from "../../../components/ui/YouTubeGallery.astro";
-import { VIDEOS } from "../../../data/prueba-social";
+import ResetRealizadoCard from "../../../components/ui/ResetRealizadoCard.astro";
+import { RESETS_REALIZADOS } from "../../../data/reset-realizados";
 import { t } from "../../../i18n/utils";
 
 const locale = "es" as const;
@@ -24,5 +24,17 @@ const locale = "es" as const;
   />
   <h1>{t(locale, "resetRealizadosPage.heading")}</h1>
   <p>{t(locale, "pruebaSocialPage.resetsTexto")}</p>
-  <YouTubeGallery videos={VIDEOS} reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")} />
+  <div class="rr-index-grid">
+    {RESETS_REALIZADOS.map((evidencia) => (
+      <ResetRealizadoCard evidencia={evidencia} />
+    ))}
+  </div>
 </BaseLayout>
+
+<style>
+  .rr-index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.85rem;
+  }
+</style>

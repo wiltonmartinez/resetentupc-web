@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumb from "../../../components/Breadcrumb.astro";
+import YouTubeFacade from "../../../components/ui/YouTubeFacade.astro";
+import { RESETS_REALIZADOS } from "../../../data/reset-realizados";
+import { t } from "../../../i18n/utils";
+
+export function getStaticPaths() {
+  return RESETS_REALIZADOS.map((evidencia) => ({
+    params: { slug: evidencia.slug },
+    props: { evidencia },
+  }));
+}
+
+const locale = "es" as const;
+const { evidencia } = Astro.props;
+const duracionTexto = `${evidencia.duracionSegundos} ${t(locale, "resetRealizadosPage.segundos")}`;
+---
+
+<BaseLayout
+  title={`${evidencia.titulo} | ResetEnLinea.com`}
+  description={evidencia.descripcion ?? evidencia.titulo}
+  locale={locale}
+  path={`/prueba-social/reset-realizados/${evidencia.slug}/`}
+  noindex
+>
+  <Breadcrumb
+    items={[
+      { label: t(locale, "nav.home"), href: "/" },
+      { label: t(locale, "nav.pruebaSocial"), href: "/prueba-social/" },
+      { label: t(locale, "resetRealizadosPage.heading"), href: "/prueba-social/reset-realizados/" },
+      { label: evidencia.titulo },
+    ]}
+  />
+  <h1>{evidencia.titulo}</h1>
+  <YouTubeFacade
+    youtubeId={evidencia.youtubeId}
+    titulo={evidencia.titulo}
+    descripcion={evidencia.descripcion}
+    reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+  />
+  <dl class="rr-detalle-datos">
+    <div><dt>{t(locale, "resetRealizadosPage.marca")}</dt><dd>{evidencia.marca}</dd></div>
+    <div><dt>{t(locale, "resetRealizadosPage.modelo")}</dt><dd>{evidencia.modelo}</dd></div>
+    <div><dt>{t(locale, "resetRealizadosPage.error")}</dt><dd>{evidencia.error}</dd></div>
+    <div><dt>{t(locale, "resetRealizadosPage.pais")}</dt><dd>{evidencia.pais}</dd></div>
+    <div><dt>{t(locale, "resetRealizadosPage.duracion")}</dt><dd>{duracionTexto}</dd></div>
+  </dl>
+  <p class="rr-volver">
+    <a href="/prueba-social/reset-realizados/">{t(locale, "resetRealizadosPage.volverLink")}</a>
+  </p>
+</BaseLayout>
+
+<style>
+  .rr-detalle-datos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .rr-detalle-datos div {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+  }
+
+  .rr-detalle-datos dt {
+    font-size: 0.78rem;
+    color: var(--color-text-subtle);
+  }
+
+  .rr-detalle-datos dd {
+    margin: 0.15rem 0 0;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .rr-volver {
+    text-align: center;
+  }
+</style>
