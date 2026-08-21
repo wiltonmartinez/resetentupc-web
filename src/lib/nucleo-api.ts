@@ -33,14 +33,16 @@ export interface ClienteSatisfechoPublico {
 }
 
 /**
- * Galería pura de imágenes (capturas de Trustpilot) — sin slug, sin título,
- * sin página individual. `/api/public/testimonios/` devuelve TODO en un
- * único llamado (sin paginación). Un testimonio no requiere pedido: puede
- * venir con número de pedido, solo email, o sin ningún dato — marca/modelo/
- * país pueden venir vacíos.
+ * Galería pura de evidencias de Trustpilot — sin slug, sin título, sin
+ * página individual. `/api/public/testimonios/` devuelve TODO en un único
+ * llamado (sin paginación). Un testimonio no requiere pedido: puede venir
+ * con número de pedido, solo email, o sin ningún dato — marca/modelo/país/
+ * fecha pueden venir vacíos. Cada testimonio trae al menos una de las dos
+ * evidencias (url_imgur y/o url_trustpilot_review), nunca ambas vacías.
  */
 export interface TestimonioPublico {
   url_imgur: string;
+  url_trustpilot_review: string;
   marca: string;
   modelo: string;
   pais: string;

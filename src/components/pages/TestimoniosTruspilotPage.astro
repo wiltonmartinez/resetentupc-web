@@ -1,8 +1,12 @@
 ---
 /**
- * Galería pura de imágenes — sin slug, sin título ni descripción por item,
- * sin página de detalle. Cada testimonio aporta una imagen (url_imgur);
- * marca/modelo/país pueden venir vacíos (un testimonio no requiere pedido).
+ * Galería pura de evidencias de Trustpilot — sin slug, sin título ni
+ * descripción por item, sin página de detalle. Cada testimonio aporta una
+ * o dos evidencias independientes: url_imgur (captura) se pinta como
+ * <img>, url_trustpilot_review (link a la reseña real) se embebe en un
+ * <iframe> con una capa clicable encima (un iframe no navega por sí solo)
+ * que abre esa misma URL en pestaña nueva. marca/modelo/país pueden venir
+ * vacíos (un testimonio no requiere pedido real).
  */
 import Breadcrumb from "../Breadcrumb.astro";
 import { buildLocalizedPath, t } from "../../i18n/utils";
@@ -16,17 +20,15 @@ interface Props {
 
 const { locale, testimonios } = Astro.props;
 
-interface Imagen {
-  url: string;
-  alt: string;
-}
+type Evidencia = { tipo: "imagen" | "iframe"; url: string; alt: string };
 
-const imagenes: Imagen[] = testimonios
-  .filter((testimonio) => testimonio.url_imgur && testimonio.url_imgur.trim() !== "")
-  .map((testimonio) => ({
-    url: testimonio.url_imgur,
-    alt: [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · "),
-  }));
+const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
+  const alt = [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · ");
+  const items: Evidencia[] = [];
+  if (testimonio.url_imgur?.trim()) items.push({ tipo: "imagen", url: testimonio.url_imgur, alt });
+  if (testimonio.url_trustpilot_review?.trim()) items.push({ tipo: "iframe", url: testimonio.url_trustpilot_review, alt });
+  return items;
+});
 ---
 
 <Breadcrumb
@@ -39,13 +41,26 @@ const imagenes: Imagen[] = testimonios
 <h1>{t(locale, "testimoniosTruspilotPage.heading")}</h1>
 <p>{t(locale, "testimoniosTruspilotPage.texto")}</p>
 
-{imagenes.length > 0 ? (
+{evidencias.length > 0 ? (
   <div class="testimonios-grid">
-    {imagenes.map((imagen) => (
-      <a class="testimonios-item" href={imagen.url} target="_blank" rel="noopener noreferrer">
-        <img src={imagen.url} alt={imagen.alt} loading="lazy" />
-      </a>
-    ))}
+    {evidencias.map((evidencia) =>
+      evidencia.tipo === "imagen" ? (
+        <a class="testimonios-item" href={evidencia.url} target="_blank" rel="noopener noreferrer">
+          <img src={evidencia.url} alt={evidencia.alt} loading="lazy" />
+        </a>
+      ) : (
+        <div class="testimonios-item testimonios-item-iframe">
+          <iframe src={evidencia.url} title={evidencia.alt || "Reseña en Trustpilot"} loading="lazy" />
+          <a
+            class="testimonios-item-overlay"
+            href={evidencia.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={evidencia.alt ? `${evidencia.alt} — Trustpilot` : "Ver reseña en Trustpilot"}
+          />
+        </div>
+      )
+    )}
   </div>
 ) : (
   <p class="testimonios-vacio">{t(locale, "testimoniosTruspilotPage.sinRegistros")}</p>
@@ -70,6 +85,24 @@ const imagenes: Imagen[] = testimonios
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  .testimonios-item-iframe {
+    position: relative;
+    min-height: 360px;
+  }
+
+  .testimonios-item-iframe iframe {
+    display: block;
+    width: 100%;
+    height: 360px;
+    border: none;
+  }
+
+  .testimonios-item-overlay {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
   }
 
   .testimonios-vacio {
