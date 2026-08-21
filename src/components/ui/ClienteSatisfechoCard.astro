@@ -5,7 +5,11 @@
  * página de detalle de cada slug, para que el índice aguante cientos/miles
  * de registros sin pesar.
  */
-import { tituloClienteSatisfecho, type ClienteSatisfechoEvidencia } from "../../data/cliente-satisfecho";
+import {
+  tituloClienteSatisfecho,
+  slugClienteSatisfecho,
+  type ClienteSatisfechoEvidencia,
+} from "../../data/cliente-satisfecho";
 
 interface Props {
   evidencia: ClienteSatisfechoEvidencia;
@@ -13,7 +17,7 @@ interface Props {
 
 const { evidencia } = Astro.props;
 const titulo = tituloClienteSatisfecho(evidencia);
-const href = `/prueba-social/cliente-satisfecho/${evidencia.slug}/`;
+const href = `/prueba-social/cliente-satisfecho/${slugClienteSatisfecho(evidencia)}/`;
 ---
 
 <a class="cs-card" href={href}>
