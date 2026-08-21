@@ -2,7 +2,8 @@
 import Breadcrumb from "../Breadcrumb.astro";
 import YouTubeFacade from "../ui/YouTubeFacade.astro";
 import { tituloConRespaldo, type ResetRealizadoPublico } from "../../lib/nucleo-api";
-import { buildLocalizedPath, t } from "../../i18n/utils";
+import { buildLocalizedPath, buildCanonicalUrl, t } from "../../i18n/utils";
+import { buildReviewSchema } from "../../lib/schema";
 import type { Locale } from "../../config/site";
 
 interface Props {
@@ -27,7 +28,18 @@ const resumenContenido = t(locale, duracion ? "resetRealizadosPage.resumenConten
   .replaceAll("{error}", evidencia.error)
   .replaceAll("{pais}", evidencia.pais)
   .replaceAll("{duracion}", duracion || "");
+
+const reviewSchema = buildReviewSchema({
+  marca: evidencia.marca,
+  modelo: evidencia.modelo,
+  pais: evidencia.pais,
+  fechaPublicacion: evidencia.fecha_publicacion,
+  reviewBody: resumenContenido,
+  url: buildCanonicalUrl(locale, `/prueba-social/reset-evidencia/${evidencia.slug}/`),
+});
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
 
 <Breadcrumb
   items={[

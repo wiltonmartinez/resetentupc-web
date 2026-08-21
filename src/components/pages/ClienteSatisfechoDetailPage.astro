@@ -9,7 +9,8 @@
 import Breadcrumb from "../Breadcrumb.astro";
 import ClienteSatisfechoEmbed from "../ui/ClienteSatisfechoEmbed.astro";
 import { tituloConRespaldo, type ClienteSatisfechoPublico } from "../../lib/nucleo-api";
-import { buildLocalizedPath, t } from "../../i18n/utils";
+import { buildLocalizedPath, buildCanonicalUrl, t } from "../../i18n/utils";
+import { buildReviewSchema } from "../../lib/schema";
 import type { Locale } from "../../config/site";
 
 interface Props {
@@ -19,7 +20,16 @@ interface Props {
 
 const { locale, evidencia } = Astro.props;
 const titulo = tituloConRespaldo(evidencia);
+const reviewSchema = buildReviewSchema({
+  marca: evidencia.marca,
+  modelo: evidencia.modelo,
+  pais: evidencia.pais,
+  fechaPublicacion: evidencia.fecha_publicacion,
+  url: buildCanonicalUrl(locale, `/prueba-social/cliente-satisfecho/${evidencia.slug}/`),
+});
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
 
 <Breadcrumb
   items={[
