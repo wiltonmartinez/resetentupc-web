@@ -4,7 +4,8 @@ export const prerender = false;
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Breadcrumb from "../../../components/Breadcrumb.astro";
 import YouTubeFacade from "../../../components/ui/YouTubeFacade.astro";
-import { obtenerResetRealizadoPorSlug, tituloConRespaldo } from "../../../lib/nucleo-api";
+import { obtenerResetRealizadoPorSlug } from "../../../lib/nucleo-api";
+import { obtenerDuracionYoutube } from "../../../lib/youtube";
 import { buildLocalizedPath, t } from "../../../i18n/utils";
 
 const locale = "es" as const;
@@ -15,7 +16,17 @@ if (!evidencia) {
   Astro.response.status = 404;
 }
 
-const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
+// Duración real calculada en vivo vía la API de YouTube (no depende de que
+// Núcleo la haya cargado a mano) — si la API falla, cae a duracion_video.
+const apiKeyYoutube = (Astro.locals as { runtime?: { env?: { YOUTUBE_API_KEY?: string } } }).runtime?.env?.YOUTUBE_API_KEY;
+const duracion = evidencia
+  ? (apiKeyYoutube ? await obtenerDuracionYoutube(evidencia.youtube_id, apiKeyYoutube) : null) ?? evidencia.duracion_video
+  : "";
+
+// Formato fijo pedido: "Reset {marca} {modelo} {error} {pais} {duracion}".
+const titulo = evidencia
+  ? ["Reset", evidencia.marca, evidencia.modelo, evidencia.error, evidencia.pais, duracion].filter(Boolean).join(" ")
+  : "";
 ---
 
 {evidencia ? (
@@ -45,7 +56,7 @@ const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
       <div><dt>{t(locale, "resetRealizadosPage.modelo")}</dt><dd>{evidencia.modelo}</dd></div>
       <div><dt>{t(locale, "resetRealizadosPage.error")}</dt><dd>{evidencia.error}</dd></div>
       <div><dt>{t(locale, "resetRealizadosPage.pais")}</dt><dd>{evidencia.pais}</dd></div>
-      {evidencia.duracion_video && <div><dt>{t(locale, "resetRealizadosPage.duracion")}</dt><dd>{evidencia.duracion_video}</dd></div>}
+      {duracion && <div><dt>{t(locale, "resetRealizadosPage.duracion")}</dt><dd>{duracion}</dd></div>}
     </dl>
     <p class="rr-volver">
       <a href="/prueba-social/reset-evidencia/">{t(locale, "resetRealizadosPage.volverLink")}</a>

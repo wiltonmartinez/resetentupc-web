@@ -108,4 +108,30 @@ const miniatura = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
     font-size: 0.82rem;
     color: var(--color-text-subtle);
   }
+
+  .youtube-card :global(.youtube-card-iframe) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    border-radius: var(--radius-md);
+  }
 </style>
+
+<script is:inline>
+  document.querySelectorAll("[data-youtube-trigger]").forEach(function (trigger) {
+    trigger.addEventListener("click", function () {
+      const youtubeId = trigger.dataset.youtubeId;
+      if (!youtubeId) return;
+
+      const iframe = document.createElement("iframe");
+      iframe.src = "https://www.youtube-nocookie.com/embed/" + youtubeId + "?autoplay=1";
+      iframe.title = trigger.getAttribute("aria-label") || "YouTube video";
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      iframe.allowFullscreen = true;
+      iframe.loading = "lazy";
+      iframe.className = "youtube-card-iframe";
+
+      trigger.replaceWith(iframe);
+    });
+  });
+</script>
