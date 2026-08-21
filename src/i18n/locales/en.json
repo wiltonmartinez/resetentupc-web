@@ -192,7 +192,7 @@
   },
   "contactForm": {
     "botonFlotante": "Contact us",
-    "tituloModal": "Tell us about your case",
+    "tituloModal": "What do you need to do today?",
     "cerrarModal": "Close",
     "paraLabel": "Who is your message for?",
     "paraWilton": "Wilton Martínez",
@@ -261,7 +261,7 @@
     "errorCorreoNoReal": "This email isn't real",
     "errorBloqueado": "Access blocked due to repeated attempts with fake emails.",
     "tipoLabel": "What would you like to do?",
-    "tipoCotizacion": "Quote",
+    "tipoCotizacion": "Quote / Purchase",
     "tipoGarantia": "Warranty",
     "tipoPrueba": "Free trial",
     "tipoCompra": "Buy now",

@@ -192,7 +192,7 @@
   },
   "contactForm": {
     "botonFlotante": "Contactez-nous",
-    "tituloModal": "Parlez-nous de votre cas",
+    "tituloModal": "De quoi avez-vous besoin aujourd’hui ?",
     "cerrarModal": "Fermer",
     "paraLabel": "À qui s'adresse votre message ?",
     "paraWilton": "Wilton Martínez",
@@ -261,7 +261,7 @@
     "errorCorreoNoReal": "Cet e-mail n'est pas réel",
     "errorBloqueado": "Accès bloqué en raison de tentatives répétées avec des e-mails faux.",
     "tipoLabel": "Que souhaitez-vous faire ?",
-    "tipoCotizacion": "Devis",
+    "tipoCotizacion": "Devis / Achat",
     "tipoGarantia": "Garantie",
     "tipoPrueba": "Essai gratuit",
     "tipoCompra": "Achat immédiat",
