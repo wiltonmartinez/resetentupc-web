@@ -1,8 +1,8 @@
 ---
 /**
  * Galería pura de imágenes — sin slug, sin título ni descripción por item,
- * sin página de detalle. Cada testimonio puede aportar 0, 1 o 2 imágenes
- * (foto + reseña), independientes entre sí; se filtran los campos vacíos.
+ * sin página de detalle. Cada testimonio aporta una imagen (url_imgur);
+ * marca/modelo/país pueden venir vacíos (un testimonio no requiere pedido).
  */
 import Breadcrumb from "../Breadcrumb.astro";
 import { buildLocalizedPath, t } from "../../i18n/utils";
@@ -21,11 +21,12 @@ interface Imagen {
   alt: string;
 }
 
-const imagenes: Imagen[] = testimonios.flatMap((testimonio) => {
-  const alt = [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · ");
-  const urls = [testimonio.url_trustpilot_foto, testimonio.url_resena].filter((url) => url && url.trim() !== "");
-  return urls.map((url) => ({ url, alt }));
-});
+const imagenes: Imagen[] = testimonios
+  .filter((testimonio) => testimonio.url_imgur && testimonio.url_imgur.trim() !== "")
+  .map((testimonio) => ({
+    url: testimonio.url_imgur,
+    alt: [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · "),
+  }));
 ---
 
 <Breadcrumb

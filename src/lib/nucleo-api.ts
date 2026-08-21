@@ -35,15 +35,16 @@ export interface ClienteSatisfechoPublico {
 /**
  * Galería pura de imágenes (capturas de Trustpilot) — sin slug, sin título,
  * sin página individual. `/api/public/testimonios/` devuelve TODO en un
- * único llamado (sin paginación).
+ * único llamado (sin paginación). Un testimonio no requiere pedido: puede
+ * venir con número de pedido, solo email, o sin ningún dato — marca/modelo/
+ * país pueden venir vacíos.
  */
 export interface TestimonioPublico {
-  url_trustpilot_foto: string;
-  url_resena: string;
+  url_imgur: string;
   marca: string;
   modelo: string;
   pais: string;
-  fecha_publicacion: string;
+  fecha: string;
 }
 
 export interface ApiMeta {
