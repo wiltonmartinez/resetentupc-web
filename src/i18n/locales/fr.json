@@ -392,7 +392,9 @@
   },
   "footer": {
     "rights": "Tous droits réservés.",
-    "disclaimer": "ResetEnLinea.com propose une assistance professionnelle indépendante pour la réinitialisation d'imprimantes. Les marques mentionnées appartiennent à leurs propriétaires respectifs."
+    "disclaimer": "ResetEnLinea.com propose une assistance professionnelle indépendante pour la réinitialisation d'imprimantes. Les marques mentionnées appartiennent à leurs propriétaires respectifs.",
+    "legalInfoTitulo": "Informations légales",
+    "terminosLink": "Conditions Générales"
   },
   "ruletaPage": {
     "title": "Roulette | ResetEnLinea.com",

@@ -1,0 +1,382 @@
+---
+/**
+ * Página legal — solo español (jurisdicción colombiana explícita en el
+ * propio contenido). No se traduce a los demás idiomas del sitio: un
+ * documento legal necesita revisión de un abogado por cada jurisdicción,
+ * no una traducción automática.
+ */
+import { SITE_URL, WHATSAPP_NUMBER, type Locale } from "../../config/site";
+import { buildWhatsAppLink } from "../../i18n/utils";
+import InfoCard from "../ui/InfoCard.astro";
+import SharePageButtons from "../ui/SharePageButtons.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const path = "/terminos-y-condiciones/";
+const url = `${SITE_URL}${path}`;
+
+const mensajeWhatsapp = `Te comparto los Términos y Condiciones oficiales de ResetEnLinea:\n\n${url}`;
+const asuntoEmail = "Términos y Condiciones de ResetEnLinea";
+const cuerpoEmail = `Hola,\n\nTe comparto los Términos y Condiciones oficiales de ResetEnLinea:\n\n${url}\n\nSaludos,\nResetEnLinea`;
+
+const whatsappConsultaHref = buildWhatsAppLink(
+  WHATSAPP_NUMBER,
+  "Hola, tengo una consulta sobre los Términos y Condiciones de ResetEnLinea."
+);
+
+const secciones = [
+  { id: "objeto", titulo: "1. Objeto del servicio" },
+  { id: "naturaleza", titulo: "2. Naturaleza del servicio" },
+  { id: "proceso", titulo: "3. Cómo funciona el proceso" },
+  { id: "reembolsos", titulo: "4. Política de reembolsos" },
+  { id: "exclusiones", titulo: "5. Qué no incluye el servicio" },
+  { id: "errores", titulo: "6. Errores que podemos atender" },
+  { id: "garantia", titulo: "7. Garantía" },
+  { id: "certificado", titulo: "8. Certificado de garantía" },
+  { id: "evidencia", titulo: "9. Evidencia del servicio y prueba social" },
+  { id: "privacidad", titulo: "10. Privacidad de las conversaciones" },
+  { id: "prestador", titulo: "11. Datos del prestador del servicio" },
+  { id: "legislacion", titulo: "12. Legislación aplicable" },
+];
+---
+
+<article class="terminos-page">
+  <h1>Términos y Condiciones</h1>
+  <p class="terminos-actualizacion">Última actualización: 21 de agosto de 2026.</p>
+
+  <SharePageButtons
+    url={url}
+    tituloLabel="Compartir estos Términos y Condiciones"
+    mensajeWhatsapp={mensajeWhatsapp}
+    asuntoEmail={asuntoEmail}
+    cuerpoEmail={cuerpoEmail}
+    labelWhatsapp="WhatsApp"
+    labelEmail="Email"
+    labelCopiar="Copiar enlace"
+    labelCopiado="Enlace copiado"
+    labelImprimir="Imprimir / Guardar PDF"
+    labelCompartir="Compartir"
+  />
+
+  <nav class="terminos-toc" aria-label="Índice de contenidos">
+    <h2>Índice</h2>
+    <ol>
+      {secciones.map((seccion) => (
+        <li><a href={`#${seccion.id}`}>{seccion.titulo}</a></li>
+      ))}
+    </ol>
+  </nav>
+
+  <section id="objeto">
+    <h2>1. Objeto del servicio</h2>
+    <p>
+      ResetEnLinea presta un servicio denominado <strong>Reset Asistido 100% remoto mediante conexión USB</strong>.
+      ResetEnLinea no vende software, no vende licencias ni vende programas de reset. Las herramientas técnicas
+      utilizadas durante la prestación del servicio son únicamente medios para prestarlo, no el producto que se
+      contrata.
+    </p>
+  </section>
+
+  <section id="naturaleza">
+    <h2>2. Naturaleza del servicio</h2>
+    <p>
+      El técnico de ResetEnLinea no ingresa al computador del cliente. El cliente únicamente comparte, de forma
+      temporal, el puerto USB de su impresora mediante la herramienta de conexión correspondiente.
+    </p>
+    <p>
+      USB Redirector <strong>no es el reseteador</strong>. Esta herramienta únicamente permite establecer la
+      comunicación entre la impresora del cliente y el servidor donde trabaja el técnico. El reset en sí lo realiza
+      el técnico de forma remota, sin acceder al equipo del cliente más allá de esa conexión de la impresora.
+    </p>
+  </section>
+
+  <section id="proceso">
+    <h2>3. Cómo funciona el proceso</h2>
+    <ol class="terminos-proceso-lista">
+      <li>Solicitud</li>
+      <li>Conexión USB</li>
+      <li>Revisión técnica</li>
+      <li>Confirmación de compatibilidad</li>
+      <li>Cotización</li>
+      <li>Pago</li>
+      <li>Reset</li>
+      <li>Evidencia</li>
+    </ol>
+  </section>
+
+  <section id="reembolsos">
+    <h2>4. Política de reembolsos</h2>
+    <p>
+      Antes de confirmar el pago, se realiza una revisión técnica para comprobar la compatibilidad del equipo con
+      el servicio contratado.
+    </p>
+    <ul>
+      <li>Si, tras esa revisión, el equipo resulta no ser compatible, procede el reembolso.</li>
+      <li>Si el procedimiento no logra realizar el reset contratado, procede el reembolso.</li>
+      <li>Una vez el reset se considera exitoso, <strong>no hay lugar a reembolso</strong>.</li>
+    </ul>
+    <p>
+      Se considera que el reset fue exitoso cuando el contador objeto del servicio fue restablecido y el error
+      específico contratado fue eliminado. Resetear no significa reparar.
+    </p>
+    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — política de reembolsos.</p>
+  </section>
+
+  <section id="exclusiones">
+    <h2>5. Qué no incluye el servicio</h2>
+    <p>El servicio de Reset Asistido no incluye, entre otros:</p>
+    <ul>
+      <li>Reparación física, limpieza física o mantenimiento físico del equipo</li>
+      <li>Reparación de cabezales de impresión</li>
+      <li>Reparación de sensores</li>
+      <li>Reparación de bombas</li>
+      <li>Reparación del sistema de tinta</li>
+      <li>Reparación de cartuchos</li>
+      <li>Reparación de la caja de mantenimiento</li>
+      <li>Reparación de placas electrónicas</li>
+      <li>Reparación de memoria EEPROM</li>
+      <li>Reparación de daños eléctricos</li>
+      <li>Reparación de impresoras que no encienden</li>
+      <li>Problemas de calidad de impresión (impresiones borrosas o en blanco)</li>
+      <li>Configuración del equipo o instalación de drivers</li>
+      <li>En general, cualquier reparación de tipo físico</li>
+    </ul>
+  </section>
+
+  <section id="errores">
+    <h2>6. Errores que podemos atender</h2>
+    <p><strong>Epson:</strong> E-11, W-11, E-10, W-10</p>
+    <p><strong>Canon:</strong> 5B00, 1700, P07</p>
+    <p>
+      <strong>Epson-SC y equipos compatibles:</strong> 0014BD, 00000008, 00000001, 00000004, 0000000C, 00010000,
+      00040000, 00080000, 00010008, 0001000C, 00010004, 00040008, 0004000C, 000C0008, 000C0001, 000C0004
+    </p>
+    <p>
+      Estos códigos no significan automáticamente que cualquier modelo sea compatible. La compatibilidad depende
+      del modelo específico y debe confirmarse antes de realizar el pago.
+    </p>
+  </section>
+
+  <section id="garantia">
+    <h2>7. Garantía</h2>
+    <p>
+      La garantía del servicio puede tener una duración de 3 a 12 meses. La duración exacta aplicable a cada
+      servicio queda establecida en el certificado correspondiente.
+    </p>
+    <p>
+      De forma promocional, ResetEnLinea puede ofrecer una ampliación de garantía de 1 mes adicional, hasta un
+      máximo de 2 meses adicionales.
+    </p>
+    <p>
+      La garantía corresponde específicamente al reset del modelo contratado y no constituye una garantía integral
+      de la impresora ni de sus demás componentes.
+    </p>
+    <p>
+      Durante la vigencia de la garantía, el cliente puede solicitar el servicio para otra impresora del mismo
+      modelo, siempre que se trate de:
+    </p>
+    <ul>
+      <li>la misma persona,</li>
+      <li>el mismo contacto,</li>
+      <li>el mismo correo electrónico,</li>
+      <li>el mismo modelo de impresora, y</li>
+      <li>un certificado válido y vigente.</li>
+    </ul>
+    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — condiciones de traslado/reutilización de la garantía.</p>
+  </section>
+
+  <section id="certificado">
+    <h2>8. Certificado de garantía</h2>
+    <p>
+      El certificado es el documento que acredita la garantía del servicio prestado. Puede entregarse en formato
+      PDF, como fotografía, o en formato impreso.
+    </p>
+    <p>
+      Si el cliente no proporciona una dirección de correo electrónico, no será posible enviarle el certificado por
+      esa vía.
+    </p>
+  </section>
+
+  <section id="evidencia">
+    <h2>9. Evidencia del servicio y prueba social</h2>
+    <p>
+      Después de un reset exitoso, ResetEnLinea puede generar evidencia en video del servicio realizado. Esta
+      evidencia puede utilizarse como prueba social y publicarse en los canales de ResetEnLinea, incluyendo este
+      sitio web.
+    </p>
+  </section>
+
+  <section id="privacidad">
+    <h2>10. Privacidad de las conversaciones</h2>
+    <p>
+      Existe una versión privada de la conversación con el cliente, sin censura, que puede formar parte del
+      certificado de garantía entregado a este. La versión que se publica públicamente está censurada, protegiendo
+      los datos personales del cliente.
+    </p>
+    <p>
+      La publicación pública de conversaciones, videos o evidencias del servicio se maneja mediante una
+      autorización independiente a estos Términos y Condiciones.
+    </p>
+    <p>
+      Si, después de una publicación pública, el cliente solicita su retiro, puede hacerlo escribiendo a
+      <a href="mailto:info@resetenlinea.com">info@resetenlinea.com</a>.
+    </p>
+    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — tratamiento de datos personales y autorización de imagen/publicación.</p>
+  </section>
+
+  <section id="prestador">
+    <h2>11. Datos del prestador del servicio</h2>
+    <ul class="terminos-datos-lista">
+      <li>ResetEnLinea</li>
+      <li>Wilton Martinez Escorcia</li>
+      <li>Santa Marta, Colombia</li>
+      <li><a href="mailto:info@resetenlinea.com">info@resetenlinea.com</a></li>
+      <li><a href="https://resetenlinea.com">resetenlinea.com</a></li>
+    </ul>
+  </section>
+
+  <section id="legislacion">
+    <h2>12. Legislación aplicable</h2>
+    <p>El servicio se presta desde Colombia y se rige por la legislación colombiana aplicable.</p>
+    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — ley aplicable y resolución de controversias.</p>
+  </section>
+
+  <InfoCard tone="muted">
+    <p class="terminos-cta-texto">¿Tienes una duda sobre estos Términos y Condiciones?</p>
+    <a class="terminos-cta-whatsapp" href={whatsappConsultaHref} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
+      Escríbenos por WhatsApp
+    </a>
+  </InfoCard>
+
+  <SharePageButtons
+    url={url}
+    tituloLabel="Compartir estos Términos y Condiciones"
+    mensajeWhatsapp={mensajeWhatsapp}
+    asuntoEmail={asuntoEmail}
+    cuerpoEmail={cuerpoEmail}
+    labelWhatsapp="WhatsApp"
+    labelEmail="Email"
+    labelCopiar="Copiar enlace"
+    labelCopiado="Enlace copiado"
+    labelImprimir="Imprimir / Guardar PDF"
+    labelCompartir="Compartir"
+  />
+</article>
+
+<style>
+  .terminos-page {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .terminos-actualizacion {
+    margin: -0.5rem 0 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .terminos-toc {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+  }
+
+  .terminos-toc h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  .terminos-toc ol {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.3rem;
+    columns: 1;
+  }
+
+  @media (min-width: 640px) {
+    .terminos-toc ol {
+      columns: 2;
+      column-gap: 1.5rem;
+    }
+  }
+
+  .terminos-toc a {
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+
+  .terminos-toc a:hover {
+    text-decoration: underline;
+  }
+
+  .terminos-page section {
+    scroll-margin-top: 5rem;
+  }
+
+  .terminos-page section h2 {
+    margin: 0 0 0.5rem;
+  }
+
+  .terminos-page section p,
+  .terminos-page section ul,
+  .terminos-page section ol {
+    margin: 0 0 0.6rem;
+    color: var(--color-text-muted);
+  }
+
+  .terminos-proceso-lista {
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .terminos-datos-lista {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .terminos-revision-legal {
+    font-weight: 700;
+    color: var(--color-warning-text);
+  }
+
+  .terminos-cta-texto {
+    margin: 0;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .terminos-cta-whatsapp {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .terminos-cta-whatsapp:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+  }
+
+  @media print {
+    .terminos-cta-whatsapp,
+    .terminos-toc {
+      display: none;
+    }
+  }
+</style>

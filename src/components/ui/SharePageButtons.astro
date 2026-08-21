@@ -1,0 +1,174 @@
+---
+/**
+ * Botones "compartir esta página" — WhatsApp, Email, Copiar enlace,
+ * Imprimir/Guardar PDF, y (si el navegador lo soporta) Compartir nativo.
+ * Sin backend, sin guardar nada del usuario: todo ocurre en el dispositivo
+ * del propio usuario, quien decide si comparte o no.
+ *
+ * `url` se recibe ya resuelta a la URL canónica (SITE_URL + path), nunca
+ * leída de window.location — así nunca se comparte localhost ni una URL
+ * de desarrollo, sin importar dónde corra este componente.
+ */
+import { WHATSAPP_NUMBER } from "../../config/site";
+import { buildWhatsAppLink } from "../../i18n/utils";
+
+interface Props {
+  url: string;
+  tituloLabel: string;
+  mensajeWhatsapp: string;
+  asuntoEmail: string;
+  cuerpoEmail: string;
+  labelWhatsapp: string;
+  labelEmail: string;
+  labelCopiar: string;
+  labelCopiado: string;
+  labelImprimir: string;
+  labelCompartir: string;
+}
+
+const {
+  url,
+  tituloLabel,
+  mensajeWhatsapp,
+  asuntoEmail,
+  cuerpoEmail,
+  labelWhatsapp,
+  labelEmail,
+  labelCopiar,
+  labelCopiado,
+  labelImprimir,
+  labelCompartir,
+} = Astro.props;
+
+const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
+const mailtoHref = `mailto:?subject=${encodeURIComponent(asuntoEmail)}&body=${encodeURIComponent(cuerpoEmail)}`;
+---
+
+<div class="share-page" data-share-url={url} data-copiado-label={labelCopiado}>
+  <p class="share-page-titulo">{tituloLabel}</p>
+  <div class="share-page-botones">
+    <a class="share-page-btn" href={whatsappHref} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
+      {labelWhatsapp}
+    </a>
+    <a class="share-page-btn" href={mailtoHref} data-sound="select">
+      {labelEmail}
+    </a>
+    <button type="button" class="share-page-btn" data-copiar-enlace data-sound="select">
+      {labelCopiar}
+    </button>
+    <button type="button" class="share-page-btn" data-imprimir data-sound="select">
+      {labelImprimir}
+    </button>
+    <button type="button" class="share-page-btn" data-compartir-nativo hidden data-sound="select">
+      {labelCompartir}
+    </button>
+  </div>
+  <p class="share-page-confirmacion" data-confirmacion hidden aria-live="polite"></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-share-url]").forEach((contenedor) => {
+    const url = contenedor.dataset.shareUrl ?? "";
+    const labelCopiado = contenedor.dataset.copiadoLabel ?? "Copiado";
+    const confirmacion = contenedor.querySelector<HTMLElement>("[data-confirmacion]");
+    let temporizador: ReturnType<typeof setTimeout> | undefined;
+
+    const mostrarConfirmacion = (texto: string) => {
+      if (!confirmacion) return;
+      confirmacion.textContent = texto;
+      confirmacion.hidden = false;
+      clearTimeout(temporizador);
+      temporizador = setTimeout(() => {
+        confirmacion.hidden = true;
+      }, 2500);
+    };
+
+    contenedor.querySelector("[data-copiar-enlace]")?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        mostrarConfirmacion(labelCopiado);
+      } catch {
+        // Portapapeles no disponible (permiso denegado, navegador viejo, etc.)
+        // — no hay nada más seguro que ofrecer aquí sin backend.
+      }
+    });
+
+    contenedor.querySelector("[data-imprimir]")?.addEventListener("click", () => {
+      window.print();
+    });
+
+    const botonNativo = contenedor.querySelector<HTMLButtonElement>("[data-compartir-nativo]");
+    if (botonNativo && typeof navigator.share === "function") {
+      botonNativo.hidden = false;
+      botonNativo.addEventListener("click", () => {
+        navigator.share({ url }).catch(() => {
+          // Usuario canceló el share nativo — no es un error a mostrar.
+        });
+      });
+    }
+  });
+</script>
+
+<style>
+  .share-page {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .share-page-titulo {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+  }
+
+  .share-page-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .share-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-width: 8rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .share-page-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+  }
+
+  .share-page-confirmacion {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+  }
+
+  @media (max-width: 480px) {
+    .share-page-btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media print {
+    .share-page {
+      display: none;
+    }
+  }
+</style>

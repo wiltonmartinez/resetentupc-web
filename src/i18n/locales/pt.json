@@ -392,7 +392,9 @@
   },
   "footer": {
     "rights": "Todos os direitos reservados.",
-    "disclaimer": "A ResetEnLinea.com oferece assistência profissional independente para o reset de impressoras. As marcas mencionadas pertencem a seus respectivos proprietários."
+    "disclaimer": "A ResetEnLinea.com oferece assistência profissional independente para o reset de impressoras. As marcas mencionadas pertencem a seus respectivos proprietários.",
+    "legalInfoTitulo": "Informações legais",
+    "terminosLink": "Termos e Condições"
   },
   "ruletaPage": {
     "title": "Roleta | ResetEnLinea.com",
