@@ -404,7 +404,9 @@
   },
   "footer": {
     "rights": "Todos los derechos reservados.",
-    "disclaimer": "ResetEnLinea.com ofrece asistencia profesional independiente para el reset de impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios."
+    "disclaimer": "ResetEnLinea.com ofrece asistencia profesional independiente para el reset de impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios.",
+    "legalInfoTitulo": "Información legal",
+    "terminosLink": "Términos y Condiciones"
   },
   "testimoniosTruspilotPage": {
     "title": "Testimonios Trustpilot | ResetEnLinea.com",

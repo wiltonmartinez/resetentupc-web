@@ -13,6 +13,10 @@ const { locale } = Astro.props;
   <div class="site-footer-inner">
     <p>&copy; {new Date().getFullYear()} ResetEnLinea.com. {t(locale, "footer.rights")}</p>
     <p class="disclaimer">{t(locale, "footer.disclaimer")}</p>
+    <nav class="site-footer-legal" aria-label={t(locale, "footer.legalInfoTitulo")}>
+      <span class="site-footer-legal-titulo">{t(locale, "footer.legalInfoTitulo")}:</span>
+      <a href="/terminos-y-condiciones/">{t(locale, "footer.terminosLink")}</a>
+    </nav>
   </div>
 </footer>
 
@@ -30,5 +34,22 @@ const { locale } = Astro.props;
   }
   .disclaimer {
     margin: 0.5rem 0 0;
+  }
+
+  .site-footer-legal {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .site-footer-legal-titulo {
+    font-weight: 600;
+  }
+
+  .site-footer-legal a {
+    color: var(--color-primary-dark);
   }
 </style>

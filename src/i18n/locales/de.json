@@ -404,7 +404,9 @@
   },
   "footer": {
     "rights": "Alle Rechte vorbehalten.",
-    "disclaimer": "ResetEnLinea.com bietet unabhängige professionelle Unterstützung für den Reset von Druckern. Die genannten Marken gehören ihren jeweiligen Eigentümern."
+    "disclaimer": "ResetEnLinea.com bietet unabhängige professionelle Unterstützung für den Reset von Druckern. Die genannten Marken gehören ihren jeweiligen Eigentümern.",
+    "legalInfoTitulo": "Rechtliche Hinweise",
+    "terminosLink": "Allgemeine Geschäftsbedingungen"
   },
   "testimoniosTruspilotPage": {
     "title": "Trustpilot-Erfahrungen | ResetEnLinea.com",

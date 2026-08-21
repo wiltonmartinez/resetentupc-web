@@ -392,7 +392,9 @@
   },
   "footer": {
     "rights": "Tutti i diritti riservati.",
-    "disclaimer": "ResetEnLinea.com offre assistenza professionale indipendente per il reset di stampanti. I marchi citati appartengono ai rispettivi proprietari."
+    "disclaimer": "ResetEnLinea.com offre assistenza professionale indipendente per il reset di stampanti. I marchi citati appartengono ai rispettivi proprietari.",
+    "legalInfoTitulo": "Informazioni legali",
+    "terminosLink": "Termini e Condizioni"
   },
   "ruletaPage": {
     "title": "Ruota della fortuna | ResetEnLinea.com",

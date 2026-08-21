@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TerminosCondicionesPage from "../components/pages/TerminosCondicionesPage.astro";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  title="Términos y Condiciones | ResetEnLinea.com"
+  description="Términos y Condiciones del servicio de Reset Asistido 100% remoto mediante conexión USB de ResetEnLinea."
+  locale={locale}
+  path="/terminos-y-condiciones/"
+>
+  <TerminosCondicionesPage locale={locale} />
+</BaseLayout>
