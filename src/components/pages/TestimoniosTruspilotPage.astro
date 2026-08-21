@@ -1,20 +1,14 @@
 ---
 /**
- * Galería pura de evidencias de Trustpilot — sin slug, sin página de
- * detalle propia. Cada testimonio aporta una o dos evidencias
- * independientes: url_imgur (captura) se pinta como <img> normal;
- * url_trustpilot_review (link a la reseña real) se muestra como una
- * tarjeta tipo "link preview" (misma técnica que WhatsApp/Slack) usando
- * el og:image/og:title/og:description reales de esa página — Trustpilot
- * bloquea el framing con una pantalla de verificación anti-bot, así que
- * un <iframe> ahí no funciona. Si esa URL no trae og:image, se cae al
- * ícono genérico + "Ver reseña" como último recurso.
- * marca/modelo/país pueden venir vacíos (un testimonio no requiere
- * pedido real).
+ * Galería pura de imágenes — sin slug, sin página de detalle propia, sin
+ * ningún texto/leyenda visible por item. Cada testimonio con url_imgur se
+ * pinta como una sola imagen clickeable; el destino del click prefiere
+ * url_trustpilot_review (si viene) y si no, la propia imagen. Testimonios
+ * sin url_imgur no se muestran (no hay nada que pintar sin agregar texto,
+ * y esta galería no debe llevar texto).
  */
 import Breadcrumb from "../Breadcrumb.astro";
 import { buildLocalizedPath, t } from "../../i18n/utils";
-import { obtenerLinkPreview, type LinkPreview } from "../../lib/link-preview";
 import type { Locale } from "../../config/site";
 import type { TestimonioPublico } from "../../lib/nucleo-api";
 
@@ -25,31 +19,12 @@ interface Props {
 
 const { locale, testimonios } = Astro.props;
 
-type Evidencia =
-  | { tipo: "imagen"; url: string; alt: string }
-  | { tipo: "review"; url: string; alt: string; preview: LinkPreview | null };
-
-const urlsUnicasReview = [
-  ...new Set(testimonios.map((t) => t.url_trustpilot_review).filter((url) => url?.trim())),
-];
-const previews = new Map(
-  await Promise.all(urlsUnicasReview.map(async (url) => [url, await obtenerLinkPreview(url)] as const))
-);
-
-const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
-  const alt = [testimonio.marca, testimonio.modelo, testimonio.pais].filter(Boolean).join(" · ");
-  const items: Evidencia[] = [];
-  if (testimonio.url_imgur?.trim()) items.push({ tipo: "imagen", url: testimonio.url_imgur, alt });
-  if (testimonio.url_trustpilot_review?.trim()) {
-    items.push({
-      tipo: "review",
-      url: testimonio.url_trustpilot_review,
-      alt,
-      preview: previews.get(testimonio.url_trustpilot_review) ?? null,
-    });
-  }
-  return items;
-});
+const evidencias = testimonios
+  .filter((testimonio) => testimonio.url_imgur?.trim())
+  .map((testimonio) => ({
+    imagen: testimonio.url_imgur,
+    destino: testimonio.url_trustpilot_review?.trim() || testimonio.url_imgur,
+  }));
 ---
 
 <Breadcrumb
@@ -64,36 +39,11 @@ const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
 
 {evidencias.length > 0 ? (
   <div class="testimonios-grid">
-    {evidencias.map((evidencia) => {
-      if (evidencia.tipo === "imagen") {
-        return (
-          <a class="testimonios-item" href={evidencia.url} target="_blank" rel="noopener noreferrer">
-            <img src={evidencia.url} alt={evidencia.alt} loading="lazy" />
-          </a>
-        );
-      }
-
-      const preview = evidencia.preview;
-      return preview?.image ? (
-        <a class="testimonios-item testimonios-item-preview" href={evidencia.url} target="_blank" rel="noopener noreferrer">
-          <img src={preview.image} alt={preview.title || evidencia.alt} loading="lazy" />
-          {(preview.title || preview.description) && (
-            <span class="testimonios-item-preview-texto">
-              {preview.title && <strong>{preview.title}</strong>}
-              {preview.description && <span class="testimonios-item-preview-desc">{preview.description}</span>}
-              <span class="testimonios-item-sello">★ Trustpilot</span>
-            </span>
-          )}
-        </a>
-      ) : (
-        <a class="testimonios-item testimonios-item-link" href={evidencia.url} target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true">
-            <path d="M12 2l2.9 6.6L22 9.3l-5 4.6L18.5 21 12 17.3 5.5 21 7 13.9l-5-4.6 7.1-.7z" />
-          </svg>
-          <span>{t(locale, "testimoniosTruspilotPage.verResenaLink")}</span>
-        </a>
-      );
-    })}
+    {evidencias.map((evidencia) => (
+      <a href={evidencia.destino} target="_blank" rel="noopener noreferrer" class="testimonios-item">
+        <img src={evidencia.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
+      </a>
+    ))}
   </div>
 ) : (
   <p class="testimonios-vacio">{t(locale, "testimoniosTruspilotPage.sinRegistros")}</p>
@@ -108,68 +58,14 @@ const evidencias: Evidencia[] = testimonios.flatMap((testimonio) => {
 
   .testimonios-item {
     display: block;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-card);
-    text-decoration: none;
-    color: inherit;
+    line-height: 0;
   }
 
   .testimonios-item img {
-    display: block;
     width: 100%;
     height: auto;
-  }
-
-  .testimonios-item-preview {
-    background: var(--color-bg-card);
-  }
-
-  .testimonios-item-preview-texto {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 1rem 1.1rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .testimonios-item-preview-texto strong {
-    color: var(--color-text);
-    font-size: 0.95rem;
-  }
-
-  .testimonios-item-preview-desc {
-    color: var(--color-text-subtle);
-    font-size: 0.85rem;
-  }
-
-  .testimonios-item-sello {
-    margin-top: 0.15rem;
-    color: #00b67a;
-    font-size: 0.78rem;
-    font-weight: 700;
-  }
-
-  .testimonios-item-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    min-height: 140px;
-    padding: 1.5rem;
-    color: #00b67a;
-    background: var(--color-bg-card);
-    font-weight: 600;
-    transition: border-color 0.15s ease;
-  }
-
-  .testimonios-item-link:hover {
-    border-color: #00b67a;
-  }
-
-  .testimonios-item-link span {
-    color: var(--color-text);
+    display: block;
+    border-radius: var(--radius-md);
   }
 
   .testimonios-vacio {
