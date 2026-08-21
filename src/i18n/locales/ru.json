@@ -167,7 +167,12 @@
     "pasoFinalTexto": "Когда вы выполните эти шаги, напишите нам в WhatsApp, чтобы продолжить процесс с поддержкой специалиста.",
     "ctaContinuar": "Я подготовил своё устройство — продолжить через WhatsApp",
     "marcarRevisado": "Отметить шаг как проверенный",
-    "videoProcesoLabel": "Смотреть видео полного процесса"
+    "videoProcesoLabel": "Смотреть видео полного процесса",
+    "paso1ImagenAlt": "Скачанный файл usb-redirector-customer-module.exe, готовый к установке",
+    "paso2ImagenAlt": "Форма подключения к технику: поле Technician ID и поле для ввода вашего имени",
+    "paso2ImagenAlt2": "Индикатор прогресса подключения к технику",
+    "paso3ImagenAlt": "Экран USB Redirector с просьбой повторно подключить USB-кабель принтера",
+    "paso4ImagenAlt": "Экран USB Redirector в ожидании техника, с напоминанием написать в WhatsApp"
   },
   "comoFunciona": {
     "title": "Как работает сервис | ResetEnLinea.com",

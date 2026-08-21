@@ -121,7 +121,12 @@
     "pasoFinalTexto": "Ao concluir esses passos, escreva-nos pelo WhatsApp para continuar o processo assistido.",
     "ctaContinuar": "Já preparei meu computador — continuar no WhatsApp",
     "marcarRevisado": "Marcar etapa como concluída",
-    "videoProcesoLabel": "Ver vídeo do processo completo"
+    "videoProcesoLabel": "Ver vídeo do processo completo",
+    "paso1ImagenAlt": "Arquivo usb-redirector-customer-module.exe baixado, pronto para iniciar a instalação",
+    "paso2ImagenAlt": "Formulário de conexão com o técnico: campo Technician ID e campo para escrever seu nome",
+    "paso2ImagenAlt2": "Barra de progresso conectando com o técnico",
+    "paso3ImagenAlt": "Tela do USB Redirector pedindo para reconectar o cabo USB da impressora",
+    "paso4ImagenAlt": "Tela do USB Redirector aguardando o técnico, com o aviso para escrever no WhatsApp"
   },
   "comoFunciona": {
     "title": "Como funciona o serviço | ResetEnLinea.com",

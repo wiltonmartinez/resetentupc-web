@@ -127,31 +127,41 @@ const pasosFlujoServicio = [
   },
 ];
 
+const img1 = getProcesoImage("paso1-descargar");
+const img2a = getProcesoImage("paso2-formulario");
+const img2b = getProcesoImage("paso2-formulario-2");
+const img3 = getProcesoImage("paso3-reconectarcableusb");
+const img4 = getProcesoImage("paso4-contactarnos");
+
 const pasosProceso = [
   {
     titulo: t(locale, "proceso.paso1Titulo"),
     descripcion: t(locale, "proceso.paso1Texto"),
     icono: "monitor" as const,
     enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
-    imagen: getProcesoImage("paso1-preparar") ?? undefined,
+    imagenes: img1 ? [{ src: img1, alt: t(locale, "proceso.paso1ImagenAlt") }] : undefined,
   },
   {
     titulo: t(locale, "proceso.paso2Titulo"),
     descripcion: t(locale, "proceso.paso2Texto"),
     icono: "conectar" as const,
     destacado: `Technician ID: ${TECHNICIAN_ID}`,
-    imagen: getProcesoImage("paso2-conectar") ?? undefined,
+    imagenes: [
+      img2a && { src: img2a, alt: t(locale, "proceso.paso2ImagenAlt") },
+      img2b && { src: img2b, alt: t(locale, "proceso.paso2ImagenAlt2") },
+    ].filter((imagenPaso): imagenPaso is { src: ImageMetadata; alt: string } => Boolean(imagenPaso)),
   },
   {
     titulo: t(locale, "proceso.paso3Titulo"),
     descripcion: t(locale, "proceso.paso3Texto"),
     icono: "usb" as const,
-    imagen: getProcesoImage("paso3-usb") ?? undefined,
+    imagenes: img3 ? [{ src: img3, alt: t(locale, "proceso.paso3ImagenAlt") }] : undefined,
   },
   {
     titulo: t(locale, "proceso.paso4Titulo"),
     descripcion: t(locale, "proceso.paso4Texto"),
     icono: "whatsapp" as const,
+    imagenes: img4 ? [{ src: img4, alt: t(locale, "proceso.paso4ImagenAlt") }] : undefined,
   },
 ];
 ---

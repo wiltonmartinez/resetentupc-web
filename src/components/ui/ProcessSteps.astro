@@ -1,13 +1,18 @@
 ---
 import { Image } from "astro:assets";
 
+interface ImagenPaso {
+  src: ImageMetadata;
+  alt: string;
+}
+
 interface Paso {
   titulo: string;
   descripcion: string;
   icono?: "monitor" | "conectar" | "usb" | "whatsapp";
   destacado?: string;
   enlace?: { href: string; label: string };
-  imagen?: ImageMetadata;
+  imagenes?: ImagenPaso[];
 }
 
 interface Props {
@@ -89,15 +94,19 @@ const { titulo, introTexto, pasos, pasoFinalTexto, marcarRevisadoLabel = "Marcar
               <span>{paso.titulo}</span>
             </h4>
             <p>{paso.descripcion}</p>
-            {paso.imagen && (
-              <Image
-                src={paso.imagen}
-                alt={paso.titulo}
-                width={paso.imagen.width}
-                height={paso.imagen.height}
-                loading="lazy"
-                class="process-step-imagen"
-              />
+            {paso.imagenes && paso.imagenes.length > 0 && (
+              <div class="process-step-imagenes">
+                {paso.imagenes.map((imagenPaso) => (
+                  <Image
+                    src={imagenPaso.src}
+                    alt={imagenPaso.alt}
+                    width={imagenPaso.src.width}
+                    height={imagenPaso.src.height}
+                    loading="lazy"
+                    class="process-step-imagen"
+                  />
+                ))}
+              </div>
             )}
             {paso.destacado && <code class="process-step-destacado">{paso.destacado}</code>}
             {paso.enlace && (
@@ -239,11 +248,19 @@ const { titulo, introTexto, pasos, pasoFinalTexto, marcarRevisadoLabel = "Marcar
     margin: 0;
   }
 
+  .process-step-imagenes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+  }
+
   .process-step-imagen {
     display: block;
     max-width: 100%;
+    width: 100%;
     height: auto;
-    margin-top: 0.6rem;
+    flex: 1 1 240px;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
   }

@@ -167,7 +167,12 @@
     "pasoFinalTexto": "Sobald du diese Schritte abgeschlossen hast, schreib uns über WhatsApp, um mit dem assistierten Prozess fortzufahren.",
     "ctaContinuar": "Ich habe mein Gerät vorbereitet — über WhatsApp fortfahren",
     "marcarRevisado": "Schritt als geprüft markieren",
-    "videoProcesoLabel": "Video des vollständigen Prozesses ansehen"
+    "videoProcesoLabel": "Video des vollständigen Prozesses ansehen",
+    "paso1ImagenAlt": "Heruntergeladene Datei usb-redirector-customer-module.exe, bereit zur Installation",
+    "paso2ImagenAlt": "Verbindungsformular mit dem Techniker: Feld Technician ID und Feld für deinen Namen",
+    "paso2ImagenAlt2": "Fortschrittsbalken beim Verbinden mit dem Techniker",
+    "paso3ImagenAlt": "USB-Redirector-Bildschirm mit der Aufforderung, das USB-Kabel des Druckers erneut anzuschließen",
+    "paso4ImagenAlt": "USB-Redirector-Bildschirm beim Warten auf den Techniker, mit dem Hinweis, über WhatsApp zu schreiben"
   },
   "comoFunciona": {
     "title": "So funktioniert der Service | ResetEnLinea.com",
