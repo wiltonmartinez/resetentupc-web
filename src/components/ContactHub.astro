@@ -10,8 +10,9 @@
  *     componente lo abre programáticamente; la burbuja propia de Crisp se
  *     mantiene oculta (ver BaseLayout.astro) para no duplicar botones.
  *   - WhatsApp: visible en todos los idiomas EXCEPTO donde no es el canal
- *     habitual — hoy eso es solo "ru" (Rusia/Europa del Este usa Telegram
- *     mucho más que WhatsApp). No es "WhatsApp solo para es/pt": es "ocultar
+ *     habitual — hoy eso es "ru" (Rusia/Europa del Este usa Telegram mucho
+ *     más que WhatsApp) y "ko" (Corea del Sur usa KakaoTalk, WhatsApp tiene
+ *     adopción marginal ahí). No es "WhatsApp solo para es/pt": es "ocultar
  *     WhatsApp donde no aplica", Live Chat cubre a todo el mundo siempre.
  *
  * No incluye Telegram ni KakaoTalk: el negocio no tiene esos canales
@@ -31,7 +32,7 @@ interface Props {
 
 const { locale, path, marcaDefault, modeloDefault } = Astro.props;
 
-const LOCALES_SIN_WHATSAPP: Locale[] = ["ru"];
+const LOCALES_SIN_WHATSAPP: Locale[] = ["ru", "ko"];
 const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
 const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
