@@ -5,6 +5,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LanguageBanner from "../components/LanguageBanner.astro";
 import FloatingContactButton from "../components/FloatingContactButton.astro";
+import PurchaseNotification from "../components/PurchaseNotification.astro";
 
 interface Props {
   title: string;
@@ -85,6 +86,7 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     {!ocultarBotonContacto && (
       <FloatingContactButton locale={locale} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
     )}
+    {!ocultarBotonContacto && <PurchaseNotification locale={locale} />}
   </body>
 </html>
 
