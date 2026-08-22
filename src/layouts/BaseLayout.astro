@@ -83,30 +83,37 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
          adentro, incluso después de chat:open). El CSS oculta el contenedor
          sin que Crisp se entere; los eventos reales chat:opened/chat:closed
          del SDK alternan una clase en <body> que el CSS usa para mostrar el
-         widget SOLO mientras el chat está realmente abierto. -->
+         widget SOLO mientras el chat está realmente abierto.
+         Los "on chat:opened/closed" NO se ponen en el array inicial: se
+         comprobó en vivo que Crisp ignora silenciosamente los "on" puestos
+         ahí antes de que su script cargue (is('chat:opened') pasaba a true
+         pero el listener nunca disparaba), mientras que los mismos "on"
+         agregados con $crisp.push() después de "onload" del script sí
+         disparan siempre. Por eso se registran en el callback onload. -->
     <script is:inline type="text/javascript">
-      window.$crisp = [
-        [
-          "on",
-          "chat:opened",
-          function () {
-            document.body.classList.add("crisp-chat-activo");
-          },
-        ],
-        [
-          "on",
-          "chat:closed",
-          function () {
-            document.body.classList.remove("crisp-chat-activo");
-          },
-        ],
-      ];
+      window.$crisp = [];
       window.CRISP_WEBSITE_ID = "3da814a8-583a-4d03-9f45-af1bc77104de";
       (function () {
         const d = document;
         const s = d.createElement("script");
         s.src = "https://client.crisp.chat/l.js";
         s.async = 1;
+        s.onload = function () {
+          window.$crisp.push([
+            "on",
+            "chat:opened",
+            function () {
+              document.body.classList.add("crisp-chat-activo");
+            },
+          ]);
+          window.$crisp.push([
+            "on",
+            "chat:closed",
+            function () {
+              document.body.classList.remove("crisp-chat-activo");
+            },
+          ]);
+        };
         d.getElementsByTagName("head")[0].appendChild(s);
       })();
     </script>
