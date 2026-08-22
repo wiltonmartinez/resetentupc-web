@@ -210,11 +210,11 @@ function resolverRedireccion(pathname: string): string | null {
  */
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.trustpilot.com",
+  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.trustpilot.com https://static.cloudflareinsights.com",
   "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
   "img-src 'self' data: https:",
   "font-src 'self' data: https://cdn.jsdelivr.net",
-  "connect-src 'self' https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com",
+  "connect-src 'self' https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com https://cloudflareinsights.com",
   "frame-src https://ruleta.resetalmohadillas.com https://nucleo.resetalmohadillas.com https://www.youtube-nocookie.com https://*.trustpilot.com",
   "object-src 'none'",
   "base-uri 'self'",
