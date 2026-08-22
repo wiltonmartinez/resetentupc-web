@@ -12,6 +12,7 @@ import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
 import ServiceFlow from "../ui/ServiceFlow.astro";
 import EvidenceCard from "../ui/EvidenceCard.astro";
+import ErrorImage from "../ui/ErrorImage.astro";
 import VideoModal from "../ui/VideoModal.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import SensorLocation from "../ui/SensorLocation.astro";
@@ -269,7 +270,10 @@ const pasosProceso = [
       <p>{t(locale, "modelo.revisionTexto")}</p>
       <ul class="lista-simple">
         {erroresOtros.map((err) => (
-          <li>{err.descripcion}</li>
+          <li>
+            {err.descripcion}
+            <ErrorImage errorId={err.error_id} modeloSlug={modeloSlug} alt={err.descripcion} />
+          </li>
         ))}
       </ul>
       <WhatsAppCTA
@@ -499,6 +503,16 @@ const pasosProceso = [
     display: grid;
     gap: 0.4rem;
     color: var(--color-warning-text);
+  }
+
+  .lista-simple li {
+    display: grid;
+    gap: 0.6rem;
+    padding-top: 0.2rem;
+  }
+
+  .lista-simple :global(.evidencia-imagen) {
+    max-width: 320px;
   }
 
   .confianza-checklist {
