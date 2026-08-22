@@ -198,6 +198,38 @@ function resolverRedireccion(pathname: string): string | null {
   return null;
 }
 
+/**
+ * Cabeceras de seguridad aplicadas a toda respuesta HTML. El sitio depende de
+ * varios scripts inline por componente (Astro no los firma con nonce por
+ * defecto), así que script-src/style-src necesitan 'unsafe-inline' — no es
+ * una CSP estricta, pero sí limita qué ORÍGENES externos pueden cargar
+ * recursos, lo cual ya mitiga inyección de script/imagen/iframe de terceros
+ * no listados aquí. Lista de orígenes basada en los widgets/CDNs reales que
+ * usa el sitio (Trustpilot, YouTube-nocookie, la ruleta y Núcleo en
+ * subdominios de resetalmohadillas.com, jsDelivr para intl-tel-input).
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.trustpilot.com",
+  "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+  "img-src 'self' data: https:",
+  "font-src 'self' data: https://cdn.jsdelivr.net",
+  "connect-src 'self' https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com",
+  "frame-src https://ruleta.resetalmohadillas.com https://nucleo.resetalmohadillas.com https://www.youtube-nocookie.com https://*.trustpilot.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self' https://atajos.resetalmohadillas.com",
+  "frame-ancestors 'self'",
+].join("; ");
+
+function aplicarCabecerasSeguridad(headers: Headers): void {
+  headers.set("Content-Security-Policy", CSP);
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  headers.set("Permissions-Policy", "geolocation=(), camera=(), microphone=(), payment=()");
+  headers.set("X-Frame-Options", "SAMEORIGIN");
+}
+
 export const onRequest: MiddlewareHandler = async (context, next) => {
   const { pathname } = context.url;
 
@@ -208,5 +240,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     return context.redirect(destino, 301);
   }
 
-  return next();
+  const response = await next();
+  aplicarCabecerasSeguridad(response.headers);
+  return response;
 };

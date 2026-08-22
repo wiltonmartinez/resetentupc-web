@@ -451,5 +451,137 @@
     "texto": "Screenshot reali di recensioni e valutazioni dei nostri clienti su Trustpilot.",
     "sinRegistros": "Non ci sono ancora testimonianze pubblicate.",
     "verResenaLink": "Vedi recensione su Trustpilot ↗"
+  },
+  "terminos": {
+    "meta": {
+      "title": "Termini e Condizioni | ResetEnLinea.com",
+      "description": "Termini e Condizioni del servizio di Reset Assistito 100% da remoto tramite connessione USB di ResetEnLinea."
+    },
+    "title": "Termini e Condizioni",
+    "actualizacion": "Ultimo aggiornamento: 21 agosto 2026.",
+    "tocTitulo": "Indice",
+    "share": {
+      "titulo": "Condividi questi Termini e Condizioni",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "copiar": "Copia link",
+      "copiado": "Link copiato",
+      "imprimir": "Stampa / Salva PDF",
+      "compartir": "Condividi",
+      "mensajeWhatsapp": "Ti condivido i Termini e Condizioni ufficiali di ResetEnLinea:",
+      "asuntoEmail": "Termini e Condizioni di ResetEnLinea",
+      "cuerpoEmailSaludo": "Ciao,",
+      "cuerpoEmailIntro": "Ti condivido i Termini e Condizioni ufficiali di ResetEnLinea:",
+      "cuerpoEmailDespedida": "Saluti,\nResetEnLinea"
+    },
+    "cta": {
+      "texto": "Hai un dubbio su questi Termini e Condizioni?",
+      "whatsappLabel": "Scrivici su WhatsApp",
+      "whatsappMensaje": "Ciao, ho una domanda sui Termini e Condizioni di ResetEnLinea."
+    },
+    "secciones": {
+      "objeto": {
+        "titulo": "1. Oggetto del servizio",
+        "p1Antes": "ResetEnLinea offre un servizio denominato",
+        "p1Fuerte": "Reset Assistito 100% da remoto tramite connessione USB",
+        "p1Despues": ". ResetEnLinea non vende software, non vende licenze né vende programmi di reset. Gli strumenti tecnici utilizzati durante l'erogazione del servizio sono unicamente mezzi per prestarlo, non il prodotto oggetto del contratto."
+      },
+      "naturaleza": {
+        "titulo": "2. Natura del servizio",
+        "p1": "Il tecnico di ResetEnLinea non accede al computer del cliente. Il cliente condivide unicamente, in modo temporaneo, la porta USB della propria stampante mediante lo strumento di connessione corrispondente.",
+        "p2Antes": "USB Redirector",
+        "p2Fuerte": "non è il programma di reset",
+        "p2Despues": ". Questo strumento consente unicamente di stabilire la comunicazione tra la stampante del cliente e il server su cui opera il tecnico. Il reset vero e proprio viene eseguito dal tecnico da remoto, senza accedere all'apparecchio del cliente al di là di tale connessione della stampante."
+      },
+      "proceso": {
+        "titulo": "3. Come funziona il processo",
+        "pasos": [
+          "Richiesta",
+          "Connessione USB",
+          "Verifica tecnica",
+          "Conferma di compatibilità",
+          "Preventivo",
+          "Pagamento",
+          "Reset",
+          "Evidenza"
+        ]
+      },
+      "reembolsos": {
+        "titulo": "4. Politica di rimborso",
+        "p1": "Prima di confermare il pagamento, viene effettuata una verifica tecnica per accertare la compatibilità dell'apparecchio con il servizio contrattato.",
+        "li1": "Se, a seguito di tale verifica, l'apparecchio risulta non essere compatibile, si procede al rimborso.",
+        "li2": "Se la procedura non riesce a eseguire il reset contrattato, si procede al rimborso.",
+        "li3Antes": "Una volta che il reset è considerato riuscito,",
+        "li3Fuerte": "non è previsto alcun rimborso",
+        "li3Despues": ".",
+        "p2": "Il reset si considera riuscito quando il contatore oggetto del servizio è stato ripristinato e l'errore specifico contrattato è stato eliminato. Effettuare il reset non significa riparare.",
+        "legal": "REVISIONE LEGALE CONSIGLIATA — politica di rimborso."
+      },
+      "exclusiones": {
+        "titulo": "5. Cosa non include il servizio",
+        "intro": "Il servizio di Reset Assistito non include, tra l'altro:",
+        "items": [
+          "Riparazione fisica, pulizia fisica o manutenzione fisica dell'apparecchio",
+          "Riparazione delle testine di stampa",
+          "Riparazione dei sensori",
+          "Riparazione delle pompe",
+          "Riparazione del sistema di inchiostro",
+          "Riparazione delle cartucce",
+          "Riparazione della vaschetta di manutenzione",
+          "Riparazione delle schede elettroniche",
+          "Riparazione della memoria EEPROM",
+          "Riparazione di danni elettrici",
+          "Riparazione di stampanti che non si accendono",
+          "Problemi di qualità di stampa (stampe sfocate o bianche)",
+          "Configurazione dell'apparecchio o installazione dei driver",
+          "In generale, qualsiasi riparazione di tipo fisico"
+        ]
+      },
+      "errores": {
+        "titulo": "6. Errori che possiamo gestire",
+        "epsonLabel": "Epson:",
+        "canonLabel": "Canon:",
+        "epsonScLabel": "Epson-SC e dispositivi compatibili:",
+        "nota": "Questi codici non significano automaticamente che un determinato modello sia compatibile. La compatibilità dipende dal modello specifico e deve essere confermata prima di effettuare il pagamento."
+      },
+      "garantia": {
+        "titulo": "7. Garanzia",
+        "p1": "La garanzia del servizio può avere una durata da 3 a 12 mesi. La durata esatta applicabile a ciascun servizio è indicata nel relativo certificato.",
+        "p2": "In via promozionale, ResetEnLinea può offrire un'estensione di garanzia di 1 mese aggiuntivo, fino a un massimo di 2 mesi aggiuntivi.",
+        "p3": "La garanzia riguarda specificamente il reset del modello contrattato e non costituisce una garanzia integrale della stampante né dei suoi altri componenti.",
+        "p4": "Durante il periodo di validità della garanzia, il cliente può richiedere il servizio per un'altra stampante dello stesso modello, purché si tratti di:",
+        "li1": "la stessa persona,",
+        "li2": "lo stesso contatto,",
+        "li3": "lo stesso indirizzo email,",
+        "li4": "lo stesso modello di stampante, e",
+        "li5": "un certificato valido e in corso di validità.",
+        "legal": "REVISIONE LEGALE CONSIGLIATA — condizioni di trasferimento/riutilizzo della garanzia."
+      },
+      "certificado": {
+        "titulo": "8. Certificato di garanzia",
+        "p1": "Il certificato è il documento che attesta la garanzia del servizio prestato. Può essere consegnato in formato PDF, come fotografia o in formato cartaceo.",
+        "p2": "Se il cliente non fornisce un indirizzo email, non sarà possibile inviargli il certificato per questa via."
+      },
+      "evidencia": {
+        "titulo": "9. Evidenza del servizio e prova sociale",
+        "p1": "Dopo un reset riuscito, ResetEnLinea può generare un'evidenza video del servizio eseguito. Questa evidenza può essere utilizzata come prova sociale e pubblicata sui canali di ResetEnLinea, incluso questo sito web."
+      },
+      "privacidad": {
+        "titulo": "10. Riservatezza delle conversazioni",
+        "p1": "Esiste una versione privata della conversazione con il cliente, senza censure, che può far parte del certificato di garanzia a lui consegnato. La versione pubblicata pubblicamente è invece censurata, a tutela dei dati personali del cliente.",
+        "p2": "La pubblicazione pubblica di conversazioni, video o altre evidenze del servizio è disciplinata da un'autorizzazione indipendente rispetto ai presenti Termini e Condizioni.",
+        "p3Antes": "Se, dopo una pubblicazione pubblica, il cliente ne richiede la rimozione, può farlo scrivendo a",
+        "p3Despues": ".",
+        "legal": "REVISIONE LEGALE CONSIGLIATA — trattamento dei dati personali e autorizzazione all'uso dell'immagine/pubblicazione."
+      },
+      "prestador": {
+        "titulo": "11. Dati del prestatore del servizio"
+      },
+      "legislacion": {
+        "titulo": "12. Legislazione applicabile",
+        "p1": "Il servizio è prestato dalla Colombia ed è disciplinato dalla legislazione colombiana applicabile.",
+        "legal": "REVISIONE LEGALE CONSIGLIATA — legge applicabile e risoluzione delle controversie."
+      }
+    }
   }
 }

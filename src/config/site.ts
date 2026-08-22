@@ -99,6 +99,15 @@ export const PAGE_SLUGS = {
     de: "kontakt",
     ru: "kontakty",
   },
+  terminosCondiciones: {
+    es: "terminos-y-condiciones",
+    en: "terms-and-conditions",
+    pt: "termos-e-condicoes",
+    fr: "conditions-generales",
+    it: "termini-e-condizioni",
+    de: "allgemeine-geschaeftsbedingungen",
+    ru: "usloviya-ispolzovaniya",
+  },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type StaticPageKey = keyof typeof PAGE_SLUGS;

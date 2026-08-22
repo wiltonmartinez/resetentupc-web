@@ -415,5 +415,137 @@
     "texto": "Echte Screenshots von Bewertungen und Sternen unserer Kunden auf Trustpilot.",
     "sinRegistros": "Es sind noch keine Erfahrungsberichte veröffentlicht.",
     "verResenaLink": "Bewertung auf Trustpilot ansehen ↗"
+  },
+  "terminos": {
+    "meta": {
+      "title": "Allgemeine Geschäftsbedingungen | ResetEnLinea.com",
+      "description": "Allgemeine Geschäftsbedingungen für den Service des 100 % ferngesteuerten unterstützten Resets per USB-Verbindung von ResetEnLinea."
+    },
+    "title": "Allgemeine Geschäftsbedingungen",
+    "actualizacion": "Letzte Aktualisierung: 21. August 2026.",
+    "tocTitulo": "Inhaltsverzeichnis",
+    "share": {
+      "titulo": "Diese Allgemeinen Geschäftsbedingungen teilen",
+      "whatsapp": "WhatsApp",
+      "email": "E-Mail",
+      "copiar": "Link kopieren",
+      "copiado": "Link kopiert",
+      "imprimir": "Drucken / Als PDF speichern",
+      "compartir": "Teilen",
+      "mensajeWhatsapp": "Ich teile die offiziellen Allgemeinen Geschäftsbedingungen von ResetEnLinea mit Ihnen:",
+      "asuntoEmail": "Allgemeine Geschäftsbedingungen von ResetEnLinea",
+      "cuerpoEmailSaludo": "Hallo,",
+      "cuerpoEmailIntro": "ich teile die offiziellen Allgemeinen Geschäftsbedingungen von ResetEnLinea mit Ihnen:",
+      "cuerpoEmailDespedida": "Viele Grüße,\nResetEnLinea"
+    },
+    "cta": {
+      "texto": "Haben Sie eine Frage zu diesen Allgemeinen Geschäftsbedingungen?",
+      "whatsappLabel": "Schreiben Sie uns per WhatsApp",
+      "whatsappMensaje": "Hallo, ich habe eine Frage zu den Allgemeinen Geschäftsbedingungen von ResetEnLinea."
+    },
+    "secciones": {
+      "objeto": {
+        "titulo": "1. Gegenstand der Dienstleistung",
+        "p1Antes": "ResetEnLinea erbringt einen Dienst, der als",
+        "p1Fuerte": "100 % ferngesteuerter unterstützter Reset per USB-Verbindung",
+        "p1Despues": " bezeichnet wird. ResetEnLinea verkauft weder Software noch Lizenzen noch Reset-Programme. Die technischen Werkzeuge, die bei der Erbringung der Dienstleistung eingesetzt werden, sind lediglich Mittel zu deren Erbringung, nicht aber das vertraglich vereinbarte Produkt."
+      },
+      "naturaleza": {
+        "titulo": "2. Art der Dienstleistung",
+        "p1": "Der Techniker von ResetEnLinea greift nicht auf den Computer des Kunden zu. Der Kunde gibt lediglich vorübergehend den USB-Anschluss seines Druckers über das entsprechende Verbindungstool frei.",
+        "p2Antes": "USB Redirector",
+        "p2Fuerte": "ist nicht das Reset-Programm",
+        "p2Despues": ". Dieses Tool ermöglicht lediglich die Herstellung der Verbindung zwischen dem Drucker des Kunden und dem Server, an dem der Techniker arbeitet. Der Reset selbst wird vom Techniker aus der Ferne durchgeführt, ohne dass er über diese Druckerverbindung hinaus auf das Gerät des Kunden zugreift."
+      },
+      "proceso": {
+        "titulo": "3. Ablauf des Prozesses",
+        "pasos": [
+          "Anfrage",
+          "USB-Verbindung",
+          "Technische Prüfung",
+          "Kompatibilitätsbestätigung",
+          "Kostenvoranschlag",
+          "Zahlung",
+          "Reset",
+          "Nachweis"
+        ]
+      },
+      "reembolsos": {
+        "titulo": "4. Rückerstattungsrichtlinie",
+        "p1": "Vor der Bestätigung der Zahlung wird eine technische Prüfung durchgeführt, um die Kompatibilität des Geräts mit der beauftragten Dienstleistung zu überprüfen.",
+        "li1": "Stellt sich nach dieser Prüfung heraus, dass das Gerät nicht kompatibel ist, erfolgt eine Rückerstattung.",
+        "li2": "Kann der beauftragte Reset im Rahmen des Verfahrens nicht durchgeführt werden, erfolgt eine Rückerstattung.",
+        "li3Antes": "Sobald der Reset als erfolgreich gilt,",
+        "li3Fuerte": "besteht kein Anspruch auf Rückerstattung",
+        "li3Despues": ".",
+        "p2": "Der Reset gilt als erfolgreich, wenn der vom Service betroffene Zähler zurückgesetzt und der konkret beauftragte Fehler behoben wurde. Ein Reset ist keine Reparatur.",
+        "legal": "RECHTLICHE PRÜFUNG EMPFOHLEN — Rückerstattungsrichtlinie."
+      },
+      "exclusiones": {
+        "titulo": "5. Was die Dienstleistung nicht umfasst",
+        "intro": "Der Service des unterstützten Resets umfasst unter anderem nicht:",
+        "items": [
+          "Physische Reparatur, physische Reinigung oder physische Wartung des Geräts",
+          "Reparatur von Druckköpfen",
+          "Reparatur von Sensoren",
+          "Reparatur von Pumpen",
+          "Reparatur des Tintensystems",
+          "Reparatur von Patronen",
+          "Reparatur der Wartungsbox",
+          "Reparatur von Leiterplatinen",
+          "Reparatur des EEPROM-Speichers",
+          "Reparatur elektrischer Schäden",
+          "Reparatur von Druckern, die sich nicht einschalten lassen",
+          "Probleme mit der Druckqualität (unscharfe oder leere Ausdrucke)",
+          "Konfiguration des Geräts oder Installation von Treibern",
+          "Allgemein jede Art von physischer Reparatur"
+        ]
+      },
+      "errores": {
+        "titulo": "6. Fehlercodes, die wir bearbeiten können",
+        "epsonLabel": "Epson:",
+        "canonLabel": "Canon:",
+        "epsonScLabel": "Epson-SC und kompatible Geräte:",
+        "nota": "Diese Codes bedeuten nicht automatisch, dass jedes Modell kompatibel ist. Die Kompatibilität hängt vom jeweiligen Modell ab und muss vor der Zahlung bestätigt werden."
+      },
+      "garantia": {
+        "titulo": "7. Garantie",
+        "p1": "Die Garantie für die Dienstleistung kann eine Laufzeit von 3 bis 12 Monaten haben. Die genaue, für den jeweiligen Service geltende Laufzeit wird im entsprechenden Zertifikat festgelegt.",
+        "p2": "Im Rahmen von Aktionen kann ResetEnLinea eine Verlängerung der Garantie um 1 zusätzlichen Monat anbieten, bis zu maximal 2 zusätzlichen Monaten.",
+        "p3": "Die Garantie bezieht sich ausschließlich auf den Reset des beauftragten Modells und stellt keine umfassende Garantie für den Drucker oder seine übrigen Bauteile dar.",
+        "p4": "Während der Garantielaufzeit kann der Kunde den Service für einen anderen Drucker desselben Modells in Anspruch nehmen, sofern es sich um Folgendes handelt:",
+        "li1": "dieselbe Person,",
+        "li2": "denselben Kontakt,",
+        "li3": "dieselbe E-Mail-Adresse,",
+        "li4": "dasselbe Druckermodell, und",
+        "li5": "ein gültiges und aktuelles Zertifikat.",
+        "legal": "RECHTLICHE PRÜFUNG EMPFOHLEN — Bedingungen für die Übertragung/Wiederverwendung der Garantie."
+      },
+      "certificado": {
+        "titulo": "8. Garantiezertifikat",
+        "p1": "Das Zertifikat ist das Dokument, das die Garantie für die erbrachte Dienstleistung bestätigt. Es kann als PDF-Datei, als Foto oder in gedruckter Form ausgehändigt werden.",
+        "p2": "Gibt der Kunde keine E-Mail-Adresse an, kann ihm das Zertifikat nicht auf diesem Weg zugesandt werden."
+      },
+      "evidencia": {
+        "titulo": "9. Nachweis der Dienstleistung und Social Proof",
+        "p1": "Nach einem erfolgreichen Reset kann ResetEnLinea einen Videonachweis der durchgeführten Dienstleistung erstellen. Dieser Nachweis kann als Social Proof verwendet und über die Kanäle von ResetEnLinea veröffentlicht werden, einschließlich dieser Website."
+      },
+      "privacidad": {
+        "titulo": "10. Vertraulichkeit der Gespräche",
+        "p1": "Es existiert eine private, ungekürzte Version des Gesprächs mit dem Kunden, die Teil des ihm ausgehändigten Garantiezertifikats sein kann. Die öffentlich veröffentlichte Version ist geschwärzt, um die personenbezogenen Daten des Kunden zu schützen.",
+        "p2": "Die öffentliche Veröffentlichung von Gesprächen, Videos oder sonstigen Nachweisen der Dienstleistung erfolgt auf Grundlage einer von diesen Allgemeinen Geschäftsbedingungen unabhängigen Einwilligung.",
+        "p3Antes": "Beantragt der Kunde nach einer öffentlichen Veröffentlichung deren Entfernung, kann er dies tun, indem er sich an",
+        "p3Despues": " wendet.",
+        "legal": "RECHTLICHE PRÜFUNG EMPFOHLEN — Verarbeitung personenbezogener Daten und Einwilligung zur Nutzung von Bild-/Videomaterial und Veröffentlichung."
+      },
+      "prestador": {
+        "titulo": "11. Angaben zum Dienstleister"
+      },
+      "legislacion": {
+        "titulo": "12. Anwendbares Recht",
+        "p1": "Die Dienstleistung wird aus Kolumbien heraus erbracht und unterliegt dem anwendbaren kolumbianischen Recht.",
+        "legal": "RECHTLICHE PRÜFUNG EMPFOHLEN — anwendbares Recht und Streitbeilegung."
+      }
+    }
   }
 }

@@ -451,5 +451,137 @@
     "texto": "Real screenshots of reviews and ratings from our customers on Trustpilot.",
     "sinRegistros": "There are no testimonials published yet.",
     "verResenaLink": "View review on Trustpilot ↗"
+  },
+  "terminos": {
+    "meta": {
+      "title": "Terms and Conditions | ResetEnLinea.com",
+      "description": "Terms and Conditions for ResetEnLinea's 100% Remote Assisted Reset service via USB connection."
+    },
+    "title": "Terms and Conditions",
+    "actualizacion": "Last updated: August 21, 2026.",
+    "tocTitulo": "Table of Contents",
+    "share": {
+      "titulo": "Share these Terms and Conditions",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "copiar": "Copy link",
+      "copiado": "Link copied",
+      "imprimir": "Print / Save as PDF",
+      "compartir": "Share",
+      "mensajeWhatsapp": "I'm sharing ResetEnLinea's official Terms and Conditions with you:",
+      "asuntoEmail": "ResetEnLinea Terms and Conditions",
+      "cuerpoEmailSaludo": "Hello,",
+      "cuerpoEmailIntro": "I'm sharing ResetEnLinea's official Terms and Conditions with you:",
+      "cuerpoEmailDespedida": "Best regards,\nResetEnLinea"
+    },
+    "cta": {
+      "texto": "Have a question about these Terms and Conditions?",
+      "whatsappLabel": "Message us on WhatsApp",
+      "whatsappMensaje": "Hello, I have a question about ResetEnLinea's Terms and Conditions."
+    },
+    "secciones": {
+      "objeto": {
+        "titulo": "1. Purpose of the service",
+        "p1Antes": "ResetEnLinea provides a service called",
+        "p1Fuerte": "100% Remote Assisted Reset via USB Connection",
+        "p1Despues": ". ResetEnLinea does not sell software, licenses, or reset programs. The technical tools used while providing the service are merely a means of delivering it, not the product being contracted."
+      },
+      "naturaleza": {
+        "titulo": "2. Nature of the service",
+        "p1": "ResetEnLinea's technician does not access the client's computer. The client only temporarily shares their printer's USB port through the corresponding connection tool.",
+        "p2Antes": "USB Redirector",
+        "p2Fuerte": "is not the reset tool",
+        "p2Despues": ". This tool only establishes communication between the client's printer and the server where the technician works. The reset itself is performed remotely by the technician, without accessing the client's equipment beyond that printer connection."
+      },
+      "proceso": {
+        "titulo": "3. How the process works",
+        "pasos": [
+          "Request",
+          "USB Connection",
+          "Technical Review",
+          "Compatibility Confirmation",
+          "Quote",
+          "Payment",
+          "Reset",
+          "Evidence"
+        ]
+      },
+      "reembolsos": {
+        "titulo": "4. Refund policy",
+        "p1": "Before payment is confirmed, a technical review is carried out to verify the equipment's compatibility with the contracted service.",
+        "li1": "If, following that review, the equipment turns out not to be compatible, a refund applies.",
+        "li2": "If the procedure fails to complete the contracted reset, a refund applies.",
+        "li3Antes": "Once the reset is deemed successful,",
+        "li3Fuerte": "no refund will be issued",
+        "li3Despues": ".",
+        "p2": "The reset is considered successful when the counter covered by the service has been reset and the specific contracted error has been cleared. Resetting does not mean repairing.",
+        "legal": "RECOMMENDED LEGAL REVIEW — refund policy."
+      },
+      "exclusiones": {
+        "titulo": "5. What the service does not include",
+        "intro": "The Assisted Reset service does not include, among other things:",
+        "items": [
+          "Physical repair, physical cleaning, or physical maintenance of the equipment",
+          "Repair of print heads",
+          "Repair of sensors",
+          "Repair of pumps",
+          "Repair of the ink system",
+          "Repair of cartridges",
+          "Repair of the maintenance box",
+          "Repair of electronic boards",
+          "Repair of EEPROM memory",
+          "Repair of electrical damage",
+          "Repair of printers that do not power on",
+          "Print quality issues (blurry or blank printouts)",
+          "Equipment configuration or driver installation",
+          "In general, any type of physical repair"
+        ]
+      },
+      "errores": {
+        "titulo": "6. Errors we can address",
+        "epsonLabel": "Epson:",
+        "canonLabel": "Canon:",
+        "epsonScLabel": "Epson-SC and compatible units:",
+        "nota": "These codes do not automatically mean that any model is compatible. Compatibility depends on the specific model and must be confirmed before payment is made."
+      },
+      "garantia": {
+        "titulo": "7. Warranty",
+        "p1": "The service warranty may run from 3 to 12 months. The exact duration applicable to each service is set out in the corresponding certificate.",
+        "p2": "As a promotional offer, ResetEnLinea may extend the warranty by an additional 1 month, up to a maximum of 2 additional months.",
+        "p3": "The warranty applies specifically to the reset of the contracted model and does not constitute a comprehensive warranty covering the printer or its other components.",
+        "p4": "While the warranty remains valid, the client may request the service for another printer of the same model, provided that it involves:",
+        "li1": "the same person,",
+        "li2": "the same contact,",
+        "li3": "the same email address,",
+        "li4": "the same printer model, and",
+        "li5": "a valid, unexpired certificate.",
+        "legal": "RECOMMENDED LEGAL REVIEW — conditions for transferring/reusing the warranty."
+      },
+      "certificado": {
+        "titulo": "8. Warranty certificate",
+        "p1": "The certificate is the document that evidences the warranty for the service provided. It may be delivered in PDF format, as a photograph, or in printed form.",
+        "p2": "If the client does not provide an email address, the certificate cannot be sent to them by that means."
+      },
+      "evidencia": {
+        "titulo": "9. Service evidence and social proof",
+        "p1": "After a successful reset, ResetEnLinea may generate video evidence of the service performed. This evidence may be used as social proof and published on ResetEnLinea's channels, including this website."
+      },
+      "privacidad": {
+        "titulo": "10. Privacy of conversations",
+        "p1": "An uncensored, private version of the conversation with the client exists and may form part of the warranty certificate delivered to them. The version published publicly is censored, protecting the client's personal data.",
+        "p2": "Public publication of conversations, videos, or service evidence is handled through an authorization separate from these Terms and Conditions.",
+        "p3Antes": "If, after a public posting, the client requests its removal, they may do so by writing to",
+        "p3Despues": ".",
+        "legal": "RECOMMENDED LEGAL REVIEW — processing of personal data and image/publication authorization."
+      },
+      "prestador": {
+        "titulo": "11. Service provider information"
+      },
+      "legislacion": {
+        "titulo": "12. Governing law",
+        "p1": "The service is provided from Colombia and is governed by applicable Colombian law.",
+        "legal": "RECOMMENDED LEGAL REVIEW — governing law and dispute resolution."
+      }
+    }
   }
 }
