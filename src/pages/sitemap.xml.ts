@@ -9,7 +9,7 @@ import {
 } from "../i18n/utils";
 import modelos from "../data/modelos-muestra.json";
 
-const STATIC_PAGE_KEYS: StaticPageKey[] = ["comoFunciona", "preguntasFrecuentes", "contacto"];
+const STATIC_PAGE_KEYS: StaticPageKey[] = ["comoFunciona", "preguntasFrecuentes", "contacto", "terminosCondiciones"];
 const MODEL_PATHS = modelos.map((modelo) => `/reset/${modelo.marcaSlug}/${modelo.modeloSlug}/`);
 
 function alternatesXml(alternates: HreflangLink[]): string {

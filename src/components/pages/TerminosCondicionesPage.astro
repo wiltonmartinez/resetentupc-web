@@ -1,14 +1,16 @@
 ---
 /**
- * Página legal — solo español (jurisdicción colombiana explícita en el
- * propio contenido). No se traduce a los demás idiomas del sitio: un
- * documento legal necesita revisión de un abogado por cada jurisdicción,
- * no una traducción automática.
+ * Página legal, disponible en los 7 idiomas del sitio. El contenido legal
+ * fue redactado originalmente en español (jurisdicción colombiana explícita
+ * en el propio texto) y traducido al resto de idiomas; cada bloque marcado
+ * como "REVISIÓN LEGAL RECOMENDADA" sigue necesitando revisión de un abogado
+ * por jurisdicción antes de tratarse como asesoría legal definitiva.
  */
 import { SITE_URL, WHATSAPP_NUMBER, type Locale } from "../../config/site";
-import { buildWhatsAppLink } from "../../i18n/utils";
+import { buildWhatsAppLink, buildStaticPagePath, t } from "../../i18n/utils";
 import InfoCard from "../ui/InfoCard.astro";
 import SharePageButtons from "../ui/SharePageButtons.astro";
+import ObfuscatedEmail from "../ui/ObfuscatedEmail.astro";
 
 interface Props {
   locale: Locale;
@@ -16,54 +18,51 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const path = "/terminos-y-condiciones/";
+const path = buildStaticPagePath(locale, "terminosCondiciones");
 const url = `${SITE_URL}${path}`;
 
-const mensajeWhatsapp = `Te comparto los Términos y Condiciones oficiales de ResetEnLinea:\n\n${url}`;
-const asuntoEmail = "Términos y Condiciones de ResetEnLinea";
-const cuerpoEmail = `Hola,\n\nTe comparto los Términos y Condiciones oficiales de ResetEnLinea:\n\n${url}\n\nSaludos,\nResetEnLinea`;
+const mensajeWhatsapp = `${t(locale, "terminos.share.mensajeWhatsapp")}\n\n${url}`;
+const asuntoEmail = t(locale, "terminos.share.asuntoEmail");
+const cuerpoEmail = `${t(locale, "terminos.share.cuerpoEmailSaludo")}\n\n${t(locale, "terminos.share.cuerpoEmailIntro")}\n\n${url}\n\n${t(locale, "terminos.share.cuerpoEmailDespedida")}`;
 
-const whatsappConsultaHref = buildWhatsAppLink(
-  WHATSAPP_NUMBER,
-  "Hola, tengo una consulta sobre los Términos y Condiciones de ResetEnLinea."
-);
+const whatsappConsultaHref = buildWhatsAppLink(WHATSAPP_NUMBER, t(locale, "terminos.cta.whatsappMensaje"));
 
 const secciones = [
-  { id: "objeto", titulo: "1. Objeto del servicio" },
-  { id: "naturaleza", titulo: "2. Naturaleza del servicio" },
-  { id: "proceso", titulo: "3. Cómo funciona el proceso" },
-  { id: "reembolsos", titulo: "4. Política de reembolsos" },
-  { id: "exclusiones", titulo: "5. Qué no incluye el servicio" },
-  { id: "errores", titulo: "6. Errores que podemos atender" },
-  { id: "garantia", titulo: "7. Garantía" },
-  { id: "certificado", titulo: "8. Certificado de garantía" },
-  { id: "evidencia", titulo: "9. Evidencia del servicio y prueba social" },
-  { id: "privacidad", titulo: "10. Privacidad de las conversaciones" },
-  { id: "prestador", titulo: "11. Datos del prestador del servicio" },
-  { id: "legislacion", titulo: "12. Legislación aplicable" },
-];
+  "objeto",
+  "naturaleza",
+  "proceso",
+  "reembolsos",
+  "exclusiones",
+  "errores",
+  "garantia",
+  "certificado",
+  "evidencia",
+  "privacidad",
+  "prestador",
+  "legislacion",
+].map((id) => ({ id, titulo: t(locale, `terminos.secciones.${id}.titulo`) }));
 ---
 
 <article class="terminos-page">
-  <h1>Términos y Condiciones</h1>
-  <p class="terminos-actualizacion">Última actualización: 21 de agosto de 2026.</p>
+  <h1>{t(locale, "terminos.title")}</h1>
+  <p class="terminos-actualizacion">{t(locale, "terminos.actualizacion")}</p>
 
   <SharePageButtons
     url={url}
-    tituloLabel="Compartir estos Términos y Condiciones"
+    tituloLabel={t(locale, "terminos.share.titulo")}
     mensajeWhatsapp={mensajeWhatsapp}
     asuntoEmail={asuntoEmail}
     cuerpoEmail={cuerpoEmail}
-    labelWhatsapp="WhatsApp"
-    labelEmail="Email"
-    labelCopiar="Copiar enlace"
-    labelCopiado="Enlace copiado"
-    labelImprimir="Imprimir / Guardar PDF"
-    labelCompartir="Compartir"
+    labelWhatsapp={t(locale, "terminos.share.whatsapp")}
+    labelEmail={t(locale, "terminos.share.email")}
+    labelCopiar={t(locale, "terminos.share.copiar")}
+    labelCopiado={t(locale, "terminos.share.copiado")}
+    labelImprimir={t(locale, "terminos.share.imprimir")}
+    labelCompartir={t(locale, "terminos.share.compartir")}
   />
 
-  <nav class="terminos-toc" aria-label="Índice de contenidos">
-    <h2>Índice</h2>
+  <nav class="terminos-toc" aria-label={t(locale, "terminos.tocTitulo")}>
+    <h2>{t(locale, "terminos.tocTitulo")}</h2>
     <ol>
       {secciones.map((seccion) => (
         <li><a href={`#${seccion.id}`}>{seccion.titulo}</a></li>
@@ -72,198 +71,137 @@ const secciones = [
   </nav>
 
   <section id="objeto">
-    <h2>1. Objeto del servicio</h2>
+    <h2>{t(locale, "terminos.secciones.objeto.titulo")}</h2>
     <p>
-      ResetEnLinea presta un servicio denominado <strong>Reset Asistido 100% remoto mediante conexión USB</strong>.
-      ResetEnLinea no vende software, no vende licencias ni vende programas de reset. Las herramientas técnicas
-      utilizadas durante la prestación del servicio son únicamente medios para prestarlo, no el producto que se
-      contrata.
+      {t(locale, "terminos.secciones.objeto.p1Antes")} <strong>{t(locale, "terminos.secciones.objeto.p1Fuerte")}</strong>{t(locale, "terminos.secciones.objeto.p1Despues")}
     </p>
   </section>
 
   <section id="naturaleza">
-    <h2>2. Naturaleza del servicio</h2>
+    <h2>{t(locale, "terminos.secciones.naturaleza.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.naturaleza.p1")}</p>
     <p>
-      El técnico de ResetEnLinea no ingresa al computador del cliente. El cliente únicamente comparte, de forma
-      temporal, el puerto USB de su impresora mediante la herramienta de conexión correspondiente.
-    </p>
-    <p>
-      USB Redirector <strong>no es el reseteador</strong>. Esta herramienta únicamente permite establecer la
-      comunicación entre la impresora del cliente y el servidor donde trabaja el técnico. El reset en sí lo realiza
-      el técnico de forma remota, sin acceder al equipo del cliente más allá de esa conexión de la impresora.
+      {t(locale, "terminos.secciones.naturaleza.p2Antes")} <strong>{t(locale, "terminos.secciones.naturaleza.p2Fuerte")}</strong>{t(locale, "terminos.secciones.naturaleza.p2Despues")}
     </p>
   </section>
 
   <section id="proceso">
-    <h2>3. Cómo funciona el proceso</h2>
+    <h2>{t(locale, "terminos.secciones.proceso.titulo")}</h2>
     <ol class="terminos-proceso-lista">
-      <li>Solicitud</li>
-      <li>Conexión USB</li>
-      <li>Revisión técnica</li>
-      <li>Confirmación de compatibilidad</li>
-      <li>Cotización</li>
-      <li>Pago</li>
-      <li>Reset</li>
-      <li>Evidencia</li>
+      {(t(locale, "terminos.secciones.proceso.pasos") as string[]).map((paso) => (
+        <li>{paso}</li>
+      ))}
     </ol>
   </section>
 
   <section id="reembolsos">
-    <h2>4. Política de reembolsos</h2>
-    <p>
-      Antes de confirmar el pago, se realiza una revisión técnica para comprobar la compatibilidad del equipo con
-      el servicio contratado.
-    </p>
+    <h2>{t(locale, "terminos.secciones.reembolsos.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.reembolsos.p1")}</p>
     <ul>
-      <li>Si, tras esa revisión, el equipo resulta no ser compatible, procede el reembolso.</li>
-      <li>Si el procedimiento no logra realizar el reset contratado, procede el reembolso.</li>
-      <li>Una vez el reset se considera exitoso, <strong>no hay lugar a reembolso</strong>.</li>
+      <li>{t(locale, "terminos.secciones.reembolsos.li1")}</li>
+      <li>{t(locale, "terminos.secciones.reembolsos.li2")}</li>
+      <li>
+        {t(locale, "terminos.secciones.reembolsos.li3Antes")} <strong>{t(locale, "terminos.secciones.reembolsos.li3Fuerte")}</strong>{t(locale, "terminos.secciones.reembolsos.li3Despues")}
+      </li>
     </ul>
-    <p>
-      Se considera que el reset fue exitoso cuando el contador objeto del servicio fue restablecido y el error
-      específico contratado fue eliminado. Resetear no significa reparar.
-    </p>
-    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — política de reembolsos.</p>
+    <p>{t(locale, "terminos.secciones.reembolsos.p2")}</p>
+    <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.reembolsos.legal")}</p>
   </section>
 
   <section id="exclusiones">
-    <h2>5. Qué no incluye el servicio</h2>
-    <p>El servicio de Reset Asistido no incluye, entre otros:</p>
+    <h2>{t(locale, "terminos.secciones.exclusiones.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.exclusiones.intro")}</p>
     <ul>
-      <li>Reparación física, limpieza física o mantenimiento físico del equipo</li>
-      <li>Reparación de cabezales de impresión</li>
-      <li>Reparación de sensores</li>
-      <li>Reparación de bombas</li>
-      <li>Reparación del sistema de tinta</li>
-      <li>Reparación de cartuchos</li>
-      <li>Reparación de la caja de mantenimiento</li>
-      <li>Reparación de placas electrónicas</li>
-      <li>Reparación de memoria EEPROM</li>
-      <li>Reparación de daños eléctricos</li>
-      <li>Reparación de impresoras que no encienden</li>
-      <li>Problemas de calidad de impresión (impresiones borrosas o en blanco)</li>
-      <li>Configuración del equipo o instalación de drivers</li>
-      <li>En general, cualquier reparación de tipo físico</li>
+      {(t(locale, "terminos.secciones.exclusiones.items") as string[]).map((item) => (
+        <li>{item}</li>
+      ))}
     </ul>
   </section>
 
   <section id="errores">
-    <h2>6. Errores que podemos atender</h2>
-    <p><strong>Epson:</strong> E-11, W-11, E-10, W-10</p>
-    <p><strong>Canon:</strong> 5B00, 1700, P07</p>
+    <h2>{t(locale, "terminos.secciones.errores.titulo")}</h2>
+    <p><strong>{t(locale, "terminos.secciones.errores.epsonLabel")}</strong> E-11, W-11, E-10, W-10</p>
+    <p><strong>{t(locale, "terminos.secciones.errores.canonLabel")}</strong> 5B00, 1700, P07</p>
     <p>
-      <strong>Epson-SC y equipos compatibles:</strong> 0014BD, 00000008, 00000001, 00000004, 0000000C, 00010000,
+      <strong>{t(locale, "terminos.secciones.errores.epsonScLabel")}</strong> 0014BD, 00000008, 00000001, 00000004, 0000000C, 00010000,
       00040000, 00080000, 00010008, 0001000C, 00010004, 00040008, 0004000C, 000C0008, 000C0001, 000C0004
     </p>
-    <p>
-      Estos códigos no significan automáticamente que cualquier modelo sea compatible. La compatibilidad depende
-      del modelo específico y debe confirmarse antes de realizar el pago.
-    </p>
+    <p>{t(locale, "terminos.secciones.errores.nota")}</p>
   </section>
 
   <section id="garantia">
-    <h2>7. Garantía</h2>
-    <p>
-      La garantía del servicio puede tener una duración de 3 a 12 meses. La duración exacta aplicable a cada
-      servicio queda establecida en el certificado correspondiente.
-    </p>
-    <p>
-      De forma promocional, ResetEnLinea puede ofrecer una ampliación de garantía de 1 mes adicional, hasta un
-      máximo de 2 meses adicionales.
-    </p>
-    <p>
-      La garantía corresponde específicamente al reset del modelo contratado y no constituye una garantía integral
-      de la impresora ni de sus demás componentes.
-    </p>
-    <p>
-      Durante la vigencia de la garantía, el cliente puede solicitar el servicio para otra impresora del mismo
-      modelo, siempre que se trate de:
-    </p>
+    <h2>{t(locale, "terminos.secciones.garantia.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.garantia.p1")}</p>
+    <p>{t(locale, "terminos.secciones.garantia.p2")}</p>
+    <p>{t(locale, "terminos.secciones.garantia.p3")}</p>
+    <p>{t(locale, "terminos.secciones.garantia.p4")}</p>
     <ul>
-      <li>la misma persona,</li>
-      <li>el mismo contacto,</li>
-      <li>el mismo correo electrónico,</li>
-      <li>el mismo modelo de impresora, y</li>
-      <li>un certificado válido y vigente.</li>
+      <li>{t(locale, "terminos.secciones.garantia.li1")}</li>
+      <li>{t(locale, "terminos.secciones.garantia.li2")}</li>
+      <li>{t(locale, "terminos.secciones.garantia.li3")}</li>
+      <li>{t(locale, "terminos.secciones.garantia.li4")}</li>
+      <li>{t(locale, "terminos.secciones.garantia.li5")}</li>
     </ul>
-    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — condiciones de traslado/reutilización de la garantía.</p>
+    <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.garantia.legal")}</p>
   </section>
 
   <section id="certificado">
-    <h2>8. Certificado de garantía</h2>
-    <p>
-      El certificado es el documento que acredita la garantía del servicio prestado. Puede entregarse en formato
-      PDF, como fotografía, o en formato impreso.
-    </p>
-    <p>
-      Si el cliente no proporciona una dirección de correo electrónico, no será posible enviarle el certificado por
-      esa vía.
-    </p>
+    <h2>{t(locale, "terminos.secciones.certificado.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.certificado.p1")}</p>
+    <p>{t(locale, "terminos.secciones.certificado.p2")}</p>
   </section>
 
   <section id="evidencia">
-    <h2>9. Evidencia del servicio y prueba social</h2>
-    <p>
-      Después de un reset exitoso, ResetEnLinea puede generar evidencia en video del servicio realizado. Esta
-      evidencia puede utilizarse como prueba social y publicarse en los canales de ResetEnLinea, incluyendo este
-      sitio web.
-    </p>
+    <h2>{t(locale, "terminos.secciones.evidencia.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.evidencia.p1")}</p>
   </section>
 
   <section id="privacidad">
-    <h2>10. Privacidad de las conversaciones</h2>
+    <h2>{t(locale, "terminos.secciones.privacidad.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.privacidad.p1")}</p>
+    <p>{t(locale, "terminos.secciones.privacidad.p2")}</p>
     <p>
-      Existe una versión privada de la conversación con el cliente, sin censura, que puede formar parte del
-      certificado de garantía entregado a este. La versión que se publica públicamente está censurada, protegiendo
-      los datos personales del cliente.
+      {t(locale, "terminos.secciones.privacidad.p3Antes")} <ObfuscatedEmail user="info" domain="resetenlinea.com" />{t(locale, "terminos.secciones.privacidad.p3Despues")}
     </p>
-    <p>
-      La publicación pública de conversaciones, videos o evidencias del servicio se maneja mediante una
-      autorización independiente a estos Términos y Condiciones.
-    </p>
-    <p>
-      Si, después de una publicación pública, el cliente solicita su retiro, puede hacerlo escribiendo a
-      <a href="mailto:info@resetenlinea.com">info@resetenlinea.com</a>.
-    </p>
-    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — tratamiento de datos personales y autorización de imagen/publicación.</p>
+    <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.privacidad.legal")}</p>
   </section>
 
   <section id="prestador">
-    <h2>11. Datos del prestador del servicio</h2>
+    <h2>{t(locale, "terminos.secciones.prestador.titulo")}</h2>
     <ul class="terminos-datos-lista">
       <li>ResetEnLinea</li>
       <li>Wilton Martinez Escorcia</li>
       <li>Santa Marta, Colombia</li>
-      <li><a href="mailto:info@resetenlinea.com">info@resetenlinea.com</a></li>
+      <li><ObfuscatedEmail user="info" domain="resetenlinea.com" /></li>
       <li><a href="https://resetenlinea.com">resetenlinea.com</a></li>
     </ul>
   </section>
 
   <section id="legislacion">
-    <h2>12. Legislación aplicable</h2>
-    <p>El servicio se presta desde Colombia y se rige por la legislación colombiana aplicable.</p>
-    <p class="terminos-revision-legal">⚠️ REVISIÓN LEGAL RECOMENDADA — ley aplicable y resolución de controversias.</p>
+    <h2>{t(locale, "terminos.secciones.legislacion.titulo")}</h2>
+    <p>{t(locale, "terminos.secciones.legislacion.p1")}</p>
+    <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.legislacion.legal")}</p>
   </section>
 
   <InfoCard tone="muted">
-    <p class="terminos-cta-texto">¿Tienes una duda sobre estos Términos y Condiciones?</p>
+    <p class="terminos-cta-texto">{t(locale, "terminos.cta.texto")}</p>
     <a class="terminos-cta-whatsapp" href={whatsappConsultaHref} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
-      Escríbenos por WhatsApp
+      {t(locale, "terminos.cta.whatsappLabel")}
     </a>
   </InfoCard>
 
   <SharePageButtons
     url={url}
-    tituloLabel="Compartir estos Términos y Condiciones"
+    tituloLabel={t(locale, "terminos.share.titulo")}
     mensajeWhatsapp={mensajeWhatsapp}
     asuntoEmail={asuntoEmail}
     cuerpoEmail={cuerpoEmail}
-    labelWhatsapp="WhatsApp"
-    labelEmail="Email"
-    labelCopiar="Copiar enlace"
-    labelCopiado="Enlace copiado"
-    labelImprimir="Imprimir / Guardar PDF"
-    labelCompartir="Compartir"
+    labelWhatsapp={t(locale, "terminos.share.whatsapp")}
+    labelEmail={t(locale, "terminos.share.email")}
+    labelCopiar={t(locale, "terminos.share.copiar")}
+    labelCopiado={t(locale, "terminos.share.copiado")}
+    labelImprimir={t(locale, "terminos.share.imprimir")}
+    labelCompartir={t(locale, "terminos.share.compartir")}
   />
 </article>
 
@@ -345,8 +283,17 @@ const secciones = [
   }
 
   .terminos-revision-legal {
-    font-weight: 700;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--color-warning-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-warning-bg);
     color: var(--color-warning-text);
+    font-weight: 600;
+    font-size: 0.88rem;
   }
 
   .terminos-cta-texto {

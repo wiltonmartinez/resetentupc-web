@@ -1,0 +1,35 @@
+---
+/**
+ * Enlace de correo ofuscado contra bots de scraping: el HTML servido por el
+ * servidor nunca contiene la dirección completa en texto plano ni en un
+ * atributo href — solo el usuario y el dominio por separado en data-*. Un
+ * script (una sola vez por página, sin importar cuántas instancias haya)
+ * reconstruye el texto visible y el href="mailto:" en el navegador.
+ */
+interface Props {
+  user: string;
+  domain: string;
+  class?: string;
+}
+
+const { user, domain, class: className } = Astro.props;
+---
+
+<a
+  href="#"
+  class={className ?? "email-ofuscado"}
+  data-email-user={user}
+  data-email-domain={domain}
+  rel="nofollow"
+></a>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("[data-email-user][data-email-domain]").forEach((enlace) => {
+    const usuario = enlace.dataset.emailUser;
+    const dominio = enlace.dataset.emailDomain;
+    if (!usuario || !dominio) return;
+    const direccion = `${usuario}@${dominio}`;
+    enlace.href = `mailto:${direccion}`;
+    enlace.textContent = direccion;
+  });
+</script>

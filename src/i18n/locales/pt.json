@@ -451,5 +451,137 @@
     "texto": "Capturas reais de avaliações e notas dos nossos clientes no Trustpilot.",
     "sinRegistros": "Ainda não há depoimentos publicados.",
     "verResenaLink": "Ver avaliação no Trustpilot ↗"
+  },
+  "terminos": {
+    "meta": {
+      "title": "Termos e Condições | ResetEnLinea.com",
+      "description": "Termos e Condições do serviço de Reset Assistido 100% remoto via conexão USB da ResetEnLinea."
+    },
+    "title": "Termos e Condições",
+    "actualizacion": "Última atualização: 21 de agosto de 2026.",
+    "tocTitulo": "Índice",
+    "share": {
+      "titulo": "Compartilhar estes Termos e Condições",
+      "whatsapp": "WhatsApp",
+      "email": "E-mail",
+      "copiar": "Copiar link",
+      "copiado": "Link copiado",
+      "imprimir": "Imprimir / Salvar PDF",
+      "compartir": "Compartilhar",
+      "mensajeWhatsapp": "Compartilho com você os Termos e Condições oficiais da ResetEnLinea:",
+      "asuntoEmail": "Termos e Condições da ResetEnLinea",
+      "cuerpoEmailSaludo": "Olá,",
+      "cuerpoEmailIntro": "Compartilho com você os Termos e Condições oficiais da ResetEnLinea:",
+      "cuerpoEmailDespedida": "Atenciosamente,\nResetEnLinea"
+    },
+    "cta": {
+      "texto": "Tem alguma dúvida sobre estes Termos e Condições?",
+      "whatsappLabel": "Fale conosco pelo WhatsApp",
+      "whatsappMensaje": "Olá, tenho uma dúvida sobre os Termos e Condições da ResetEnLinea."
+    },
+    "secciones": {
+      "objeto": {
+        "titulo": "1. Objeto do serviço",
+        "p1Antes": "A ResetEnLinea presta um serviço denominado",
+        "p1Fuerte": "Reset Assistido 100% remoto via conexão USB",
+        "p1Despues": ". A ResetEnLinea não vende software, não vende licenças nem vende programas de reset. As ferramentas técnicas utilizadas durante a prestação do serviço são apenas meios para prestá-lo, não o produto contratado."
+      },
+      "naturaleza": {
+        "titulo": "2. Natureza do serviço",
+        "p1": "O técnico da ResetEnLinea não acessa o computador do cliente. O cliente apenas compartilha, de forma temporária, a porta USB de sua impressora por meio da ferramenta de conexão correspondente.",
+        "p2Antes": "USB Redirector",
+        "p2Fuerte": "não é o reseteador",
+        "p2Despues": ". Essa ferramenta apenas permite estabelecer a comunicação entre a impressora do cliente e o servidor onde trabalha o técnico. O reset em si é realizado pelo técnico de forma remota, sem acessar o equipamento do cliente além dessa conexão da impressora."
+      },
+      "proceso": {
+        "titulo": "3. Como funciona o processo",
+        "pasos": [
+          "Solicitação",
+          "Conexão USB",
+          "Revisão técnica",
+          "Confirmação de compatibilidade",
+          "Orçamento",
+          "Pagamento",
+          "Reset",
+          "Evidência"
+        ]
+      },
+      "reembolsos": {
+        "titulo": "4. Política de reembolsos",
+        "p1": "Antes de confirmar o pagamento, é realizada uma revisão técnica para verificar a compatibilidade do equipamento com o serviço contratado.",
+        "li1": "Se, após essa revisão, o equipamento não for compatível, o reembolso será realizado.",
+        "li2": "Se o procedimento não conseguir realizar o reset contratado, o reembolso será realizado.",
+        "li3Antes": "Uma vez que o reset seja considerado bem-sucedido,",
+        "li3Fuerte": "não há direito a reembolso",
+        "li3Despues": ".",
+        "p2": "Considera-se que o reset foi bem-sucedido quando o contador objeto do serviço foi restabelecido e o erro específico contratado foi eliminado. Resetar não significa reparar.",
+        "legal": "REVISÃO JURÍDICA RECOMENDADA — política de reembolsos."
+      },
+      "exclusiones": {
+        "titulo": "5. O que o serviço não inclui",
+        "intro": "O serviço de Reset Assistido não inclui, entre outros:",
+        "items": [
+          "Reparo físico, limpeza física ou manutenção física do equipamento",
+          "Reparo de cabeças de impressão",
+          "Reparo de sensores",
+          "Reparo de bombas",
+          "Reparo do sistema de tinta",
+          "Reparo de cartuchos",
+          "Reparo da caixa de manutenção",
+          "Reparo de placas eletrônicas",
+          "Reparo de memória EEPROM",
+          "Reparo de danos elétricos",
+          "Reparo de impressoras que não ligam",
+          "Problemas de qualidade de impressão (impressões borradas ou em branco)",
+          "Configuração do equipamento ou instalação de drivers",
+          "Em geral, qualquer reparo de natureza física"
+        ]
+      },
+      "errores": {
+        "titulo": "6. Erros que podemos atender",
+        "epsonLabel": "Epson:",
+        "canonLabel": "Canon:",
+        "epsonScLabel": "Epson-SC e equipamentos compatíveis:",
+        "nota": "Esses códigos não significam automaticamente que qualquer modelo seja compatível. A compatibilidade depende do modelo específico e deve ser confirmada antes de realizar o pagamento."
+      },
+      "garantia": {
+        "titulo": "7. Garantia",
+        "p1": "A garantia do serviço pode ter duração de 3 a 12 meses. A duração exata aplicável a cada serviço fica estabelecida no certificado correspondente.",
+        "p2": "De forma promocional, a ResetEnLinea pode oferecer uma ampliação de garantia de 1 mês adicional, até um máximo de 2 meses adicionais.",
+        "p3": "A garantia corresponde especificamente ao reset do modelo contratado e não constitui uma garantia integral da impressora nem de seus demais componentes.",
+        "p4": "Durante a vigência da garantia, o cliente pode solicitar o serviço para outra impressora do mesmo modelo, desde que se trate de:",
+        "li1": "a mesma pessoa,",
+        "li2": "o mesmo contato,",
+        "li3": "o mesmo e-mail,",
+        "li4": "o mesmo modelo de impressora, e",
+        "li5": "um certificado válido e vigente.",
+        "legal": "REVISÃO JURÍDICA RECOMENDADA — condições de transferência/reutilização da garantia."
+      },
+      "certificado": {
+        "titulo": "8. Certificado de garantia",
+        "p1": "O certificado é o documento que comprova a garantia do serviço prestado. Pode ser entregue em formato PDF, como fotografia ou em formato impresso.",
+        "p2": "Se o cliente não fornecer um endereço de e-mail, não será possível enviar-lhe o certificado por essa via."
+      },
+      "evidencia": {
+        "titulo": "9. Evidência do serviço e prova social",
+        "p1": "Após um reset bem-sucedido, a ResetEnLinea pode gerar evidência em vídeo do serviço realizado. Essa evidência pode ser utilizada como prova social e publicada nos canais da ResetEnLinea, incluindo este site."
+      },
+      "privacidad": {
+        "titulo": "10. Privacidade das conversas",
+        "p1": "Existe uma versão privada da conversa com o cliente, sem censura, que pode fazer parte do certificado de garantia entregue a ele. A versão publicada é censurada, protegendo os dados pessoais do cliente.",
+        "p2": "A publicação pública de conversas, vídeos ou evidências do serviço é feita mediante autorização independente destes Termos e Condições.",
+        "p3Antes": "Se, após uma publicação pública, o cliente solicitar sua remoção, poderá fazê-lo escrevendo para",
+        "p3Despues": ".",
+        "legal": "REVISÃO JURÍDICA RECOMENDADA — tratamento de dados pessoais e autorização de imagem/publicação."
+      },
+      "prestador": {
+        "titulo": "11. Dados do prestador do serviço"
+      },
+      "legislacion": {
+        "titulo": "12. Legislação aplicável",
+        "p1": "O serviço é prestado a partir da Colômbia e rege-se pela legislação colombiana aplicável.",
+        "legal": "REVISÃO JURÍDICA RECOMENDADA — lei aplicável e resolução de controvérsias."
+      }
+    }
   }
 }

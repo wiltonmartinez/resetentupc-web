@@ -451,5 +451,137 @@
     "texto": "Captures réelles d'avis et de notes de nos clients sur Trustpilot.",
     "sinRegistros": "Aucun témoignage publié pour le moment.",
     "verResenaLink": "Voir l'avis sur Trustpilot ↗"
+  },
+  "terminos": {
+    "meta": {
+      "title": "Conditions Générales | ResetEnLinea.com",
+      "description": "Conditions Générales du service de Réinitialisation Assistée 100 % à distance via connexion USB de ResetEnLinea."
+    },
+    "title": "Conditions Générales",
+    "actualizacion": "Dernière mise à jour : 21 août 2026.",
+    "tocTitulo": "Sommaire",
+    "share": {
+      "titulo": "Partager ces Conditions Générales",
+      "whatsapp": "WhatsApp",
+      "email": "E-mail",
+      "copiar": "Copier le lien",
+      "copiado": "Lien copié",
+      "imprimir": "Imprimer / Enregistrer en PDF",
+      "compartir": "Partager",
+      "mensajeWhatsapp": "Je te partage les Conditions Générales officielles de ResetEnLinea :",
+      "asuntoEmail": "Conditions Générales de ResetEnLinea",
+      "cuerpoEmailSaludo": "Bonjour,",
+      "cuerpoEmailIntro": "Je te partage les Conditions Générales officielles de ResetEnLinea :",
+      "cuerpoEmailDespedida": "Cordialement,\nResetEnLinea"
+    },
+    "cta": {
+      "texto": "Vous avez une question sur ces Conditions Générales ?",
+      "whatsappLabel": "Écrivez-nous sur WhatsApp",
+      "whatsappMensaje": "Bonjour, j'ai une question concernant les Conditions Générales de ResetEnLinea."
+    },
+    "secciones": {
+      "objeto": {
+        "titulo": "1. Objet du service",
+        "p1Antes": "ResetEnLinea fournit un service dénommé",
+        "p1Fuerte": "Réinitialisation Assistée 100 % à distance via connexion USB",
+        "p1Despues": ". ResetEnLinea ne vend ni logiciel, ni licences, ni programmes de réinitialisation. Les outils techniques utilisés lors de la prestation du service sont uniquement des moyens permettant de le fournir, et non le produit faisant l'objet du contrat."
+      },
+      "naturaleza": {
+        "titulo": "2. Nature du service",
+        "p1": "Le technicien de ResetEnLinea n'accède pas à l'ordinateur du client. Le client partage uniquement, de manière temporaire, le port USB de son imprimante au moyen de l'outil de connexion correspondant.",
+        "p2Antes": "USB Redirector",
+        "p2Fuerte": "n'est pas l'outil de réinitialisation",
+        "p2Despues": ". Cet outil permet uniquement d'établir la communication entre l'imprimante du client et le serveur où travaille le technicien. La réinitialisation en elle-même est effectuée par le technicien à distance, sans accéder à l'équipement du client au-delà de cette connexion de l'imprimante."
+      },
+      "proceso": {
+        "titulo": "3. Comment fonctionne le processus",
+        "pasos": [
+          "Demande",
+          "Connexion USB",
+          "Vérification technique",
+          "Confirmation de compatibilité",
+          "Devis",
+          "Paiement",
+          "Réinitialisation",
+          "Preuve"
+        ]
+      },
+      "reembolsos": {
+        "titulo": "4. Politique de remboursement",
+        "p1": "Avant la confirmation du paiement, une vérification technique est réalisée afin de confirmer la compatibilité de l'équipement avec le service souscrit.",
+        "li1": "Si, à l'issue de cette vérification, l'équipement s'avère incompatible, le remboursement est applicable.",
+        "li2": "Si la procédure ne parvient pas à effectuer la réinitialisation souscrite, le remboursement est applicable.",
+        "li3Antes": "Une fois la réinitialisation considérée comme réussie,",
+        "li3Fuerte": "aucun remboursement n'est possible",
+        "li3Despues": ".",
+        "p2": "La réinitialisation est considérée comme réussie lorsque le compteur faisant l'objet du service a été remis à zéro et que l'erreur spécifique visée par le contrat a été supprimée. Réinitialiser ne signifie pas réparer.",
+        "legal": "RÉVISION JURIDIQUE RECOMMANDÉE — politique de remboursement."
+      },
+      "exclusiones": {
+        "titulo": "5. Ce que le service n'inclut pas",
+        "intro": "Le service de Réinitialisation Assistée n'inclut pas, entre autres :",
+        "items": [
+          "Réparation physique, nettoyage physique ou entretien physique de l'équipement",
+          "Réparation des têtes d'impression",
+          "Réparation des capteurs",
+          "Réparation des pompes",
+          "Réparation du système d'encre",
+          "Réparation des cartouches",
+          "Réparation du bac de maintenance",
+          "Réparation des cartes électroniques",
+          "Réparation de la mémoire EEPROM",
+          "Réparation des dommages électriques",
+          "Réparation des imprimantes qui ne s'allument pas",
+          "Problèmes de qualité d'impression (impressions floues ou blanches)",
+          "Configuration de l'équipement ou installation de pilotes",
+          "De manière générale, toute réparation de nature physique"
+        ]
+      },
+      "errores": {
+        "titulo": "6. Erreurs que nous pouvons traiter",
+        "epsonLabel": "Epson :",
+        "canonLabel": "Canon :",
+        "epsonScLabel": "Epson-SC et appareils compatibles :",
+        "nota": "Ces codes ne signifient pas automatiquement que tout modèle est compatible. La compatibilité dépend du modèle spécifique et doit être confirmée avant d'effectuer le paiement."
+      },
+      "garantia": {
+        "titulo": "7. Garantie",
+        "p1": "La garantie du service peut avoir une durée de 3 à 12 mois. La durée exacte applicable à chaque service est indiquée dans le certificat correspondant.",
+        "p2": "À titre promotionnel, ResetEnLinea peut proposer une extension de garantie d'1 mois supplémentaire, jusqu'à un maximum de 2 mois supplémentaires.",
+        "p3": "La garantie porte spécifiquement sur la réinitialisation du modèle souscrit et ne constitue pas une garantie intégrale de l'imprimante ni de ses autres composants.",
+        "p4": "Pendant la période de validité de la garantie, le client peut demander le service pour une autre imprimante du même modèle, à condition qu'il s'agisse de :",
+        "li1": "la même personne,",
+        "li2": "le même contact,",
+        "li3": "la même adresse électronique,",
+        "li4": "le même modèle d'imprimante, et",
+        "li5": "un certificat valide et en cours de validité.",
+        "legal": "RÉVISION JURIDIQUE RECOMMANDÉE — conditions de transfert/réutilisation de la garantie."
+      },
+      "certificado": {
+        "titulo": "8. Certificat de garantie",
+        "p1": "Le certificat est le document attestant la garantie du service fourni. Il peut être remis au format PDF, sous forme de photographie, ou au format imprimé.",
+        "p2": "Si le client ne fournit pas d'adresse électronique, il ne sera pas possible de lui envoyer le certificat par ce moyen."
+      },
+      "evidencia": {
+        "titulo": "9. Preuve du service et preuve sociale",
+        "p1": "Après une réinitialisation réussie, ResetEnLinea peut produire une preuve vidéo du service réalisé. Cette preuve peut être utilisée comme preuve sociale et publiée sur les canaux de ResetEnLinea, y compris ce site web."
+      },
+      "privacidad": {
+        "titulo": "10. Confidentialité des conversations",
+        "p1": "Il existe une version privée, non censurée, de la conversation avec le client, qui peut faire partie du certificat de garantie qui lui est remis. La version publiée publiquement est censurée afin de protéger les données personnelles du client.",
+        "p2": "La publication publique de conversations, vidéos ou preuves du service fait l'objet d'une autorisation distincte de ces Conditions Générales.",
+        "p3Antes": "Si, après une publication publique, le client demande son retrait, il peut le faire en écrivant à",
+        "p3Despues": ".",
+        "legal": "RÉVISION JURIDIQUE RECOMMANDÉE — traitement des données personnelles et autorisation d'image/de publication."
+      },
+      "prestador": {
+        "titulo": "11. Coordonnées du prestataire de services"
+      },
+      "legislacion": {
+        "titulo": "12. Législation applicable",
+        "p1": "Le service est fourni depuis la Colombie et est régi par la législation colombienne applicable.",
+        "legal": "RÉVISION JURIDIQUE RECOMMANDÉE — loi applicable et résolution des litiges."
+      }
+    }
   }
 }
