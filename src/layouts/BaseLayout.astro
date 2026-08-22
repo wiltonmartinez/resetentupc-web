@@ -75,11 +75,31 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     <!-- TrustBox script -->
     <script type="text/javascript" src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
     <!-- End TrustBox script -->
-    <!-- Crisp chat: burbuja propia oculta (chat:hide) — se abre solo desde el
-         botón "Chat en vivo" del hub de contacto (ver ContactHub.astro), para
-         no duplicar botones flotantes en pantalla. -->
+    <!-- Crisp chat: la burbuja propia se oculta por CSS (#crisp-chatbox, ver
+         estilo global más abajo) — chat:hide/chat:show por sí solos no son
+         confiables (Crisp marca data-hidden="true" pero no siempre aplica
+         display:none). Los eventos reales chat:opened/chat:closed del SDK
+         alternan una clase en <body> que el CSS usa para mostrar el widget
+         SOLO mientras el chat está realmente abierto — así nunca queda un
+         segundo elemento flotante encima de los botones del hub. -->
     <script is:inline type="text/javascript">
-      window.$crisp = [["do", "chat:hide"]];
+      window.$crisp = [
+        ["do", "chat:hide"],
+        [
+          "on",
+          "chat:opened",
+          function () {
+            document.body.classList.add("crisp-chat-activo");
+          },
+        ],
+        [
+          "on",
+          "chat:closed",
+          function () {
+            document.body.classList.remove("crisp-chat-activo");
+          },
+        ],
+      ];
       window.CRISP_WEBSITE_ID = "3da814a8-583a-4d03-9f45-af1bc77104de";
       (function () {
         const d = document;
@@ -238,5 +258,18 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
       padding: var(--space-sm) var(--space-sm) var(--space-lg);
       gap: var(--space-md);
     }
+  }
+
+  /* Burbuja propia de Crisp: oculta por defecto siempre. Solo se muestra
+     mientras el chat está realmente abierto (ver script de Crisp arriba,
+     que alterna esta clase con los eventos chat:opened/chat:closed del
+     propio SDK) — así nunca compite con el botón circular del hub de
+     contacto en la esquina inferior derecha. */
+  #crisp-chatbox {
+    display: none !important;
+  }
+
+  body.crisp-chat-activo #crisp-chatbox {
+    display: block !important;
   }
 </style>
