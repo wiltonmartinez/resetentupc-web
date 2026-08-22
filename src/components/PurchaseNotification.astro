@@ -43,6 +43,53 @@ const { locale } = Astro.props;
   const CANTIDAD_CONFETI = 130;
   const STORAGE_KEY = "resetenlinea_purchase_popup_shown";
 
+  // Solo para mostrar una bandera junto al país cuando lo reconocemos — si
+  // el país no está en esta lista simplemente no se muestra bandera, nunca
+  // se inventa una. Claves normalizadas (minúsculas, sin tildes).
+  const BANDERAS = {
+    colombia: "🇨🇴",
+    mexico: "🇲🇽",
+    guatemala: "🇬🇹",
+    espana: "🇪🇸",
+    argentina: "🇦🇷",
+    peru: "🇵🇪",
+    chile: "🇨🇱",
+    ecuador: "🇪🇨",
+    venezuela: "🇻🇪",
+    panama: "🇵🇦",
+    "costa rica": "🇨🇷",
+    honduras: "🇭🇳",
+    "el salvador": "🇸🇻",
+    nicaragua: "🇳🇮",
+    "republica dominicana": "🇩🇴",
+    bolivia: "🇧🇴",
+    paraguay: "🇵🇾",
+    uruguay: "🇺🇾",
+    italia: "🇮🇹",
+    "estados unidos": "🇺🇸",
+    usa: "🇺🇸",
+    "puerto rico": "🇵🇷",
+    cuba: "🇨🇺",
+    brasil: "🇧🇷",
+    francia: "🇫🇷",
+    alemania: "🇩🇪",
+    portugal: "🇵🇹",
+    "reino unido": "🇬🇧",
+    canada: "🇨🇦",
+  };
+
+  function normalizar(texto) {
+    return texto
+      .normalize("NFD")
+      .replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
+      .toLowerCase()
+      .trim();
+  }
+
+  function banderaPara(pais) {
+    return BANDERAS[normalizar(pais)] || "";
+  }
+
   const contenedor = document.getElementById("purchase-notification");
   if (contenedor) {
     const apiBase = contenedor.dataset.apiBase || "";
@@ -94,14 +141,16 @@ const { locale } = Astro.props;
     }
 
     let visible = false;
+    let temporizadorAutoOcultar = null;
 
     function ocultar() {
       if (!visible) return;
       visible = false;
+      clearTimeout(temporizadorAutoOcultar);
       contenedor.classList.remove("purchase-notification-visible");
       setTimeout(() => {
         contenedor.hidden = true;
-      }, 300);
+      }, 350);
     }
 
     function mostrar(item) {
@@ -112,18 +161,29 @@ const { locale } = Astro.props;
       const linea = lineaProducto(item);
       const mensajeWhatsapp = `${saludo} ${linea}`;
       const whatsappHref = `https://wa.me/${numero}?text=${encodeURIComponent(mensajeWhatsapp)}`;
-      const intro = textoAlguien.replace("{pais}", `<strong>${item.pais}</strong>`);
+      const bandera = banderaPara(item.pais);
+      const intro = textoAlguien.replace("{pais}", `${bandera ? bandera + " " : ""}<strong>${item.pais}</strong>`);
 
       contenedor.innerHTML = `
         <button type="button" class="purchase-notification-cerrar" aria-label="${cerrarLabel}" data-sound="select">×</button>
-        <div class="purchase-notification-icono" aria-hidden="true">🛍️</div>
+        <div class="purchase-notification-icono-wrap">
+          <div class="purchase-notification-icono" aria-hidden="true">🛍️</div>
+          <span class="purchase-notification-punto-vivo" aria-hidden="true"></span>
+        </div>
         <div class="purchase-notification-cuerpo">
           <p class="purchase-notification-intro">${intro}</p>
           <p class="purchase-notification-producto">${linea}</p>
-          <a class="purchase-notification-cta" href="${whatsappHref}" target="_blank" rel="noopener noreferrer nofollow" data-sound="select">${ctaLabel}</a>
+          <a class="purchase-notification-cta" href="${whatsappHref}" target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
+            <span class="purchase-notification-cta-icono" aria-hidden="true"></span>
+            <span>${ctaLabel}</span>
+          </a>
         </div>
+        <div class="purchase-notification-progreso"><span class="purchase-notification-progreso-barra"></span></div>
       `;
       contenedor.hidden = false;
+      const barra = contenedor.querySelector(".purchase-notification-progreso-barra");
+      if (barra) barra.style.animationDuration = `${AUTO_OCULTAR_MS}ms`;
+
       // setTimeout en vez de requestAnimationFrame: más confiable para
       // disparar la transición de entrada incluso si la pestaña no está
       // componiendo frames activamente (pestaña en segundo plano, etc.).
@@ -133,7 +193,7 @@ const { locale } = Astro.props;
       lanzarConfeti(CANTIDAD_CONFETI);
 
       contenedor.querySelector(".purchase-notification-cerrar")?.addEventListener("click", ocultar);
-      setTimeout(ocultar, AUTO_OCULTAR_MS);
+      temporizadorAutoOcultar = setTimeout(ocultar, AUTO_OCULTAR_MS);
     }
 
     function programar(retraso) {
@@ -161,39 +221,85 @@ const { locale } = Astro.props;
     z-index: 45;
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    width: min(320px, calc(100vw - 2 * var(--space-sm)));
-    padding: 1rem 1.1rem;
+    gap: 0.85rem;
+    width: min(348px, calc(100vw - 2 * var(--space-sm)));
+    padding: 1.1rem 1.2rem 1.3rem;
     border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-whatsapp);
     background: var(--color-bg-card);
-    box-shadow: var(--shadow-floating);
+    box-shadow:
+      var(--shadow-floating),
+      0 0 0 1px rgba(15, 23, 42, 0.04);
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateX(-28px) scale(0.94);
     transition:
-      opacity 0.25s ease,
-      transform 0.25s ease;
+      opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .purchase-notification-visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0) scale(1);
+    animation: purchase-notification-pulso 2.6s ease-in-out 0.4s infinite;
+  }
+
+  @keyframes purchase-notification-pulso {
+    0%,
+    100% {
+      box-shadow:
+        var(--shadow-floating),
+        0 0 0 0 rgba(37, 211, 102, 0.4);
+    }
+    50% {
+      box-shadow:
+        var(--shadow-floating),
+        0 0 0 7px rgba(37, 211, 102, 0);
+    }
+  }
+
+  .purchase-notification-icono-wrap {
+    position: relative;
+    flex: none;
   }
 
   .purchase-notification-icono {
-    flex: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 50%;
     background: var(--color-primary-light);
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+  }
+
+  .purchase-notification-punto-vivo {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--color-whatsapp);
+    border: 2px solid var(--color-bg-card);
+    animation: purchase-notification-punto 1.6s ease-in-out infinite;
+  }
+
+  @keyframes purchase-notification-punto {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.55;
+      transform: scale(1.3);
+    }
   }
 
   .purchase-notification-cuerpo {
     display: grid;
-    gap: 0.4rem;
+    gap: 0.45rem;
     min-width: 0;
   }
 
@@ -203,33 +309,57 @@ const { locale } = Astro.props;
     color: var(--color-text-subtle);
   }
 
-  .purchase-notification-producto {
-    margin: 0;
-    font-size: 0.92rem;
-    font-weight: 700;
+  .purchase-notification-intro strong {
     color: var(--color-text);
   }
 
+  .purchase-notification-producto {
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.35;
+  }
+
   .purchase-notification-cta {
-    display: block;
-    text-align: center;
-    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.15rem;
+    padding: 0.7rem 0.75rem;
     border-radius: var(--radius-sm);
     background: var(--color-whatsapp);
     color: var(--color-whatsapp-ink);
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     text-decoration: none;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+    transition:
+      background 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .purchase-notification-cta:hover {
     background: var(--color-whatsapp-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.45);
+  }
+
+  .purchase-notification-cta-icono {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23062f1a'%3E%3Cpath d='M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
   }
 
   .purchase-notification-cerrar {
     position: absolute;
-    top: 0.4rem;
-    right: 0.5rem;
+    top: 0.5rem;
+    right: 0.6rem;
     border: none;
     background: none;
     color: var(--color-text-subtle);
@@ -241,6 +371,55 @@ const { locale } = Astro.props;
 
   .purchase-notification-cerrar:hover {
     color: var(--color-text);
+  }
+
+  .purchase-notification-progreso {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+
+  .purchase-notification-progreso-barra {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: var(--color-whatsapp);
+    transform-origin: left;
+    animation-name: purchase-notification-progreso;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes purchase-notification-progreso {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .purchase-notification {
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+    .purchase-notification-visible {
+      animation: none;
+    }
+    .purchase-notification-punto-vivo {
+      animation: none;
+    }
+    .purchase-notification-progreso-barra {
+      animation: none;
+      width: 0;
+    }
   }
 
   @media (max-width: 480px) {
