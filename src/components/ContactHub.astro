@@ -4,12 +4,15 @@
  * eran 3 elementos superpuestos (botón "Contáctanos", botón directo de
  * WhatsApp, burbuja de Crisp). El panel ofrece los accesos rápidos que
  * tenía el modal (Cotización/Garantía abren el mismo ContactForm ya
- * preseleccionado; Ruleta lleva a /ruleta/) y, debajo, UN solo canal de
- * conversación elegido por idioma:
- *   - es / pt -> WhatsApp directo (el canal real que ya usa el negocio).
- *   - resto de idiomas -> Chat en vivo (Crisp), que este componente abre
- *     programáticamente; la burbuja propia de Crisp se mantiene oculta
- *     (ver BaseLayout.astro) para no duplicar botones.
+ * preseleccionado; Ruleta lleva a /ruleta/) y, debajo, los canales de
+ * conversación:
+ *   - Chat en vivo (Crisp): siempre visible, para todos los idiomas. Este
+ *     componente lo abre programáticamente; la burbuja propia de Crisp se
+ *     mantiene oculta (ver BaseLayout.astro) para no duplicar botones.
+ *   - WhatsApp: visible en todos los idiomas EXCEPTO donde no es el canal
+ *     habitual — hoy eso es solo "ru" (Rusia/Europa del Este usa Telegram
+ *     mucho más que WhatsApp). No es "WhatsApp solo para es/pt": es "ocultar
+ *     WhatsApp donde no aplica", Live Chat cubre a todo el mundo siempre.
  *
  * No incluye Telegram ni KakaoTalk: el negocio no tiene esos canales
  * configurados todavía — agregar un botón a un canal inexistente sería
@@ -28,7 +31,8 @@ interface Props {
 
 const { locale, path, marcaDefault, modeloDefault } = Astro.props;
 
-const usaWhatsappPrincipal = locale === "es" || locale === "pt";
+const LOCALES_SIN_WHATSAPP: Locale[] = ["ru"];
+const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
 const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
 const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
@@ -92,7 +96,7 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
     </div>
 
     <div class="contact-hub-canal">
-      {usaWhatsappPrincipal ? (
+      {mostrarWhatsapp && (
         <a
           class="contact-hub-canal-btn contact-hub-canal-whatsapp"
           href={whatsappHref}
@@ -106,25 +110,24 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
           </svg>
           {t(locale, "contactHub.whatsapp")}
         </a>
-      ) : (
-        <button
-          type="button"
-          class="contact-hub-canal-btn contact-hub-canal-chat"
-          data-hub-abrir-chat
-          data-sound="confirm"
-          data-analytics-event="contact_hub_livechat"
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-            <path
-              d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
-              stroke="currentColor"
-              stroke-width="1.6"
-              stroke-linejoin="round"
-            />
-          </svg>
-          {t(locale, "contactHub.liveChat")}
-        </button>
       )}
+      <button
+        type="button"
+        class="contact-hub-canal-btn contact-hub-canal-chat"
+        data-hub-abrir-chat
+        data-sound="confirm"
+        data-analytics-event="contact_hub_livechat"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+          <path
+            d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+          />
+        </svg>
+        {t(locale, "contactHub.liveChat")}
+      </button>
     </div>
   </div>
 
@@ -354,6 +357,8 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
   }
 
   .contact-hub-canal {
+    display: grid;
+    gap: 0.5rem;
     padding-top: 0.6rem;
     border-top: 1px solid var(--color-border);
   }
