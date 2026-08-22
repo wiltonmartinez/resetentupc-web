@@ -555,5 +555,15 @@
     "ctaLabel": "Necesito Reset Asistido 100% Remoto",
     "whatsappSaludo": "Hola, vi la notificación de la web y necesito",
     "cerrarLabel": "Cerrar notificación"
+  },
+  "contactHub": {
+    "abrirLabel": "Abrir opciones de contacto",
+    "cerrarLabel": "Cerrar",
+    "titulo": "¿Cómo podemos ayudarte?",
+    "cotizacion": "Cotización o compra",
+    "garantia": "Garantía",
+    "ruleta": "Jugar a la Ruleta",
+    "whatsapp": "Escribir por WhatsApp",
+    "liveChat": "Chat en vivo"
   }
 }

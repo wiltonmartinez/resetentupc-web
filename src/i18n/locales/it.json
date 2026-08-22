@@ -583,5 +583,15 @@
         "legal": "REVISIONE LEGALE CONSIGLIATA — legge applicabile e risoluzione delle controversie."
       }
     }
+  },
+  "contactHub": {
+    "abrirLabel": "Apri le opzioni di contatto",
+    "cerrarLabel": "Chiudi",
+    "titulo": "Come possiamo aiutarti?",
+    "cotizacion": "Preventivo o acquisto",
+    "garantia": "Garanzia",
+    "ruleta": "Gioca alla Ruota",
+    "whatsapp": "Scrivici su WhatsApp",
+    "liveChat": "Chat dal vivo"
   }
 }

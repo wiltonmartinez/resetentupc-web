@@ -2,7 +2,6 @@
 import { t, buildLocalizedPath, buildCanonicalUrl, resolveErroresParaModelo } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import ErrorSelector from "../ErrorSelector.astro";
-import FloatingWhatsApp from "../FloatingWhatsApp.astro";
 import Breadcrumb from "../Breadcrumb.astro";
 import InfoCard from "../ui/InfoCard.astro";
 import ChecklistItem from "../ui/ChecklistItem.astro";
@@ -382,15 +381,6 @@ const pasosProceso = [
   </InfoCard>
 </article>
 
-<FloatingWhatsApp
-  marca={nombreMarca}
-  modelo={nombreModelo}
-  error={errorPrincipal?.descripcion}
-  sourceId={`${sourceIdBase}-flotante`}
-  urlPath={localizedPath}
-  locale={locale}
-  label={t(locale, "common.whatsappButton")}
-/>
 
 <script>
   import { esFavorito, alternarFavorito } from "../../lib/favoritos.js";

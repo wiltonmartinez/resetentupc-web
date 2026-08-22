@@ -1522,6 +1522,18 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
       if (trigger.dataset.metodo) defaultsMetodoPendiente = trigger.dataset.metodo;
       if (trigger.dataset.error) defaultsErrorPendiente = trigger.dataset.error;
 
+      // Preselecciona el "tipo" de solicitud (cotización/garantía/ruleta) y
+      // avanza el asistente, para que un botón externo (ej. el hub de
+      // contacto) pueda llevar directo a ese camino sin que el usuario
+      // tenga que volver a elegirlo.
+      if (trigger.dataset.tipo) {
+        const tipoRadio = form.querySelector(`input[name="tipo"][data-tipo-valor="${trigger.dataset.tipo}"]`);
+        if (tipoRadio && !tipoRadio.checked) {
+          tipoRadio.checked = true;
+          form.querySelector('[data-paso="tipo"] [data-continuar]')?.click();
+        }
+      }
+
       requestAnimationFrame(() => {
         form.scrollIntoView({ behavior: "smooth", block: "start" });
       });

@@ -33,6 +33,14 @@ export const RULETA_URL = "https://ruleta.resetalmohadillas.com";
  */
 export const NUCLEO_API_BASE_URL = "https://nucleo.resetalmohadillas.com";
 
+/**
+ * Google Analytics 4 Measurement ID (ej. "G-XXXXXXXXXX"). Vacío = GA4 no se
+ * carga en absoluto (BaseLayout omite el script por completo) — nunca se
+ * envía telemetría a una propiedad inventada. Pon aquí el ID real cuando
+ * lo tengas.
+ */
+export const GA_MEASUREMENT_ID = "";
+
 export const DEFAULT_LOCALE = "es";
 
 export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it", "de", "ru"] as const;
