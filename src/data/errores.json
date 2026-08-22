@@ -653,6 +653,16 @@
           "marcaSlug": "epson",
           "modeloSlug": "xp-455",
           "fuente": "Confirmado directamente por el usuario (2026-08-14): aplica el concepto epson-almohadillas (sin código específico confirmado)."
+        },
+        {
+          "marcaSlug": "epson",
+          "modeloSlug": "p400",
+          "fuente": "Confirmado directamente por el usuario (2026-08-22): P400 y P1430 no pertenecen a la marca Epson-SC (plotters), sino a Epson; aplica el concepto epson-almohadillas (sin código específico confirmado)."
+        },
+        {
+          "marcaSlug": "epson",
+          "modeloSlug": "p1430",
+          "fuente": "Confirmado directamente por el usuario (2026-08-22): P400 y P1430 no pertenecen a la marca Epson-SC (plotters), sino a Epson; aplica el concepto epson-almohadillas (sin código específico confirmado)."
         }
       ]
     },
@@ -1004,16 +1014,6 @@
           "marcaSlug": "epson-sc",
           "modeloSlug": "t5475",
           "fuente": "Confirmado directamente por el usuario (2026-08-14): T3170, T3170M, T3170X, T3475 y T5475 comparten las mismas 18 asociaciones de error que F570."
-        },
-        {
-          "marcaSlug": "epson-sc",
-          "modeloSlug": "p1430",
-          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
-        },
-        {
-          "marcaSlug": "epson-sc",
-          "modeloSlug": "p400",
-          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
         }
       ],
       "requisito_previo": "Antes del reset se requiere: Desarmado y limpieza impecable al 100% del sensor de tinta, tapas y almohadilla nueva. Se requiere en modo de inspección,"
@@ -3578,16 +3578,6 @@
           "marcaSlug": "epson-sc",
           "modeloSlug": "t5475",
           "fuente": "Confirmado directamente por el usuario (2026-08-14): T3170, T3170M, T3170X, T3475 y T5475 comparten las mismas 18 asociaciones de error que F570."
-        },
-        {
-          "marcaSlug": "epson-sc",
-          "modeloSlug": "p1430",
-          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
-        },
-        {
-          "marcaSlug": "epson-sc",
-          "modeloSlug": "p400",
-          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
         }
       ]
     },

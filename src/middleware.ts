@@ -99,7 +99,15 @@ function resolverRedireccion(pathname: string): string | null {
   if (segs[0] === "reset" && segs.length === 3) {
     const [, marcaRaw, modeloRaw] = segs;
     const m = tryMatch(marcaRaw, modeloRaw);
-    if (m) return null;
+    if (m) {
+      // tryMatch puede "corregir" la marca (ej. un modelo reclasificado de
+      // una marca a otra) vía el fallback de candidato único — si el par
+      // resuelto no es exactamente el de la URL, hay que redirigir, no
+      // dar por buena la URL vieja.
+      const corregido = `/reset/${m[0]}/${m[1]}/`;
+      if (corregido === `/reset/${marcaRaw.toLowerCase()}/${modeloRaw.toLowerCase()}/`) return null;
+      return corregido;
+    }
     // ej. /reset/epson-sc-plotter/sc-f570/ -> marca compuesta + modelo con prefijo "sc-"
     if (modeloRaw.startsWith("sc-")) {
       const m2 = tryMatch("epson-sc", modeloRaw.slice(3));
