@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ContactoPage from "../../components/pages/ContactoPage.astro";
+import { t, buildStaticPagePath } from "../../i18n/utils";
+
+const locale = "ko" as const;
+---
+
+<BaseLayout
+  title={t(locale, "contacto.title")}
+  description={t(locale, "contacto.description")}
+  locale={locale}
+  path={buildStaticPagePath(locale, "contacto")}
+  pageKey="contacto"
+  ocultarBotonContacto
+>
+  <ContactoPage locale={locale} />
+</BaseLayout>

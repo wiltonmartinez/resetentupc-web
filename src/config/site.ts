@@ -43,7 +43,7 @@ export const GA_MEASUREMENT_ID = "";
 
 export const DEFAULT_LOCALE = "es";
 
-export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it", "de", "ru"] as const;
+export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it", "de", "ru", "ko"] as const;
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
@@ -55,6 +55,7 @@ export const LOCALE_PATH_PREFIX: Record<Locale, string> = {
   it: "/it",
   de: "/de",
   ru: "/ru",
+  ko: "/ko",
 };
 
 export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
@@ -65,6 +66,7 @@ export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
   it: "it",
   de: "de",
   ru: "ru",
+  ko: "ko",
 };
 
 export const X_DEFAULT_LOCALE: Locale = "es";
@@ -77,6 +79,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   it: "Italiano",
   de: "Deutsch",
   ru: "Русский",
+  ko: "한국어",
 };
 
 export const PAGE_SLUGS = {
@@ -88,6 +91,7 @@ export const PAGE_SLUGS = {
     it: "come-funziona",
     de: "wie-es-funktioniert",
     ru: "kak-eto-rabotaet",
+    ko: "iyong-bangbeop",
   },
   preguntasFrecuentes: {
     es: "preguntas-frecuentes",
@@ -97,6 +101,7 @@ export const PAGE_SLUGS = {
     it: "domande-frequenti",
     de: "haeufige-fragen",
     ru: "chasto-zadavaemye-voprosy",
+    ko: "jaju-mudneun-jilmun",
   },
   contacto: {
     es: "contacto",
@@ -106,6 +111,7 @@ export const PAGE_SLUGS = {
     it: "contatto",
     de: "kontakt",
     ru: "kontakty",
+    ko: "munuihagi",
   },
   terminosCondiciones: {
     es: "terminos-y-condiciones",
@@ -115,6 +121,7 @@ export const PAGE_SLUGS = {
     it: "termini-e-condizioni",
     de: "allgemeine-geschaeftsbedingungen",
     ru: "usloviya-ispolzovaniya",
+    ko: "iyong-yakgwan",
   },
 } as const satisfies Record<string, Record<Locale, string>>;
 
