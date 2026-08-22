@@ -1656,9 +1656,9 @@
     "popularidad": 4
   },
   {
-    "marcaSlug": "epson-sc",
+    "marcaSlug": "epson",
     "modeloSlug": "p400",
-    "nombreMarca": "Epson SC",
+    "nombreMarca": "Epson",
     "nombreModelo": "P400",
     "nivel": 2,
     "popularidad": 4
@@ -1944,9 +1944,9 @@
     "popularidad": 3
   },
   {
-    "marcaSlug": "epson-sc",
+    "marcaSlug": "epson",
     "modeloSlug": "p1430",
-    "nombreMarca": "Epson SC",
+    "nombreMarca": "Epson",
     "nombreModelo": "P1430",
     "nivel": 2,
     "popularidad": 3
