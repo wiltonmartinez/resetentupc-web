@@ -870,10 +870,22 @@
       "error_id": "epson-sc-0014bd",
       "marcaSlug": "epson-sc",
       "error_name": {
-        "es": "0014BD"
+        "es": "0014BD",
+        "en": "0014BD",
+        "pt": "0014BD",
+        "fr": "0014BD",
+        "it": "0014BD",
+        "de": "0014BD",
+        "ru": "0014BD"
       },
       "error_description": {
-        "es": "Código 0014bd Sensor de tinta Requiere Desarmar, Limpiar y Resetear"
+        "es": "Código 0014bd Sensor de tinta Requiere Desarmar, Limpiar y Resetear",
+        "en": "Code 0014BD - Ink sensor requires disassembly, cleaning, and reset",
+        "pt": "Código 0014BD - Sensor de tinta requer desmontagem, limpeza e reset",
+        "fr": "Code 0014BD - Capteur d'encre nécessitant démontage, nettoyage et réinitialisation",
+        "it": "Codice 0014BD - Sensore d'inchiostro che richiede smontaggio, pulizia e reset",
+        "de": "Code 0014BD - Tintensensor erfordert Zerlegen, Reinigung und Reset",
+        "ru": "Код 0014BD - датчик чернил требует разборки, очистки и сброса"
       },
       "symptoms": [],
       "estado_servicio": "requiere_revision",
@@ -992,6 +1004,16 @@
           "marcaSlug": "epson-sc",
           "modeloSlug": "t5475",
           "fuente": "Confirmado directamente por el usuario (2026-08-14): T3170, T3170M, T3170X, T3475 y T5475 comparten las mismas 18 asociaciones de error que F570."
+        },
+        {
+          "marcaSlug": "epson-sc",
+          "modeloSlug": "p1430",
+          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
+        },
+        {
+          "marcaSlug": "epson-sc",
+          "modeloSlug": "p400",
+          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
         }
       ],
       "requisito_previo": "Antes del reset se requiere: Desarmado y limpieza impecable al 100% del sensor de tinta, tapas y almohadilla nueva. Se requiere en modo de inspección,"
@@ -3556,6 +3578,16 @@
           "marcaSlug": "epson-sc",
           "modeloSlug": "t5475",
           "fuente": "Confirmado directamente por el usuario (2026-08-14): T3170, T3170M, T3170X, T3475 y T5475 comparten las mismas 18 asociaciones de error que F570."
+        },
+        {
+          "marcaSlug": "epson-sc",
+          "modeloSlug": "p1430",
+          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
+        },
+        {
+          "marcaSlug": "epson-sc",
+          "modeloSlug": "p400",
+          "fuente": "Confirmado directamente por el usuario (2026-08-22): aplica a todas las impresoras Epson-SC del catálogo, incluyendo P1430 y P400."
         }
       ]
     },
