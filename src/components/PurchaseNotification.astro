@@ -1,0 +1,251 @@
+---
+/**
+ * "Alguien de {país} acaba de comprar" — prueba social de compra reciente.
+ * Usa el endpoint público de solo lectura que ya alimenta Prueba Social
+ * (/api/public/reset-realizados/), sin ningún cambio en Núcleo: cada
+ * entrada es un reset real ya registrado allí (marca/modelo/error/país).
+ *
+ * Se muestra como máximo 2 veces por sesión de navegador (sessionStorage),
+ * en momentos espaciados, para que se sienta ocasional y no invasivo.
+ */
+import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER, type Locale } from "../config/site";
+import { t } from "../i18n/utils";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div
+  id="purchase-notification"
+  class="purchase-notification"
+  hidden
+  data-api-base={NUCLEO_API_BASE_URL}
+  data-whatsapp-number={WHATSAPP_NUMBER}
+  data-texto-alguien={t(locale, "purchaseNotification.alguienDe")}
+  data-label-error={t(locale, "purchaseNotification.codigoError")}
+  data-servicio={t(locale, "purchaseNotification.servicio")}
+  data-cta-label={t(locale, "purchaseNotification.ctaLabel")}
+  data-whatsapp-saludo={t(locale, "purchaseNotification.whatsappSaludo")}
+  data-cerrar-label={t(locale, "purchaseNotification.cerrarLabel")}
+></div>
+
+<script>
+  import { playFeedback } from "../lib/sound-manager.js";
+  import { lanzarConfeti } from "../lib/confetti.js";
+
+  const MAX_APARICIONES = 2;
+  const PRIMER_RETRASO_MS = 12000;
+  const SEPARACION_MS = 55000;
+  const AUTO_OCULTAR_MS = 9000;
+  const STORAGE_KEY = "resetenlinea_purchase_popup_shown";
+
+  const contenedor = document.getElementById("purchase-notification");
+  if (contenedor) {
+    const apiBase = contenedor.dataset.apiBase || "";
+    const numero = contenedor.dataset.whatsappNumber || "";
+    const textoAlguien = contenedor.dataset.textoAlguien || "";
+    const labelError = contenedor.dataset.labelError || "";
+    const servicio = contenedor.dataset.servicio || "";
+    const ctaLabel = contenedor.dataset.ctaLabel || "";
+    const saludo = contenedor.dataset.whatsappSaludo || "";
+    const cerrarLabel = contenedor.dataset.cerrarLabel || "";
+
+    function vecesMostradas() {
+      try {
+        return parseInt(sessionStorage.getItem(STORAGE_KEY) || "0", 10) || 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    function registrarAparicion() {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, String(vecesMostradas() + 1));
+      } catch {
+        // sessionStorage no disponible — no bloquea, solo puede aparecer más veces.
+      }
+    }
+
+    let candidatosPromise = null;
+    async function cargarCandidatos() {
+      if (!candidatosPromise) {
+        candidatosPromise = fetch(`${apiBase}/api/public/reset-realizados/?page=1&per_page=20`)
+          .then((r) => (r.ok ? r.json() : null))
+          .then((json) => (json?.data || []).filter((item) => item.marca && item.modelo && item.error && item.pais))
+          .catch(() => []);
+      }
+      return candidatosPromise;
+    }
+    cargarCandidatos();
+
+    function formatearError(valor) {
+      // Algunos registros ya traen "Error" en el propio texto (ej. "Error
+      // E-11 / Tampon"); otros son solo el código (ej. "5b00"). Evita
+      // duplicar la palabra "Error" cuando el dato ya la incluye.
+      return /error/i.test(valor) ? valor : `${labelError} ${valor}`;
+    }
+
+    function lineaProducto(item) {
+      return `Reset ${item.marca} ${item.modelo} - ${formatearError(item.error)} (${servicio})`;
+    }
+
+    let visible = false;
+
+    function ocultar() {
+      if (!visible) return;
+      visible = false;
+      contenedor.classList.remove("purchase-notification-visible");
+      setTimeout(() => {
+        contenedor.hidden = true;
+      }, 300);
+    }
+
+    function mostrar(item) {
+      if (visible) return;
+      visible = true;
+      registrarAparicion();
+
+      const linea = lineaProducto(item);
+      const mensajeWhatsapp = `${saludo} ${linea}`;
+      const whatsappHref = `https://wa.me/${numero}?text=${encodeURIComponent(mensajeWhatsapp)}`;
+      const intro = textoAlguien.replace("{pais}", `<strong>${item.pais}</strong>`);
+
+      contenedor.innerHTML = `
+        <button type="button" class="purchase-notification-cerrar" aria-label="${cerrarLabel}" data-sound="select">×</button>
+        <div class="purchase-notification-icono" aria-hidden="true">🛍️</div>
+        <div class="purchase-notification-cuerpo">
+          <p class="purchase-notification-intro">${intro}</p>
+          <p class="purchase-notification-producto">${linea}</p>
+          <a class="purchase-notification-cta" href="${whatsappHref}" target="_blank" rel="noopener noreferrer nofollow" data-sound="select">${ctaLabel}</a>
+        </div>
+      `;
+      contenedor.hidden = false;
+      // setTimeout en vez de requestAnimationFrame: más confiable para
+      // disparar la transición de entrada incluso si la pestaña no está
+      // componiendo frames activamente (pestaña en segundo plano, etc.).
+      setTimeout(() => contenedor.classList.add("purchase-notification-visible"), 20);
+
+      playFeedback("celebracion");
+      lanzarConfeti();
+
+      contenedor.querySelector(".purchase-notification-cerrar")?.addEventListener("click", ocultar);
+      setTimeout(ocultar, AUTO_OCULTAR_MS);
+    }
+
+    function programar(retraso) {
+      setTimeout(async () => {
+        if (vecesMostradas() >= MAX_APARICIONES) return;
+        const candidatos = await cargarCandidatos();
+        if (!candidatos.length) return;
+        const item = candidatos[Math.floor(Math.random() * candidatos.length)];
+        mostrar(item);
+      }, retraso);
+    }
+
+    if (vecesMostradas() < MAX_APARICIONES) {
+      programar(PRIMER_RETRASO_MS);
+      programar(PRIMER_RETRASO_MS + SEPARACION_MS);
+    }
+  }
+</script>
+
+<style>
+  .purchase-notification {
+    position: fixed;
+    left: var(--space-sm);
+    bottom: var(--space-sm);
+    z-index: 45;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: min(320px, calc(100vw - 2 * var(--space-sm)));
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-floating);
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .purchase-notification-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .purchase-notification-icono {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    font-size: 1.2rem;
+  }
+
+  .purchase-notification-cuerpo {
+    display: grid;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .purchase-notification-intro {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--color-text-subtle);
+  }
+
+  .purchase-notification-producto {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .purchase-notification-cta {
+    display: block;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-whatsapp);
+    color: var(--color-whatsapp-ink);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  .purchase-notification-cta:hover {
+    background: var(--color-whatsapp-dark);
+  }
+
+  .purchase-notification-cerrar {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.5rem;
+    border: none;
+    background: none;
+    color: var(--color-text-subtle);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .purchase-notification-cerrar:hover {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 480px) {
+    .purchase-notification {
+      left: var(--space-xs);
+      bottom: var(--space-xs);
+    }
+  }
+</style>

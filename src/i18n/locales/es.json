@@ -547,5 +547,13 @@
         "legal": "REVISIÓN LEGAL RECOMENDADA — ley aplicable y resolución de controversias."
       }
     }
+  },
+  "purchaseNotification": {
+    "alguienDe": "Alguien de {pais} acaba de comprar:",
+    "codigoError": "Código Error",
+    "servicio": "Reset Asistido 100% Remoto por conexión USB",
+    "ctaLabel": "Necesito este producto",
+    "whatsappSaludo": "Hola, vi la notificación de la web y necesito",
+    "cerrarLabel": "Cerrar notificación"
   }
 }
