@@ -31,7 +31,7 @@ function inyectarEstilos() {
   document.head.appendChild(style);
 }
 
-export function lanzarConfeti() {
+export function lanzarConfeti(cantidad = 60) {
   if (typeof document === "undefined") return;
   if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   inyectarEstilos();
@@ -40,7 +40,6 @@ export function lanzarConfeti() {
   contenedor.className = "reset-confeti-contenedor";
   document.body.appendChild(contenedor);
 
-  const cantidad = 60;
   for (let i = 0; i < cantidad; i++) {
     const pieza = document.createElement("span");
     pieza.className = "reset-confeti-pieza";

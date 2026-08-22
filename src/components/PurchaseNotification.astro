@@ -39,7 +39,8 @@ const { locale } = Astro.props;
   const MAX_APARICIONES = 2;
   const PRIMER_RETRASO_MS = 12000;
   const SEPARACION_MS = 55000;
-  const AUTO_OCULTAR_MS = 9000;
+  const AUTO_OCULTAR_MS = 20000;
+  const CANTIDAD_CONFETI = 130;
   const STORAGE_KEY = "resetenlinea_purchase_popup_shown";
 
   const contenedor = document.getElementById("purchase-notification");
@@ -129,7 +130,7 @@ const { locale } = Astro.props;
       setTimeout(() => contenedor.classList.add("purchase-notification-visible"), 20);
 
       playFeedback("celebracion");
-      lanzarConfeti();
+      lanzarConfeti(CANTIDAD_CONFETI);
 
       contenedor.querySelector(".purchase-notification-cerrar")?.addEventListener("click", ocultar);
       setTimeout(ocultar, AUTO_OCULTAR_MS);
