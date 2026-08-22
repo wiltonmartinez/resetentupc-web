@@ -218,11 +218,11 @@ function resolverRedireccion(pathname: string): string | null {
  */
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.trustpilot.com https://static.cloudflareinsights.com https://*.crisp.chat",
+  "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.trustpilot.com https://static.cloudflareinsights.com https://*.crisp.chat https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.crisp.chat",
   "img-src 'self' data: https:",
   "font-src 'self' data: https://cdn.jsdelivr.net https://*.crisp.chat",
-  "connect-src 'self' https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com https://cloudflareinsights.com https://*.crisp.chat https://*.relay.crisp.chat wss://*.crisp.chat wss://*.relay.crisp.chat",
+  "connect-src 'self' https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com https://cloudflareinsights.com https://*.crisp.chat https://*.relay.crisp.chat wss://*.crisp.chat wss://*.relay.crisp.chat https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
   "frame-src https://ruleta.resetalmohadillas.com https://nucleo.resetalmohadillas.com https://www.youtube-nocookie.com https://*.trustpilot.com https://*.crisp.chat",
   "object-src 'none'",
   "base-uri 'self'",

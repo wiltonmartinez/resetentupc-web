@@ -1,10 +1,10 @@
 ---
-import { HREFLANG_BY_LOCALE, SITE_URL, type Locale, type StaticPageKey } from "../config/site";
+import { GA_MEASUREMENT_ID, HREFLANG_BY_LOCALE, SITE_URL, type Locale, type StaticPageKey } from "../config/site";
 import { buildCanonicalUrl, buildHreflangLinks, buildStaticPageCanonical, buildStaticPageHreflangLinks } from "../i18n/utils";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LanguageBanner from "../components/LanguageBanner.astro";
-import FloatingContactButton from "../components/FloatingContactButton.astro";
+import ContactHub from "../components/ContactHub.astro";
 import PurchaseNotification from "../components/PurchaseNotification.astro";
 
 interface Props {
@@ -75,9 +75,11 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     <!-- TrustBox script -->
     <script type="text/javascript" src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
     <!-- End TrustBox script -->
-    <!-- Crisp chat -->
+    <!-- Crisp chat: burbuja propia oculta (chat:hide) — se abre solo desde el
+         botón "Chat en vivo" del hub de contacto (ver ContactHub.astro), para
+         no duplicar botones flotantes en pantalla. -->
     <script is:inline type="text/javascript">
-      window.$crisp = [];
+      window.$crisp = [["do", "chat:hide"]];
       window.CRISP_WEBSITE_ID = "3da814a8-583a-4d03-9f45-af1bc77104de";
       (function () {
         const d = document;
@@ -88,6 +90,22 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
       })();
     </script>
     <!-- End Crisp chat -->
+    {GA_MEASUREMENT_ID && (
+      <>
+        <!-- Google Analytics 4 -->
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+        <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          window.gtag = gtag;
+          gtag("js", new Date());
+          gtag("config", GA_MEASUREMENT_ID);
+        </script>
+        <!-- End Google Analytics 4 -->
+      </>
+    )}
   </head>
   <body>
     <Header locale={locale} path={path} pageKey={pageKey} />
@@ -97,7 +115,7 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     </main>
     <Footer locale={locale} />
     {!ocultarBotonContacto && (
-      <FloatingContactButton locale={locale} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
+      <ContactHub locale={locale} path={path} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
     )}
     {!ocultarBotonContacto && <PurchaseNotification locale={locale} />}
   </body>

@@ -547,5 +547,15 @@
         "legal": "RECHTLICHE PRÜFUNG EMPFOHLEN — anwendbares Recht und Streitbeilegung."
       }
     }
+  },
+  "contactHub": {
+    "abrirLabel": "Kontaktoptionen öffnen",
+    "cerrarLabel": "Schließen",
+    "titulo": "Wie können wir Ihnen helfen?",
+    "cotizacion": "Angebot oder Kauf",
+    "garantia": "Garantie",
+    "ruleta": "Am Glücksrad spielen",
+    "whatsapp": "Über WhatsApp schreiben",
+    "liveChat": "Live-Chat"
   }
 }

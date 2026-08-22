@@ -583,5 +583,15 @@
         "legal": "RECOMMENDED LEGAL REVIEW — governing law and dispute resolution."
       }
     }
+  },
+  "contactHub": {
+    "abrirLabel": "Open contact options",
+    "cerrarLabel": "Close",
+    "titulo": "How can we help you?",
+    "cotizacion": "Quote or purchase",
+    "garantia": "Warranty",
+    "ruleta": "Play the Wheel",
+    "whatsapp": "Message us on WhatsApp",
+    "liveChat": "Live chat"
   }
 }
