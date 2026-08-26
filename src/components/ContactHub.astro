@@ -209,6 +209,15 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
       w.$crisp = w.$crisp || [];
       w.$crisp.push(["do", "chat:show"]);
       w.$crisp.push(["do", "chat:open"]);
+      // No basta con esperar el evento "chat:opened" del SDK (ver
+      // BaseLayout.astro): si Crisp ya considera el chat "abierto" desde
+      // una visita anterior (su estado persiste entre cargas de página),
+      // pedir chat:open no genera ninguna transición real y el evento
+      // nunca se dispara, dejando la ventana oculta pese al clic. Por eso
+      // se muestra el contenedor de forma inmediata al hacer clic, y el
+      // evento chat:closed se sigue usando para volver a ocultarlo cuando
+      // el usuario cierra el chat desde la propia ventana de Crisp.
+      document.body.classList.add("crisp-chat-activo");
       cerrarPanel();
     });
 
