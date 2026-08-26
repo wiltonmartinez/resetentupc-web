@@ -45,7 +45,26 @@ const logo = getLogo();
       <nav class="site-nav" aria-label={t(locale, "nav.home")}>
         <a href={buildLocalizedPath(locale, "/")}>{t(locale, "nav.home")}</a>
         <a href={buildStaticPagePath(locale, "comoFunciona")}>{t(locale, "nav.comoFunciona")}</a>
-        <a href={buildLocalizedPath(locale, "/prueba-social/")}>{t(locale, "nav.pruebaSocial")}</a>
+        <div class="site-nav-item-dropdown">
+          <a href={buildLocalizedPath(locale, "/prueba-social/")}>{t(locale, "nav.pruebaSocial")}</a>
+          <ul class="site-nav-submenu">
+            <li>
+              <a href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}>
+                {t(locale, "pruebaSocialPage.conversacionesTitulo")}
+              </a>
+            </li>
+            <li>
+              <a href={buildLocalizedPath(locale, "/prueba-social/reset-evidencia/")}>
+                {t(locale, "pruebaSocialPage.resetsTitulo")}
+              </a>
+            </li>
+            <li>
+              <a href={buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/")}>
+                {t(locale, "pruebaSocialPage.testimoniosTitulo")}
+              </a>
+            </li>
+          </ul>
+        </div>
         <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>{t(locale, "nav.preguntasFrecuentes")}</a>
         <a href={buildLocalizedPath(locale, "/ruleta/")}>{t(locale, "nav.ruleta")}</a>
         <a href={buildStaticPagePath(locale, "contacto")} class="site-nav-contacto">{t(locale, "nav.contacto")}</a>
@@ -135,6 +154,7 @@ const logo = getLogo();
   }
   .site-nav {
     display: flex;
+    align-items: center;
     gap: 1.25rem;
     flex-wrap: wrap;
   }
@@ -146,6 +166,42 @@ const logo = getLogo();
   }
   .site-nav a:hover {
     color: var(--color-primary);
+  }
+
+  .site-nav-item-dropdown {
+    position: relative;
+  }
+
+  .site-nav-submenu {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-floating);
+    z-index: 40;
+  }
+
+  .site-nav-item-dropdown:hover .site-nav-submenu,
+  .site-nav-item-dropdown:focus-within .site-nav-submenu {
+    display: block;
+  }
+
+  .site-nav-submenu a {
+    display: block;
+    padding: 0.5rem 0.6rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  .site-nav-submenu a:hover {
+    background: var(--color-bg-muted);
   }
 
   /* Contacto es el destino final del recorrido (punto de conversión hacia
@@ -203,12 +259,33 @@ const logo = getLogo();
     }
     .site-nav {
       flex-direction: column;
+      align-items: stretch;
       gap: 0;
     }
     .site-nav a {
       padding: 0.75rem 0;
       border-bottom: 1px solid var(--color-border);
       font-size: 1rem;
+    }
+    .site-nav-item-dropdown {
+      position: static;
+    }
+    .site-nav-submenu {
+      display: block;
+      position: static;
+      box-shadow: none;
+      border: none;
+      padding: 0 0 0 1rem;
+      background: transparent;
+    }
+    .site-nav-submenu a {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.92rem;
+      color: var(--color-text-subtle);
+    }
+    .site-nav-submenu a:hover {
+      background: transparent;
     }
     .site-header-controls {
       margin: 0.75rem 0 0;
