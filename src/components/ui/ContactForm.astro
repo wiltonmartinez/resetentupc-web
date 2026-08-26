@@ -127,6 +127,17 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
       </label>
     </div>
     <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
+    <button type="button" class="contact-form-chat-en-vivo" data-abrir-chat-form>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+        <path
+          d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+      </svg>
+      {t(locale, "contactHub.liveChat")}
+    </button>
   </fieldset>
 
   <!-- PASO: verificación de garantía (camino corto, solo tipo=garantia) -->
@@ -1184,6 +1195,19 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
       });
     });
 
+    // Atajo directo a Chat en vivo desde el primer paso, para quien prefiere
+    // hablar con alguien en vez de recorrer el asistente (mismo mecanismo que
+    // el botón del panel de contacto, ver ContactHub.astro).
+    form.querySelector("[data-abrir-chat-form]")?.addEventListener("click", () => {
+      const w = window as any;
+      w.$crisp = w.$crisp || [];
+      w.$crisp.push(["do", "chat:show"]);
+      w.$crisp.push(["do", "chat:open"]);
+      document.body.classList.add("crisp-chat-activo");
+      const dialog = form.closest("dialog");
+      if (dialog && typeof dialog.close === "function") dialog.close();
+    });
+
     // ---------- Correo: verificación en vivo (misma lógica de siempre) ----------
     let emailTimer = null;
     let emailVerificacionId = 0;
@@ -1884,6 +1908,26 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
 
   .contact-form-continuar:hover {
     background: var(--color-primary-dark);
+  }
+
+  .contact-form-chat-en-vivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    justify-self: start;
+    padding: 0.6rem 1.1rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: #2563eb;
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .contact-form-chat-en-vivo:hover {
+    background: #1d4ed8;
   }
 
   .contact-form-antibot {
