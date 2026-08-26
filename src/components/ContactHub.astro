@@ -34,10 +34,7 @@ const { locale, path, marcaDefault, modeloDefault } = Astro.props;
 
 const LOCALES_SIN_WHATSAPP: Locale[] = ["ru", "ko"];
 const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
-// Ocultar temporalmente el canal de Chat en vivo a pedido del usuario
-// (2026-08-22). El widget propio de Crisp sigue oculto por CSS en
-// BaseLayout.astro de todas formas; esto solo quita el botón del panel.
-const mostrarLiveChat = false;
+const mostrarLiveChat = true;
 const mostrarCanales = mostrarWhatsapp || mostrarLiveChat;
 const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
