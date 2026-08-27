@@ -17,7 +17,8 @@
     "pruebaSocial": "Prova Social",
     "ruleta": "Roleta",
     "abrirMenu": "Abrir menu",
-    "eslogan": "Reset profissional, seguro e rápido."
+    "eslogan": "Reset profissional, seguro e rápido.",
+    "consultaGarantia": "Consulta Garantia"
   },
   "common": {
     "whatsappButton": "Falar no WhatsApp",
@@ -593,5 +594,23 @@
     "ruleta": "Jogar a Roleta",
     "whatsapp": "Falar no WhatsApp",
     "liveChat": "Chat ao vivo"
+  },
+  "consultaGarantiaPage": {
+    "title": "Consulta de Garantia | ResetEnLinea.com",
+    "description": "Consulte o status da sua garantia com seu e-mail ou WhatsApp.",
+    "heading": "Consulta de Garantia",
+    "intro": "Digite o e-mail ou WhatsApp que você usou na sua compra para ver o status da sua garantia.",
+    "inputLabel": "E-mail ou WhatsApp",
+    "inputPlaceholder": "cliente@email.com ou +57 300 1234567",
+    "boton": "Consultar",
+    "botonConsultando": "Consultando...",
+    "colPedido": "Número do pedido",
+    "colDescarga": "Baixar Certificado",
+    "colEstado": "Status",
+    "descargaBoton": "📄 Baixar",
+    "descargaNoDisponible": "Ainda não disponível",
+    "estadoVacio": "—",
+    "sinResultados": "Nenhum pedido encontrado com esse e-mail ou WhatsApp.",
+    "errorGenerico": "Ocorreu um erro na consulta. Tente novamente em alguns minutos."
   }
 }

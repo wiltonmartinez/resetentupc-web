@@ -17,7 +17,8 @@
     "pruebaSocial": "고객 후기",
     "ruleta": "룰렛",
     "abrirMenu": "메뉴 열기",
-    "eslogan": "전문적이고 안전하며 빠른 리셋 서비스입니다."
+    "eslogan": "전문적이고 안전하며 빠른 리셋 서비스입니다.",
+    "consultaGarantia": "보증 확인"
   },
   "ruletaPage": {
     "title": "룰렛 | ResetEnLinea.com",
@@ -565,5 +566,23 @@
     "ruleta": "룰렛 돌리기",
     "whatsapp": "WhatsApp으로 문의하기",
     "liveChat": "실시간 채팅"
+  },
+  "consultaGarantiaPage": {
+    "title": "보증 확인 | ResetEnLinea.com",
+    "description": "이메일 또는 WhatsApp으로 보증 상태를 확인하세요.",
+    "heading": "보증 확인",
+    "intro": "구매 시 사용한 이메일 또는 WhatsApp 번호를 입력하여 보증 상태를 확인하세요.",
+    "inputLabel": "이메일 또는 WhatsApp",
+    "inputPlaceholder": "customer@email.com 또는 +57 300 1234567",
+    "boton": "확인하기",
+    "botonConsultando": "확인 중...",
+    "colPedido": "주문 번호",
+    "colDescarga": "인증서 다운로드",
+    "colEstado": "상태",
+    "descargaBoton": "📄 다운로드",
+    "descargaNoDisponible": "아직 이용 불가",
+    "estadoVacio": "—",
+    "sinResultados": "해당 이메일 또는 WhatsApp으로 등록된 주문이 없습니다.",
+    "errorGenerico": "오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
   }
 }

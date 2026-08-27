@@ -17,7 +17,8 @@
     "pruebaSocial": "Prova Sociale",
     "ruleta": "Ruota della fortuna",
     "abrirMenu": "Apri menu",
-    "eslogan": "Reset professionale, sicuro e veloce."
+    "eslogan": "Reset professionale, sicuro e veloce.",
+    "consultaGarantia": "Verifica Garanzia"
   },
   "common": {
     "whatsappButton": "Scrivi su WhatsApp",
@@ -593,5 +594,23 @@
     "ruleta": "Gioca alla Ruota",
     "whatsapp": "Scrivici su WhatsApp",
     "liveChat": "Chat dal vivo"
+  },
+  "consultaGarantiaPage": {
+    "title": "Verifica Garanzia | ResetEnLinea.com",
+    "description": "Verifica lo stato della tua garanzia con la tua email o WhatsApp.",
+    "heading": "Verifica Garanzia",
+    "intro": "Inserisci l'email o il numero WhatsApp usato per il tuo acquisto per vedere lo stato della tua garanzia.",
+    "inputLabel": "Email o WhatsApp",
+    "inputPlaceholder": "cliente@email.com o +57 300 1234567",
+    "boton": "Verifica",
+    "botonConsultando": "Verifica in corso...",
+    "colPedido": "Numero d'ordine",
+    "colDescarga": "Scarica Certificato",
+    "colEstado": "Stato",
+    "descargaBoton": "📄 Scarica",
+    "descargaNoDisponible": "Non ancora disponibile",
+    "estadoVacio": "—",
+    "sinResultados": "Nessun ordine trovato con questa email o WhatsApp.",
+    "errorGenerico": "Si è verificato un errore. Riprova tra qualche minuto."
   }
 }
