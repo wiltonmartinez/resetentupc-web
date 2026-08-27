@@ -4,6 +4,7 @@ import type { Locale, StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 import LanguageSelector from "./LanguageSelector.astro";
 import SoundToggle from "./ui/SoundToggle.astro";
+import TrustpilotWidget from "./TrustpilotWidget.astro";
 import { getLogo } from "../lib/branding.js";
 
 interface Props {
@@ -29,6 +30,9 @@ const logo = getLogo();
         <span class="site-logo-eslogan">{t(locale, "nav.eslogan")}</span>
       </span>
     </a>
+    <div class="site-header-trustpilot">
+      <TrustpilotWidget />
+    </div>
     <button
       type="button"
       class="site-nav-toggle"
@@ -149,6 +153,21 @@ const logo = getLogo();
     color: white;
     font-size: 0.9rem;
   }
+
+  .site-header-trustpilot {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .site-header-trustpilot :global(.trustpilot-wrapper) {
+    margin: 0;
+  }
+
+  .site-header-trustpilot :global(.trustpilot-widget) {
+    max-width: 220px;
+  }
   .site-nav-panel {
     display: contents;
   }
@@ -237,7 +256,13 @@ const logo = getLogo();
 
   @media (max-width: 720px) {
     .site-header-inner {
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
+    }
+    .site-header-trustpilot {
+      order: 3;
+      flex-basis: 100%;
+      flex-shrink: 0;
+      margin-top: 0.5rem;
     }
     .site-nav-toggle {
       display: inline-flex;
