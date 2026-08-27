@@ -17,7 +17,8 @@
     "pruebaSocial": "Erfahrungsberichte",
     "ruleta": "Glücksrad",
     "abrirMenu": "Menü öffnen",
-    "eslogan": "Professioneller, sicherer und schneller Reset."
+    "eslogan": "Professioneller, sicherer und schneller Reset.",
+    "consultaGarantia": "Garantie-Abfrage"
   },
   "ruletaPage": {
     "title": "Glücksrad | ResetEnLinea.com",
@@ -557,5 +558,23 @@
     "ruleta": "Am Glücksrad spielen",
     "whatsapp": "Über WhatsApp schreiben",
     "liveChat": "Live-Chat"
+  },
+  "consultaGarantiaPage": {
+    "title": "Garantie-Abfrage | ResetEnLinea.com",
+    "description": "Prüfe den Status deiner Garantie mit deiner E-Mail oder WhatsApp-Nummer.",
+    "heading": "Garantie-Abfrage",
+    "intro": "Gib die E-Mail oder WhatsApp-Nummer ein, die du beim Kauf verwendet hast, um den Status deiner Garantie zu sehen.",
+    "inputLabel": "E-Mail oder WhatsApp",
+    "inputPlaceholder": "kunde@email.com oder +57 300 1234567",
+    "boton": "Abfragen",
+    "botonConsultando": "Wird geprüft...",
+    "colPedido": "Bestellnummer",
+    "colDescarga": "Zertifikat herunterladen",
+    "colEstado": "Status",
+    "descargaBoton": "📄 Herunterladen",
+    "descargaNoDisponible": "Noch nicht verfügbar",
+    "estadoVacio": "—",
+    "sinResultados": "Keine Bestellung mit dieser E-Mail oder WhatsApp-Nummer gefunden.",
+    "errorGenerico": "Es ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut."
   }
 }

@@ -1,0 +1,283 @@
+---
+import { t } from "../../i18n/utils";
+import { NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
+---
+
+<article class="garantia-page">
+  <h1>{t(locale, "consultaGarantiaPage.heading")}</h1>
+  <p class="garantia-intro">{t(locale, "consultaGarantiaPage.intro")}</p>
+
+  <form class="garantia-form" data-garantia-form data-api-url={API_URL}>
+    <label for="garantia-q">{t(locale, "consultaGarantiaPage.inputLabel")}</label>
+    <div class="garantia-form-fila">
+      <input
+        type="text"
+        id="garantia-q"
+        name="q"
+        placeholder={t(locale, "consultaGarantiaPage.inputPlaceholder")}
+        required
+        autocomplete="off"
+      />
+      <button
+        type="submit"
+        data-garantia-boton
+        data-texto-consultando={t(locale, "consultaGarantiaPage.botonConsultando")}
+        data-texto-descarga-boton={t(locale, "consultaGarantiaPage.descargaBoton")}
+        data-texto-descarga-no-disponible={t(locale, "consultaGarantiaPage.descargaNoDisponible")}
+        data-texto-estado-vacio={t(locale, "consultaGarantiaPage.estadoVacio")}
+        data-texto-sin-resultados={t(locale, "consultaGarantiaPage.sinResultados")}
+        data-texto-error-generico={t(locale, "consultaGarantiaPage.errorGenerico")}
+      >
+        {t(locale, "consultaGarantiaPage.boton")}
+      </button>
+    </div>
+  </form>
+
+  <p class="garantia-mensaje" data-garantia-mensaje role="status" aria-live="polite" hidden></p>
+
+  <div class="garantia-resultado" data-garantia-resultado hidden>
+    <table class="garantia-tabla">
+      <thead>
+        <tr>
+          <th>{t(locale, "consultaGarantiaPage.colPedido")}</th>
+          <th>{t(locale, "consultaGarantiaPage.colDescarga")}</th>
+          <th>{t(locale, "consultaGarantiaPage.colEstado")}</th>
+        </tr>
+      </thead>
+      <tbody data-garantia-tbody></tbody>
+    </table>
+  </div>
+</article>
+
+<script>
+  const textos = {
+    botonDefault: "",
+    botonConsultando: "",
+    descargaBoton: "",
+    descargaNoDisponible: "",
+    estadoVacio: "",
+    sinResultados: "",
+    errorGenerico: "",
+  };
+
+  document.querySelectorAll<HTMLFormElement>("[data-garantia-form]").forEach((form) => {
+    const apiUrl = form.dataset.apiUrl || "";
+    const boton = form.querySelector<HTMLButtonElement>("[data-garantia-boton]");
+    const input = form.querySelector<HTMLInputElement>("#garantia-q");
+    const mensajeEl = document.querySelector<HTMLElement>("[data-garantia-mensaje]");
+    const resultadoEl = document.querySelector<HTMLElement>("[data-garantia-resultado]");
+    const tbody = document.querySelector<HTMLElement>("[data-garantia-tbody]");
+    if (!boton || !input || !mensajeEl || !resultadoEl || !tbody) return;
+
+    textos.botonDefault = (boton.textContent || "").trim();
+    textos.botonConsultando = boton.dataset.textoConsultando || textos.botonDefault;
+    textos.descargaBoton = boton.dataset.textoDescargaBoton || "";
+    textos.descargaNoDisponible = boton.dataset.textoDescargaNoDisponible || "";
+    textos.estadoVacio = boton.dataset.textoEstadoVacio || "—";
+    textos.sinResultados = boton.dataset.textoSinResultados || "";
+    textos.errorGenerico = boton.dataset.textoErrorGenerico || "";
+
+    function mostrarMensaje(texto: string, tipo: "error" | "" = "") {
+      mensajeEl!.textContent = texto;
+      mensajeEl!.dataset.tipo = tipo;
+      mensajeEl!.hidden = !texto;
+    }
+
+    function limpiarResultado() {
+      tbody!.innerHTML = "";
+      resultadoEl!.hidden = true;
+    }
+
+    function renderResultado(pedidos: Array<{ numero_pedido: number; estado: string | null; descarga_url: string | null }>) {
+      limpiarResultado();
+      if (pedidos.length === 0) {
+        mostrarMensaje(textos.sinResultados);
+        return;
+      }
+      mostrarMensaje("");
+      pedidos.forEach((pedido) => {
+        const tr = document.createElement("tr");
+
+        const tdPedido = document.createElement("td");
+        tdPedido.textContent = `#${pedido.numero_pedido}`;
+        tr.appendChild(tdPedido);
+
+        const tdDescarga = document.createElement("td");
+        if (pedido.descarga_url) {
+          const a = document.createElement("a");
+          a.href = pedido.descarga_url;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer nofollow";
+          a.className = "garantia-descarga-link";
+          a.textContent = textos.descargaBoton;
+          tdDescarga.appendChild(a);
+        } else {
+          const span = document.createElement("span");
+          span.className = "garantia-descarga-no-disponible";
+          span.textContent = textos.descargaNoDisponible;
+          tdDescarga.appendChild(span);
+        }
+        tr.appendChild(tdDescarga);
+
+        const tdEstado = document.createElement("td");
+        tdEstado.textContent = pedido.estado || textos.estadoVacio;
+        tr.appendChild(tdEstado);
+
+        tbody!.appendChild(tr);
+      });
+      resultadoEl!.hidden = false;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+
+      limpiarResultado();
+      mostrarMensaje("");
+      boton.disabled = true;
+      boton.textContent = textos.botonConsultando;
+
+      try {
+        const res = await fetch(`${apiUrl}?q=${encodeURIComponent(q)}`);
+        const data = await res.json().catch(() => null);
+
+        if (res.status === 200 && data && Array.isArray(data.data)) {
+          renderResultado(data.data);
+        } else if (res.status === 400 || res.status === 429) {
+          mostrarMensaje((data && data.detalle) || textos.errorGenerico, "error");
+        } else {
+          mostrarMensaje(textos.errorGenerico, "error");
+        }
+      } catch {
+        mostrarMensaje(textos.errorGenerico, "error");
+      } finally {
+        boton.disabled = false;
+        boton.textContent = textos.botonDefault;
+      }
+    });
+  });
+</script>
+
+<style>
+  .garantia-page {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .garantia-intro {
+    margin: 0;
+  }
+
+  .garantia-form {
+    display: grid;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .garantia-form label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .garantia-form-fila {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .garantia-form-fila input {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 0.95rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+  }
+
+  .garantia-form-fila button {
+    padding: 0.65rem 1.4rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .garantia-form-fila button:hover:not(:disabled) {
+    background: var(--color-primary-dark);
+  }
+
+  .garantia-form-fila button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .garantia-mensaje {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-muted);
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .garantia-mensaje[data-tipo="error"] {
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
+    color: var(--color-warning-text);
+  }
+
+  .garantia-resultado {
+    overflow-x: auto;
+  }
+
+  .garantia-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  .garantia-tabla th,
+  .garantia-tabla td {
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .garantia-tabla th {
+    font-weight: 700;
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .garantia-descarga-link {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .garantia-descarga-link:hover {
+    color: var(--color-primary-dark);
+  }
+
+  .garantia-descarga-no-disponible {
+    color: var(--color-text-subtle);
+  }
+</style>

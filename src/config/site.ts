@@ -123,6 +123,16 @@ export const PAGE_SLUGS = {
     ru: "usloviya-ispolzovaniya",
     ko: "iyong-yakgwan",
   },
+  consultaGarantia: {
+    es: "consulta-garantia",
+    en: "warranty-check",
+    pt: "consulta-garantia",
+    fr: "verifier-garantie",
+    it: "verifica-garanzia",
+    de: "garantie-abfrage",
+    ru: "proverka-garantii",
+    ko: "bojeung-hwagin",
+  },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type StaticPageKey = keyof typeof PAGE_SLUGS;

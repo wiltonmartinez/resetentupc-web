@@ -17,7 +17,8 @@
     "pruebaSocial": "Отзывы",
     "ruleta": "Рулетка",
     "abrirMenu": "Открыть меню",
-    "eslogan": "Профессиональный, безопасный и быстрый сброс."
+    "eslogan": "Профессиональный, безопасный и быстрый сброс.",
+    "consultaGarantia": "Проверка гарантии"
   },
   "ruletaPage": {
     "title": "Рулетка | ResetEnLinea.com",
@@ -557,5 +558,23 @@
     "ruleta": "Играть в колесо",
     "whatsapp": "Написать в WhatsApp",
     "liveChat": "Онлайн-чат"
+  },
+  "consultaGarantiaPage": {
+    "title": "Проверка гарантии | ResetEnLinea.com",
+    "description": "Проверьте статус гарантии по email или WhatsApp.",
+    "heading": "Проверка гарантии",
+    "intro": "Введите email или номер WhatsApp, которые вы использовали при покупке, чтобы проверить статус гарантии.",
+    "inputLabel": "Email или WhatsApp",
+    "inputPlaceholder": "client@email.com или +57 300 1234567",
+    "boton": "Проверить",
+    "botonConsultando": "Проверяем...",
+    "colPedido": "Номер заказа",
+    "colDescarga": "Скачать сертификат",
+    "colEstado": "Статус",
+    "descargaBoton": "📄 Скачать",
+    "descargaNoDisponible": "Пока недоступно",
+    "estadoVacio": "—",
+    "sinResultados": "Заказ с таким email или WhatsApp не найден.",
+    "errorGenerico": "Произошла ошибка. Попробуйте снова через несколько минут."
   }
 }

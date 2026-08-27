@@ -17,7 +17,8 @@
     "pruebaSocial": "Social Proof",
     "ruleta": "Roulette",
     "abrirMenu": "Open menu",
-    "eslogan": "Professional, safe and fast reset."
+    "eslogan": "Professional, safe and fast reset.",
+    "consultaGarantia": "Warranty Check"
   },
   "common": {
     "whatsappButton": "Chat on WhatsApp",
@@ -593,5 +594,23 @@
     "ruleta": "Play the Wheel",
     "whatsapp": "Message us on WhatsApp",
     "liveChat": "Live chat"
+  },
+  "consultaGarantiaPage": {
+    "title": "Warranty Check | ResetEnLinea.com",
+    "description": "Check your warranty status with your email or WhatsApp number.",
+    "heading": "Warranty Check",
+    "intro": "Enter the email or WhatsApp number you used for your purchase to check your warranty status.",
+    "inputLabel": "Email or WhatsApp",
+    "inputPlaceholder": "customer@email.com or +57 300 1234567",
+    "boton": "Check",
+    "botonConsultando": "Checking...",
+    "colPedido": "Order number",
+    "colDescarga": "Download Certificate",
+    "colEstado": "Status",
+    "descargaBoton": "📄 Download",
+    "descargaNoDisponible": "Not available yet",
+    "estadoVacio": "—",
+    "sinResultados": "No order found with that email or WhatsApp number.",
+    "errorGenerico": "Something went wrong. Please try again in a few minutes."
   }
 }

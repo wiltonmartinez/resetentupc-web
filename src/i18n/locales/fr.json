@@ -17,7 +17,8 @@
     "pruebaSocial": "Preuve Sociale",
     "ruleta": "Roulette",
     "abrirMenu": "Ouvrir le menu",
-    "eslogan": "Réinitialisation professionnelle, sûre et rapide."
+    "eslogan": "Réinitialisation professionnelle, sûre et rapide.",
+    "consultaGarantia": "Vérifier ma Garantie"
   },
   "common": {
     "whatsappButton": "Écrire sur WhatsApp",
@@ -593,5 +594,23 @@
     "ruleta": "Jouer à la Roue",
     "whatsapp": "Nous écrire sur WhatsApp",
     "liveChat": "Chat en direct"
+  },
+  "consultaGarantiaPage": {
+    "title": "Vérifier ma Garantie | ResetEnLinea.com",
+    "description": "Vérifiez l'état de votre garantie avec votre e-mail ou WhatsApp.",
+    "heading": "Vérifier ma Garantie",
+    "intro": "Saisissez l'e-mail ou le numéro WhatsApp utilisé lors de votre achat pour voir l'état de votre garantie.",
+    "inputLabel": "E-mail ou WhatsApp",
+    "inputPlaceholder": "client@email.com ou +57 300 1234567",
+    "boton": "Vérifier",
+    "botonConsultando": "Vérification...",
+    "colPedido": "Numéro de commande",
+    "colDescarga": "Télécharger le Certificat",
+    "colEstado": "Statut",
+    "descargaBoton": "📄 Télécharger",
+    "descargaNoDisponible": "Pas encore disponible",
+    "estadoVacio": "—",
+    "sinResultados": "Aucune commande trouvée avec cet e-mail ou ce WhatsApp.",
+    "errorGenerico": "Une erreur est survenue. Réessayez dans quelques minutes."
   }
 }

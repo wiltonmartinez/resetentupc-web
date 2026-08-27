@@ -16,6 +16,7 @@
     "contacto": "Contacto",
     "pruebaSocial": "Prueba Social",
     "ruleta": "Ruleta",
+    "consultaGarantia": "Consulta Garantía",
     "abrirMenu": "Abrir menú",
     "eslogan": "Reset profesional, seguro y rápido."
   },
@@ -238,6 +239,24 @@
     "rolWilton": "Admin - Técnico Reset Online - Asesor",
     "rolDiana": "Asesora",
     "ubicacion": "Santa Marta, Colombia"
+  },
+  "consultaGarantiaPage": {
+    "title": "Consulta de Garantía | ResetEnLinea.com",
+    "description": "Consulta el estado de tu garantía con tu correo o WhatsApp.",
+    "heading": "Consulta de Garantía",
+    "intro": "Escribe el correo o WhatsApp que usaste en tu compra para ver el estado de tu garantía.",
+    "inputLabel": "Correo o WhatsApp",
+    "inputPlaceholder": "cliente@correo.com o +57 300 1234567",
+    "boton": "Consultar",
+    "botonConsultando": "Consultando...",
+    "colPedido": "Número de pedido",
+    "colDescarga": "Descargar Certificado",
+    "colEstado": "Estado",
+    "descargaBoton": "📄 Descargar",
+    "descargaNoDisponible": "Aún no disponible",
+    "estadoVacio": "—",
+    "sinResultados": "No existe ningún pedido con ese correo o WhatsApp.",
+    "errorGenerico": "Ocurrió un error al consultar. Intenta de nuevo en unos minutos."
   },
   "whatsapp": {
     "greetingWithError": "Hola, necesito ayuda con el reset de mi {marca} {modelo}.\n\nError: {error}\n\nVengo desde:\n{url}",

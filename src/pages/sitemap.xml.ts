@@ -9,7 +9,13 @@ import {
 } from "../i18n/utils";
 import modelos from "../data/modelos-muestra.json";
 
-const STATIC_PAGE_KEYS: StaticPageKey[] = ["comoFunciona", "preguntasFrecuentes", "contacto", "terminosCondiciones"];
+const STATIC_PAGE_KEYS: StaticPageKey[] = [
+  "comoFunciona",
+  "preguntasFrecuentes",
+  "contacto",
+  "terminosCondiciones",
+  "consultaGarantia",
+];
 const MODEL_PATHS = modelos.map((modelo) => `/reset/${modelo.marcaSlug}/${modelo.modeloSlug}/`);
 // Los listados de Prueba Social (a diferencia de ruleta/404) sí son indexables:
 // contienen evidencia real (conversaciones, videos, reseñas) que ayuda a SEO y
