@@ -67,8 +67,8 @@
     "heroTagline": "Réinitialisation professionnelle, sûre et rapide, avec une garantie réutilisable depuis n'importe quel PC."
   },
   "modelo": {
-    "titleTemplate": "Réinitialisation {marca} {modelo} — Service Assisté | ResetEnLinea.com",
-    "descriptionTemplate": "Service de réinitialisation assisté et à distance pour votre {marca} {modelo}. Ni téléchargement ni auto-dépannage : un technicien réel vous accompagne en sécurité sur WhatsApp.",
+    "titleTemplate": "Reset {marca} {modelo} | ResetEnLinea.com",
+    "descriptionTemplate": "Reset assisté à distance pour votre {marca} {modelo}. Ni téléchargement ni auto-dépannage : un technicien vous guide en sécurité sur WhatsApp.",
     "intro": "Nous vous aidons à résoudre la réinitialisation de votre {marca} {modelo} en toute sécurité, avec un accompagnement professionnel à chaque étape.",
     "errorSectionTitle": "Quelle erreur affiche votre imprimante ?",
     "errorSectionText": "Indiquez-nous le message ou le code d'erreur affiché sur votre {marca} {modelo} pour un diagnostic plus précis.",
