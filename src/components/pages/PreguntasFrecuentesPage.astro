@@ -10,7 +10,22 @@ interface Props {
 
 const { locale } = Astro.props;
 const items: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: items.map((item) => ({
+    "@type": "Question",
+    name: item.pregunta,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.respuesta,
+    },
+  })),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
 <article class="faq-page">
   <h1>{t(locale, "faq.heading")}</h1>
