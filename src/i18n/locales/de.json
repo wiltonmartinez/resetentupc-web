@@ -113,8 +113,8 @@
     "verModelo": "Modell ansehen"
   },
   "modelo": {
-    "titleTemplate": "Reset {marca} {modelo} — Assistierter Service | ResetEnLinea.com",
-    "descriptionTemplate": "Assistierter Fern-Reset-Service für deinen {marca} {modelo}. Kein Download und kein Selbstbedienungs-Tool: Ein echter Techniker begleitet dich sicher über WhatsApp.",
+    "titleTemplate": "Reset {marca} {modelo} | ResetEnLinea.com",
+    "descriptionTemplate": "Assistierter Reset-Service für deinen {marca} {modelo}. Kein Download, kein Selbstbedienungstool: Ein Techniker begleitet dich sicher über WhatsApp.",
     "intro": "Wir helfen dir, den Reset deines {marca} {modelo} sicher zu lösen, mit professioneller Begleitung bei jedem Schritt.",
     "errorSectionTitle": "Welchen Fehler zeigt dein Drucker?",
     "errorSectionText": "Teile uns die Fehlermeldung oder den Fehlercode mit, den du auf deinem {marca} {modelo} siehst, damit wir dir eine genauere Diagnose geben können.",
