@@ -401,7 +401,8 @@
     "conexionPaso3Desconectar": "프린터의 USB 케이블을 분리하세요.",
     "conexionPaso3Esperar": "5초간 기다리세요.",
     "conexionPaso3Reconectar": "USB 케이블을 다시 연결하세요.",
-    "conexionAviso": "모든 단계를 완료하신 후 2단계에서 대기 중임을 알려주세요."
+    "conexionAviso": "모든 단계를 완료하신 후 2단계에서 대기 중임을 알려주세요.",
+    "whatsappDirecto": "바로 WhatsApp 채팅"
   },
   "footer": {
     "rights": "모든 권리 보유.",

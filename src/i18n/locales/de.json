@@ -401,7 +401,8 @@
     "conexionPaso3Desconectar": "Trenne das USB-Kabel vom Drucker.",
     "conexionPaso3Esperar": "Warte 5 Sekunden.",
     "conexionPaso3Reconectar": "Schließe das USB-Kabel wieder an.",
-    "conexionAviso": "Führe alle Schritte aus und melde dich, wenn du fertig bist — wir warten bei Schritt #2."
+    "conexionAviso": "Führe alle Schritte aus und melde dich, wenn du fertig bist — wir warten bei Schritt #2.",
+    "whatsappDirecto": "Direkter WhatsApp-Chat"
   },
   "footer": {
     "rights": "Alle Rechte vorbehalten.",

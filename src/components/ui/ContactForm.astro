@@ -1,8 +1,8 @@
 ---
-import { t } from "../../i18n/utils";
+import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../../i18n/utils";
 import modelos from "../../data/modelos-muestra.json";
 import pagosData from "../../data/pagos.json";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -32,6 +32,18 @@ const marcaDefaultSlug = marcasUnicas.find((m) => m.nombre === marcaDefault)?.sl
 const id = (nombre: string) => `${idPrefix}-${nombre}`;
 
 const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }));
+
+// Atajo directo a WhatsApp desde el primer paso, igual que el botón de Chat en
+// vivo (ver ContactHub.astro): mismo mensaje inicial genérico que usa el resto
+// del sitio para un primer contacto, sin marca/modelo todavía precargados aquí.
+const urlOrigenWhatsapp = `${SITE_URL}${Astro.url.pathname}`;
+const mensajeWhatsappDirecto = buildWhatsAppMessage({
+  locale,
+  marca: marcaDefault,
+  modelo: modeloDefault,
+  urlOrigen: urlOrigenWhatsapp,
+});
+const whatsappDirectoHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsappDirecto);
 ---
 
 <form
@@ -126,18 +138,31 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
         <span>🎡 {t(locale, "contactForm.tipoRuleta")}</span>
       </label>
     </div>
-    <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
-    <button type="button" class="contact-form-chat-en-vivo" data-abrir-chat-form>
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-        <path
-          d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-linejoin="round"
-        />
-      </svg>
-      {t(locale, "contactHub.liveChat")}
-    </button>
+    <div class="contact-form-canal">
+      <a
+        class="contact-form-whatsapp-directo"
+        href={whatsappDirectoHref}
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        data-sound="confirm"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z" />
+        </svg>
+        {t(locale, "contactForm.whatsappDirecto")}
+      </a>
+      <button type="button" class="contact-form-chat-en-vivo" data-abrir-chat-form>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+          <path
+            d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+          />
+        </svg>
+        {t(locale, "contactHub.liveChat")}
+      </button>
+    </div>
   </fieldset>
 
   <!-- PASO: verificación de garantía (camino corto, solo tipo=garantia) -->
@@ -1554,7 +1579,7 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
         const tipoRadio = form.querySelector(`input[name="tipo"][data-tipo-valor="${trigger.dataset.tipo}"]`);
         if (tipoRadio && !tipoRadio.checked) {
           tipoRadio.checked = true;
-          form.querySelector('[data-paso="tipo"] [data-continuar]')?.click();
+          if (pasoActual === "tipo") avanzar();
         }
       }
 
@@ -1910,20 +1935,43 @@ const PAISES = pagosData.paises.map((p) => ({ slug: p.slug, nombre: p.nombre }))
     background: var(--color-primary-dark);
   }
 
+  .contact-form-canal {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: 0.6rem;
+    margin-top: 0.2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .contact-form-whatsapp-directo,
   .contact-form-chat-en-vivo {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.4rem;
-    justify-self: start;
-    padding: 0.6rem 1.1rem;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem;
     border: none;
-    border-radius: var(--radius-full);
-    background: #2563eb;
-    color: white;
+    border-radius: var(--radius-sm);
     font: inherit;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
+    text-decoration: none;
     cursor: pointer;
+  }
+
+  .contact-form-whatsapp-directo {
+    background: var(--color-whatsapp);
+    color: var(--color-whatsapp-ink);
+  }
+
+  .contact-form-whatsapp-directo:hover {
+    background: var(--color-whatsapp-dark);
+  }
+
+  .contact-form-chat-en-vivo {
+    background: #2563eb;
+    color: white;
   }
 
   .contact-form-chat-en-vivo:hover {

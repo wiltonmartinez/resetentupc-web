@@ -419,7 +419,8 @@
     "conexionPaso3Desconectar": "Desconecte el cable USB de la impresora.",
     "conexionPaso3Esperar": "Espere 5 segundos.",
     "conexionPaso3Reconectar": "Vuelva a conectar el cable USB.",
-    "conexionAviso": "Realice todos los pasos y avise cuando esté listo, esperando en el paso #2."
+    "conexionAviso": "Realice todos los pasos y avise cuando esté listo, esperando en el paso #2.",
+    "whatsappDirecto": "Chat WhatsApp Directo"
   },
   "footer": {
     "rights": "Todos los derechos reservados.",
