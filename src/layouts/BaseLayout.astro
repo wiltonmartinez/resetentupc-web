@@ -151,9 +151,11 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
   <body>
     <Header locale={locale} path={path} pageKey={pageKey} />
     <LanguageBanner locale={locale} path={path} pageKey={pageKey} />
-    <main>
-      <slot />
-    </main>
+    <div class="page-boxed-bg">
+      <main>
+        <slot />
+      </main>
+    </div>
     <Footer locale={locale} />
     {!ocultarBotonContacto && (
       <ContactHub locale={locale} path={path} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
@@ -223,13 +225,21 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     -webkit-font-smoothing: antialiased;
   }
 
+  .page-boxed-bg {
+    background: #1f2937;
+    padding: var(--space-lg) var(--space-md);
+  }
+
   main {
     max-width: var(--content-width);
     margin: 0 auto;
     padding: var(--space-md) var(--space-md) var(--space-xl);
     display: grid;
     gap: var(--space-lg);
-    overflow-x: visible;
+    overflow-x: hidden;
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-floating);
   }
 
   /* Evita que los hijos de un grid (ej. un <select> con opciones largas)
@@ -275,9 +285,14 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
   }
 
   @media (max-width: 640px) {
+    .page-boxed-bg {
+      padding: var(--space-md) var(--space-sm);
+    }
+
     main {
       padding: var(--space-sm) var(--space-sm) var(--space-lg);
       gap: var(--space-md);
+      border-radius: var(--radius-md);
     }
   }
 

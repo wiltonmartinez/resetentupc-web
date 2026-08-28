@@ -107,7 +107,6 @@ const seriesDisponibles = Array.from(
   <AyudaCTA sourceId="home-hero" label={t(locale, "home.heroCta")} destacado />
 </section>
 
-<div class="modelos-boxed-bg">
 <section class="modelos">
   <h2>{t(locale, "home.modelosTitle")}</h2>
 
@@ -220,7 +219,6 @@ const seriesDisponibles = Array.from(
     {t(locale, "home.buscadorSinResultados")}
   </p>
 </section>
-</div>
 
 <script>
   import { obtenerFavoritos, alternarFavorito } from "../../lib/favoritos.js";
@@ -547,40 +545,6 @@ const seriesDisponibles = Array.from(
     .hero h1,
     .hero-tagline {
       white-space: normal;
-    }
-  }
-
-  /* "Caja flotante": el fondo oscuro ocupa todo el ancho de la pantalla (se
-     escapa del max-width de <main>, que por eso necesita overflow-x visible
-     — ver comentario junto a la regla de <main> en BaseLayout.astro), y
-     adentro el contenedor blanco queda centrado con su propio ancho máximo. */
-  .modelos-boxed-bg {
-    position: relative;
-    left: 50%;
-    right: 50%;
-    width: 100vw;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    background: #1f2937;
-    padding: var(--space-lg) var(--space-md);
-  }
-
-  .modelos {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-floating);
-    padding: var(--space-lg) var(--space-md);
-  }
-
-  @media (max-width: 640px) {
-    .modelos-boxed-bg {
-      padding: var(--space-md) var(--space-sm);
-    }
-    .modelos {
-      border-radius: var(--radius-md);
-      padding: var(--space-md) var(--space-sm);
     }
   }
 
