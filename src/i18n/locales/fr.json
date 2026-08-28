@@ -389,7 +389,8 @@
     "garantiaVigente": "✅ Garantie valide",
     "garantiaVencida": "⚠️ Garantie expirée",
     "garantiaNoEncontrada": "Nous n'avons pas trouvé de garantie avec cette information — vous pouvez continuer quand même, nous vérifierons avec vous.",
-    "checklistGarantiaDato": "Information de garantie"
+    "checklistGarantiaDato": "Information de garantie",
+    "whatsappDirecto": "Chat WhatsApp Direct"
   },
   "footer": {
     "rights": "Tous droits réservés.",

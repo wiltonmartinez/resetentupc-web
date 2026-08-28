@@ -401,7 +401,8 @@
     "conexionPaso3Desconectar": "Отсоедините USB-кабель от принтера.",
     "conexionPaso3Esperar": "Подождите 5 секунд.",
     "conexionPaso3Reconectar": "Снова подключите USB-кабель.",
-    "conexionAviso": "Выполните все шаги и сообщите, когда будете готовы, ожидая на шаге №2."
+    "conexionAviso": "Выполните все шаги и сообщите, когда будете готовы, ожидая на шаге №2.",
+    "whatsappDirecto": "Прямой чат в WhatsApp"
   },
   "footer": {
     "rights": "Все права защищены.",
