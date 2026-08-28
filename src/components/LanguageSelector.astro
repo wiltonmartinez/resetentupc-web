@@ -80,18 +80,18 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
     align-items: center;
     gap: 0.35rem;
     padding: 0.4rem 0.7rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: var(--radius-full);
-    background: var(--color-bg);
-    color: var(--color-text-muted);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
   }
 
   .language-selector-trigger:hover {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+    color: #ffffff;
+    border-color: #f97316;
   }
 
   .language-selector-actual {
@@ -99,7 +99,7 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
   }
 
   .language-selector-chevron {
-    color: var(--color-text-subtle);
+    color: rgba(255, 255, 255, 0.6);
     transition: transform 0.15s ease;
   }
 
@@ -161,6 +161,19 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
       background: transparent;
       padding: 0.5rem 0 0;
       margin-top: 0;
+    }
+
+    .language-selector-link {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .language-selector-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .language-selector-link[aria-current="true"] {
+      color: #f97316;
     }
 
     .language-selector-trigger {

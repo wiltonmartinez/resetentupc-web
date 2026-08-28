@@ -529,15 +529,26 @@ const seriesDisponibles = Array.from(
   }
 
   .hero h1 {
-    max-width: 36ch;
-    font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+    min-width: 0;
+    max-width: 100%;
+    font-size: clamp(1.3rem, 4.1vw, 1.82rem);
     line-height: 1.15;
+    white-space: nowrap;
   }
 
   .hero-tagline {
-    max-width: 48ch;
-    font-size: 1.05rem;
+    min-width: 0;
+    max-width: 100%;
+    font-size: clamp(0.8rem, 2vw, 1rem);
     color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 510px) {
+    .hero h1,
+    .hero-tagline {
+      white-space: normal;
+    }
   }
 
   .modelos h2 {
