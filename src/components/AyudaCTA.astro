@@ -2,12 +2,33 @@
 interface Props {
   sourceId: string;
   label: string;
+  destacado?: boolean;
 }
 
-const { sourceId, label } = Astro.props;
+const { sourceId, label, destacado = false } = Astro.props;
 ---
 
-<button type="button" class="ayuda-cta" data-abrir-formulario-contacto="" data-source-id={sourceId} data-sound="select">
+<button
+  type="button"
+  class:list={["ayuda-cta", { "ayuda-cta-destacado": destacado }]}
+  data-abrir-formulario-contacto=""
+  data-source-id={sourceId}
+  data-sound="select"
+>
+  {destacado && (
+    <>
+      <span class="ayuda-cta-badge" aria-hidden="true">1</span>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+        <path
+          d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+        />
+        <path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
+    </>
+  )}
   {label}
 </button>
 
@@ -26,5 +47,54 @@ const { sourceId, label } = Astro.props;
   }
   .ayuda-cta:hover {
     background: var(--color-primary-light);
+  }
+
+  .ayuda-cta-destacado {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-primary);
+    color: white;
+    box-shadow: var(--shadow-floating);
+    animation: ayuda-cta-pulso 2.4s ease-in-out infinite;
+  }
+
+  .ayuda-cta-destacado:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .ayuda-cta-badge {
+    position: absolute;
+    top: -0.35rem;
+    right: -0.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    border: 2px solid var(--color-bg);
+    background: #e0293e;
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  @keyframes ayuda-cta-pulso {
+    0%,
+    100% {
+      box-shadow: var(--shadow-floating), 0 0 0 0 rgba(15, 118, 110, 0.45);
+    }
+    50% {
+      box-shadow: var(--shadow-floating), 0 0 0 0.5rem rgba(15, 118, 110, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ayuda-cta-destacado {
+      animation: none;
+    }
   }
 </style>
