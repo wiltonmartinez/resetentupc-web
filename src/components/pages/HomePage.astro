@@ -273,7 +273,6 @@ const seriesDisponibles = Array.from(
       marcaTexto: card.querySelector(".modelo-card-marca")?.textContent.trim() || "",
       modelo: card.querySelector(".modelo-card-modelo")?.textContent.trim() || "",
       href: card.querySelector(".modelo-card-verlink")?.getAttribute("href") || "",
-      imgSrc: card.querySelector("img")?.getAttribute("src") || null,
     }));
 
     let activeIndex = -1;
@@ -357,11 +356,7 @@ const seriesDisponibles = Array.from(
           .map(
             (c, i) => `
             <a class="modelos-buscador-item" href="${c.href}" role="option" id="modelos-buscador-opcion-${i}" data-index="${i}">
-              ${c.imgSrc ? `<img src="${c.imgSrc}" alt="" loading="lazy" />` : `<span class="modelos-buscador-item-sinfoto"></span>`}
-              <span class="modelos-buscador-item-texto">
-                <span class="modelos-buscador-item-marca">${highlight(c.marcaTexto, query)}</span>
-                <span class="modelos-buscador-item-modelo">${highlight(c.modelo, query)}</span>
-              </span>
+              <span class="modelos-buscador-item-titulo">${highlight(c.marcaTexto, query)} ${highlight(c.modelo, query)}</span>
             </a>`
           )
           .join("");
@@ -678,7 +673,13 @@ const seriesDisponibles = Array.from(
     padding: 0.4rem;
   }
 
-  .modelos-buscador-conteo {
+  /* El contenido de .modelos-buscador-panel (conteo/item/titulo/mark/mas/vacio)
+     se genera con innerHTML desde el script de abajo, así que nunca recibe el
+     atributo de scoping de Astro — sin :global() estas reglas nunca coinciden
+     con nada (se comprobó en vivo: el panel entero se renderizaba con estilos
+     por defecto del navegador, sin flex/padding/negrita, y la imagen se veía
+     enorme porque su tamaño tampoco se aplicaba). */
+  :global(.modelos-buscador-conteo) {
     margin: 0.2rem 0.5rem 0.4rem;
     font-size: 0.78rem;
     font-weight: 600;
@@ -687,7 +688,7 @@ const seriesDisponibles = Array.from(
     letter-spacing: 0.03em;
   }
 
-  .modelos-buscador-item {
+  :global(.modelos-buscador-item) {
     display: flex;
     align-items: center;
     gap: 0.7rem;
@@ -697,55 +698,32 @@ const seriesDisponibles = Array.from(
     color: var(--color-text);
   }
 
-  .modelos-buscador-item:hover,
-  .modelos-buscador-item.is-active {
+  :global(.modelos-buscador-item:hover),
+  :global(.modelos-buscador-item.is-active) {
     background: var(--color-bg-muted);
   }
 
-  .modelos-buscador-item img,
-  .modelos-buscador-item-sinfoto {
-    width: 2.25rem;
-    height: 2.25rem;
-    flex: none;
-    border-radius: var(--radius-sm);
-    object-fit: contain;
-    background: var(--color-bg-muted);
-    border: 1px solid var(--color-border);
-  }
-
-  .modelos-buscador-item-texto {
-    display: flex;
-    flex-direction: column;
+  :global(.modelos-buscador-item-titulo) {
+    font-weight: 700;
+    font-size: 0.95rem;
     min-width: 0;
   }
 
-  .modelos-buscador-item-marca {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: var(--color-text-subtle);
-  }
-
-  .modelos-buscador-item-modelo {
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-
-  .modelos-buscador-item mark {
+  :global(.modelos-buscador-item mark) {
     background: var(--color-primary-light);
     color: var(--color-primary-dark);
     border-radius: 0.2rem;
     padding: 0 0.1rem;
   }
 
-  .modelos-buscador-mas {
+  :global(.modelos-buscador-mas) {
     margin: 0.3rem 0.5rem 0.2rem;
     font-size: 0.8rem;
     color: var(--color-text-subtle);
     text-align: center;
   }
 
-  .modelos-buscador-vacio {
+  :global(.modelos-buscador-vacio) {
     margin: 0;
     padding: 0.9rem 0.6rem;
     text-align: center;
