@@ -363,26 +363,6 @@ const pasosProceso = [
     <TrustpilotWidget />
   </InfoCard>
 
-  <!-- 5. Acción -->
-  <InfoCard tone="accent">
-    <div class="seccion-header">
-      <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
-        <path d="M3 17l1.6-4.8A7 7 0 1110 17a7 7 0 01-4.6-1.7L3 17Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
-      </svg>
-      <h2>{t(locale, "modelo.cierreTitulo")}</h2>
-    </div>
-    <p>{t(locale, "modelo.cierreTexto")}</p>
-    <WhatsAppCTA
-      marca={nombreMarca}
-      modelo={nombreModelo}
-      error={errorPrincipal?.descripcion}
-      sourceId={`${sourceIdBase}-cierre`}
-      urlPath={localizedPath}
-      locale={locale}
-      label={t(locale, "common.whatsappButton")}
-    />
-  </InfoCard>
-
   <div class="modelo-cta-final">
     <AyudaCTA sourceId={`${sourceIdBase}-final-destacado`} label={t(locale, "home.heroCta")} destacado />
   </div>
