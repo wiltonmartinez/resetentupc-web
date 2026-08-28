@@ -1,6 +1,7 @@
 ---
 import { t, buildLocalizedPath, buildCanonicalUrl, resolveErroresParaModelo } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
+import AyudaCTA from "../AyudaCTA.astro";
 import ErrorSelector from "../ErrorSelector.astro";
 import Breadcrumb from "../Breadcrumb.astro";
 import InfoCard from "../ui/InfoCard.astro";
@@ -186,6 +187,7 @@ const pasosProceso = [
         <span>{tituloConPrefijo}</span>
         <FavoritoEstrella modeloId={modeloId} variante="titulo" ariaLabel={labelFavoritoAgregar} />
       </h1>
+      <AyudaCTA sourceId={`${sourceIdBase}-hero-destacado`} label={t(locale, "home.heroCta")} destacado />
       <TrustpilotWidget />
       <p class="modelo-hero-modalidad">{t(locale, "proceso.titulo")}</p>
       <p class="modelo-hero-pregunta">{reconocimiento}</p>
@@ -380,6 +382,10 @@ const pasosProceso = [
       label={t(locale, "common.whatsappButton")}
     />
   </InfoCard>
+
+  <div class="modelo-cta-final">
+    <AyudaCTA sourceId={`${sourceIdBase}-final-destacado`} label={t(locale, "home.heroCta")} destacado />
+  </div>
 </article>
 
 
@@ -417,6 +423,10 @@ const pasosProceso = [
   .modelo-page {
     display: grid;
     gap: var(--space-md);
+  }
+
+  .modelo-cta-final {
+    text-align: center;
   }
 
   .modelo-hero {
