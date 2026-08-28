@@ -18,6 +18,7 @@ interface Props {
   marcaDefault?: string;
   modeloDefault?: string;
   ocultarBotonContacto?: boolean;
+  wide?: boolean;
 }
 
 const {
@@ -31,6 +32,7 @@ const {
   marcaDefault,
   modeloDefault,
   ocultarBotonContacto = false,
+  wide = false,
 } = Astro.props;
 
 const canonicalUrl = pageKey ? buildStaticPageCanonical(locale, pageKey) : buildCanonicalUrl(locale, path);
@@ -152,7 +154,7 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     <Header locale={locale} path={path} pageKey={pageKey} />
     <LanguageBanner locale={locale} path={path} pageKey={pageKey} />
     <div class="page-boxed-bg">
-      <main>
+      <main class:list={{ "main-wide": wide }}>
         <slot />
       </main>
     </div>
@@ -240,6 +242,10 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     background: var(--color-bg);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-floating);
+  }
+
+  main.main-wide {
+    max-width: 1200px;
   }
 
   /* Evita que los hijos de un grid (ej. un <select> con opciones largas)

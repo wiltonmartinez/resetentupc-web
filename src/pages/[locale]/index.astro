@@ -13,6 +13,6 @@ export function getStaticPaths() {
 const locale = Astro.params.locale as Locale;
 ---
 
-<BaseLayout title={t(locale, "home.title")} description={t(locale, "home.description")} locale={locale} path="/">
+<BaseLayout title={t(locale, "home.title")} description={t(locale, "home.description")} locale={locale} path="/" wide>
   <HomePage locale={locale} />
 </BaseLayout>
