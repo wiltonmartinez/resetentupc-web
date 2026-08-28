@@ -1,7 +1,5 @@
 ---
 import { t, buildStaticPagePath } from "../../i18n/utils";
-import AyudaCTA from "../AyudaCTA.astro";
-import TrustpilotWidget from "../TrustpilotWidget.astro";
 import InfoCard from "../ui/InfoCard.astro";
 import ContactCard from "../ui/ContactCard.astro";
 import ContactForm from "../ui/ContactForm.astro";
@@ -19,11 +17,6 @@ const mensajeLabel = t(locale, "contacto.enviarMensaje");
 
 <article class="contacto-page">
   <h1>{t(locale, "contacto.heading")}</h1>
-  <InfoCard tone="accent">
-    <p>{t(locale, "contacto.text")}</p>
-    <TrustpilotWidget />
-    <AyudaCTA sourceId="contacto-cta" label={t(locale, "contacto.cta")} />
-  </InfoCard>
 
   <InfoCard tone="muted">
     <h2>{t(locale, "contactForm.tituloModal")}</h2>
