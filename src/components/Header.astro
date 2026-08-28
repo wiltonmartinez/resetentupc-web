@@ -166,8 +166,8 @@ const logo = getLogo();
 
 <style>
   .site-header {
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-bg);
+    border-bottom: 3px solid #f97316;
+    background: #1f2937;
     position: sticky;
     top: 0;
     z-index: 30;
@@ -188,7 +188,7 @@ const logo = getLogo();
     font-weight: 800;
     text-decoration: none;
     font-size: 1.1rem;
-    color: var(--color-text);
+    color: #ffffff;
   }
   .site-logo-imagen {
     width: 1.75rem;
@@ -204,7 +204,7 @@ const logo = getLogo();
   .site-logo-eslogan {
     font-size: 0.68rem;
     font-weight: 500;
-    color: var(--color-text-subtle);
+    color: rgba(255, 255, 255, 0.6);
     text-transform: none;
     letter-spacing: normal;
   }
@@ -235,7 +235,7 @@ const logo = getLogo();
     padding: 0.45rem 0.5rem;
     border-radius: var(--radius-sm);
     text-decoration: none;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.75);
     font-weight: 600;
     font-size: 0.86rem;
     white-space: nowrap;
@@ -249,8 +249,8 @@ const logo = getLogo();
     transition: opacity 0.15s ease;
   }
   .site-nav a:hover {
-    color: var(--color-primary);
-    background: var(--color-bg-muted);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
   }
   .site-nav a:hover svg {
     opacity: 1;
@@ -296,12 +296,13 @@ const logo = getLogo();
      WhatsApp) — se distingue con el color y peso ya usados en el sitio para
      énfasis (ver .process-step-enlace), sin convertirlo en un botón. */
   .site-nav a.site-nav-contacto {
-    color: var(--color-primary);
+    color: #f97316;
     font-weight: 700;
   }
 
   .site-nav a.site-nav-contacto:hover {
-    color: var(--color-primary-dark);
+    color: #fb923c;
+    background: rgba(249, 115, 22, 0.14);
   }
   .site-header-controls {
     display: flex;
@@ -316,10 +317,10 @@ const logo = getLogo();
     width: 2.25rem;
     height: 2.25rem;
     margin-left: auto;
-    border: 1px solid var(--color-border);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: var(--radius-sm);
-    background: var(--color-bg-card);
-    color: var(--color-text);
+    background: transparent;
+    color: #ffffff;
     cursor: pointer;
   }
 
@@ -337,8 +338,8 @@ const logo = getLogo();
       left: 0;
       right: 0;
       flex-direction: column;
-      background: var(--color-bg);
-      border-bottom: 1px solid var(--color-border);
+      background: #1f2937;
+      border-bottom: 3px solid #f97316;
       box-shadow: var(--shadow-floating);
       padding: 0.5rem var(--space-md) 1rem;
     }
@@ -352,7 +353,7 @@ const logo = getLogo();
     }
     .site-nav a {
       padding: 0.75rem 0;
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       font-size: 1rem;
     }
     .site-nav-item-dropdown {
@@ -368,17 +369,18 @@ const logo = getLogo();
     }
     .site-nav-submenu a {
       padding: 0.6rem 0;
-      border-bottom: 1px solid var(--color-border);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       font-size: 0.92rem;
-      color: var(--color-text-subtle);
+      color: rgba(255, 255, 255, 0.6);
     }
     .site-nav-submenu a:hover {
       background: transparent;
+      color: #ffffff;
     }
     .site-header-controls {
       margin: 0.75rem 0 0;
       padding-top: 0.75rem;
-      border-top: 1px solid var(--color-border);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
     }
   }
 </style>
