@@ -402,7 +402,7 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
     </li>
 
     <li>
-      <h3>5{esEpson ? ")" : "."} {esEpson ? "Reset Asistido en 1 minuto" : "Procedimiento"}</h3>
+      <h3>5{esEpson ? ")" : "."} {esEpson ? `Reset Asistido en 1 minuto | ${marca} ${modelo}` : "Procedimiento"}</h3>
       {esEpson ? (
         videoResetRealizado ? (
           <div class="procedimiento-video-real" data-procedimiento-video-real data-href-base={hrefResetEvidencia}>
@@ -701,6 +701,12 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
     display: grid;
     gap: 0.5rem;
     max-width: 480px;
+  }
+
+  /* El título del video (real, de Núcleo) queda solo como aria-label —
+     ya no se muestra como texto visible bajo el video. */
+  .procedimiento-video-real :global(.youtube-card-titulo) {
+    display: none;
   }
 
   .procedimiento-enlace-seo {
