@@ -125,6 +125,28 @@ export async function listarErroresPorModelo(marcaSlug: string, modeloSlug: stri
   return resultado?.data ?? [];
 }
 
+/**
+ * PROPUESTO — este endpoint todavía no existe en Núcleo (ver INSTRUCCIONES
+ * PARA EL BACKEND entregadas al usuario). Devuelve UNA evidencia ya elegida
+ * por Núcleo (aplica su propia regla de modelo hermano + azar si hay
+ * varias) para embeber directo en un <iframe> — mientras no exista,
+ * `obtenerJson` devuelve null y quien la llama cae de vuelta a
+ * `listarClienteSatisfecho()` filtrado por marca en el propio frontend.
+ */
+export interface EvidenciaClienteSatisfechoPublica {
+  html_url: string;
+  titulo: string;
+}
+
+export async function obtenerEvidenciaClienteSatisfecho(
+  marcaSlug: string,
+  modeloSlug: string
+): Promise<EvidenciaClienteSatisfechoPublica | null> {
+  return obtenerJson<EvidenciaClienteSatisfechoPublica>(
+    `/api/public/cliente-satisfecho/evidencia/?marca=${encodeURIComponent(marcaSlug)}&modelo=${encodeURIComponent(modeloSlug)}`
+  );
+}
+
 /** Título de respaldo cuando `titulo` viene vacío (campo no se llena desde el admin todavía). */
 export function tituloConRespaldo(item: { titulo: string; marca: string; modelo: string; error: string; pais: string }): string {
   if (item.titulo.trim() !== "") return item.titulo;

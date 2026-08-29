@@ -29,12 +29,13 @@ import ProcesoReutilizable from "./ui/ProcesoReutilizable.astro";
 import ProcesoReutilizableCanon from "./ui/ProcesoReutilizableCanon.astro";
 import ProcesoReutilizableEpsonSc from "./ui/ProcesoReutilizableEpsonSc.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
+import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
-import { CLIENTES_SATISFECHOS, tituloClienteSatisfecho, slugClienteSatisfecho } from "../data/cliente-satisfecho";
 import {
   listarErroresPorModelo,
   listarTestimonios,
   listarClienteSatisfecho,
+  obtenerEvidenciaClienteSatisfecho,
   tituloConRespaldo,
   type ErrorPublico,
 } from "../lib/nucleo-api";
@@ -117,7 +118,7 @@ const paso5Videos =
 const mostrarPruebaSocial = marcaSlug === "epson";
 
 let testimonioTrustpilot: { imagen: string; destino: string } | null = null;
-let testimonioLocal: { titulo: string; preview: string; href: string } | null = null;
+let testimonioLocalEmbed: { url: string; titulo: string } | null = null;
 
 if (mostrarPruebaSocial) {
   const trustpilotList = (await listarTestimonios()).filter((tt) => tt.url_imgur?.trim() || tt.url_trustpilot_review?.trim());
@@ -129,23 +130,21 @@ if (mostrarPruebaSocial) {
     };
   }
 
-  const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
-  if (clienteSatisfechoResp.data.length > 0) {
-    const elegido = clienteSatisfechoResp.data[Math.floor(Math.random() * clienteSatisfechoResp.data.length)];
-    testimonioLocal = {
-      titulo: tituloConRespaldo(elegido),
-      preview: elegido.error ? `${elegido.marca} ${elegido.modelo} — ${elegido.error}` : `${elegido.marca} ${elegido.modelo}`,
-      href: buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${elegido.slug}/`),
-    };
-  } else if (CLIENTES_SATISFECHOS.length > 0) {
-    // Último recurso: placeholder local (marcado como tal en cliente-satisfecho.ts)
-    // mientras Núcleo no tenga todavía ninguna evidencia real publicada.
-    const elegido = CLIENTES_SATISFECHOS[Math.floor(Math.random() * CLIENTES_SATISFECHOS.length)];
-    testimonioLocal = {
-      titulo: tituloClienteSatisfecho(elegido),
-      preview: elegido.previewTexto,
-      href: buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${slugClienteSatisfecho(elegido)}/`),
-    };
+  // Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
+  // propia regla de "modelo hermano" + azar entre varios casos. Si todavía
+  // no existe, se cae a filtrar por marca el listado real ya existente —
+  // sin lógica de modelo hermano (esa vive en Núcleo, no se duplica acá).
+  const evidenciaDirecta = await obtenerEvidenciaClienteSatisfecho(marcaSlug, modeloSlug);
+  if (evidenciaDirecta) {
+    testimonioLocalEmbed = { url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo };
+  } else {
+    const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
+    const dela = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
+    const candidatos = dela.length > 0 ? dela : clienteSatisfechoResp.data;
+    if (candidatos.length > 0) {
+      const elegido = candidatos[Math.floor(Math.random() * candidatos.length)];
+      testimonioLocalEmbed = { url: elegido.html_url, titulo: tituloConRespaldo(elegido) };
+    }
   }
 }
 
@@ -239,12 +238,7 @@ const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/tes
       <h3>6. Impresora Imprimiendo</h3>
       {mostrarPruebaSocial && (
         <div class="procedimiento-prueba-social">
-          {testimonioLocal && (
-            <div class="procedimiento-testimonio">
-              <p class="procedimiento-testimonio-titulo">{testimonioLocal.titulo}</p>
-              <p class="procedimiento-testimonio-preview">{testimonioLocal.preview}</p>
-            </div>
-          )}
+          {testimonioLocalEmbed && <ClienteSatisfechoEmbed url={testimonioLocalEmbed.url} titulo={testimonioLocalEmbed.titulo} />}
           {testimonioTrustpilot?.imagen && (
             <a class="procedimiento-testimonio-trustpilot" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
               <img src={testimonioTrustpilot.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
@@ -376,28 +370,6 @@ const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/tes
     display: grid;
     gap: 0.75rem;
     justify-items: center;
-  }
-
-  .procedimiento-testimonio {
-    width: 100%;
-    max-width: 480px;
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-bg-card);
-    box-shadow: var(--shadow-card);
-    text-align: center;
-  }
-
-  .procedimiento-testimonio-titulo {
-    margin: 0 0 0.35rem;
-    font-weight: 700;
-  }
-
-  .procedimiento-testimonio-preview {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
   }
 
   .procedimiento-testimonio-trustpilot {
