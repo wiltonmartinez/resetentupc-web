@@ -67,7 +67,9 @@ const errorSectionText = t(locale, "modelo.errorSectionText")
   .replaceAll("{marca}", nombreMarca)
   .replaceAll("{modelo}", nombreModelo);
 
-const tieneSensorTinta = getSensorTintaParaMarca(marcaSlug) !== null;
+const CODIGO_ERROR_SENSOR = "epson-sc-0014bd";
+const tieneSensorTinta =
+  getSensorTintaParaMarca(marcaSlug) !== null && erroresCompatibles.some((e) => e.error_id === CODIGO_ERROR_SENSOR);
 
 const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
 const faqConfianza = faqItems.slice(0, 3);
@@ -269,21 +271,25 @@ const pasosProceso = [
     </InfoCard>
   )}
 
-  <!-- 2b. Sensor de tinta: solo para la familia Epson-SC (large-format) -->
+  <!-- 2b. Sensor de tinta: solo para la familia Epson-SC (large-format), y
+       solo cuando el código de error 0014BD está entre los confirmados para
+       este modelo. Si hay selector de errores, la sección se muestra u
+       oculta en vivo según lo que el cliente elija (ver script más abajo);
+       si el 0014BD es el único error confirmado, queda visible siempre. -->
   {tieneSensorTinta && (
-    <InfoCard tone="muted">
-      <SensorLocation marcaSlug={marcaSlug} nombreMarca={nombreMarca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
-    </InfoCard>
-  )}
+    <div data-sensor-tinta-wrapper data-source-id-base={sourceIdBase} hidden={errorPrincipal?.error_id !== CODIGO_ERROR_SENSOR}>
+      <InfoCard tone="muted">
+        <SensorLocation marcaSlug={marcaSlug} nombreMarca={nombreMarca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
+      </InfoCard>
 
-  {tieneSensorTinta && (
-    <InfoCard tone="muted">
-      <SensorConditionComparison
-        marcaSlug={marcaSlug}
-        tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
-        tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
-      />
-    </InfoCard>
+      <InfoCard tone="muted">
+        <SensorConditionComparison
+          marcaSlug={marcaSlug}
+          tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
+          tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
+        />
+      </InfoCard>
+    </div>
   )}
 
   <!-- 3. Flujo del servicio: reforzar que es asistido, no autónomo.
@@ -388,12 +394,36 @@ const pasosProceso = [
     });
     playFeedback(esFavoritoAhora ? "favoritoAgregar" : "favoritoQuitar");
   });
+
+  // Sección de sensor de tinta (Epson-SC): visible solo mientras el error
+  // elegido en el selector sea 0014BD. Escucha el mismo <select> que ya
+  // maneja ErrorSelector.astro (mismo sourceIdBase).
+  document.querySelectorAll<HTMLElement>("[data-sensor-tinta-wrapper]").forEach((wrapper) => {
+    const base = wrapper.dataset.sourceIdBase;
+    if (!base) return;
+
+    const select = document.getElementById(`error-select-${base}`) as HTMLSelectElement | null;
+    if (!select) return;
+
+    select.addEventListener("change", () => {
+      wrapper.hidden = select.value !== "epson-sc-0014bd";
+    });
+  });
 </script>
 
 <style>
   .modelo-page {
     display: grid;
     gap: var(--space-md);
+  }
+
+  [data-sensor-tinta-wrapper] {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  [data-sensor-tinta-wrapper][hidden] {
+    display: none;
   }
 
   .modelo-cta-final {

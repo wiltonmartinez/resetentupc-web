@@ -3,14 +3,18 @@
 // estructura (grid 3x2 en escritorio / 1 columna en móvil), con los
 // íconos de src/assets/procedimiento-epson-sc/{1..6}.png.
 //
-// La Tarjeta 1 es reactiva: cuando el modelo tiene varios errores
+// Las Tarjetas 1 y 5 son reactivas: cuando el modelo tiene varios errores
 // confirmados, ModeloPage.astro ya renderiza un <ErrorSelector> con un
 // <select id={`error-select-${sourceIdBase}`}> (ver ErrorSelector.astro).
 // Este componente escucha ese mismo <select> por su id — construido con el
-// mismo sourceIdBase — y actualiza el código de error mostrado en la
-// Tarjeta 1 cada vez que el cliente cambia su selección. Antes de que el
-// cliente elija algo, o si el modelo no tiene selector (un solo error
-// confirmado, o ninguno), se muestra "Almohadillas" como valor genérico.
+// mismo sourceIdBase — y:
+//   - actualiza el código de error mostrado en la Tarjeta 1.
+//   - cambia el texto de la Tarjeta 5 según si el código elegido es 0014BD
+//     (requiere cambiar almohadillas + limpiar sensor) o cualquier otro
+//     (reset estándar en modo reparación).
+// Antes de que el cliente elija algo, o si el modelo no tiene selector (un
+// solo error confirmado, o ninguno), la Tarjeta 1 muestra "Almohadillas" y
+// la Tarjeta 5 muestra el texto genérico de reset estándar.
 import { Image } from "astro:assets";
 import { t } from "../../i18n/utils";
 import type { Locale } from "../../config/site";
@@ -33,57 +37,86 @@ const { locale, modelo, sourceIdBase, codigoErrorInicial = "Almohadillas" } = As
 const paso1Template = t(locale, "procesoReutilizable.paso1TituloEpsonSc").replaceAll("{modelo}", modelo);
 const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
 
-const pasosResto = [
-  { icono: icono2, titulo: t(locale, "procesoReutilizable.paso2Titulo") },
-  { icono: icono3, titulo: t(locale, "procesoReutilizable.paso3Titulo") },
-  { icono: icono4, titulo: t(locale, "procesoReutilizable.paso4Titulo") },
-  { icono: icono5, titulo: t(locale, "procesoReutilizable.paso5TituloEpsonSc") },
-  { icono: icono6, titulo: t(locale, "procesoReutilizable.paso6Titulo") },
-];
+const paso5TituloDefault = t(locale, "procesoReutilizable.paso5TituloEpsonSc");
+const paso5Titulo0014bd = t(locale, "procesoReutilizable.paso5TituloEpsonSc0014bd");
 ---
 
-<div class="pr">
+<div class="pr" data-pr-source-id-base={sourceIdBase}>
   <span class="pr-badge">✅ {t(locale, "procesoReutilizable.badge")} 🔄</span>
 
   <ol class="pr-grid">
     <li class="pr-card">
       <span class="pr-numero" aria-hidden="true">1</span>
       <Image src={icono1} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo" data-pr-source-id-base={sourceIdBase}>
+      <p class="pr-card-titulo">
         {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
       </p>
     </li>
-    {
-      pasosResto.map((paso, index) => (
-        <li class="pr-card">
-          <span class="pr-numero" aria-hidden="true">
-            {index + 2}
-          </span>
-          <Image src={paso.icono} alt="" width={80} height={80} class="pr-imagen" />
-          <p class="pr-card-titulo">{paso.titulo}</p>
-        </li>
-      ))
-    }
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">2</span>
+      <Image src={icono2} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso2Titulo")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">3</span>
+      <Image src={icono3} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso3Titulo")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">4</span>
+      <Image src={icono4} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso4Titulo")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">5</span>
+      <Image src={icono5} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">
+        <span data-pr-paso5 data-pr-paso5-default={paso5TituloDefault} data-pr-paso5-sensor={paso5Titulo0014bd}>
+          {paso5TituloDefault}
+        </span>
+      </p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">6</span>
+      <Image src={icono6} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso6Titulo")}</p>
+    </li>
   </ol>
 </div>
 
 <script>
   // Escucha el <select> de ErrorSelector.astro (mismo sourceIdBase) y
-  // refleja el código elegido en la Tarjeta 1. Si esa página no tiene
-  // selector (un solo error confirmado, o ninguno), no hace nada — la
-  // tarjeta se queda con su valor inicial ("Almohadillas" por defecto).
-  document.querySelectorAll<HTMLElement>("[data-pr-source-id-base]").forEach((titulo) => {
-    const base = titulo.dataset.prSourceIdBase;
-    const codigoEl = titulo.querySelector<HTMLElement>("[data-pr-codigo]");
-    if (!base || !codigoEl) return;
+  // refleja la elección en las Tarjetas 1 y 5. Si esa página no tiene
+  // selector (un solo error confirmado, o ninguno), no hace nada — las
+  // tarjetas se quedan con su valor inicial (genérico).
+  document.querySelectorAll<HTMLElement>(".pr[data-pr-source-id-base]").forEach((container) => {
+    const base = container.dataset.prSourceIdBase;
+    if (!base) return;
 
     const select = document.getElementById(`error-select-${base}`) as HTMLSelectElement | null;
     if (!select) return;
 
+    const codigoEl = container.querySelector<HTMLElement>("[data-pr-codigo]");
+    const paso5El = container.querySelector<HTMLElement>("[data-pr-paso5]");
+
     select.addEventListener("change", () => {
       const valor = select.value || "";
-      const codigo = valor.replace(/^epson-sc-/i, "").toUpperCase();
-      codigoEl.textContent = codigo || "Almohadillas";
+      const es0014bd = /^epson-sc-0014bd$/i.test(valor);
+
+      if (codigoEl) {
+        const codigo = valor.replace(/^epson-sc-/i, "").toUpperCase();
+        codigoEl.textContent = codigo || "Almohadillas";
+      }
+
+      if (paso5El) {
+        const texto = es0014bd ? paso5El.dataset.prPaso5Sensor : paso5El.dataset.prPaso5Default;
+        if (texto) paso5El.textContent = texto;
+      }
     });
   });
 </script>
