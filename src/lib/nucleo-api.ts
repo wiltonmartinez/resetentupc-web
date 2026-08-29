@@ -102,6 +102,29 @@ export async function listarTestimonios(): Promise<TestimonioPublico[]> {
   return resultado?.data ?? [];
 }
 
+/**
+ * PROPUESTO — este endpoint todavía no existe en Núcleo (ver
+ * INSTRUCCIONES PARA EL BACKEND entregadas al usuario). Mientras no exista,
+ * `obtenerJson` devuelve null en el primer fetch fallido (404/red caída) y
+ * esta función devuelve `[]`, así que quien la llama debe caer de vuelta a
+ * `resolveErroresParaModelo` (errores.json local) — nunca debe romper la
+ * página ni bloquear el selector de errores.
+ */
+export interface ErrorPublico {
+  error_id: string;
+  codigo: string;
+  descripcion: string;
+  categoria: "bloqueo" | "combinacion" | "notificacion" | "otros";
+  estado_servicio: "compatible" | "requiere_revision" | "no_compatible";
+}
+
+export async function listarErroresPorModelo(marcaSlug: string, modeloSlug: string): Promise<ErrorPublico[]> {
+  const resultado = await obtenerJson<{ data: ErrorPublico[] }>(
+    `/api/public/errores/?marca=${encodeURIComponent(marcaSlug)}&modelo=${encodeURIComponent(modeloSlug)}`
+  );
+  return resultado?.data ?? [];
+}
+
 /** Título de respaldo cuando `titulo` viene vacío (campo no se llena desde el admin todavía). */
 export function tituloConRespaldo(item: { titulo: string; marca: string; modelo: string; error: string; pais: string }): string {
   if (item.titulo.trim() !== "") return item.titulo;

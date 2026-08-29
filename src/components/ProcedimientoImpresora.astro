@@ -1,0 +1,428 @@
+---
+/**
+ * Orquesta el flujo completo de reset por marca en 4 secciones: selector de
+ * error, sensor condicional (solo Epson-SC + 0014BD), índice visual 3x2 y
+ * desarrollo detallado de los 6 pasos.
+ *
+ * Datos: intenta primero Núcleo (errores por modelo, testimonios); si el
+ * endpoint de errores todavía no existe o Núcleo no responde, cae a
+ * errores.json local (resolveErroresParaModelo) sin romper la página — ver
+ * nucleo-api.ts. Los testimonios (Trustpilot y Cliente Satisfecho) SÍ son
+ * reales hoy (mismos endpoints que ya usan las páginas de Prueba Social);
+ * el testimonio local "PLACEHOLDER" del archivo estático solo se usa como
+ * último recurso si Núcleo no devuelve ninguno.
+ *
+ * IMPORTANTE: al depender de un fetch en vivo, la página que use este
+ * componente debe declarar `export const prerender = false;` — si no, el
+ * fetch (y el Math.random() de qué testimonio mostrar) se ejecuta una sola
+ * vez en build y queda fijo hasta el próximo deploy.
+ *
+ * Los videos de YouTube del Paso 5 se dejan como placeholders visibles
+ * (nunca se inventa una URL de YouTube real) hasta que exista el video.
+ */
+import { t, resolveErroresParaModelo, buildLocalizedPath, type ErrorResuelto } from "../i18n/utils";
+import type { Locale } from "../config/site";
+import ErrorSelector from "./ErrorSelector.astro";
+import SensorLocation from "./ui/SensorLocation.astro";
+import SensorConditionComparison from "./ui/SensorConditionComparison.astro";
+import ProcesoReutilizable from "./ui/ProcesoReutilizable.astro";
+import ProcesoReutilizableCanon from "./ui/ProcesoReutilizableCanon.astro";
+import ProcesoReutilizableEpsonSc from "./ui/ProcesoReutilizableEpsonSc.astro";
+import TrustpilotWidget from "./TrustpilotWidget.astro";
+import { getSensorTintaParaMarca } from "../data/sensor-tinta";
+import { CLIENTES_SATISFECHOS, tituloClienteSatisfecho, slugClienteSatisfecho } from "../data/cliente-satisfecho";
+import {
+  listarErroresPorModelo,
+  listarTestimonios,
+  listarClienteSatisfecho,
+  tituloConRespaldo,
+  type ErrorPublico,
+} from "../lib/nucleo-api";
+
+interface Props {
+  marca: "Epson" | "Canon" | "Epson-SC";
+  modelo: string;
+  /** No pedido explícitamente por props, pero necesario para reusar los
+   *  datos reales (i18n). Default "es". */
+  locale?: Locale;
+}
+
+const { marca, modelo, locale = "es" } = Astro.props;
+const marcaSlug = marca.toLowerCase(); // "epson" | "canon" | "epson-sc" — coincide con los slugs reales del sitio
+const modeloSlug = modelo.toLowerCase();
+const sourceIdBase = `${marcaSlug}-${modeloSlug}`;
+const localizedPath = buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`);
+
+/** "Bloqueo Código 00080000 Pump Cap Counter Reset" -> "00080000". */
+function obtenerErrorCorto(cadena?: string): string {
+  if (!cadena) return "";
+  const matchCodigo = cadena.match(/c[oó]digo\s+([0-9a-z]+)/i);
+  if (matchCodigo) return matchCodigo[1].toUpperCase();
+  // Epson doméstico no tiene código numérico visible (solo "almohadilla de
+  // tinta al final de su vida útil") — se usa el mismo término que ya usa
+  // el resto del sitio para este caso en vez de la frase completa.
+  if (/almohadilla/i.test(cadena)) return "Almohadillas";
+  return cadena.trim();
+}
+
+function mapearErrorPublico(e: ErrorPublico): ErrorResuelto {
+  return {
+    error_id: e.error_id,
+    nombre: e.codigo,
+    descripcion: e.descripcion,
+    codigo: e.codigo,
+    estado_servicio: e.estado_servicio,
+    tipo: e.categoria === "otros" ? undefined : e.categoria,
+  };
+}
+
+// 1) Errores: Núcleo primero, errores.json local como respaldo.
+const erroresNucleo = await listarErroresPorModelo(marcaSlug, modeloSlug);
+const fuenteErrores = erroresNucleo.length > 0 ? "nucleo" : "local";
+const erroresResueltos =
+  fuenteErrores === "nucleo" ? erroresNucleo.map(mapearErrorPublico) : resolveErroresParaModelo(marcaSlug, modeloSlug, locale);
+
+const erroresCompatibles = erroresResueltos.filter((e) => e.estado_servicio === "compatible");
+const variosCompatibles = erroresCompatibles.length > 1;
+
+// Epson-SC arranca en "00080000" (pedido explícito), no vacío ni el primer
+// error por orden alfabético — solo si ese código está confirmado para
+// este modelo; si no, cae al primero disponible.
+const ERROR_INICIAL_EPSON_SC = "epson-sc-00080000";
+const codigoErrorInicialSelector =
+  marcaSlug === "epson-sc" && erroresCompatibles.some((e) => e.error_id === ERROR_INICIAL_EPSON_SC)
+    ? ERROR_INICIAL_EPSON_SC
+    : undefined;
+const errorPrincipal = erroresCompatibles.find((e) => e.error_id === codigoErrorInicialSelector) ?? erroresCompatibles[0];
+const codigoCortoInicial = obtenerErrorCorto(errorPrincipal?.descripcion) || "Almohadillas";
+const esSensorInicial = marcaSlug === "epson-sc" && codigoCortoInicial === "0014BD";
+
+const tieneSensorTinta =
+  getSensorTintaParaMarca(marcaSlug) !== null &&
+  erroresCompatibles.some((e) => obtenerErrorCorto(e.descripcion) === "0014BD");
+
+// Paso 5 (video): fijo por marca; en Epson-SC además depende del error
+// elegido (Modo Inspección para 0014BD, Modo Reparación para el resto) —
+// esa parte se actualiza en vivo por script si hay selector.
+const paso5Videos =
+  marcaSlug === "epson"
+    ? [`Video correspondiente ${modelo}`]
+    : marcaSlug === "canon"
+      ? ["Video Modo Servicio", `Video correspondiente ${modelo}`]
+      : [esSensorInicial ? "Video Modo Inspección" : "Video Modo Reparación", `Video correspondiente ${modelo}`];
+
+// 2) Prueba Social (solo Epson): un testimonio de Trustpilot y uno Local,
+// elegidos al azar en el SERVIDOR en cada request real (no en build) —
+// requiere que la página use prerender=false, ver comentario arriba.
+const mostrarPruebaSocial = marcaSlug === "epson";
+
+let testimonioTrustpilot: { imagen: string; destino: string } | null = null;
+let testimonioLocal: { titulo: string; preview: string; href: string } | null = null;
+
+if (mostrarPruebaSocial) {
+  const trustpilotList = (await listarTestimonios()).filter((tt) => tt.url_imgur?.trim() || tt.url_trustpilot_review?.trim());
+  if (trustpilotList.length > 0) {
+    const elegido = trustpilotList[Math.floor(Math.random() * trustpilotList.length)];
+    testimonioTrustpilot = {
+      imagen: elegido.url_imgur,
+      destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur,
+    };
+  }
+
+  const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
+  if (clienteSatisfechoResp.data.length > 0) {
+    const elegido = clienteSatisfechoResp.data[Math.floor(Math.random() * clienteSatisfechoResp.data.length)];
+    testimonioLocal = {
+      titulo: tituloConRespaldo(elegido),
+      preview: elegido.error ? `${elegido.marca} ${elegido.modelo} — ${elegido.error}` : `${elegido.marca} ${elegido.modelo}`,
+      href: buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${elegido.slug}/`),
+    };
+  } else if (CLIENTES_SATISFECHOS.length > 0) {
+    // Último recurso: placeholder local (marcado como tal en cliente-satisfecho.ts)
+    // mientras Núcleo no tenga todavía ninguna evidencia real publicada.
+    const elegido = CLIENTES_SATISFECHOS[Math.floor(Math.random() * CLIENTES_SATISFECHOS.length)];
+    testimonioLocal = {
+      titulo: tituloClienteSatisfecho(elegido),
+      preview: elegido.previewTexto,
+      href: buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${slugClienteSatisfecho(elegido)}/`),
+    };
+  }
+}
+
+const hrefClienteSatisfecho = buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/");
+const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/");
+---
+
+<div class="procedimiento" data-procedimiento data-source-id-base={sourceIdBase} data-marca={marcaSlug} data-fuente-errores={fuenteErrores}>
+  <!-- SECCIÓN 1: Selector de error -->
+  {variosCompatibles ? (
+    <ErrorSelector
+      errores={erroresCompatibles}
+      marca={marca}
+      modelo={modelo}
+      modeloSlug={modeloSlug}
+      locale={locale}
+      urlPath={localizedPath}
+      sourceIdBase={sourceIdBase}
+      codigoErrorInicial={codigoErrorInicialSelector}
+    />
+  ) : (
+    errorPrincipal && <p class="procedimiento-error-unico">{errorPrincipal.descripcion}</p>
+  )}
+
+  <!-- SECCIÓN 2: Sensor de tinta (solo Epson-SC con 0014BD entre los confirmados) -->
+  {tieneSensorTinta && (
+    <div data-procedimiento-sensor hidden={!esSensorInicial}>
+      <div class="procedimiento-sensor-columnas">
+        <SensorLocation marcaSlug={marcaSlug} nombreMarca={marca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
+        <SensorConditionComparison
+          marcaSlug={marcaSlug}
+          tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
+          tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
+          hintVerLimpio={t(locale, "modelo.sensorHintVerLimpio")}
+          hintVerSucio={t(locale, "modelo.sensorHintVerSucio")}
+        />
+      </div>
+    </div>
+  )}
+
+  <!-- SECCIÓN 3: Índice visual 3x2 (variante real según marca) -->
+  {marcaSlug === "epson" && <ProcesoReutilizable locale={locale} modelo={modelo} />}
+  {marcaSlug === "canon" && <ProcesoReutilizableCanon locale={locale} modelo={modelo} />}
+  {marcaSlug === "epson-sc" && (
+    <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
+  )}
+
+  <!-- SECCIÓN 4: Desarrollo detallado -->
+  <ol class="procedimiento-detalle">
+    <li>
+      <h3>
+        1. Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+      </h3>
+    </li>
+
+    <li>
+      <h3>2. Requisitos</h3>
+      <ul>
+        <li>Impresora {marca} {modelo} conectada mediante cable USB al computador.</li>
+        <li>PC con Windows (7, 8, 10 u 11).</li>
+        <li>Conexión a internet estable.</li>
+        <li>Realizar los pasos asistidos (no es autónomo).</li>
+      </ul>
+    </li>
+
+    <li>
+      <h3>3. Revisión Compatibilidad (Ejecución del módulo de conexión USB Redirector y Technician ID)</h3>
+    </li>
+
+    <li>
+      <h3>4. Cotización y Pago</h3>
+    </li>
+
+    <li>
+      <h3>5. Procedimiento</h3>
+      <div class="procedimiento-videos" data-procedimiento-videos>
+        {paso5Videos.map((label, index) => (
+          <div class="procedimiento-video-placeholder" data-procedimiento-video={index === 0 && marcaSlug === "epson-sc" ? "condicional" : "fijo"}>
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+              <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
+            </svg>
+            <span class="procedimiento-video-label" data-procedimiento-video-label>{label}</span>
+            <span class="procedimiento-video-nota">(agregar el iframe de YouTube real aquí)</span>
+          </div>
+        ))}
+      </div>
+    </li>
+
+    <li>
+      <h3>6. Impresora Imprimiendo</h3>
+      {mostrarPruebaSocial && (
+        <div class="procedimiento-prueba-social">
+          {testimonioLocal && (
+            <div class="procedimiento-testimonio">
+              <p class="procedimiento-testimonio-titulo">{testimonioLocal.titulo}</p>
+              <p class="procedimiento-testimonio-preview">{testimonioLocal.preview}</p>
+            </div>
+          )}
+          {testimonioTrustpilot?.imagen && (
+            <a class="procedimiento-testimonio-trustpilot" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
+              <img src={testimonioTrustpilot.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
+            </a>
+          )}
+          <TrustpilotWidget />
+          <div class="procedimiento-prueba-social-enlaces">
+            <a href={hrefClienteSatisfecho}>Ver más clientes satisfechos →</a>
+            <a href={hrefTestimoniosTrustpilot}>Ver testimonios en Trustpilot →</a>
+          </div>
+        </div>
+      )}
+    </li>
+  </ol>
+</div>
+
+<script>
+  // Reactividad: escucha el mismo <select> de ErrorSelector.astro (por
+  // sourceIdBase) y actualiza el código mostrado en el Paso 1 y, solo para
+  // Epson-SC, la etiqueta condicional del primer video del Paso 5.
+  function obtenerErrorCorto(cadena: string): string {
+    if (!cadena) return "";
+    const matchCodigo = cadena.match(/c[oó]digo\s+([0-9a-z]+)/i);
+    if (matchCodigo) return matchCodigo[1].toUpperCase();
+    if (/almohadilla/i.test(cadena)) return "Almohadillas";
+    return cadena.trim();
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-procedimiento]").forEach((raiz) => {
+    const base = raiz.dataset.sourceIdBase;
+    const marcaSlug = raiz.dataset.marca;
+    const select = base ? (document.getElementById(`error-select-${base}`) as HTMLSelectElement | null) : null;
+    if (!select) return;
+
+    const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
+    const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
+    const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
+
+    select.addEventListener("change", () => {
+      const opcion = select.options[select.selectedIndex];
+      const descripcion = opcion?.getAttribute("data-descripcion") || "";
+      const codigo = obtenerErrorCorto(descripcion) || "Almohadillas";
+
+      if (codigoEl) codigoEl.textContent = codigo;
+      if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
+      if (videoCondicional) {
+        videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
+      }
+    });
+  });
+</script>
+
+<style>
+  .procedimiento {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .procedimiento-error-unico {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .procedimiento-sensor-columnas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .procedimiento-sensor-columnas {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .procedimiento-detalle {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .procedimiento-detalle h3 {
+    margin: 0 0 0.4rem;
+  }
+
+  .procedimiento-detalle ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .procedimiento-videos {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .procedimiento-videos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .procedimiento-video-placeholder {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    padding: 1.5rem 1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+    color: var(--color-text-subtle);
+    text-align: center;
+  }
+
+  .procedimiento-video-label {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .procedimiento-video-nota {
+    font-size: 0.78rem;
+  }
+
+  .procedimiento-prueba-social {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+  }
+
+  .procedimiento-testimonio {
+    width: 100%;
+    max-width: 480px;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+  }
+
+  .procedimiento-testimonio-titulo {
+    margin: 0 0 0.35rem;
+    font-weight: 700;
+  }
+
+  .procedimiento-testimonio-preview {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .procedimiento-testimonio-trustpilot {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    line-height: 0;
+  }
+
+  .procedimiento-testimonio-trustpilot img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .procedimiento-prueba-social-enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    font-weight: 600;
+  }
+
+  .procedimiento-prueba-social-enlaces a {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+</style>
