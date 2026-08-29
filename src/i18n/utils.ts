@@ -175,6 +175,12 @@ export interface ErrorResuelto {
   codigo?: string;
   estado_servicio: ErrorConcepto["estado_servicio"];
   tipo?: TipoError;
+  /** Modalidad del reset ("asistido", "autónomo", etc.) — todavía no la
+   *  entrega Núcleo ni errores.json local; se deja opcional para no
+   *  bloquear ni fabricar el dato hasta que exista del lado del backend. */
+  modo?: string;
+  /** Nombre de archivo de la foto del error (ver ErrorPublico.foto_url en nucleo-api.ts). */
+  foto_url?: string;
 }
 
 /**

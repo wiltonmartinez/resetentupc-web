@@ -102,6 +102,63 @@ export async function listarTestimonios(): Promise<TestimonioPublico[]> {
   return resultado?.data ?? [];
 }
 
+/**
+ * Ya en producción (confirmado por el equipo de Núcleo). `modelo` es
+ * opcional: pasarlo junto con `marca` no excluye los errores genéricos de
+ * la marca — Núcleo ya los incluye igual (probado en vivo contra
+ * epson-sc). Si Núcleo no tiene errores cargados todavía para una marca
+ * (hoy el caso de "epson" y "canon") devuelve `data: []`, y quien llama a
+ * esta función debe caer de vuelta a `resolveErroresParaModelo`
+ * (errores.json local) — nunca debe romper la página ni bloquear el
+ * selector de errores. Solo trae errores con estado_servicio "compatible"
+ * (Núcleo nunca expone "no_compatible" por esta vía).
+ */
+export interface ErrorPublico {
+  error_id: string;
+  codigo: string;
+  descripcion: string;
+  categoria: "bloqueo" | "combinacion" | "notificacion" | "otros";
+  estado_servicio: "compatible" | "requiere_revision" | "no_compatible";
+  /** Todavía no la entrega Núcleo — opcional para no romper el tipo cuando se agregue. */
+  modo?: string;
+  /**
+   * Nombre de archivo (ej. "almohadillas.jpg"), no URL — se resuelve contra
+   * los assets locales en src/assets/errores/ vía getErrorImageByFilename
+   * (error-images.js). Opcional: si Núcleo no la entrega, se cae al
+   * mapeo existente por error_id/modeloSlug.
+   */
+  foto_url?: string;
+}
+
+export async function listarErroresPorModelo(marcaSlug: string, modeloSlug?: string): Promise<ErrorPublico[]> {
+  const query = new URLSearchParams({ marca: marcaSlug });
+  if (modeloSlug) query.set("modelo", modeloSlug);
+  const resultado = await obtenerJson<{ data: ErrorPublico[] }>(`/api/public/errores/?${query.toString()}`);
+  return resultado?.data ?? [];
+}
+
+/**
+ * PROPUESTO — este endpoint todavía no existe en Núcleo (ver INSTRUCCIONES
+ * PARA EL BACKEND entregadas al usuario). Devuelve UNA evidencia ya elegida
+ * por Núcleo (aplica su propia regla de modelo hermano + azar si hay
+ * varias) para embeber directo en un <iframe> — mientras no exista,
+ * `obtenerJson` devuelve null y quien la llama cae de vuelta a
+ * `listarClienteSatisfecho()` filtrado por marca en el propio frontend.
+ */
+export interface EvidenciaClienteSatisfechoPublica {
+  html_url: string;
+  titulo: string;
+}
+
+export async function obtenerEvidenciaClienteSatisfecho(
+  marcaSlug: string,
+  modeloSlug: string
+): Promise<EvidenciaClienteSatisfechoPublica | null> {
+  return obtenerJson<EvidenciaClienteSatisfechoPublica>(
+    `/api/public/cliente-satisfecho/evidencia/?marca=${encodeURIComponent(marcaSlug)}&modelo=${encodeURIComponent(modeloSlug)}`
+  );
+}
+
 /** Título de respaldo cuando `titulo` viene vacío (campo no se llena desde el admin todavía). */
 export function tituloConRespaldo(item: { titulo: string; marca: string; modelo: string; error: string; pais: string }): string {
   if (item.titulo.trim() !== "") return item.titulo;

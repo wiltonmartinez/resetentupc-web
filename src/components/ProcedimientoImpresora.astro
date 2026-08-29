@@ -1,0 +1,638 @@
+---
+/**
+ * Orquesta el flujo completo de reset por marca en 4 secciones: selector de
+ * error, sensor condicional (solo Epson-SC + 0014BD), índice visual 3x2 y
+ * desarrollo detallado de los 6 pasos.
+ *
+ * Datos: intenta primero Núcleo (errores por modelo, testimonios) — el
+ * endpoint de errores ya está en producción, pero hoy solo tiene datos
+ * cargados para "epson-sc"; "epson" y "canon" devuelven data:[] hasta que
+ * el panel admin de Núcleo cargue sus errores, así que esas dos marcas
+ * siguen cayendo a errores.json local (resolveErroresParaModelo) por
+ * ahora — ver nucleo-api.ts. Los testimonios (Trustpilot y Cliente
+ * Satisfecho) sí son reales hoy para todas las marcas (mismos endpoints
+ * que ya usan las páginas de Prueba Social).
+ *
+ * IMPORTANTE: al depender de un fetch en vivo, la página que use este
+ * componente debe declarar `export const prerender = false;` — si no, el
+ * fetch (y el Math.random() de qué testimonio mostrar) se ejecuta una sola
+ * vez en build y queda fijo hasta el próximo deploy.
+ *
+ * El video del Paso 5 (solo Epson) sale de `listarResetRealizados` — si no
+ * hay uno para el modelo exacto, cae a cualquiera de la misma marca (una
+ * similitud simple hecha aquí; la similitud real "por modelo hermano" vive
+ * en Núcleo, ver INSTRUCCIONES PARA EL BACKEND más abajo). Nunca se inventa
+ * un youtube_id. Canon y Epson-SC conservan el placeholder visible de
+ * siempre hasta que se pida lo mismo para esas marcas.
+ */
+import { getImage } from "astro:assets";
+import {
+  t,
+  resolveErroresParaModelo,
+  buildLocalizedPath,
+  buildWhatsAppMessage,
+  buildWhatsAppLink,
+  type ErrorResuelto,
+} from "../i18n/utils";
+import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import ErrorSelector from "./ErrorSelector.astro";
+import SensorLocation from "./ui/SensorLocation.astro";
+import SensorConditionComparison from "./ui/SensorConditionComparison.astro";
+import ProcesoReutilizable from "./ui/ProcesoReutilizable.astro";
+import ProcesoReutilizableCanon from "./ui/ProcesoReutilizableCanon.astro";
+import ProcesoReutilizableEpsonSc from "./ui/ProcesoReutilizableEpsonSc.astro";
+import YouTubeFacade from "./ui/YouTubeFacade.astro";
+import TrustpilotWidget from "./TrustpilotWidget.astro";
+import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
+import { getSensorTintaParaMarca } from "../data/sensor-tinta";
+import { getErrorImage, getErrorImageByFilename } from "../lib/error-images.js";
+import {
+  listarErroresPorModelo,
+  listarResetRealizados,
+  listarTestimonios,
+  listarClienteSatisfecho,
+  obtenerEvidenciaClienteSatisfecho,
+  tituloConRespaldo,
+  type ErrorPublico,
+} from "../lib/nucleo-api";
+
+interface Props {
+  marca: "Epson" | "Canon" | "Epson-SC";
+  modelo: string;
+  /** No pedido explícitamente por props, pero necesario para reusar los
+   *  datos reales (i18n). Default "es". */
+  locale?: Locale;
+}
+
+const { marca, modelo, locale = "es" } = Astro.props;
+const marcaSlug = marca.toLowerCase(); // "epson" | "canon" | "epson-sc" — coincide con los slugs reales del sitio
+const modeloSlug = modelo.toLowerCase();
+const sourceIdBase = `${marcaSlug}-${modeloSlug}`;
+const localizedPath = buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`);
+const esEpson = marcaSlug === "epson";
+
+/** "Bloqueo Código 00080000 Pump Cap Counter Reset" -> "00080000". */
+function obtenerErrorCorto(cadena?: string): string {
+  if (!cadena) return "";
+  const matchCodigo = cadena.match(/c[oó]digo\s+([0-9a-z]+)/i);
+  if (matchCodigo) return matchCodigo[1].toUpperCase();
+  // Epson doméstico no tiene código numérico visible (solo "almohadilla de
+  // tinta al final de su vida útil") — se usa el mismo término que ya usa
+  // el resto del sitio para este caso en vez de la frase completa.
+  if (/almohadilla/i.test(cadena)) return "Almohadillas";
+  return cadena.trim();
+}
+
+function mapearErrorPublico(e: ErrorPublico): ErrorResuelto {
+  return {
+    error_id: e.error_id,
+    nombre: e.codigo,
+    descripcion: e.descripcion,
+    codigo: e.codigo,
+    estado_servicio: e.estado_servicio,
+    tipo: e.categoria === "otros" ? undefined : e.categoria,
+    modo: e.modo,
+    foto_url: e.foto_url,
+  };
+}
+
+// 1) Errores: Núcleo primero, errores.json local como respaldo.
+const erroresNucleo = await listarErroresPorModelo(marcaSlug, modeloSlug);
+const fuenteErrores = erroresNucleo.length > 0 ? "nucleo" : "local";
+const erroresResueltos =
+  fuenteErrores === "nucleo" ? erroresNucleo.map(mapearErrorPublico) : resolveErroresParaModelo(marcaSlug, modeloSlug, locale);
+
+const erroresCompatibles = erroresResueltos.filter((e) => e.estado_servicio === "compatible");
+const variosCompatibles = erroresCompatibles.length > 1;
+
+// Epson-SC arranca en "00080000" (pedido explícito), no vacío ni el primer
+// error por orden alfabético — solo si ese código está confirmado para
+// este modelo; si no, cae al primero disponible.
+const ERROR_INICIAL_EPSON_SC = "epson-sc-00080000";
+const codigoErrorInicialSelector =
+  marcaSlug === "epson-sc" && erroresCompatibles.some((e) => e.error_id === ERROR_INICIAL_EPSON_SC)
+    ? ERROR_INICIAL_EPSON_SC
+    : undefined;
+const errorPrincipal = erroresCompatibles.find((e) => e.error_id === codigoErrorInicialSelector) ?? erroresCompatibles[0];
+// Preferir el campo `codigo` (real y confiable en los datos de Núcleo; en
+// combinaciones tipo "00010000-00000004" la descripción no contiene la
+// palabra "Código", así que el parser de texto no serviría ahí) — el
+// regex sobre la descripción queda solo como respaldo para entradas
+// locales viejas que no tengan `codigo` cargado.
+const codigoCortoInicial =
+  (errorPrincipal?.codigo?.trim().toUpperCase() || obtenerErrorCorto(errorPrincipal?.descripcion)) || "Almohadillas";
+const esSensorInicial = marcaSlug === "epson-sc" && codigoCortoInicial === "0014BD";
+
+const tieneSensorTinta =
+  getSensorTintaParaMarca(marcaSlug) !== null &&
+  erroresCompatibles.some((e) => obtenerErrorCorto(e.descripcion) === "0014BD");
+
+// Paso 1 (Sección 4, solo Epson): foto real del error elegido — misma
+// fuente que ya usa ErrorSelector (src/lib/error-images.js), nunca
+// inventada aquí. Se actualiza en vivo por script si hay selector.
+// Prioridad: foto_url de Núcleo (nombre de archivo explícito) > mapeo por
+// error_id > mapeo por slug de modelo (respaldo genérico existente).
+const errorImgPrincipal =
+  (errorPrincipal?.foto_url ? getErrorImageByFilename(errorPrincipal.foto_url) : null) ??
+  getErrorImage(errorPrincipal?.error_id ?? "") ??
+  getErrorImage(modeloSlug);
+const fotoErrorPrincipalUrl = errorImgPrincipal ? (await getImage({ src: errorImgPrincipal, format: "webp", width: 480 })).src : "";
+const errorLargoPrincipal = errorPrincipal?.descripcion ?? "";
+
+// Paso 5 (video): fijo por marca; en Epson-SC además depende del error
+// elegido (Modo Inspección para 0014BD, Modo Reparación para el resto) —
+// esa parte se actualiza en vivo por script si hay selector.
+const paso5Videos =
+  marcaSlug === "canon"
+    ? ["Video Modo Servicio", `Video correspondiente ${modelo}`]
+    : marcaSlug === "epson-sc"
+      ? [esSensorInicial ? "Video Modo Inspección" : "Video Modo Reparación", `Video correspondiente ${modelo}`]
+      : [`Video correspondiente ${modelo}`];
+
+// Paso 5 (solo Epson): video real de "reset realizado" ya publicado para
+// este modelo. Si no hay uno exacto, cae a cualquiera de la misma marca
+// (respaldo simple por marca; el respaldo real "por modelo hermano" lo
+// decide Núcleo — ver INSTRUCCIONES PARA EL BACKEND). Nunca se inventa un
+// youtube_id: si no hay ningún candidato, se muestra el placeholder de
+// siempre en vez de romper la sección.
+let videoResetRealizado: { youtubeId: string; titulo: string; slug: string } | null = null;
+if (esEpson) {
+  const listadoReset = await listarResetRealizados(1, 50);
+  const porMarcaModelo = listadoReset.data.filter(
+    (r) => r.marca.toLowerCase() === marcaSlug && r.modelo.toLowerCase() === modeloSlug
+  );
+  const porMarca = listadoReset.data.filter((r) => r.marca.toLowerCase() === marcaSlug);
+  const candidatosVideo = porMarcaModelo.length > 0 ? porMarcaModelo : porMarca;
+  if (candidatosVideo.length > 0) {
+    const elegidoVideo = candidatosVideo[Math.floor(Math.random() * candidatosVideo.length)];
+    videoResetRealizado = { youtubeId: elegidoVideo.youtube_id, titulo: tituloConRespaldo(elegidoVideo), slug: elegidoVideo.slug };
+  }
+}
+const hrefResetEvidencia = buildLocalizedPath(locale, "/prueba-social/reset-evidencia/");
+const anchorResetEvidencia = videoResetRealizado
+  ? `Ver la evidencia completa: ${videoResetRealizado.titulo}`
+  : `Ver evidencias reales de reset en Epson`;
+
+// 2) Prueba Social (solo Epson): un testimonio de Trustpilot y uno Local,
+// elegidos al azar en el SERVIDOR en cada request real (no en build) —
+// requiere que la página use prerender=false, ver comentario arriba.
+const mostrarPruebaSocial = esEpson;
+
+let testimonioTrustpilot: { imagen: string; destino: string; marca: string; modelo: string } | null = null;
+let testimonioLocalEmbed: { url: string; titulo: string; slug?: string } | null = null;
+
+if (mostrarPruebaSocial) {
+  const trustpilotList = (await listarTestimonios()).filter((tt) => tt.url_imgur?.trim() || tt.url_trustpilot_review?.trim());
+  if (trustpilotList.length > 0) {
+    const elegido = trustpilotList[Math.floor(Math.random() * trustpilotList.length)];
+    testimonioTrustpilot = {
+      imagen: elegido.url_imgur,
+      destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur,
+      marca: elegido.marca,
+      modelo: elegido.modelo,
+    };
+  }
+
+  // Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
+  // propia regla de "modelo hermano" + azar entre varios casos. Si todavía
+  // no existe, se cae a filtrar por marca el listado real ya existente —
+  // sin lógica de modelo hermano (esa vive en Núcleo, no se duplica acá).
+  const evidenciaDirecta = await obtenerEvidenciaClienteSatisfecho(marcaSlug, modeloSlug);
+  if (evidenciaDirecta) {
+    testimonioLocalEmbed = { url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo };
+  } else {
+    const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
+    const dela = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
+    const candidatos = dela.length > 0 ? dela : clienteSatisfechoResp.data;
+    if (candidatos.length > 0) {
+      const elegido = candidatos[Math.floor(Math.random() * candidatos.length)];
+      testimonioLocalEmbed = { url: elegido.html_url, titulo: tituloConRespaldo(elegido), slug: elegido.slug };
+    }
+  }
+}
+
+const hrefClienteSatisfecho = buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/");
+const hrefClienteSatisfechoDetalle = testimonioLocalEmbed?.slug
+  ? buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${testimonioLocalEmbed.slug}/`)
+  : null;
+const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/");
+const anchorTrustpilot = testimonioTrustpilot
+  ? `Reseña real en Trustpilot${[testimonioTrustpilot.marca, testimonioTrustpilot.modelo].filter(Boolean).length ? ": " + [testimonioTrustpilot.marca, testimonioTrustpilot.modelo].filter(Boolean).join(" ") : ""}`
+  : "";
+
+// Módulo Contacto WhatsApp (cierre del Paso 6): CTA final con su propio
+// source_id para trazabilidad — el número vive únicamente en
+// WHATSAPP_NUMBER (config/site.ts), nunca se escribe a mano aquí.
+const mensajeFinalWhatsApp = buildWhatsAppMessage({
+  locale,
+  marca,
+  modelo,
+  error: errorPrincipal?.descripcion,
+  urlOrigen: `${SITE_URL}${localizedPath}`,
+});
+const hrefFinalWhatsApp = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeFinalWhatsApp);
+const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
+---
+
+<div class="procedimiento" data-procedimiento data-source-id-base={sourceIdBase} data-marca={marcaSlug} data-fuente-errores={fuenteErrores}>
+  <!-- SECCIÓN 1: Selector de error -->
+  {variosCompatibles ? (
+    <ErrorSelector
+      errores={erroresCompatibles}
+      marca={marca}
+      modelo={modelo}
+      modeloSlug={modeloSlug}
+      locale={locale}
+      urlPath={localizedPath}
+      sourceIdBase={sourceIdBase}
+      codigoErrorInicial={codigoErrorInicialSelector}
+    />
+  ) : (
+    errorPrincipal && <p class="procedimiento-error-unico">{errorPrincipal.descripcion}</p>
+  )}
+
+  <!-- SECCIÓN 2: Sensor de tinta (solo Epson-SC con 0014BD entre los confirmados) -->
+  {tieneSensorTinta && (
+    <div data-procedimiento-sensor hidden={!esSensorInicial}>
+      <div class="procedimiento-sensor-columnas">
+        <SensorLocation marcaSlug={marcaSlug} nombreMarca={marca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
+        <SensorConditionComparison
+          marcaSlug={marcaSlug}
+          tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
+          tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
+          hintVerLimpio={t(locale, "modelo.sensorHintVerLimpio")}
+          hintVerSucio={t(locale, "modelo.sensorHintVerSucio")}
+        />
+      </div>
+    </div>
+  )}
+
+  <!-- SECCIÓN 3: Índice visual 3x2 (variante real según marca) -->
+  {esEpson && (
+    <ProcesoReutilizable locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
+  )}
+  {marcaSlug === "canon" && <ProcesoReutilizableCanon locale={locale} modelo={modelo} />}
+  {marcaSlug === "epson-sc" && (
+    <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
+  )}
+
+  <!-- SECCIÓN 4: Desarrollo detallado -->
+  <ol class="procedimiento-detalle">
+    <li>
+      <h3>
+        1{esEpson ? ")" : "."} Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+      </h3>
+      {esEpson && (
+        <>
+          <p data-procedimiento-pregunta-error>
+            ¿Tu Epson {modelo} presenta un mensaje de error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span>?
+          </p>
+          {fotoErrorPrincipalUrl && (
+            <img
+              class="procedimiento-foto-error"
+              data-procedimiento-foto-error
+              src={fotoErrorPrincipalUrl}
+              alt={`Así se ve el error ${codigoCortoInicial} en Epson ${modelo}`}
+              loading="lazy"
+            />
+          )}
+        </>
+      )}
+    </li>
+
+    <li>
+      <h3>2{esEpson ? ")" : "."} Requisitos {esEpson ? "y Conexión USB" : ""}</h3>
+      {esEpson ? (
+        <ul>
+          <li>Impresora Epson {modelo} conectada mediante CABLE USB al computador.</li>
+          <li>PC con Windows (7, 8, 10 u 11).</li>
+          <li>Conexión a Internet estable.</li>
+          <li>
+            Realizar los pasos Asistidos (Recibe Reset asistido, no recibe Software autónomo).
+            {errorPrincipal?.modo && <> Modalidad: {errorPrincipal.modo}.</>}
+          </li>
+        </ul>
+      ) : (
+        <ul>
+          <li>Impresora {marca} {modelo} conectada mediante cable USB al computador.</li>
+          <li>PC con Windows (7, 8, 10 u 11).</li>
+          <li>Conexión a internet estable.</li>
+          <li>Realizar los pasos asistidos (no es autónomo).</li>
+        </ul>
+      )}
+    </li>
+
+    <li>
+      {esEpson ? (
+        <>
+          <h3>3) Revisión Asistida de compatibilidad USB y Reset Disponible</h3>
+          <p class="procedimiento-respuesta-destacada">Respuesta: Lectura 100%</p>
+          <div class="procedimiento-video-placeholder">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+              <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
+            </svg>
+            <span class="procedimiento-video-label">Pasos módulo USB Redirector</span>
+          </div>
+        </>
+      ) : (
+        <h3>3. Revisión Compatibilidad (Ejecución del módulo de conexión USB Redirector y Technician ID)</h3>
+      )}
+    </li>
+
+    <li>
+      <h3>4{esEpson ? ")" : "."} Cotización y Pago{esEpson ? " o Garantía Vigente" : ""}</h3>
+    </li>
+
+    <li>
+      <h3>5{esEpson ? ")" : "."} {esEpson ? "Reset Asistido en 1 minuto" : "Procedimiento"}</h3>
+      {esEpson ? (
+        videoResetRealizado ? (
+          <div class="procedimiento-video-real">
+            <YouTubeFacade
+              youtubeId={videoResetRealizado.youtubeId}
+              titulo={videoResetRealizado.titulo}
+              reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+            />
+            <a class="procedimiento-enlace-seo" href={`${hrefResetEvidencia}${videoResetRealizado.slug}/`}>
+              {anchorResetEvidencia} →
+            </a>
+          </div>
+        ) : (
+          <div class="procedimiento-video-placeholder">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+              <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
+            </svg>
+            <span class="procedimiento-video-label">Reset Asistido en 1 minuto</span>
+            <span class="procedimiento-video-nota">(evidencia en camino — aún sin video publicado para este modelo)</span>
+            <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
+          </div>
+        )
+      ) : (
+        <div class="procedimiento-videos" data-procedimiento-videos>
+          {paso5Videos.map((label, index) => (
+            <div class="procedimiento-video-placeholder" data-procedimiento-video={index === 0 && marcaSlug === "epson-sc" ? "condicional" : "fijo"}>
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+                <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+                <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
+              </svg>
+              <span class="procedimiento-video-label" data-procedimiento-video-label>{label}</span>
+              <span class="procedimiento-video-nota">(agregar el iframe de YouTube real aquí)</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </li>
+
+    <li>
+      <h3>6{esEpson ? ")" : "."} Impresora {esEpson ? "Desbloqueada y lista para imprimir" : "Imprimiendo"}</h3>
+      {mostrarPruebaSocial && (
+        <div class="procedimiento-prueba-social">
+          {testimonioLocalEmbed && (
+            <div class="procedimiento-testimonio-item">
+              <ClienteSatisfechoEmbed url={testimonioLocalEmbed.url} titulo={testimonioLocalEmbed.titulo} />
+              {hrefClienteSatisfechoDetalle && (
+                <a class="procedimiento-enlace-seo" href={hrefClienteSatisfechoDetalle}>
+                  Leer el caso completo: {testimonioLocalEmbed.titulo} →
+                </a>
+              )}
+            </div>
+          )}
+          {testimonioTrustpilot?.imagen && (
+            <div class="procedimiento-testimonio-item">
+              <a class="procedimiento-testimonio-trustpilot" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
+                <img src={testimonioTrustpilot.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
+              </a>
+              <a
+                class="procedimiento-enlace-seo"
+                href={testimonioTrustpilot.destino}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+              >
+                {anchorTrustpilot} →
+              </a>
+            </div>
+          )}
+          <TrustpilotWidget />
+          <div class="procedimiento-prueba-social-enlaces">
+            <a href={hrefClienteSatisfecho}>Ver más clientes satisfechos →</a>
+            <a href={hrefTestimoniosTrustpilot}>Ver testimonios en Trustpilot →</a>
+          </div>
+          <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow">
+            {t(locale, "common.whatsappButton")}
+          </a>
+        </div>
+      )}
+    </li>
+  </ol>
+</div>
+
+<script>
+  // Reactividad: escucha el mismo <select> de ErrorSelector.astro (por
+  // sourceIdBase) y actualiza el código y la descripción larga mostrados en
+  // el Paso 1, la foto del error (solo Epson) y, solo para Epson-SC, la
+  // etiqueta condicional del primer video del Paso 5.
+  function obtenerErrorCorto(cadena: string): string {
+    if (!cadena) return "";
+    const matchCodigo = cadena.match(/c[oó]digo\s+([0-9a-z]+)/i);
+    if (matchCodigo) return matchCodigo[1].toUpperCase();
+    if (/almohadilla/i.test(cadena)) return "Almohadillas";
+    return cadena.trim();
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-procedimiento]").forEach((raiz) => {
+    const base = raiz.dataset.sourceIdBase;
+    const marcaSlug = raiz.dataset.marca;
+    const select = base ? (document.getElementById(`error-select-${base}`) as HTMLSelectElement | null) : null;
+    if (!select) return;
+
+    const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
+    const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
+    const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
+    const errorLargoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-error-largo]");
+    const fotoErrorEl = raiz.querySelector<HTMLImageElement>("[data-procedimiento-foto-error]");
+
+    select.addEventListener("change", () => {
+      const opcion = select.options[select.selectedIndex];
+      const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
+      const descripcion = opcion?.getAttribute("data-descripcion") || "";
+      const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
+      const errorUrl = opcion?.getAttribute("data-error-imagen") || "";
+
+      if (codigoEl) codigoEl.textContent = codigo;
+      if (errorLargoEl && descripcion) errorLargoEl.textContent = descripcion;
+      if (fotoErrorEl && errorUrl) fotoErrorEl.src = errorUrl;
+      if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
+      if (videoCondicional) {
+        videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
+      }
+    });
+  });
+</script>
+
+<style>
+  .procedimiento {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .procedimiento-error-unico {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .procedimiento-sensor-columnas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .procedimiento-sensor-columnas {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .procedimiento-detalle {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .procedimiento-detalle h3 {
+    margin: 0 0 0.4rem;
+  }
+
+  .procedimiento-detalle ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .procedimiento-foto-error {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 0.5rem auto 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .procedimiento-respuesta-destacada {
+    display: inline-block;
+    margin: 0 0 0.6rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .procedimiento-videos {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .procedimiento-videos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .procedimiento-video-placeholder {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    padding: 1.5rem 1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+    color: var(--color-text-subtle);
+    text-align: center;
+  }
+
+  .procedimiento-video-label {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .procedimiento-video-nota {
+    font-size: 0.78rem;
+  }
+
+  .procedimiento-video-real {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 480px;
+  }
+
+  .procedimiento-enlace-seo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+
+  .procedimiento-prueba-social {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+  }
+
+  .procedimiento-testimonio-item {
+    display: grid;
+    gap: 0.4rem;
+    justify-items: center;
+    max-width: 320px;
+  }
+
+  .procedimiento-testimonio-trustpilot {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    line-height: 0;
+  }
+
+  .procedimiento-testimonio-trustpilot img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .procedimiento-prueba-social-enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    font-weight: 600;
+  }
+
+  .procedimiento-prueba-social-enlaces a {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+
+  .whatsapp-cta {
+    display: inline-block;
+    width: fit-content;
+    background: #25d366;
+    color: #062f1a;
+    font: inherit;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .whatsapp-cta:hover {
+    background: #1fb958;
+  }
+</style>
