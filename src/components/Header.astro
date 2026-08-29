@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import type { Locale, StaticPageKey } from "../config/site";
+import { PAGE_SLUGS, type Locale, type StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 import LanguageSelector from "./LanguageSelector.astro";
 import SoundToggle from "./ui/SoundToggle.astro";
@@ -14,6 +14,29 @@ interface Props {
 
 const { locale, path, pageKey } = Astro.props;
 const logo = getLogo();
+
+// `path` (prop) es siempre la ruta canónica SIN prefijo de idioma (ver
+// src/pages/**/*.astro, que la pasan igual a BaseLayout). Para saber si un
+// ítem del menú corresponde a la página actual comparamos contra esa misma
+// forma sin prefijo, en vez de contra los href (que sí llevan el prefijo).
+function staticPagePathSinPrefijo(pageKey: StaticPageKey): string {
+  return `/${PAGE_SLUGS[pageKey][locale]}/`;
+}
+
+const inicioPath = "/";
+const comoFuncionaPath = staticPagePathSinPrefijo("comoFunciona");
+const pruebaSocialPath = "/prueba-social/";
+const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
+const resetEvidenciaPath = "/prueba-social/reset-evidencia/";
+const testimoniosPath = "/prueba-social/testimonios-truspilot/";
+const preguntasFrecuentesPath = staticPagePathSinPrefijo("preguntasFrecuentes");
+const ruletaPath = "/ruleta/";
+const contactoPath = staticPagePathSinPrefijo("contacto");
+const consultaGarantiaPath = staticPagePathSinPrefijo("consultaGarantia");
+
+const pruebaSocialActivo = [pruebaSocialPath, clienteSatisfechoPath, resetEvidenciaPath, testimoniosPath].includes(
+  path
+);
 ---
 
 <header class="site-header">
@@ -43,7 +66,7 @@ const logo = getLogo();
     </button>
     <div class="site-nav-panel" id="site-nav">
       <nav class="site-nav" aria-label={t(locale, "nav.home")}>
-        <a href={buildLocalizedPath(locale, "/")}>
+        <a href={buildLocalizedPath(locale, "/")} class:list={{ "is-active": path === inicioPath }}>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <path
               d="M4 11.2 12 4l8 7.2M6 10v9a1 1 0 0 0 1 1h3.5v-6h3v6H17a1 1 0 0 0 1-1v-9"
@@ -55,7 +78,10 @@ const logo = getLogo();
           </svg>
           <span>{t(locale, "nav.home")}</span>
         </a>
-        <a href={buildStaticPagePath(locale, "comoFunciona")}>
+        <a
+          href={buildStaticPagePath(locale, "comoFunciona")}
+          class:list={{ "is-active": path === comoFuncionaPath }}
+        >
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" />
             <path d="M10 9.3 15 12l-5 2.7V9.3Z" fill="currentColor" />
@@ -63,7 +89,10 @@ const logo = getLogo();
           <span>{t(locale, "nav.comoFunciona")}</span>
         </a>
         <div class="site-nav-item-dropdown">
-          <a href={buildLocalizedPath(locale, "/prueba-social/")}>
+          <a
+            href={buildLocalizedPath(locale, "/prueba-social/")}
+            class:list={{ "is-active": pruebaSocialActivo }}
+          >
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
               <path
                 d="M12 3.5 14.5 9l6 .6-4.6 4 1.4 5.9L12 16.6l-5.3 2.9 1.4-5.9-4.6-4 6-.6L12 3.5Z"
@@ -76,7 +105,10 @@ const logo = getLogo();
           </a>
           <ul class="site-nav-submenu">
             <li>
-              <a href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}>
+              <a
+                href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}
+                class:list={{ "is-active": path === clienteSatisfechoPath }}
+              >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                   <path
                     d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
@@ -90,7 +122,10 @@ const logo = getLogo();
               </a>
             </li>
             <li>
-              <a href={buildLocalizedPath(locale, "/prueba-social/reset-evidencia/")}>
+              <a
+                href={buildLocalizedPath(locale, "/prueba-social/reset-evidencia/")}
+                class:list={{ "is-active": path === resetEvidenciaPath }}
+              >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" />
                   <path d="M10 9.3 15 12l-5 2.7V9.3Z" fill="currentColor" />
@@ -99,7 +134,10 @@ const logo = getLogo();
               </a>
             </li>
             <li>
-              <a href={buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/")}>
+              <a
+                href={buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/")}
+                class:list={{ "is-active": path === testimoniosPath }}
+              >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                   <path
                     d="M12 3.5 14.5 9l6 .6-4.6 4 1.4 5.9L12 16.6l-5.3 2.9 1.4-5.9-4.6-4 6-.6L12 3.5Z"
@@ -113,7 +151,10 @@ const logo = getLogo();
             </li>
           </ul>
         </div>
-        <a href={buildStaticPagePath(locale, "preguntasFrecuentes")}>
+        <a
+          href={buildStaticPagePath(locale, "preguntasFrecuentes")}
+          class:list={{ "is-active": path === preguntasFrecuentesPath }}
+        >
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" />
             <path
@@ -126,7 +167,7 @@ const logo = getLogo();
           </svg>
           <span>{t(locale, "nav.preguntasFrecuentes")}</span>
         </a>
-        <a href={buildLocalizedPath(locale, "/ruleta/")}>
+        <a href={buildLocalizedPath(locale, "/ruleta/")} class:list={{ "is-active": path === ruletaPath }}>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <rect x="4" y="9" width="16" height="11" rx="1.2" stroke="currentColor" stroke-width="1.6" />
             <path d="M4 9h16M12 9v11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -140,14 +181,20 @@ const logo = getLogo();
           </svg>
           <span>{t(locale, "nav.ruleta")}</span>
         </a>
-        <a href={buildStaticPagePath(locale, "contacto")} class="site-nav-contacto">
+        <a
+          href={buildStaticPagePath(locale, "contacto")}
+          class:list={["site-nav-contacto", { "is-active": path === contactoPath }]}
+        >
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" stroke="currentColor" stroke-width="1.6" />
             <path d="m4.2 7 7.8 5.8L19.8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
           <span>{t(locale, "nav.contacto")}</span>
         </a>
-        <a href={buildStaticPagePath(locale, "consultaGarantia")}>
+        <a
+          href={buildStaticPagePath(locale, "consultaGarantia")}
+          class:list={{ "is-active": path === consultaGarantiaPath }}
+        >
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <path
               d="M12 3.3 19 6v6c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6l7-2.7Z"
@@ -198,13 +245,17 @@ const logo = getLogo();
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    /* "stretch" (en vez de center) para que cada enlace del menú ocupe todo
+       el alto de la barra: así el ítem activo puede pintarse como una
+       pestaña real, de borde a borde, en vez de solo un recuadro centrado. */
+    align-items: stretch;
     gap: 1rem;
     padding: 0.75rem var(--space-md);
   }
   .site-logo {
     display: inline-flex;
     align-items: center;
+    align-self: center;
     gap: 0.5rem;
     font-weight: 800;
     text-decoration: none;
@@ -245,11 +296,12 @@ const logo = getLogo();
   }
   .site-nav {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 0.1rem;
     flex-wrap: wrap;
   }
   .site-nav a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.32rem;
@@ -277,8 +329,35 @@ const logo = getLogo();
     opacity: 1;
   }
 
+  /* Efecto "pestaña": el enlace de la página actual se pinta con el fondo
+     claro del contenido (en vez del oscuro del menú) y con esquinas
+     redondeadas solo arriba; un pseudo-elemento extiende ese mismo fondo
+     hacia abajo, por encima del padding y del borde naranja del header,
+     como si la pestaña "recortara" el separador — igual que una pestaña de
+     carpeta o de navegador que sobresale de la barra. */
+  .site-nav a.is-active,
+  .site-nav a.is-active:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+  .site-nav a.is-active svg,
+  .site-nav a.is-active:hover svg {
+    opacity: 1;
+  }
+  .site-nav a.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(-0.75rem - 3px);
+    height: calc(0.75rem + 3px);
+    background: var(--color-bg);
+  }
+
   .site-nav-item-dropdown {
     position: relative;
+    display: flex;
   }
 
   .site-nav-submenu {
@@ -323,6 +402,20 @@ const logo = getLogo();
     color: var(--color-primary-dark);
   }
 
+  /* Dentro del panel desplegable no aplica el efecto "pestaña" (no está
+     pegado a la barra oscura del header): la página actual se distingue
+     con el mismo resaltado que ya usa el hover, pero fijo. */
+  .site-nav-submenu a.is-active,
+  .site-nav-submenu a.is-active:hover {
+    background: var(--color-bg-muted);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+  }
+  .site-nav-submenu a.is-active::after {
+    content: none;
+  }
+
   /* Contacto es el destino final del recorrido (punto de conversión hacia
      WhatsApp) — se distingue con el color y peso ya usados en el sitio para
      énfasis (ver .process-step-enlace), sin convertirlo en un botón. */
@@ -338,6 +431,7 @@ const logo = getLogo();
   .site-header-controls {
     display: flex;
     align-items: center;
+    align-self: center;
     gap: 0.75rem;
     margin-left: auto;
   }
@@ -345,6 +439,7 @@ const logo = getLogo();
     display: none;
     align-items: center;
     justify-content: center;
+    align-self: center;
     width: 2.25rem;
     height: 2.25rem;
     margin-left: auto;
@@ -389,6 +484,7 @@ const logo = getLogo();
     }
     .site-nav-item-dropdown {
       position: static;
+      display: block;
     }
     .site-nav-submenu {
       display: block;
@@ -413,6 +509,25 @@ const logo = getLogo();
     }
     .site-nav-submenu a:hover svg {
       color: #ffffff;
+    }
+
+    /* En la lista vertical del menú móvil no hay barra de header contra la
+       que "recortar" una pestaña: la página actual se marca con un
+       resaltado de fondo de ancho completo en vez del efecto de pestaña. */
+    .site-nav a.is-active,
+    .site-nav a.is-active:hover {
+      background: rgba(249, 115, 22, 0.14);
+      color: #ffffff;
+      border-radius: 0;
+    }
+    .site-nav a.is-active::after {
+      content: none;
+    }
+    .site-nav-submenu a.is-active,
+    .site-nav-submenu a.is-active:hover {
+      background: rgba(249, 115, 22, 0.14);
+      color: #ffffff;
+      border-radius: 0;
     }
     .site-header-controls {
       margin: 0.75rem 0 0;
