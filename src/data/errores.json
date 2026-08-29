@@ -889,16 +889,17 @@
         "ru": "0014BD"
       },
       "error_description": {
-        "es": "Código 0014bd Sensor de tinta Requiere Desarmar, Limpiar y Resetear",
-        "en": "Code 0014BD - Ink sensor requires disassembly, cleaning, and reset",
-        "pt": "Código 0014BD - Sensor de tinta requer desmontagem, limpeza e reset",
-        "fr": "Code 0014BD - Capteur d'encre nécessitant démontage, nettoyage et réinitialisation",
-        "it": "Codice 0014BD - Sensore d'inchiostro che richiede smontaggio, pulizia e reset",
-        "de": "Code 0014BD - Tintensensor erfordert Zerlegen, Reinigung und Reset",
-        "ru": "Код 0014BD - датчик чернил требует разборки, очистки и сброса"
+        "es": "Bloqueo Código 0014BD error de bloqueo",
+        "en": "Blockage Code 0014BD blockage error",
+        "pt": "Bloqueio Código 0014BD erro de bloqueio",
+        "fr": "Blocage Code 0014BD erreur de blocage",
+        "it": "Blocco Codice 0014BD errore di blocco",
+        "de": "Blockierung Code 0014BD Blockierungsfehler",
+        "ru": "Блокировка Код 0014BD ошибка блокировки"
       },
       "symptoms": [],
-      "estado_servicio": "requiere_revision",
+      "estado_servicio": "compatible",
+      "tipo": "bloqueo",
       "modelos_confirmados": [
         {
           "marcaSlug": "epson-sc",
