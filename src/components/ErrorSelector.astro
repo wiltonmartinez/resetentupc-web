@@ -14,9 +14,10 @@ interface Props {
   locale: Locale;
   urlPath: string;
   sourceIdBase: string;
+  codigoErrorInicial?: string;
 }
 
-const { errores, marca, modelo, modeloSlug, locale, urlPath, sourceIdBase } = Astro.props;
+const { errores, marca, modelo, modeloSlug, locale, urlPath, sourceIdBase, codigoErrorInicial } = Astro.props;
 const urlOrigen = `${SITE_URL}${urlPath}`;
 
 function categoriaLabel(tipo: ErrorResuelto["tipo"]): string {
@@ -58,7 +59,7 @@ for (const op of opciones) {
   grupo[1].push(op);
 }
 
-const primera = opciones[0];
+const primera = (codigoErrorInicial && opciones.find((op) => op.errorId === codigoErrorInicial)) || opciones[0];
 const selectId = `error-select-${sourceIdBase}`;
 ---
 
@@ -70,6 +71,7 @@ const selectId = `error-select-${sourceIdBase}`;
         {ops.map((op) => (
           <option
             value={op.errorId}
+            selected={op.errorId === primera.errorId}
             data-href={op.href}
             data-source-id={op.sourceId}
             data-descripcion={op.descripcion}
