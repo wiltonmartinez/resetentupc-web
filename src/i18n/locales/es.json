@@ -138,7 +138,9 @@
     "evidenciaFlipHint": "Toca para ver la solución",
     "sensorUbicacionTitulo": "Ubicación del sensor de tinta",
     "sensorLimpioTitulo": "Sensor limpio",
-    "sensorSucioTitulo": "Sensor sucio"
+    "sensorSucioTitulo": "Sensor sucio",
+    "sensorHintVerLimpio": "Haz clic para ver el sensor limpio",
+    "sensorHintVerSucio": "Haz clic para ver el sensor sucio"
   },
   "flujoServicio": {
     "titulo": "Así es nuestro servicio, de principio a fin",
