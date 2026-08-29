@@ -10,7 +10,7 @@ import FaqAccordion from "../ui/FaqAccordion.astro";
 import ProcessSteps from "../ui/ProcessSteps.astro";
 import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
-import ServiceFlow from "../ui/ServiceFlow.astro";
+import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
 import EvidenceCard from "../ui/EvidenceCard.astro";
 import ErrorImage from "../ui/ErrorImage.astro";
 import VideoModal from "../ui/VideoModal.astro";
@@ -104,29 +104,6 @@ const breadcrumbJsonLd = {
     { "@type": "ListItem", position: 2, name: tituloConPrefijo, item: canonicalUrl },
   ],
 };
-
-const pasosFlujoServicio = [
-  {
-    titulo: t(locale, "flujoServicio.revisionTitulo"),
-    descripcion: t(locale, "flujoServicio.revisionTexto"),
-    icono: "revision" as const,
-  },
-  {
-    titulo: t(locale, "flujoServicio.pagoTitulo"),
-    descripcion: t(locale, "flujoServicio.pagoTexto"),
-    icono: "pago" as const,
-  },
-  {
-    titulo: t(locale, "flujoServicio.resetTitulo"),
-    descripcion: t(locale, "flujoServicio.resetTexto"),
-    icono: "reset" as const,
-  },
-  {
-    titulo: t(locale, "flujoServicio.certificadoTitulo"),
-    descripcion: t(locale, "flujoServicio.certificadoTexto"),
-    icono: "certificado" as const,
-  },
-];
 
 const img1 = getProcesoImage("paso1-descargar");
 const img2a = getProcesoImage("paso2-formulario");
@@ -307,14 +284,15 @@ const pasosProceso = [
     </InfoCard>
   )}
 
-  <!-- 3. Flujo del servicio: reforzar que es asistido, no autónomo -->
-  <InfoCard tone="muted">
-    <ServiceFlow
-      titulo={t(locale, "flujoServicio.titulo")}
-      introTexto={t(locale, "flujoServicio.introTexto")}
-      pasos={pasosFlujoServicio}
-    />
-  </InfoCard>
+  <!-- 3. Flujo del servicio: reforzar que es asistido, no autónomo.
+       ProcesoReutilizable usa íconos y texto específicos de Epson
+       ("Almohadillas en Epson {modelo}"), así que solo se muestra en
+       páginas de esa marca; Canon/Epson-SC no lo ven. -->
+  {marcaSlug === "epson" && (
+    <InfoCard tone="muted">
+      <ProcesoReutilizable locale={locale} modelo={nombreModelo} />
+    </InfoCard>
+  )}
 
   <!-- 3b. Comprensión de la solución: el proceso real del servicio -->
   <InfoCard tone="muted">

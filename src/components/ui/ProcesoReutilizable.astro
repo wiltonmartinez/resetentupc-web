@@ -1,0 +1,150 @@
+---
+// Grid de 6 pasos ("Proceso Reutilizable") para páginas de modelo
+// individual: reemplaza el grid de 4 tarjetas de ServiceFlow.astro (que
+// sigue usándose tal cual en la pestaña "Nuestro servicio" de Cómo
+// Funciona) con un recorrido de 6 pasos ilustrado con los íconos ya
+// preparados en src/assets/procedimiento/{1..6}.png.
+//
+// OJO: el ícono del paso 1 y el texto de esta tarjeta están diseñados
+// específicamente para Epson ("Almohadillas en Epson {modelo}") — este
+// componente asume que solo se usa en páginas de modelo Epson. Si se
+// reutiliza en páginas Canon el texto quedaría incorrecto (Canon no usa
+// terminología de "almohadillas").
+import { Image } from "astro:assets";
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+import icono1 from "../../assets/procedimiento/1.png";
+import icono2 from "../../assets/procedimiento/2.png";
+import icono3 from "../../assets/procedimiento/3.png";
+import icono4 from "../../assets/procedimiento/4.png";
+import icono5 from "../../assets/procedimiento/5.png";
+import icono6 from "../../assets/procedimiento/6.png";
+
+interface Props {
+  locale: Locale;
+  modelo: string;
+}
+
+const { locale, modelo } = Astro.props;
+
+const pasos = [
+  { icono: icono1, titulo: t(locale, "procesoReutilizable.paso1Titulo").replaceAll("{modelo}", modelo) },
+  { icono: icono2, titulo: t(locale, "procesoReutilizable.paso2Titulo") },
+  { icono: icono3, titulo: t(locale, "procesoReutilizable.paso3Titulo") },
+  { icono: icono4, titulo: t(locale, "procesoReutilizable.paso4Titulo") },
+  { icono: icono5, titulo: t(locale, "procesoReutilizable.paso5Titulo") },
+  { icono: icono6, titulo: t(locale, "procesoReutilizable.paso6Titulo") },
+];
+---
+
+<div class="pr">
+  <span class="pr-badge">✅ {t(locale, "procesoReutilizable.badge")} 🔄</span>
+
+  <ol class="pr-grid">
+    {
+      pasos.map((paso, index) => (
+        <li class="pr-card">
+          <span class="pr-numero" aria-hidden="true">
+            {index + 1}
+          </span>
+          <Image src={paso.icono} alt="" width={80} height={80} class="pr-imagen" />
+          <p class="pr-card-titulo">{paso.titulo}</p>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .pr {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .pr-badge {
+    justify-self: start;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .pr-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .pr-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.5rem 1.1rem 1.25rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+  }
+
+  .pr-numero {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.95rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-subtle);
+  }
+
+  .pr-imagen {
+    width: 4.5rem;
+    height: 4.5rem;
+    object-fit: contain;
+    flex: none;
+  }
+
+  .pr-card-titulo {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 780px) {
+    .pr-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pr-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pr-card {
+      flex-direction: row;
+      text-align: left;
+      padding: 1rem;
+    }
+
+    .pr-imagen {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    .pr-numero {
+      top: 0.6rem;
+      right: 0.75rem;
+    }
+  }
+</style>

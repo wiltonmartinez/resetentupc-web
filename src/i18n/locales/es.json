@@ -153,6 +153,15 @@
     "certificadoTexto": "Recibes un certificado de garantía del servicio realizado.",
     "cicloTexto": "El proceso se repite en cada nuevo servicio"
   },
+  "procesoReutilizable": {
+    "badge": "Proceso reutilizable",
+    "paso1Titulo": "Identificación del error Almohadillas en Epson {modelo}",
+    "paso2Titulo": "Requisitos y conexión USB",
+    "paso3Titulo": "Revisión Compatibilidad (Ejecución del módulo y Technician ID)",
+    "paso4Titulo": "Cotización y Pago",
+    "paso5Titulo": "Reset en 1 minuto (Ejecución del módulo y Technician ID)",
+    "paso6Titulo": "Impresora desbloqueada y lista para imprimir"
+  },
   "proceso": {
     "titulo": "Reset Asistido 100% Remoto por conexión USB",
     "introTexto": "Así funciona la conexión antes de escribirnos por WhatsApp:",
