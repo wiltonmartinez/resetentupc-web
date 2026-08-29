@@ -12,6 +12,7 @@ import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
 import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
 import ProcesoReutilizableCanon from "../ui/ProcesoReutilizableCanon.astro";
+import ProcesoReutilizableEpsonSc from "../ui/ProcesoReutilizableEpsonSc.astro";
 import EvidenceCard from "../ui/EvidenceCard.astro";
 import ErrorImage from "../ui/ErrorImage.astro";
 import VideoModal from "../ui/VideoModal.astro";
@@ -286,9 +287,10 @@ const pasosProceso = [
   )}
 
   <!-- 3. Flujo del servicio: reforzar que es asistido, no autónomo.
-       ProcesoReutilizable(Canon) usa íconos y texto específicos por marca
-       (Epson: "Almohadillas"; Canon: "5B00/1700"), así que cada variante
-       solo se muestra en páginas de su propia marca; Epson-SC no lo ve. -->
+       Cada variante de ProcesoReutilizable usa íconos y texto específicos
+       por marca (Epson: "Almohadillas"; Canon: "5B00/1700"; Epson-SC:
+       "bloqueo/notificación"), así que cada una solo se muestra en
+       páginas de su propia marca. -->
   {marcaSlug === "epson" && (
     <InfoCard tone="muted">
       <ProcesoReutilizable locale={locale} modelo={nombreModelo} />
@@ -297,6 +299,11 @@ const pasosProceso = [
   {marcaSlug === "canon" && (
     <InfoCard tone="muted">
       <ProcesoReutilizableCanon locale={locale} modelo={nombreModelo} />
+    </InfoCard>
+  )}
+  {marcaSlug === "epson-sc" && (
+    <InfoCard tone="muted">
+      <ProcesoReutilizableEpsonSc locale={locale} modelo={nombreModelo} />
     </InfoCard>
   )}
 
