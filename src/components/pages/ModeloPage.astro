@@ -2,7 +2,6 @@
 import { t, buildLocalizedPath, buildCanonicalUrl, resolveErroresParaModelo } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import AyudaCTA from "../AyudaCTA.astro";
-import ErrorSelector from "../ErrorSelector.astro";
 import Breadcrumb from "../Breadcrumb.astro";
 import InfoCard from "../ui/InfoCard.astro";
 import ChecklistItem from "../ui/ChecklistItem.astro";
@@ -10,16 +9,10 @@ import FaqAccordion from "../ui/FaqAccordion.astro";
 import ProcessSteps from "../ui/ProcessSteps.astro";
 import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
-import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
-import ProcesoReutilizableCanon from "../ui/ProcesoReutilizableCanon.astro";
-import ProcesoReutilizableEpsonSc from "../ui/ProcesoReutilizableEpsonSc.astro";
-import EvidenceCard from "../ui/EvidenceCard.astro";
+import ProcedimientoImpresora from "../ProcedimientoImpresora.astro";
 import ErrorImage from "../ui/ErrorImage.astro";
 import VideoModal from "../ui/VideoModal.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
-import SensorLocation from "../ui/SensorLocation.astro";
-import SensorConditionComparison from "../ui/SensorConditionComparison.astro";
-import { getSensorTintaParaMarca } from "../../data/sensor-tinta";
 import { getProcesoImage } from "../../lib/proceso-images.js";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, SITE_URL, type Locale } from "../../config/site";
 
@@ -52,17 +45,6 @@ const variosCompatibles = erroresCompatibles.length > 1;
 const hayOtros = erroresOtros.length > 0;
 const sinErrores = erroresCompatibles.length === 0 && !hayOtros;
 
-// Epson-SC parte seleccionado por defecto en "00080000" (en vez del primer
-// error por orden alfabético) — solo si ese código está entre los
-// confirmados para este modelo; si no, cae al comportamiento genérico.
-const ERROR_INICIAL_EPSON_SC = "epson-sc-00080000";
-const codigoErrorInicialSelector =
-  marcaSlug === "epson-sc" && erroresCompatibles.some((e) => e.error_id === ERROR_INICIAL_EPSON_SC)
-    ? ERROR_INICIAL_EPSON_SC
-    : undefined;
-const errorPrincipal =
-  erroresCompatibles.find((e) => e.error_id === codigoErrorInicialSelector) ?? erroresCompatibles[0];
-
 const tituloConPrefijo = `${t(locale, "modelo.prefijoTitulo")} ${nombreMarca} ${nombreModelo}`;
 
 const modeloId = `${marcaSlug}:${modeloSlug}`;
@@ -76,10 +58,6 @@ const reconocimiento = t(locale, "modelo.reconocimiento")
 const errorSectionText = t(locale, "modelo.errorSectionText")
   .replaceAll("{marca}", nombreMarca)
   .replaceAll("{modelo}", nombreModelo);
-
-const CODIGO_ERROR_SENSOR = "epson-sc-0014bd";
-const tieneSensorTinta =
-  getSensorTintaParaMarca(marcaSlug) !== null && erroresCompatibles.some((e) => e.error_id === CODIGO_ERROR_SENSOR);
 
 const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
 const faqConfianza = faqItems.slice(0, 3);
@@ -207,34 +185,7 @@ const pasosProceso = [
         <h2>{t(locale, "modelo.errorConfirmadoTitle")}</h2>
       </div>
 
-      {unCompatible && (
-        <>
-          <p>{unCompatible.descripcion}</p>
-          <EvidenceCard
-            errorId={unCompatible.error_id}
-            modeloSlug={modeloSlug}
-            nombreMarca={nombreMarca}
-            nombreModelo={nombreModelo}
-            errorCaption={t(locale, "modelo.evidenciaErrorCaption")}
-            solucionCaption={t(locale, "modelo.evidenciaSolucionCaption")}
-            flipHint={t(locale, "modelo.evidenciaFlipHint")}
-          />
-          <VideoModal archivo="reset-demo.mp4" label={t(locale, "modelo.videoResetLabel")} />
-        </>
-      )}
-
-      {variosCompatibles && (
-        <ErrorSelector
-          errores={erroresCompatibles}
-          marca={nombreMarca}
-          modelo={nombreModelo}
-          modeloSlug={modeloSlug}
-          locale={locale}
-          urlPath={localizedPath}
-          sourceIdBase={sourceIdBase}
-          codigoErrorInicial={codigoErrorInicialSelector}
-        />
-      )}
+      <ProcedimientoImpresora marca={nombreMarca} marcaSlug={marcaSlug} modelo={nombreModelo} locale={locale} />
     </InfoCard>
   ) : null}
 
@@ -282,53 +233,9 @@ const pasosProceso = [
     </InfoCard>
   )}
 
-  <!-- 2b. Sensor de tinta: solo para la familia Epson-SC (large-format), y
-       solo cuando el código de error 0014BD está entre los confirmados para
-       este modelo. Si hay selector de errores, la sección se muestra u
-       oculta en vivo según lo que el cliente elija (ver script más abajo);
-       si el 0014BD es el único error confirmado, queda visible siempre. -->
-  {tieneSensorTinta && (
-    <div data-sensor-tinta-wrapper data-source-id-base={sourceIdBase} hidden={errorPrincipal?.error_id !== CODIGO_ERROR_SENSOR}>
-      <InfoCard tone="muted">
-        <div class="sensor-tinta-columnas">
-          <SensorLocation marcaSlug={marcaSlug} nombreMarca={nombreMarca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
-          <SensorConditionComparison
-            marcaSlug={marcaSlug}
-            tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
-            tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
-            hintVerLimpio={t(locale, "modelo.sensorHintVerLimpio")}
-            hintVerSucio={t(locale, "modelo.sensorHintVerSucio")}
-          />
-        </div>
-      </InfoCard>
-    </div>
-  )}
-
-  <!-- 3. Flujo del servicio: reforzar que es asistido, no autónomo.
-       Cada variante de ProcesoReutilizable usa íconos y texto específicos
-       por marca (Epson: "Almohadillas"; Canon: "5B00/1700"; Epson-SC:
-       "bloqueo/notificación"), así que cada una solo se muestra en
-       páginas de su propia marca. -->
-  {marcaSlug === "epson" && (
-    <InfoCard tone="muted">
-      <ProcesoReutilizable locale={locale} modelo={nombreModelo} />
-    </InfoCard>
-  )}
-  {marcaSlug === "canon" && (
-    <InfoCard tone="muted">
-      <ProcesoReutilizableCanon locale={locale} modelo={nombreModelo} />
-    </InfoCard>
-  )}
-  {marcaSlug === "epson-sc" && (
-    <InfoCard tone="muted">
-      <ProcesoReutilizableEpsonSc
-        locale={locale}
-        modelo={nombreModelo}
-        sourceIdBase={sourceIdBase}
-        codigoErrorInicial={errorPrincipal?.error_id.replace(/^epson-sc-/i, "").toUpperCase()}
-      />
-    </InfoCard>
-  )}
+  <!-- Nota: el sensor de tinta (Epson-SC + 0014BD) y el índice visual 3x2
+       ("Flujo del servicio") ahora los renderiza ProcedimientoImpresora,
+       dentro de la sección "2. Confirmación del problema" de arriba. -->
 
   <!-- 3b. Comprensión de la solución: el proceso real del servicio -->
   <InfoCard tone="muted">
@@ -411,49 +318,12 @@ const pasosProceso = [
     });
     playFeedback(esFavoritoAhora ? "favoritoAgregar" : "favoritoQuitar");
   });
-
-  // Sección de sensor de tinta (Epson-SC): visible solo mientras el error
-  // elegido en el selector sea 0014BD. Escucha el mismo <select> que ya
-  // maneja ErrorSelector.astro (mismo sourceIdBase).
-  document.querySelectorAll<HTMLElement>("[data-sensor-tinta-wrapper]").forEach((wrapper) => {
-    const base = wrapper.dataset.sourceIdBase;
-    if (!base) return;
-
-    const select = document.getElementById(`error-select-${base}`) as HTMLSelectElement | null;
-    if (!select) return;
-
-    select.addEventListener("change", () => {
-      wrapper.hidden = select.value !== "epson-sc-0014bd";
-    });
-  });
 </script>
 
 <style>
   .modelo-page {
     display: grid;
     gap: var(--space-md);
-  }
-
-  [data-sensor-tinta-wrapper] {
-    display: grid;
-    gap: var(--space-md);
-  }
-
-  [data-sensor-tinta-wrapper][hidden] {
-    display: none;
-  }
-
-  .sensor-tinta-columnas {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
-
-  @media (min-width: 768px) {
-    .sensor-tinta-columnas {
-      grid-template-columns: 1fr 1fr;
-      align-items: start;
-    }
   }
 
   .modelo-cta-final {

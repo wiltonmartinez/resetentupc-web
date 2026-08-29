@@ -63,16 +63,36 @@ export interface ApiListado<T> {
 
 const META_VACIA: ApiMeta = { page: 1, per_page: 0, total: 0, total_pages: 0 };
 
+// Caché en memoria por proceso, keyed por ruta exacta. Las páginas de
+// modelo son estáticas (getStaticPaths, ~250 modelos × 8 idiomas): sin este
+// caché, cada página repetiría el MISMO fetch (mismo marca/modelo, o
+// incluso la misma lista completa sin filtrar) una vez por idioma,
+// multiplicando por miles las peticiones reales a Núcleo en un solo build.
+// Se cachea la Promise (no el valor ya resuelto) para que llamadas
+// concurrentes a la misma ruta —Astro puede renderizar páginas en
+// paralelo— compartan el mismo fetch en vuelo en vez de disparar uno cada
+// una. Vive solo mientras dura el proceso de build/dev — coherente con que
+// estos datos ya se tratan como "frescos hasta el próximo deploy".
+const cacheJson = new Map<string, Promise<unknown>>();
+
 async function obtenerJson<T>(ruta: string): Promise<T | null> {
-  try {
-    const respuesta = await fetch(`${NUCLEO_API_BASE_URL}${ruta}`);
-    if (!respuesta.ok) return null;
-    return (await respuesta.json()) as T;
-  } catch {
-    // Núcleo caído o inalcanzable — la página que llama decide cómo
-    // degradar (lista vacía, 404, etc.), nunca se rompe el build/SSR aquí.
-    return null;
-  }
+  const cacheada = cacheJson.get(ruta);
+  if (cacheada) return cacheada as Promise<T | null>;
+
+  const promesa = (async () => {
+    try {
+      const respuesta = await fetch(`${NUCLEO_API_BASE_URL}${ruta}`);
+      if (!respuesta.ok) return null;
+      return (await respuesta.json()) as T;
+    } catch {
+      // Núcleo caído o inalcanzable — la página que llama decide cómo
+      // degradar (lista vacía, 404, etc.), nunca se rompe el build/SSR aquí.
+      return null;
+    }
+  })();
+
+  cacheJson.set(ruta, promesa);
+  return promesa as Promise<T | null>;
 }
 
 export async function listarResetRealizados(pagina = 1, porPagina = 12): Promise<ApiListado<ResetRealizadoPublico>> {

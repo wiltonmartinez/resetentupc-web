@@ -13,10 +13,19 @@
  * Satisfecho) sí son reales hoy para todas las marcas (mismos endpoints
  * que ya usan las páginas de Prueba Social).
  *
- * IMPORTANTE: al depender de un fetch en vivo, la página que use este
- * componente debe declarar `export const prerender = false;` — si no, el
- * fetch (y el Math.random() de qué testimonio mostrar) se ejecuta una sola
- * vez en build y queda fijo hasta el próximo deploy.
+ * SSG + azar en el cliente (NO SSR): las páginas de modelo son estáticas
+ * (getStaticPaths, generadas en el build). El fetch a Núcleo pasa UNA vez
+ * en build y trae el listado COMPLETO de candidatos (video de Paso 5,
+ * testimonio local y Trustpilot de Paso 6) — el HTML estático renderiza el
+ * primer candidato de cada lista (para que Googlebot vea un enlace/video
+ * real desde el primer render), y el resto de la lista se embebe como JSON
+ * en la página. Un <script> del lado del cliente elige uno al azar por
+ * visitante y actualiza el DOM (ver más abajo) — así se logra variedad
+ * real por visita sin convertir el sitio a SSR ni depender de Núcleo en
+ * vivo para que la página cargue. Este componente NO usa React (el
+ * proyecto no lo tiene instalado) — la aleatoriedad por visitante se
+ * resuelve con vanilla JS, mismo patrón que el resto de la reactividad ya
+ * construida en este componente (basada en querySelector/dataset).
  *
  * El video del Paso 5 (solo Epson) sale de `listarResetRealizados` — si no
  * hay uno para el modelo exacto, cae a cualquiera de la misma marca (una
@@ -36,6 +45,8 @@ import {
 } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
 import ErrorSelector from "./ErrorSelector.astro";
+import EvidenceCard from "./ui/EvidenceCard.astro";
+import VideoModal from "./ui/VideoModal.astro";
 import SensorLocation from "./ui/SensorLocation.astro";
 import SensorConditionComparison from "./ui/SensorConditionComparison.astro";
 import ProcesoReutilizable from "./ui/ProcesoReutilizable.astro";
@@ -57,15 +68,26 @@ import {
 } from "../lib/nucleo-api";
 
 interface Props {
-  marca: "Epson" | "Canon" | "Epson-SC";
+  /** Nombre visible ("Epson", "Canon", "Epson SC"...) — solo para texto, no para lógica. */
+  marca: string;
+  /**
+   * Slug real ("epson" | "canon" | "epson-sc") usado por el resto del
+   * sitio (imágenes, Núcleo, sensor-tinta, etc). Opcional: si no se pasa,
+   * se deriva de `marca` en minúsculas — pero eso rompe para nombres con
+   * espacio como "Epson SC" (el slug real es "epson-sc", con guion, no
+   * "epson sc"). Siempre que el caller ya tenga el slug real (como
+   * ModeloPage.astro, que lo trae de modelos-muestra.json), debe pasarlo
+   * explícito acá en vez de confiar en la derivación.
+   */
+  marcaSlug?: string;
   modelo: string;
   /** No pedido explícitamente por props, pero necesario para reusar los
    *  datos reales (i18n). Default "es". */
   locale?: Locale;
 }
 
-const { marca, modelo, locale = "es" } = Astro.props;
-const marcaSlug = marca.toLowerCase(); // "epson" | "canon" | "epson-sc" — coincide con los slugs reales del sitio
+const { marca, marcaSlug: marcaSlugProp, modelo, locale = "es" } = Astro.props;
+const marcaSlug = marcaSlugProp ?? marca.toLowerCase().replace(/\s+/g, "-");
 const modeloSlug = modelo.toLowerCase();
 const sourceIdBase = `${marcaSlug}-${modeloSlug}`;
 const localizedPath = buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`);
@@ -94,6 +116,12 @@ function mapearErrorPublico(e: ErrorPublico): ErrorResuelto {
     modo: e.modo,
     foto_url: e.foto_url,
   };
+}
+
+// Evita que un título/URL con "</script>" dentro rompa el bloque JSON
+// embebido más abajo (ver SECCIÓN 4).
+function jsonSeguroParaScript(valor: unknown): string {
+  return JSON.stringify(valor).replace(/</g, "\\u003c");
 }
 
 // 1) Errores: Núcleo primero, errores.json local como respaldo.
@@ -155,70 +183,100 @@ const paso5Videos =
 // decide Núcleo — ver INSTRUCCIONES PARA EL BACKEND). Nunca se inventa un
 // youtube_id: si no hay ningún candidato, se muestra el placeholder de
 // siempre en vez de romper la sección.
-let videoResetRealizado: { youtubeId: string; titulo: string; slug: string } | null = null;
+//
+// SSG + azar en cliente: se trae la lista COMPLETA de candidatos; el HTML
+// estático (build) renderiza SIEMPRE el primero (para SEO), y el resto
+// viaja como JSON para que el <script> del cliente elija uno al azar por
+// visitante — ver SECCIÓN 4 y el <script> al final del archivo.
+interface CandidatoVideo {
+  youtubeId: string;
+  titulo: string;
+  slug: string;
+}
+let candidatosVideo: CandidatoVideo[] = [];
 if (esEpson) {
   const listadoReset = await listarResetRealizados(1, 50);
   const porMarcaModelo = listadoReset.data.filter(
     (r) => r.marca.toLowerCase() === marcaSlug && r.modelo.toLowerCase() === modeloSlug
   );
   const porMarca = listadoReset.data.filter((r) => r.marca.toLowerCase() === marcaSlug);
-  const candidatosVideo = porMarcaModelo.length > 0 ? porMarcaModelo : porMarca;
-  if (candidatosVideo.length > 0) {
-    const elegidoVideo = candidatosVideo[Math.floor(Math.random() * candidatosVideo.length)];
-    videoResetRealizado = { youtubeId: elegidoVideo.youtube_id, titulo: tituloConRespaldo(elegidoVideo), slug: elegidoVideo.slug };
-  }
+  const candidatos = porMarcaModelo.length > 0 ? porMarcaModelo : porMarca;
+  candidatosVideo = candidatos.map((r) => ({ youtubeId: r.youtube_id, titulo: tituloConRespaldo(r), slug: r.slug }));
 }
+const videoResetRealizado = candidatosVideo[0] ?? null;
 const hrefResetEvidencia = buildLocalizedPath(locale, "/prueba-social/reset-evidencia/");
 const anchorResetEvidencia = videoResetRealizado
   ? `Ver la evidencia completa: ${videoResetRealizado.titulo}`
   : `Ver evidencias reales de reset en Epson`;
 
-// 2) Prueba Social (solo Epson): un testimonio de Trustpilot y uno Local,
-// elegidos al azar en el SERVIDOR en cada request real (no en build) —
-// requiere que la página use prerender=false, ver comentario arriba.
+// 2) Prueba Social (solo Epson): un testimonio de Trustpilot y uno Local.
+// Mismo patrón SSG + azar en cliente que el video de arriba: se traen las
+// listas completas en build, se renderiza el primer candidato de cada una
+// para el HTML estático/SEO, y el resto viaja como JSON para el <script>.
 const mostrarPruebaSocial = esEpson;
 
-let testimonioTrustpilot: { imagen: string; destino: string; marca: string; modelo: string } | null = null;
-let testimonioLocalEmbed: { url: string; titulo: string; slug?: string } | null = null;
+interface CandidatoTrustpilot {
+  imagen: string;
+  destino: string;
+  marca: string;
+  modelo: string;
+}
+interface CandidatoLocal {
+  url: string;
+  titulo: string;
+  slug?: string;
+}
+
+let candidatosTrustpilot: CandidatoTrustpilot[] = [];
+let candidatosLocal: CandidatoLocal[] = [];
 
 if (mostrarPruebaSocial) {
   const trustpilotList = (await listarTestimonios()).filter((tt) => tt.url_imgur?.trim() || tt.url_trustpilot_review?.trim());
-  if (trustpilotList.length > 0) {
-    const elegido = trustpilotList[Math.floor(Math.random() * trustpilotList.length)];
-    testimonioTrustpilot = {
-      imagen: elegido.url_imgur,
-      destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur,
-      marca: elegido.marca,
-      modelo: elegido.modelo,
-    };
-  }
+  candidatosTrustpilot = trustpilotList.map((tt) => ({
+    imagen: tt.url_imgur,
+    destino: tt.url_trustpilot_review?.trim() || tt.url_imgur,
+    marca: tt.marca,
+    modelo: tt.modelo,
+  }));
 
   // Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
-  // propia regla de "modelo hermano" + azar entre varios casos. Si todavía
-  // no existe, se cae a filtrar por marca el listado real ya existente —
-  // sin lógica de modelo hermano (esa vive en Núcleo, no se duplica acá).
+  // propia regla de "modelo hermano". Si todavía no existe, se cae a
+  // filtrar por marca el listado real ya existente — sin lógica de modelo
+  // hermano (esa vive en Núcleo, no se duplica acá). El endpoint propuesto
+  // devuelve un único elemento ya elegido por Núcleo (no una lista), así
+  // que en ese caso no hay nada más que azarear en el cliente.
   const evidenciaDirecta = await obtenerEvidenciaClienteSatisfecho(marcaSlug, modeloSlug);
   if (evidenciaDirecta) {
-    testimonioLocalEmbed = { url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo };
+    candidatosLocal = [{ url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo }];
   } else {
     const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
     const dela = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
     const candidatos = dela.length > 0 ? dela : clienteSatisfechoResp.data;
-    if (candidatos.length > 0) {
-      const elegido = candidatos[Math.floor(Math.random() * candidatos.length)];
-      testimonioLocalEmbed = { url: elegido.html_url, titulo: tituloConRespaldo(elegido), slug: elegido.slug };
-    }
+    candidatosLocal = candidatos.map((e) => ({ url: e.html_url, titulo: tituloConRespaldo(e), slug: e.slug }));
   }
 }
+
+const testimonioTrustpilot = candidatosTrustpilot[0] ?? null;
+const testimonioLocalEmbed = candidatosLocal[0] ?? null;
 
 const hrefClienteSatisfecho = buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/");
 const hrefClienteSatisfechoDetalle = testimonioLocalEmbed?.slug
   ? buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${testimonioLocalEmbed.slug}/`)
   : null;
 const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/");
-const anchorTrustpilot = testimonioTrustpilot
-  ? `Reseña real en Trustpilot${[testimonioTrustpilot.marca, testimonioTrustpilot.modelo].filter(Boolean).length ? ": " + [testimonioTrustpilot.marca, testimonioTrustpilot.modelo].filter(Boolean).join(" ") : ""}`
-  : "";
+function anchorTrustpilotDe(c: CandidatoTrustpilot): string {
+  const marcaModelo = [c.marca, c.modelo].filter(Boolean).join(" ");
+  return `Reseña real en Trustpilot${marcaModelo ? ": " + marcaModelo : ""}`;
+}
+const anchorTrustpilot = testimonioTrustpilot ? anchorTrustpilotDe(testimonioTrustpilot) : "";
+
+// JSON embebido para el <script> del cliente (solo cuando hay más de un
+// candidato — si hay 0 o 1, no hace falta azarear nada).
+const candidatosParaCliente = jsonSeguroParaScript({
+  videos: candidatosVideo.length > 1 ? candidatosVideo : [],
+  local: candidatosLocal.length > 1 ? candidatosLocal : [],
+  trustpilot: candidatosTrustpilot.length > 1 ? candidatosTrustpilot : [],
+});
 
 // Módulo Contacto WhatsApp (cierre del Paso 6): CTA final con su propio
 // source_id para trazabilidad — el número vive únicamente en
@@ -248,7 +306,21 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       codigoErrorInicial={codigoErrorInicialSelector}
     />
   ) : (
-    errorPrincipal && <p class="procedimiento-error-unico">{errorPrincipal.descripcion}</p>
+    errorPrincipal && (
+      <>
+        <p class="procedimiento-error-unico">{errorPrincipal.descripcion}</p>
+        <EvidenceCard
+          errorId={errorPrincipal.error_id}
+          modeloSlug={modeloSlug}
+          nombreMarca={marca}
+          nombreModelo={modelo}
+          errorCaption={t(locale, "modelo.evidenciaErrorCaption")}
+          solucionCaption={t(locale, "modelo.evidenciaSolucionCaption")}
+          flipHint={t(locale, "modelo.evidenciaFlipHint")}
+        />
+        <VideoModal archivo="reset-demo.mp4" label={t(locale, "modelo.videoResetLabel")} />
+      </>
+    )
   )}
 
   <!-- SECCIÓN 2: Sensor de tinta (solo Epson-SC con 0014BD entre los confirmados) -->
@@ -348,7 +420,7 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       <h3>5{esEpson ? ")" : "."} {esEpson ? "Reset Asistido en 1 minuto" : "Procedimiento"}</h3>
       {esEpson ? (
         videoResetRealizado ? (
-          <div class="procedimiento-video-real">
+          <div class="procedimiento-video-real" data-procedimiento-video-real data-href-base={hrefResetEvidencia}>
             <YouTubeFacade
               youtubeId={videoResetRealizado.youtubeId}
               titulo={videoResetRealizado.titulo}
@@ -390,7 +462,7 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       {mostrarPruebaSocial && (
         <div class="procedimiento-prueba-social">
           {testimonioLocalEmbed && (
-            <div class="procedimiento-testimonio-item">
+            <div class="procedimiento-testimonio-item" data-procedimiento-testimonio-local data-href-base={hrefClienteSatisfecho}>
               <ClienteSatisfechoEmbed url={testimonioLocalEmbed.url} titulo={testimonioLocalEmbed.titulo} />
               {hrefClienteSatisfechoDetalle && (
                 <a class="procedimiento-enlace-seo" href={hrefClienteSatisfechoDetalle}>
@@ -400,8 +472,8 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
             </div>
           )}
           {testimonioTrustpilot?.imagen && (
-            <div class="procedimiento-testimonio-item">
-              <a class="procedimiento-testimonio-trustpilot" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
+            <div class="procedimiento-testimonio-item" data-procedimiento-testimonio-trustpilot>
+              <a class="procedimiento-testimonio-trustpilot-link" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
                 <img src={testimonioTrustpilot.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
               </a>
               <a
@@ -426,6 +498,10 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       )}
     </li>
   </ol>
+
+  {(candidatosVideo.length > 1 || candidatosLocal.length > 1 || candidatosTrustpilot.length > 1) && (
+    <script type="application/json" data-procedimiento-candidatos set:html={candidatosParaCliente} />
+  )}
 </div>
 
 <script>
@@ -445,29 +521,111 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
     const base = raiz.dataset.sourceIdBase;
     const marcaSlug = raiz.dataset.marca;
     const select = base ? (document.getElementById(`error-select-${base}`) as HTMLSelectElement | null) : null;
-    if (!select) return;
 
-    const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
-    const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
-    const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
-    const errorLargoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-error-largo]");
-    const fotoErrorEl = raiz.querySelector<HTMLImageElement>("[data-procedimiento-foto-error]");
+    if (select) {
+      const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
+      const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
+      const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
+      const errorLargoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-error-largo]");
+      const fotoErrorEl = raiz.querySelector<HTMLImageElement>("[data-procedimiento-foto-error]");
 
-    select.addEventListener("change", () => {
-      const opcion = select.options[select.selectedIndex];
-      const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
-      const descripcion = opcion?.getAttribute("data-descripcion") || "";
-      const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
-      const errorUrl = opcion?.getAttribute("data-error-imagen") || "";
+      select.addEventListener("change", () => {
+        const opcion = select.options[select.selectedIndex];
+        const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
+        const descripcion = opcion?.getAttribute("data-descripcion") || "";
+        const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
+        const errorUrl = opcion?.getAttribute("data-error-imagen") || "";
 
-      if (codigoEl) codigoEl.textContent = codigo;
-      if (errorLargoEl && descripcion) errorLargoEl.textContent = descripcion;
-      if (fotoErrorEl && errorUrl) fotoErrorEl.src = errorUrl;
-      if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
-      if (videoCondicional) {
-        videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
+        if (codigoEl) codigoEl.textContent = codigo;
+        if (errorLargoEl && descripcion) errorLargoEl.textContent = descripcion;
+        if (fotoErrorEl && errorUrl) fotoErrorEl.src = errorUrl;
+        if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
+        if (videoCondicional) {
+          videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
+        }
+      });
+    }
+
+    // SSG + azar en el cliente: el HTML estático ya trae el primer
+    // candidato de cada lista (video, testimonio local, Trustpilot) — acá
+    // se elige uno al azar POR VISITANTE entre todos los candidatos reales
+    // (traídos de Núcleo en build) y se actualiza el DOM ya renderizado.
+    // Si Núcleo no devolvió más de un candidato para algo, no hay bloque
+    // JSON y esta parte no hace nada (se queda con lo que ya se renderizó).
+    const candidatosScript = raiz.querySelector<HTMLScriptElement>("script[data-procedimiento-candidatos]");
+    if (!candidatosScript) return;
+
+    let candidatos: {
+      videos?: { youtubeId: string; titulo: string; slug: string }[];
+      local?: { url: string; titulo: string; slug?: string }[];
+      trustpilot?: { imagen: string; destino: string; marca: string; modelo: string }[];
+    };
+    try {
+      candidatos = JSON.parse(candidatosScript.textContent || "{}");
+    } catch {
+      return;
+    }
+
+    const alAzar = <T,>(lista: T[] | undefined): T | null =>
+      lista && lista.length > 0 ? lista[Math.floor(Math.random() * lista.length)] : null;
+
+    // Paso 5: video
+    const videoElegido = alAzar(candidatos.videos);
+    const videoWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-video-real]");
+    if (videoElegido && videoWrapper) {
+      const trigger = videoWrapper.querySelector<HTMLElement>("[data-youtube-trigger]");
+      const img = videoWrapper.querySelector<HTMLImageElement>(".youtube-card-trigger img");
+      const tituloEl = videoWrapper.querySelector<HTMLElement>(".youtube-card-titulo");
+      const enlaceSeo = videoWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
+      const hrefBase = videoWrapper.dataset.hrefBase || "";
+
+      if (trigger) {
+        trigger.setAttribute("data-youtube-id", videoElegido.youtubeId);
+        trigger.setAttribute("aria-label", trigger.getAttribute("aria-label")?.replace(/:.*/, `: ${videoElegido.titulo}`) || videoElegido.titulo);
       }
-    });
+      if (img) img.src = `https://i.ytimg.com/vi/${videoElegido.youtubeId}/hqdefault.jpg`;
+      if (tituloEl) tituloEl.textContent = videoElegido.titulo;
+      if (enlaceSeo) {
+        enlaceSeo.href = `${hrefBase}${videoElegido.slug}/`;
+        enlaceSeo.textContent = `Ver la evidencia completa: ${videoElegido.titulo} →`;
+      }
+    }
+
+    // Paso 6: testimonio local (Cliente Satisfecho)
+    const localElegido = alAzar(candidatos.local);
+    const localWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-testimonio-local]");
+    if (localElegido && localWrapper) {
+      const iframe = localWrapper.querySelector<HTMLIFrameElement>("iframe");
+      const enlaceSeo = localWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
+      const hrefBase = localWrapper.dataset.hrefBase || "";
+
+      if (iframe) {
+        iframe.src = `${localElegido.url}${localElegido.url.includes("?") ? "&" : "?"}chat=1`;
+        iframe.title = localElegido.titulo;
+      }
+      if (enlaceSeo && localElegido.slug) {
+        enlaceSeo.href = `${hrefBase}${localElegido.slug}/`;
+        enlaceSeo.textContent = `Leer el caso completo: ${localElegido.titulo} →`;
+      }
+    }
+
+    // Paso 6: testimonio Trustpilot
+    const trustpilotElegido = alAzar(candidatos.trustpilot);
+    const trustpilotWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-testimonio-trustpilot]");
+    if (trustpilotElegido && trustpilotWrapper) {
+      const enlaceImagen = trustpilotWrapper.querySelector<HTMLAnchorElement>(".procedimiento-testimonio-trustpilot-link");
+      const img = trustpilotWrapper.querySelector<HTMLImageElement>("img");
+      const enlaceSeo = trustpilotWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
+      const marcaModelo = [trustpilotElegido.marca, trustpilotElegido.modelo].filter(Boolean).join(" ");
+      const anchor = `Reseña real en Trustpilot${marcaModelo ? ": " + marcaModelo : ""}`;
+
+      if (enlaceImagen) enlaceImagen.href = trustpilotElegido.destino;
+      if (img) img.src = trustpilotElegido.imagen;
+      if (enlaceSeo) {
+        enlaceSeo.href = trustpilotElegido.destino;
+        enlaceSeo.textContent = `${anchor} →`;
+      }
+    }
   });
 </script>
 
@@ -592,14 +750,14 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
     max-width: 320px;
   }
 
-  .procedimiento-testimonio-trustpilot {
+  .procedimiento-testimonio-trustpilot-link {
     display: block;
     width: 100%;
     max-width: 320px;
     line-height: 0;
   }
 
-  .procedimiento-testimonio-trustpilot img {
+  .procedimiento-testimonio-trustpilot-link img {
     width: 100%;
     height: auto;
     border-radius: var(--radius-md);
