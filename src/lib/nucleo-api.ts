@@ -103,12 +103,15 @@ export async function listarTestimonios(): Promise<TestimonioPublico[]> {
 }
 
 /**
- * PROPUESTO — este endpoint todavía no existe en Núcleo (ver
- * INSTRUCCIONES PARA EL BACKEND entregadas al usuario). Mientras no exista,
- * `obtenerJson` devuelve null en el primer fetch fallido (404/red caída) y
- * esta función devuelve `[]`, así que quien la llama debe caer de vuelta a
- * `resolveErroresParaModelo` (errores.json local) — nunca debe romper la
- * página ni bloquear el selector de errores.
+ * Ya en producción (confirmado por el equipo de Núcleo). `modelo` es
+ * opcional: pasarlo junto con `marca` no excluye los errores genéricos de
+ * la marca — Núcleo ya los incluye igual (probado en vivo contra
+ * epson-sc). Si Núcleo no tiene errores cargados todavía para una marca
+ * (hoy el caso de "epson" y "canon") devuelve `data: []`, y quien llama a
+ * esta función debe caer de vuelta a `resolveErroresParaModelo`
+ * (errores.json local) — nunca debe romper la página ni bloquear el
+ * selector de errores. Solo trae errores con estado_servicio "compatible"
+ * (Núcleo nunca expone "no_compatible" por esta vía).
  */
 export interface ErrorPublico {
   error_id: string;
@@ -118,10 +121,10 @@ export interface ErrorPublico {
   estado_servicio: "compatible" | "requiere_revision" | "no_compatible";
 }
 
-export async function listarErroresPorModelo(marcaSlug: string, modeloSlug: string): Promise<ErrorPublico[]> {
-  const resultado = await obtenerJson<{ data: ErrorPublico[] }>(
-    `/api/public/errores/?marca=${encodeURIComponent(marcaSlug)}&modelo=${encodeURIComponent(modeloSlug)}`
-  );
+export async function listarErroresPorModelo(marcaSlug: string, modeloSlug?: string): Promise<ErrorPublico[]> {
+  const query = new URLSearchParams({ marca: marcaSlug });
+  if (modeloSlug) query.set("modelo", modeloSlug);
+  const resultado = await obtenerJson<{ data: ErrorPublico[] }>(`/api/public/errores/?${query.toString()}`);
   return resultado?.data ?? [];
 }
 

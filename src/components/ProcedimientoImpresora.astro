@@ -4,13 +4,14 @@
  * error, sensor condicional (solo Epson-SC + 0014BD), índice visual 3x2 y
  * desarrollo detallado de los 6 pasos.
  *
- * Datos: intenta primero Núcleo (errores por modelo, testimonios); si el
- * endpoint de errores todavía no existe o Núcleo no responde, cae a
- * errores.json local (resolveErroresParaModelo) sin romper la página — ver
- * nucleo-api.ts. Los testimonios (Trustpilot y Cliente Satisfecho) SÍ son
- * reales hoy (mismos endpoints que ya usan las páginas de Prueba Social);
- * el testimonio local "PLACEHOLDER" del archivo estático solo se usa como
- * último recurso si Núcleo no devuelve ninguno.
+ * Datos: intenta primero Núcleo (errores por modelo, testimonios) — el
+ * endpoint de errores ya está en producción, pero hoy solo tiene datos
+ * cargados para "epson-sc"; "epson" y "canon" devuelven data:[] hasta que
+ * el panel admin de Núcleo cargue sus errores, así que esas dos marcas
+ * siguen cayendo a errores.json local (resolveErroresParaModelo) por
+ * ahora — ver nucleo-api.ts. Los testimonios (Trustpilot y Cliente
+ * Satisfecho) sí son reales hoy para todas las marcas (mismos endpoints
+ * que ya usan las páginas de Prueba Social).
  *
  * IMPORTANTE: al depender de un fetch en vivo, la página que use este
  * componente debe declarar `export const prerender = false;` — si no, el
@@ -95,7 +96,13 @@ const codigoErrorInicialSelector =
     ? ERROR_INICIAL_EPSON_SC
     : undefined;
 const errorPrincipal = erroresCompatibles.find((e) => e.error_id === codigoErrorInicialSelector) ?? erroresCompatibles[0];
-const codigoCortoInicial = obtenerErrorCorto(errorPrincipal?.descripcion) || "Almohadillas";
+// Preferir el campo `codigo` (real y confiable en los datos de Núcleo; en
+// combinaciones tipo "00010000-00000004" la descripción no contiene la
+// palabra "Código", así que el parser de texto no serviría ahí) — el
+// regex sobre la descripción queda solo como respaldo para entradas
+// locales viejas que no tengan `codigo` cargado.
+const codigoCortoInicial =
+  (errorPrincipal?.codigo?.trim().toUpperCase() || obtenerErrorCorto(errorPrincipal?.descripcion)) || "Almohadillas";
 const esSensorInicial = marcaSlug === "epson-sc" && codigoCortoInicial === "0014BD";
 
 const tieneSensorTinta =
@@ -279,8 +286,9 @@ const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/tes
 
     select.addEventListener("change", () => {
       const opcion = select.options[select.selectedIndex];
+      const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
       const descripcion = opcion?.getAttribute("data-descripcion") || "";
-      const codigo = obtenerErrorCorto(descripcion) || "Almohadillas";
+      const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
 
       if (codigoEl) codigoEl.textContent = codigo;
       if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");

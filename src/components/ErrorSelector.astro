@@ -37,6 +37,7 @@ const opciones = await Promise.all(
     return {
       errorId: err.error_id,
       descripcion: err.descripcion,
+      codigo: err.codigo ?? "",
       categoria: categoriaLabel(err.tipo),
       href: buildWhatsAppLink(WHATSAPP_NUMBER, message),
       sourceId: `${sourceIdBase}-error-${err.error_id}`,
@@ -75,6 +76,7 @@ const selectId = `error-select-${sourceIdBase}`;
             data-href={op.href}
             data-source-id={op.sourceId}
             data-descripcion={op.descripcion}
+            data-codigo={op.codigo}
             data-error-imagen={op.errorImgUrl}
             data-solucion-imagen={op.solucionImgUrl}
           >
