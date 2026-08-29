@@ -1,7 +1,6 @@
 ---
 import { t } from "../../i18n/utils";
 import InfoCard from "../ui/InfoCard.astro";
-import ServiceFlow from "../ui/ServiceFlow.astro";
 import ProcessSteps from "../ui/ProcessSteps.astro";
 import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
 import AyudaCTA from "../AyudaCTA.astro";
@@ -14,29 +13,6 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-
-const pasosFlujoServicio = [
-  {
-    titulo: t(locale, "flujoServicio.revisionTitulo"),
-    descripcion: t(locale, "flujoServicio.revisionTexto"),
-    icono: "revision" as const,
-  },
-  {
-    titulo: t(locale, "flujoServicio.pagoTitulo"),
-    descripcion: t(locale, "flujoServicio.pagoTexto"),
-    icono: "pago" as const,
-  },
-  {
-    titulo: t(locale, "flujoServicio.resetTitulo"),
-    descripcion: t(locale, "flujoServicio.resetTexto"),
-    icono: "reset" as const,
-  },
-  {
-    titulo: t(locale, "flujoServicio.certificadoTitulo"),
-    descripcion: t(locale, "flujoServicio.certificadoTexto"),
-    icono: "certificado" as const,
-  },
-];
 
 const img1 = getProcesoImage("paso1-descargar");
 const img2a = getProcesoImage("paso2-formulario");
@@ -79,15 +55,6 @@ const pasosProceso = [
 
 <article class="como-funciona">
   <h1>{t(locale, "comoFunciona.heading")}</h1>
-
-  <InfoCard tone="muted">
-    <ServiceFlow
-      titulo={t(locale, "flujoServicio.titulo")}
-      introTexto={t(locale, "flujoServicio.introTexto")}
-      cicloTexto={t(locale, "flujoServicio.cicloTexto")}
-      pasos={pasosFlujoServicio}
-    />
-  </InfoCard>
 
   <InfoCard tone="muted">
     <ProcesoReutilizable locale={locale} isGeneric />
