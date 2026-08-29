@@ -77,62 +77,6 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     <!-- TrustBox script -->
     <script type="text/javascript" src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
     <!-- End TrustBox script -->
-    <!-- Crisp chat: la burbuja propia se oculta por CSS (#crisp-chatbox, ver
-         estilo global más abajo), NUNCA con "do chat:hide" — ese comando le
-         indica al propio SDK de Crisp que el widget está oculto, y Crisp
-         entonces nunca llega a montar su iframe interno (se comprobó en vivo:
-         con chat:hide puesto, el contenedor se mostraba pero con 0 iframes
-         adentro, incluso después de chat:open). El CSS oculta el contenedor
-         sin que Crisp se entere; los eventos reales chat:opened/chat:closed
-         del SDK alternan una clase en <body> que el CSS usa para mostrar el
-         widget SOLO mientras el chat está realmente abierto.
-         Los "on chat:opened/closed" NO se ponen en el array inicial, ni en
-         "onload" del <script>, ni en CRISP_READY_TRIGGER — las tres formas
-         se probaron en vivo en producción y ninguna disparó los listeners
-         (is('chat:opened') sí pasaba a true, pero el evento nunca llegaba;
-         llamar CRISP_READY_TRIGGER a mano confirmó que Crisp ni siquiera
-         invoca ese gancho en esta integración). Lo único que funcionó de
-         forma consistente fue registrar los "on" en cualquier momento
-         POSTERIOR a que window.$crisp deje de ser el array de cola y pase a
-         ser el objeto real del SDK (se detecta por la aparición del método
-         $crisp.is, que el array no tiene) — por eso se espera activamente
-         a esa señal en vez de confiar en un evento de terceros. -->
-    <script is:inline type="text/javascript">
-      window.$crisp = [];
-      window.CRISP_WEBSITE_ID = "3da814a8-583a-4d03-9f45-af1bc77104de";
-      (function () {
-        function registrarEventosChat() {
-          window.$crisp.push([
-            "on",
-            "chat:opened",
-            function () {
-              document.body.classList.add("crisp-chat-activo");
-            },
-          ]);
-          window.$crisp.push([
-            "on",
-            "chat:closed",
-            function () {
-              document.body.classList.remove("crisp-chat-activo");
-            },
-          ]);
-        }
-        function esperarCrispListo() {
-          if (window.$crisp && typeof window.$crisp.is === "function") {
-            registrarEventosChat();
-          } else {
-            setTimeout(esperarCrispListo, 200);
-          }
-        }
-        esperarCrispListo();
-        const d = document;
-        const s = d.createElement("script");
-        s.src = "https://client.crisp.chat/l.js";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      })();
-    </script>
-    <!-- End Crisp chat -->
     {GA_MEASUREMENT_ID && (
       <>
         <!-- Google Analytics 4 -->
@@ -300,18 +244,5 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
       gap: var(--space-md);
       border-radius: var(--radius-md);
     }
-  }
-
-  /* Burbuja propia de Crisp: oculta por defecto siempre. Solo se muestra
-     mientras el chat está realmente abierto (ver script de Crisp arriba,
-     que alterna esta clase con los eventos chat:opened/chat:closed del
-     propio SDK) — así nunca compite con el botón circular del hub de
-     contacto en la esquina inferior derecha. */
-  #crisp-chatbox {
-    display: none !important;
-  }
-
-  body.crisp-chat-activo #crisp-chatbox {
-    display: block !important;
   }
 </style>
