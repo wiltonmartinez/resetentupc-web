@@ -408,6 +408,9 @@ const pasosProceso = [
           Realizar los pasos Asistidos (Recibe Reset asistido, no recibe Software autónomo).
           {errorPrincipal?.modo && <> Modalidad: {errorPrincipal.modo}.</>}
         </li>
+        <li data-procedimiento-requisito-sensor hidden={!esSensorInicial}>
+          Realizar limpieza 100% impecable a Sensor de tinta, Plásticos y la Almohadilla debe ser nueva antes del reset.
+        </li>
       </ul>
     </li>
 
@@ -557,6 +560,7 @@ const pasosProceso = [
     if (select) {
       const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
       const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
+      const requisitoSensor = raiz.querySelector<HTMLElement>("[data-procedimiento-requisito-sensor]");
       const errorLargoEls = raiz.querySelectorAll<HTMLElement>("[data-procedimiento-error-largo]");
 
       select.addEventListener("change", () => {
@@ -564,10 +568,12 @@ const pasosProceso = [
         const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
         const descripcion = opcion?.getAttribute("data-descripcion") || "";
         const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
+        const esSensor = marcaSlug === "epson-sc" && codigo === "0014BD";
 
         if (codigoEl) codigoEl.textContent = codigo;
         if (descripcion) errorLargoEls.forEach((el) => (el.textContent = descripcion));
-        if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
+        if (sensorWrapper) sensorWrapper.hidden = !esSensor;
+        if (requisitoSensor) requisitoSensor.hidden = !esSensor;
       });
     }
 
