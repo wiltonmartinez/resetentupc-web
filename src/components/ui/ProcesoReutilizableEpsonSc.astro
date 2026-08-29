@@ -1,10 +1,16 @@
 ---
 // Variante Epson-SC (formato ancho) de ProcesoReutilizable.astro: misma
 // estructura (grid 3x2 en escritorio / 1 columna en móvil), con los
-// íconos de src/assets/procedimiento-epson-sc/{1..6}.png. Los textos de
-// las tarjetas 1 y 5 están adaptados a esta línea (bloqueo/notificación en
-// vez de "Almohadillas"; "Modo Reparación" en el paso de reset) — el resto
-// es idéntico a la versión Epson doméstico.
+// íconos de src/assets/procedimiento-epson-sc/{1..6}.png.
+//
+// La Tarjeta 1 es reactiva: cuando el modelo tiene varios errores
+// confirmados, ModeloPage.astro ya renderiza un <ErrorSelector> con un
+// <select id={`error-select-${sourceIdBase}`}> (ver ErrorSelector.astro).
+// Este componente escucha ese mismo <select> por su id — construido con el
+// mismo sourceIdBase — y actualiza el código de error mostrado en la
+// Tarjeta 1 cada vez que el cliente cambia su selección. Antes de que el
+// cliente elija algo, o si el modelo no tiene selector (un solo error
+// confirmado, o ninguno), se muestra "Almohadillas" como valor genérico.
 import { Image } from "astro:assets";
 import { t } from "../../i18n/utils";
 import type { Locale } from "../../config/site";
@@ -18,12 +24,16 @@ import icono6 from "../../assets/procedimiento-epson-sc/6.png";
 interface Props {
   locale: Locale;
   modelo: string;
+  sourceIdBase: string;
+  codigoErrorInicial?: string;
 }
 
-const { locale, modelo } = Astro.props;
+const { locale, modelo, sourceIdBase, codigoErrorInicial = "Almohadillas" } = Astro.props;
 
-const pasos = [
-  { icono: icono1, titulo: t(locale, "procesoReutilizable.paso1TituloEpsonSc").replaceAll("{modelo}", modelo) },
+const paso1Template = t(locale, "procesoReutilizable.paso1TituloEpsonSc").replaceAll("{modelo}", modelo);
+const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
+
+const pasosResto = [
   { icono: icono2, titulo: t(locale, "procesoReutilizable.paso2Titulo") },
   { icono: icono3, titulo: t(locale, "procesoReutilizable.paso3Titulo") },
   { icono: icono4, titulo: t(locale, "procesoReutilizable.paso4Titulo") },
@@ -36,11 +46,18 @@ const pasos = [
   <span class="pr-badge">✅ {t(locale, "procesoReutilizable.badge")} 🔄</span>
 
   <ol class="pr-grid">
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">1</span>
+      <Image src={icono1} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo" data-pr-source-id-base={sourceIdBase}>
+        {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
+      </p>
+    </li>
     {
-      pasos.map((paso, index) => (
+      pasosResto.map((paso, index) => (
         <li class="pr-card">
           <span class="pr-numero" aria-hidden="true">
-            {index + 1}
+            {index + 2}
           </span>
           <Image src={paso.icono} alt="" width={80} height={80} class="pr-imagen" />
           <p class="pr-card-titulo">{paso.titulo}</p>
@@ -49,6 +66,27 @@ const pasos = [
     }
   </ol>
 </div>
+
+<script>
+  // Escucha el <select> de ErrorSelector.astro (mismo sourceIdBase) y
+  // refleja el código elegido en la Tarjeta 1. Si esa página no tiene
+  // selector (un solo error confirmado, o ninguno), no hace nada — la
+  // tarjeta se queda con su valor inicial ("Almohadillas" por defecto).
+  document.querySelectorAll<HTMLElement>("[data-pr-source-id-base]").forEach((titulo) => {
+    const base = titulo.dataset.prSourceIdBase;
+    const codigoEl = titulo.querySelector<HTMLElement>("[data-pr-codigo]");
+    if (!base || !codigoEl) return;
+
+    const select = document.getElementById(`error-select-${base}`) as HTMLSelectElement | null;
+    if (!select) return;
+
+    select.addEventListener("change", () => {
+      const valor = select.value || "";
+      const codigo = valor.replace(/^epson-sc-/i, "").toUpperCase();
+      codigoEl.textContent = codigo || "Almohadillas";
+    });
+  });
+</script>
 
 <style>
   .pr {
@@ -113,6 +151,10 @@ const pasos = [
     font-size: 0.92rem;
     line-height: 1.4;
     color: var(--color-text);
+  }
+
+  .pr-codigo-error {
+    font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 780px) {
