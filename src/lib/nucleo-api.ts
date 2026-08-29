@@ -119,6 +119,8 @@ export interface ErrorPublico {
   descripcion: string;
   categoria: "bloqueo" | "combinacion" | "notificacion" | "otros";
   estado_servicio: "compatible" | "requiere_revision" | "no_compatible";
+  /** Todavía no la entrega Núcleo — opcional para no romper el tipo cuando se agregue. */
+  modo?: string;
 }
 
 export async function listarErroresPorModelo(marcaSlug: string, modeloSlug?: string): Promise<ErrorPublico[]> {

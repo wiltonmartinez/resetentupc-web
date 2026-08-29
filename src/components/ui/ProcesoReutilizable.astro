@@ -5,11 +5,17 @@
 // Funciona) con un recorrido de 6 pasos ilustrado con los íconos ya
 // preparados en src/assets/procedimiento/{1..6}.png.
 //
-// OJO: el ícono del paso 1 y el texto de esta tarjeta están diseñados
-// específicamente para Epson ("Almohadillas en Epson {modelo}") — este
-// componente asume que solo se usa en páginas de modelo Epson. Si se
-// reutiliza en páginas Canon el texto quedaría incorrecto (Canon no usa
-// terminología de "almohadillas").
+// La Tarjeta 1 es reactiva: cuando el modelo tiene varios errores
+// confirmados, ProcedimientoImpresora.astro ya renderiza un <ErrorSelector>
+// con un <select id={`error-select-${sourceIdBase}`}> (ver
+// ErrorSelector.astro). Este componente escucha ese mismo <select> —
+// construido con el mismo sourceIdBase — y actualiza el código mostrado.
+// Antes de que el cliente elija algo, o si el modelo no tiene selector,
+// muestra `codigoErrorInicial` (por defecto "Almohadillas").
+//
+// OJO: este componente asume que solo se usa en páginas de modelo Epson
+// (Canon y Epson-SC tienen sus propias variantes con su propia
+// terminología).
 import { Image } from "astro:assets";
 import { t } from "../../i18n/utils";
 import type { Locale } from "../../config/site";
@@ -23,37 +29,82 @@ import icono6 from "../../assets/procedimiento/6.png";
 interface Props {
   locale: Locale;
   modelo: string;
+  sourceIdBase: string;
+  codigoErrorInicial?: string;
 }
 
-const { locale, modelo } = Astro.props;
+const { locale, modelo, sourceIdBase, codigoErrorInicial = "Almohadillas" } = Astro.props;
 
-const pasos = [
-  { icono: icono1, titulo: t(locale, "procesoReutilizable.paso1Titulo").replaceAll("{modelo}", modelo) },
-  { icono: icono2, titulo: t(locale, "procesoReutilizable.paso2Titulo") },
-  { icono: icono3, titulo: t(locale, "procesoReutilizable.paso3Titulo") },
-  { icono: icono4, titulo: t(locale, "procesoReutilizable.paso4Titulo") },
-  { icono: icono5, titulo: t(locale, "procesoReutilizable.paso5Titulo") },
-  { icono: icono6, titulo: t(locale, "procesoReutilizable.paso6Titulo") },
-];
+const paso1Template = t(locale, "procesoReutilizable.paso1Titulo").replaceAll("{modelo}", modelo);
+const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
 ---
 
-<div class="pr">
+<div class="pr" data-pr-source-id-base={sourceIdBase}>
   <span class="pr-badge">✅ {t(locale, "procesoReutilizable.badge")} 🔄</span>
 
   <ol class="pr-grid">
-    {
-      pasos.map((paso, index) => (
-        <li class="pr-card">
-          <span class="pr-numero" aria-hidden="true">
-            {index + 1}
-          </span>
-          <Image src={paso.icono} alt="" width={80} height={80} class="pr-imagen" />
-          <p class="pr-card-titulo">{paso.titulo}</p>
-        </li>
-      ))
-    }
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">1</span>
+      <Image src={icono1} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">
+        {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
+      </p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">2</span>
+      <Image src={icono2} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso2Titulo")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">3</span>
+      <Image src={icono3} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso3TituloEpson")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">4</span>
+      <Image src={icono4} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso4TituloEpson")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">5</span>
+      <Image src={icono5} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso5TituloEpson")}</p>
+    </li>
+
+    <li class="pr-card">
+      <span class="pr-numero" aria-hidden="true">6</span>
+      <Image src={icono6} alt="" width={80} height={80} class="pr-imagen" />
+      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso6Titulo")}</p>
+    </li>
   </ol>
 </div>
+
+<script>
+  // Escucha el <select> de ErrorSelector.astro (mismo sourceIdBase) y
+  // refleja la elección en la Tarjeta 1. Si esa página no tiene selector
+  // (un solo error confirmado, o ninguno), no hace nada — la tarjeta se
+  // queda con su valor inicial.
+  document.querySelectorAll<HTMLElement>(".pr[data-pr-source-id-base]").forEach((container) => {
+    const base = container.dataset.prSourceIdBase;
+    if (!base) return;
+
+    const select = document.getElementById(`error-select-${base}`) as HTMLSelectElement | null;
+    if (!select) return;
+
+    const codigoEl = container.querySelector<HTMLElement>("[data-pr-codigo]");
+    if (!codigoEl) return;
+
+    select.addEventListener("change", () => {
+      const opcion = select.options[select.selectedIndex];
+      const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
+      codigoEl.textContent = codigoAtributo ? codigoAtributo.toUpperCase() : "Almohadillas";
+    });
+  });
+</script>
 
 <style>
   .pr {
@@ -118,6 +169,10 @@ const pasos = [
     font-size: 0.92rem;
     line-height: 1.4;
     color: var(--color-text);
+  }
+
+  .pr-codigo-error {
+    font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 780px) {

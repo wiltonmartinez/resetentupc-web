@@ -157,13 +157,16 @@
   },
   "procesoReutilizable": {
     "badge": "Proceso reutilizable",
-    "paso1Titulo": "Identificación del error Almohadillas en Epson {modelo}",
+    "paso1Titulo": "Identificación del error {codigoError} en Epson {modelo}",
     "paso1TituloCanon": "Identificación del error 5B00/1700 en Canon {modelo}",
     "paso1TituloEpsonSc": "Identificación del error {codigoError} en Epson-SC {modelo}",
     "paso2Titulo": "Requisitos y conexión USB",
     "paso3Titulo": "Revisión Compatibilidad (Ejecución del módulo y Technician ID)",
+    "paso3TituloEpson": "Revisión Asistida de compatibilidad USB y Reset Disponible (Respuesta: Lectura 100%)",
     "paso4Titulo": "Cotización y Pago",
+    "paso4TituloEpson": "Cotización y Pago o Garantía Vigente",
     "paso5Titulo": "Reset en 1 minuto (Ejecución del módulo y Technician ID)",
+    "paso5TituloEpson": "Reset Asistido en 1 minuto",
     "paso5TituloEpsonSc": "Modo Reparación y Reset en 1 minuto (Ejecución del módulo y ID)",
     "paso5TituloEpsonSc0014bd": "Cambiar Almohadillas nueva, Limpieza Sensor y superficie de plástico al 100%, Modo Inspección y Reset en 1 minuto",
     "paso6Titulo": "Impresora desbloqueada y lista para imprimir"
