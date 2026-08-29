@@ -103,7 +103,12 @@ const pasosProceso = [
           marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
         >
           <TrustpilotWidget />
-          <AyudaCTA sourceId="como-funciona-proceso" label={t(locale, "proceso.ctaContinuar")} />
+          <InfoCard tone="warning">
+            <p class="proceso-aviso-espera">
+              <strong>{t(locale, "proceso.avisoEsperaTitulo")}:</strong> {t(locale, "proceso.avisoEsperaTexto")}
+            </p>
+          </InfoCard>
+          <AyudaCTA sourceId="como-funciona-proceso" label={t(locale, "proceso.ctaContinuar")} destacado />
         </ProcessSteps>
       </div>
     </Tabs>
@@ -114,5 +119,10 @@ const pasosProceso = [
   .como-funciona {
     display: grid;
     gap: var(--space-sm);
+  }
+
+  .proceso-aviso-espera {
+    margin: 0;
+    color: var(--color-warning-text);
   }
 </style>
