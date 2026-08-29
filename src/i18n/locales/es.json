@@ -157,10 +157,12 @@
     "badge": "Proceso reutilizable",
     "paso1Titulo": "Identificación del error Almohadillas en Epson {modelo}",
     "paso1TituloCanon": "Identificación del error 5B00/1700 en Canon {modelo}",
+    "paso1TituloEpsonSc": "Identificación del error de bloqueo/notificación en Epson-SC {modelo}",
     "paso2Titulo": "Requisitos y conexión USB",
     "paso3Titulo": "Revisión Compatibilidad (Ejecución del módulo y Technician ID)",
     "paso4Titulo": "Cotización y Pago",
     "paso5Titulo": "Reset en 1 minuto (Ejecución del módulo y Technician ID)",
+    "paso5TituloEpsonSc": "Modo Reparación y Reset en 1 minuto (Ejecución del módulo y ID)",
     "paso6Titulo": "Impresora desbloqueada y lista para imprimir"
   },
   "proceso": {
