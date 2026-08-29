@@ -34,7 +34,6 @@
  * un youtube_id. Canon y Epson-SC conservan el placeholder visible de
  * siempre hasta que se pida lo mismo para esas marcas.
  */
-import { getImage } from "astro:assets";
 import {
   t,
   resolveErroresParaModelo,
@@ -56,7 +55,6 @@ import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
-import { getErrorImage, getErrorImageByFilename } from "../lib/error-images.js";
 import {
   listarErroresPorModelo,
   listarResetRealizados,
@@ -155,16 +153,8 @@ const tieneSensorTinta =
   getSensorTintaParaMarca(marcaSlug) !== null &&
   erroresCompatibles.some((e) => obtenerErrorCorto(e.descripcion) === "0014BD");
 
-// Paso 1 (Sección 4, solo Epson): foto real del error elegido — misma
-// fuente que ya usa ErrorSelector (src/lib/error-images.js), nunca
-// inventada aquí. Se actualiza en vivo por script si hay selector.
-// Prioridad: foto_url de Núcleo (nombre de archivo explícito) > mapeo por
-// error_id > mapeo por slug de modelo (respaldo genérico existente).
-const errorImgPrincipal =
-  (errorPrincipal?.foto_url ? getErrorImageByFilename(errorPrincipal.foto_url) : null) ??
-  getErrorImage(errorPrincipal?.error_id ?? "") ??
-  getErrorImage(modeloSlug);
-const fotoErrorPrincipalUrl = errorImgPrincipal ? (await getImage({ src: errorImgPrincipal, format: "webp", width: 480 })).src : "";
+// Paso 1 (Sección 4, solo Epson): la foto ya la muestra la flip card del
+// selector (Sección 1) — acá solo queda el texto reactivo.
 const errorLargoPrincipal = errorPrincipal?.descripcion ?? "";
 
 // Paso 5 (video): fijo por marca; en Epson-SC además depende del error
@@ -293,6 +283,31 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
 ---
 
 <div class="procedimiento" data-procedimiento data-source-id-base={sourceIdBase} data-marca={marcaSlug} data-fuente-errores={fuenteErrores}>
+  <!-- SECCIÓN 3: Índice visual 3x2 (variante real según marca) — va primero,
+       justo después del título de la página. -->
+  {esEpson && (
+    <ProcesoReutilizable locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
+  )}
+  {marcaSlug === "canon" && <ProcesoReutilizableCanon locale={locale} modelo={modelo} />}
+  {marcaSlug === "epson-sc" && (
+    <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
+  )}
+
+  <!-- Paso 1 ("Identificación del error"): sube justo después del grid,
+       antes del selector — comparte el mismo <select> reactivo. -->
+  <ol class="procedimiento-detalle">
+    <li>
+      <h3>
+        1{esEpson ? ")" : "."} Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+      </h3>
+      {esEpson && (
+        <p data-procedimiento-pregunta-error>
+          ¿Tu Epson {modelo} presenta un mensaje de error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span>?
+        </p>
+      )}
+    </li>
+  </ol>
+
   <!-- SECCIÓN 1: Selector de error -->
   {variosCompatibles ? (
     <ErrorSelector
@@ -339,39 +354,8 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
     </div>
   )}
 
-  <!-- SECCIÓN 3: Índice visual 3x2 (variante real según marca) -->
-  {esEpson && (
-    <ProcesoReutilizable locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
-  )}
-  {marcaSlug === "canon" && <ProcesoReutilizableCanon locale={locale} modelo={modelo} />}
-  {marcaSlug === "epson-sc" && (
-    <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
-  )}
-
-  <!-- SECCIÓN 4: Desarrollo detallado -->
+  <!-- SECCIÓN 4: Desarrollo detallado (Paso 1 ya se movió arriba, junto al grid) -->
   <ol class="procedimiento-detalle">
-    <li>
-      <h3>
-        1{esEpson ? ")" : "."} Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
-      </h3>
-      {esEpson && (
-        <>
-          <p data-procedimiento-pregunta-error>
-            ¿Tu Epson {modelo} presenta un mensaje de error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span>?
-          </p>
-          {fotoErrorPrincipalUrl && (
-            <img
-              class="procedimiento-foto-error"
-              data-procedimiento-foto-error
-              src={fotoErrorPrincipalUrl}
-              alt={`Así se ve el error ${codigoCortoInicial} en Epson ${modelo}`}
-              loading="lazy"
-            />
-          )}
-        </>
-      )}
-    </li>
-
     <li>
       <h3>2{esEpson ? ")" : "."} Requisitos {esEpson ? "y Conexión USB" : ""}</h3>
       {esEpson ? (
@@ -527,18 +511,15 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
       const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
       const errorLargoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-error-largo]");
-      const fotoErrorEl = raiz.querySelector<HTMLImageElement>("[data-procedimiento-foto-error]");
 
       select.addEventListener("change", () => {
         const opcion = select.options[select.selectedIndex];
         const codigoAtributo = opcion?.getAttribute("data-codigo")?.trim();
         const descripcion = opcion?.getAttribute("data-descripcion") || "";
         const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
-        const errorUrl = opcion?.getAttribute("data-error-imagen") || "";
 
         if (codigoEl) codigoEl.textContent = codigo;
         if (errorLargoEl && descripcion) errorLargoEl.textContent = descripcion;
-        if (fotoErrorEl && errorUrl) fotoErrorEl.src = errorUrl;
         if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
         if (videoCondicional) {
           videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
@@ -670,15 +651,6 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
     padding-left: 1.25rem;
     display: grid;
     gap: 0.3rem;
-  }
-
-  .procedimiento-foto-error {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    margin: 0.5rem auto 0;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
   }
 
   .procedimiento-respuesta-destacada {

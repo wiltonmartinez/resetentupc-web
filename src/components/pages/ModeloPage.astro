@@ -156,9 +156,7 @@ const pasosProceso = [
         <span>{tituloConPrefijo}</span>
         <FavoritoEstrella modeloId={modeloId} variante="titulo" ariaLabel={labelFavoritoAgregar} />
       </h1>
-      <AyudaCTA sourceId={`${sourceIdBase}-hero-destacado`} label={t(locale, "home.heroCta")} destacado />
-      <TrustpilotWidget />
-      <p class="modelo-hero-modalidad">{t(locale, "proceso.titulo")}</p>
+      <p class="modelo-hero-subtitulo">{t(locale, "proceso.titulo")}</p>
       <p class="modelo-hero-pregunta">{reconocimiento}</p>
     </div>
   </header>
@@ -177,14 +175,6 @@ const pasosProceso = [
     </InfoCard>
   ) : erroresCompatibles.length > 0 ? (
     <InfoCard>
-      <div class="seccion-header">
-        <svg class="seccion-icon" viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true">
-          <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6" />
-          <path d="M17 17l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-        </svg>
-        <h2>{t(locale, "modelo.errorConfirmadoTitle")}</h2>
-      </div>
-
       <ProcedimientoImpresora marca={nombreMarca} marcaSlug={marcaSlug} modelo={nombreModelo} locale={locale} />
     </InfoCard>
   ) : null}
@@ -359,20 +349,12 @@ const pasosProceso = [
     }
   }
 
-  .modelo-hero-modalidad {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    width: fit-content;
-    margin: 0.1rem 0 0;
-    padding: 0.25rem 0.65rem;
-    border-radius: var(--radius-full);
-    background: var(--color-primary-light);
-    color: var(--color-primary-dark);
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+  .modelo-hero-subtitulo {
+    margin: -1.4rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--color-text-subtle);
   }
 
   .modelo-hero-pregunta {
