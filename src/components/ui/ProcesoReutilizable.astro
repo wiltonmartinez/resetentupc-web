@@ -43,42 +43,54 @@ const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
   <span class="pr-badge">✅ {t(locale, "procesoReutilizable.badge")} 🔄</span>
 
   <ol class="pr-grid">
-    <li class="pr-card">
-      <span class="pr-numero" aria-hidden="true">1</span>
-      <Image src={icono1} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo">
-        {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
-      </p>
+    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-1`}>
+      <a class="pr-card-link" href={`#paso-${sourceIdBase}-1`}>
+        <span class="pr-numero" aria-hidden="true">1</span>
+        <Image src={icono1} alt="" width={80} height={80} class="pr-imagen" />
+        <p class="pr-card-titulo">
+          {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
+        </p>
+      </a>
     </li>
 
-    <li class="pr-card">
-      <span class="pr-numero" aria-hidden="true">2</span>
-      <Image src={icono2} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso2Titulo")}</p>
+    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-2`}>
+      <a class="pr-card-link" href={`#paso-${sourceIdBase}-2`}>
+        <span class="pr-numero" aria-hidden="true">2</span>
+        <Image src={icono2} alt="" width={80} height={80} class="pr-imagen" />
+        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso2Titulo")}</p>
+      </a>
     </li>
 
-    <li class="pr-card">
-      <span class="pr-numero" aria-hidden="true">3</span>
-      <Image src={icono3} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso3TituloEpson")}</p>
+    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-3`}>
+      <a class="pr-card-link" href={`#paso-${sourceIdBase}-3`}>
+        <span class="pr-numero" aria-hidden="true">3</span>
+        <Image src={icono3} alt="" width={80} height={80} class="pr-imagen" />
+        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso3TituloEpson")}</p>
+      </a>
     </li>
 
-    <li class="pr-card">
-      <span class="pr-numero" aria-hidden="true">4</span>
-      <Image src={icono4} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso4TituloEpson")}</p>
+    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-4`}>
+      <a class="pr-card-link" href={`#paso-${sourceIdBase}-4`}>
+        <span class="pr-numero" aria-hidden="true">4</span>
+        <Image src={icono4} alt="" width={80} height={80} class="pr-imagen" />
+        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso4TituloEpson")}</p>
+      </a>
     </li>
 
-    <li class="pr-card">
-      <span class="pr-numero" aria-hidden="true">5</span>
-      <Image src={icono5} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso5TituloEpson")}</p>
+    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-5`}>
+      <a class="pr-card-link" href={`#paso-${sourceIdBase}-5`}>
+        <span class="pr-numero" aria-hidden="true">5</span>
+        <Image src={icono5} alt="" width={80} height={80} class="pr-imagen" />
+        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso5TituloEpson")}</p>
+      </a>
     </li>
 
-    <li class="pr-card">
-      <span class="pr-numero" aria-hidden="true">6</span>
-      <Image src={icono6} alt="" width={80} height={80} class="pr-imagen" />
-      <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso6Titulo")}</p>
+    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-6`}>
+      <a class="pr-card-link" href={`#paso-${sourceIdBase}-6`}>
+        <span class="pr-numero" aria-hidden="true">6</span>
+        <Image src={icono6} alt="" width={80} height={80} class="pr-imagen" />
+        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso6Titulo")}</p>
+      </a>
     </li>
   </ol>
 </div>
@@ -135,16 +147,33 @@ const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
 
   .pr-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
     padding: 1.5rem 1.1rem 1.25rem;
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     text-align: center;
+    scroll-margin-top: 5rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .pr-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .pr-card-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .pr-card-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-md);
   }
 
   .pr-numero {
@@ -187,9 +216,12 @@ const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
     }
 
     .pr-card {
-      flex-direction: row;
       text-align: left;
       padding: 1rem;
+    }
+
+    .pr-card-link {
+      flex-direction: row;
     }
 
     .pr-imagen {

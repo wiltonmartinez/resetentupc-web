@@ -17,9 +17,10 @@ import icono6 from "../../assets/procedimiento-canon/6.png";
 interface Props {
   locale: Locale;
   modelo: string;
+  sourceIdBase: string;
 }
 
-const { locale, modelo } = Astro.props;
+const { locale, modelo, sourceIdBase } = Astro.props;
 
 const pasos = [
   { icono: icono1, titulo: t(locale, "procesoReutilizable.paso1TituloCanon").replaceAll("{modelo}", modelo) },
@@ -37,12 +38,14 @@ const pasos = [
   <ol class="pr-grid">
     {
       pasos.map((paso, index) => (
-        <li class="pr-card">
-          <span class="pr-numero" aria-hidden="true">
-            {index + 1}
-          </span>
-          <Image src={paso.icono} alt="" width={80} height={80} class="pr-imagen" />
-          <p class="pr-card-titulo">{paso.titulo}</p>
+        <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-${index + 1}`}>
+          <a class="pr-card-link" href={`#paso-${sourceIdBase}-${index + 1}`}>
+            <span class="pr-numero" aria-hidden="true">
+              {index + 1}
+            </span>
+            <Image src={paso.icono} alt="" width={80} height={80} class="pr-imagen" />
+            <p class="pr-card-titulo">{paso.titulo}</p>
+          </a>
         </li>
       ))
     }
@@ -78,16 +81,33 @@ const pasos = [
 
   .pr-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
     padding: 1.5rem 1.1rem 1.25rem;
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
     text-align: center;
+    scroll-margin-top: 5rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .pr-card:hover {
+    border-color: var(--color-primary);
+  }
+
+  .pr-card-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .pr-card-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-md);
   }
 
   .pr-numero {
@@ -126,9 +146,12 @@ const pasos = [
     }
 
     .pr-card {
-      flex-direction: row;
       text-align: left;
       padding: 1rem;
+    }
+
+    .pr-card-link {
+      flex-direction: row;
     }
 
     .pr-imagen {

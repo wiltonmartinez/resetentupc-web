@@ -334,7 +334,7 @@ const pasosProceso = [
   {esEpson && (
     <ProcesoReutilizable locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
   )}
-  {marcaSlug === "canon" && <ProcesoReutilizableCanon locale={locale} modelo={modelo} />}
+  {marcaSlug === "canon" && <ProcesoReutilizableCanon locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} />}
   {marcaSlug === "epson-sc" && (
     <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
   )}
@@ -343,8 +343,10 @@ const pasosProceso = [
        antes del selector — comparte el mismo <select> reactivo. -->
   <ol class="procedimiento-detalle">
     <li>
-      <h3>
-        1{esEpson ? ")" : "."} Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+      <h3 id={`paso-${sourceIdBase}-1`}>
+        <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-1`}>
+          1{esEpson ? ")" : "."} Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+        </a>
       </h3>
       {esEpson && (
         <p data-procedimiento-pregunta-error>
@@ -403,7 +405,11 @@ const pasosProceso = [
   <!-- SECCIÓN 4: Desarrollo detallado (Paso 1 ya se movió arriba, junto al grid) -->
   <ol class="procedimiento-detalle">
     <li>
-      <h3>2{esEpson ? ")" : "."} Requisitos {esEpson ? "y Conexión USB" : ""}</h3>
+      <h3 id={`paso-${sourceIdBase}-2`}>
+        <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-2`}>
+          2{esEpson ? ")" : "."} Requisitos {esEpson ? "y Conexión USB" : ""}
+        </a>
+      </h3>
       {esEpson ? (
         <ul>
           <li>Impresora Epson {modelo} conectada mediante CABLE USB al computador.</li>
@@ -428,11 +434,19 @@ const pasosProceso = [
     <li>
       {esEpson ? (
         <>
-          <h3>3) Revisión Asistida de compatibilidad USB y Reset Disponible</h3>
+          <h3 id={`paso-${sourceIdBase}-3`}>
+            <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
+              3) Revisión Asistida de compatibilidad USB y Reset Disponible
+            </a>
+          </h3>
           <p class="procedimiento-respuesta-destacada">Resultado Revisión: Compatible, Conexión USB reconocida, Lectura al 100% y Servicio Disponible</p>
         </>
       ) : (
-        <h3>3. Revisión Compatibilidad (Ejecución del módulo de conexión USB Redirector y Technician ID)</h3>
+        <h3 id={`paso-${sourceIdBase}-3`}>
+          <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
+            3. Revisión Compatibilidad (Ejecución del módulo de conexión USB Redirector y Technician ID)
+          </a>
+        </h3>
       )}
     </li>
   </ol>
@@ -464,12 +478,20 @@ const pasosProceso = [
 
   <ol class="procedimiento-detalle">
     <li>
-      <h3>4{esEpson ? ")" : "."} Cotización y Pago{esEpson ? " o Garantía Vigente" : ""}</h3>
+      <h3 id={`paso-${sourceIdBase}-4`}>
+        <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-4`}>
+          4{esEpson ? ")" : "."} Cotización y Pago{esEpson ? " o Garantía Vigente" : ""}
+        </a>
+      </h3>
       {esEpson && <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />}
     </li>
 
     <li>
-      <h3>5{esEpson ? ")" : "."} {esEpson ? `Reset Asistido en 1 minuto | ${marca} ${modelo}` : "Procedimiento"}</h3>
+      <h3 id={`paso-${sourceIdBase}-5`}>
+        <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-5`}>
+          5{esEpson ? ")" : "."} {esEpson ? `Reset Asistido en 1 minuto | ${marca} ${modelo}` : "Procedimiento"}
+        </a>
+      </h3>
       {esEpson ? (
         videoResetRealizado ? (
           <div class="procedimiento-video-real" data-procedimiento-video-real data-href-base={hrefResetEvidencia}>
@@ -510,7 +532,11 @@ const pasosProceso = [
     </li>
 
     <li>
-      <h3>6{esEpson ? ")" : "."} Impresora {esEpson ? "Desbloqueada y lista para imprimir" : "Imprimiendo"}</h3>
+      <h3 id={`paso-${sourceIdBase}-6`}>
+        <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-6`}>
+          6{esEpson ? ")" : "."} Impresora {esEpson ? "Desbloqueada y lista para imprimir" : "Imprimiendo"}
+        </a>
+      </h3>
       {mostrarPruebaSocial && (
         <div class="procedimiento-prueba-social">
           {testimonioLocalEmbed && (
@@ -712,6 +738,21 @@ const pasosProceso = [
 
   .procedimiento-detalle h3 {
     margin: 0 0 0.4rem;
+    scroll-margin-top: 5rem;
+  }
+
+  .procedimiento-paso-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .procedimiento-paso-link:hover {
+    text-decoration: underline;
+  }
+
+  .procedimiento-paso-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
   }
 
   .procedimiento-detalle ul {
