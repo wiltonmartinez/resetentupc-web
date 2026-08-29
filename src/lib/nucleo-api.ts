@@ -121,6 +121,13 @@ export interface ErrorPublico {
   estado_servicio: "compatible" | "requiere_revision" | "no_compatible";
   /** Todavía no la entrega Núcleo — opcional para no romper el tipo cuando se agregue. */
   modo?: string;
+  /**
+   * Nombre de archivo (ej. "almohadillas.jpg"), no URL — se resuelve contra
+   * los assets locales en src/assets/errores/ vía getErrorImageByFilename
+   * (error-images.js). Opcional: si Núcleo no la entrega, se cae al
+   * mapeo existente por error_id/modeloSlug.
+   */
+  foto_url?: string;
 }
 
 export async function listarErroresPorModelo(marcaSlug: string, modeloSlug?: string): Promise<ErrorPublico[]> {

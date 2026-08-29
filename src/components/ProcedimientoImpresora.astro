@@ -45,7 +45,7 @@ import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
-import { getErrorImage } from "../lib/error-images.js";
+import { getErrorImage, getErrorImageByFilename } from "../lib/error-images.js";
 import {
   listarErroresPorModelo,
   listarResetRealizados,
@@ -92,6 +92,7 @@ function mapearErrorPublico(e: ErrorPublico): ErrorResuelto {
     estado_servicio: e.estado_servicio,
     tipo: e.categoria === "otros" ? undefined : e.categoria,
     modo: e.modo,
+    foto_url: e.foto_url,
   };
 }
 
@@ -129,7 +130,12 @@ const tieneSensorTinta =
 // Paso 1 (Sección 4, solo Epson): foto real del error elegido — misma
 // fuente que ya usa ErrorSelector (src/lib/error-images.js), nunca
 // inventada aquí. Se actualiza en vivo por script si hay selector.
-const errorImgPrincipal = getErrorImage(errorPrincipal?.error_id ?? "") ?? getErrorImage(modeloSlug);
+// Prioridad: foto_url de Núcleo (nombre de archivo explícito) > mapeo por
+// error_id > mapeo por slug de modelo (respaldo genérico existente).
+const errorImgPrincipal =
+  (errorPrincipal?.foto_url ? getErrorImageByFilename(errorPrincipal.foto_url) : null) ??
+  getErrorImage(errorPrincipal?.error_id ?? "") ??
+  getErrorImage(modeloSlug);
 const fotoErrorPrincipalUrl = errorImgPrincipal ? (await getImage({ src: errorImgPrincipal, format: "webp", width: 480 })).src : "";
 const errorLargoPrincipal = errorPrincipal?.descripcion ?? "";
 

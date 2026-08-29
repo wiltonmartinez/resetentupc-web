@@ -2,7 +2,7 @@
 import { getImage } from "astro:assets";
 import { buildWhatsAppMessage, buildWhatsAppLink, t, type ErrorResuelto } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
-import { getErrorImage } from "../lib/error-images.js";
+import { getErrorImage, getErrorImageByFilename } from "../lib/error-images.js";
 import { getSolucionImage } from "../lib/solucion-images.js";
 import { getModeloImage } from "../lib/model-images.js";
 
@@ -30,7 +30,12 @@ function categoriaLabel(tipo: ErrorResuelto["tipo"]): string {
 const opciones = await Promise.all(
   errores.map(async (err) => {
     const message = buildWhatsAppMessage({ locale, marca, modelo, error: err.descripcion, urlOrigen });
-    const errorImg = getErrorImage(err.error_id) ?? (modeloSlug ? getErrorImage(modeloSlug) : null);
+    // Prioridad: foto_url de Núcleo (nombre de archivo explícito, ej.
+    // "almohadillas.jpg") > mapeo por error_id > mapeo por slug de modelo.
+    const errorImg =
+      (err.foto_url ? getErrorImageByFilename(err.foto_url) : null) ??
+      getErrorImage(err.error_id) ??
+      (modeloSlug ? getErrorImage(modeloSlug) : null);
     const solucionImg = getSolucionImage(err.error_id) ?? (modeloSlug ? getSolucionImage(modeloSlug) : null);
     const errorImgUrl = errorImg ? (await getImage({ src: errorImg, format: "webp", width: 480 })).src : "";
     const solucionImgUrl = solucionImg ? (await getImage({ src: solucionImg, format: "webp", width: 480 })).src : "";
