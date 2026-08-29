@@ -361,6 +361,7 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       {esEpson ? (
         <ul>
           <li>Impresora Epson {modelo} conectada mediante CABLE USB al computador.</li>
+          <li>Error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span> en impresora {marca} {modelo}.</li>
           <li>PC con Windows (7, 8, 10 u 11).</li>
           <li>Conexión a Internet estable.</li>
           <li>
@@ -510,7 +511,7 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
       const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
       const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
       const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
-      const errorLargoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-error-largo]");
+      const errorLargoEls = raiz.querySelectorAll<HTMLElement>("[data-procedimiento-error-largo]");
 
       select.addEventListener("change", () => {
         const opcion = select.options[select.selectedIndex];
@@ -519,7 +520,7 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
         const codigo = (codigoAtributo ? codigoAtributo.toUpperCase() : obtenerErrorCorto(descripcion)) || "Almohadillas";
 
         if (codigoEl) codigoEl.textContent = codigo;
-        if (errorLargoEl && descripcion) errorLargoEl.textContent = descripcion;
+        if (descripcion) errorLargoEls.forEach((el) => (el.textContent = descripcion));
         if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
         if (videoCondicional) {
           videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
