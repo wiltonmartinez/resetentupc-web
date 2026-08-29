@@ -3,7 +3,7 @@ import { t } from "../../i18n/utils";
 import InfoCard from "../ui/InfoCard.astro";
 import ServiceFlow from "../ui/ServiceFlow.astro";
 import ProcessSteps from "../ui/ProcessSteps.astro";
-import Tabs from "../ui/Tabs.astro";
+import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
 import AyudaCTA from "../AyudaCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import { getProcesoImage } from "../../lib/proceso-images.js";
@@ -81,37 +81,31 @@ const pasosProceso = [
   <h1>{t(locale, "comoFunciona.heading")}</h1>
 
   <InfoCard tone="muted">
-    <Tabs
-      tabs={[
-        { id: "servicio", label: t(locale, "comoFunciona.tabServicio") },
-        { id: "proceso", label: t(locale, "comoFunciona.tabProceso") },
-      ]}
+    <ServiceFlow
+      titulo={t(locale, "flujoServicio.titulo")}
+      introTexto={t(locale, "flujoServicio.introTexto")}
+      cicloTexto={t(locale, "flujoServicio.cicloTexto")}
+      pasos={pasosFlujoServicio}
+    />
+  </InfoCard>
+
+  <InfoCard tone="muted">
+    <ProcesoReutilizable locale={locale} isGeneric />
+    <ProcessSteps
+      titulo={t(locale, "proceso.titulo")}
+      introTexto={t(locale, "proceso.introTexto")}
+      pasos={pasosProceso}
+      marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
+      prefijoNumero="3."
     >
-      <div data-tab-panel="servicio">
-        <ServiceFlow
-          titulo={t(locale, "flujoServicio.titulo")}
-          introTexto={t(locale, "flujoServicio.introTexto")}
-          cicloTexto={t(locale, "flujoServicio.cicloTexto")}
-          pasos={pasosFlujoServicio}
-        />
-      </div>
-      <div data-tab-panel="proceso" hidden>
-        <ProcessSteps
-          titulo={t(locale, "proceso.titulo")}
-          introTexto={t(locale, "proceso.introTexto")}
-          pasos={pasosProceso}
-          marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
-        >
-          <TrustpilotWidget />
-          <InfoCard tone="warning">
-            <p class="proceso-aviso-espera">
-              <strong>{t(locale, "proceso.avisoEsperaTitulo")}:</strong> {t(locale, "proceso.avisoEsperaTexto")}
-            </p>
-          </InfoCard>
-          <AyudaCTA sourceId="como-funciona-proceso" label={t(locale, "proceso.ctaContinuar")} destacado />
-        </ProcessSteps>
-      </div>
-    </Tabs>
+      <TrustpilotWidget />
+      <InfoCard tone="warning">
+        <p class="proceso-aviso-espera">
+          <strong>{t(locale, "proceso.avisoEsperaTitulo")}:</strong> {t(locale, "proceso.avisoEsperaTexto")}
+        </p>
+      </InfoCard>
+      <AyudaCTA sourceId="como-funciona-proceso" label={t(locale, "proceso.ctaContinuar")} destacado />
+    </ProcessSteps>
   </InfoCard>
 </article>
 

@@ -2,7 +2,12 @@
 /**
  * Orquesta el flujo completo de reset por marca en 4 secciones: selector de
  * error, sensor condicional (solo Epson-SC + 0014BD), índice visual 3x2 y
- * desarrollo detallado de los 6 pasos.
+ * desarrollo detallado de los 6 pasos. La "plantilla Epson" (Paso 1
+ * reactivo, Paso 3 con resultado de revisión, Paso 4 con consulta de
+ * garantía, Paso 5/6 con video/testimonios reales de Núcleo) se aplica por
+ * igual a las 3 marcas — solo el índice visual 3x2 (Sección 3) sigue
+ * teniendo un componente propio por marca (Epson/Canon/Epson-SC), porque
+ * cada uno usa terminología de error real y distinta para su marca.
  *
  * Datos: intenta primero Núcleo (errores por modelo, testimonios) — el
  * endpoint de errores ya está en producción, pero hoy solo tiene datos
@@ -10,8 +15,9 @@
  * el panel admin de Núcleo cargue sus errores, así que esas dos marcas
  * siguen cayendo a errores.json local (resolveErroresParaModelo) por
  * ahora — ver nucleo-api.ts. Los testimonios (Trustpilot y Cliente
- * Satisfecho) sí son reales hoy para todas las marcas (mismos endpoints
- * que ya usan las páginas de Prueba Social).
+ * Satisfecho) y los videos de reset realizado sí son reales hoy para
+ * todas las marcas (mismos endpoints que ya usan las páginas de Prueba
+ * Social) — se buscan para las 3 marcas por igual.
  *
  * SSG + azar en el cliente (NO SSR): las páginas de modelo son estáticas
  * (getStaticPaths, generadas en el build). El fetch a Núcleo pasa UNA vez
@@ -27,12 +33,12 @@
  * resuelve con vanilla JS, mismo patrón que el resto de la reactividad ya
  * construida en este componente (basada en querySelector/dataset).
  *
- * El video del Paso 5 (solo Epson) sale de `listarResetRealizados` — si no
- * hay uno para el modelo exacto, cae a cualquiera de la misma marca (una
- * similitud simple hecha aquí; la similitud real "por modelo hermano" vive
- * en Núcleo, ver INSTRUCCIONES PARA EL BACKEND más abajo). Nunca se inventa
- * un youtube_id. Canon y Epson-SC conservan el placeholder visible de
- * siempre hasta que se pida lo mismo para esas marcas.
+ * El video del Paso 5 sale de `listarResetRealizados` — si no hay uno para
+ * el modelo exacto, cae a cualquiera de la misma marca (una similitud
+ * simple hecha aquí; la similitud real "por modelo hermano" vive en
+ * Núcleo, ver INSTRUCCIONES PARA EL BACKEND más abajo). Nunca se inventa
+ * un youtube_id: si no hay ningún candidato para una marca/modelo, se
+ * muestra el placeholder visible en vez de romper la sección.
  */
 import {
   t,
@@ -162,17 +168,7 @@ const tieneSensorTinta =
 // selector (Sección 1) — acá solo queda el texto reactivo.
 const errorLargoPrincipal = errorPrincipal?.descripcion ?? "";
 
-// Paso 5 (video): fijo por marca; en Epson-SC además depende del error
-// elegido (Modo Inspección para 0014BD, Modo Reparación para el resto) —
-// esa parte se actualiza en vivo por script si hay selector.
-const paso5Videos =
-  marcaSlug === "canon"
-    ? ["Video Modo Servicio", `Video correspondiente ${modelo}`]
-    : marcaSlug === "epson-sc"
-      ? [esSensorInicial ? "Video Modo Inspección" : "Video Modo Reparación", `Video correspondiente ${modelo}`]
-      : [`Video correspondiente ${modelo}`];
-
-// Paso 5 (solo Epson): video real de "reset realizado" ya publicado para
+// Paso 5: video real de "reset realizado" ya publicado para
 // este modelo. Si no hay uno exacto, cae a cualquiera de la misma marca
 // (respaldo simple por marca; el respaldo real "por modelo hermano" lo
 // decide Núcleo — ver INSTRUCCIONES PARA EL BACKEND). Nunca se inventa un
@@ -188,28 +184,27 @@ interface CandidatoVideo {
   titulo: string;
   slug: string;
 }
-let candidatosVideo: CandidatoVideo[] = [];
-if (esEpson) {
-  const listadoReset = await listarResetRealizados(1, 50);
-  const porMarcaModelo = listadoReset.data.filter(
-    (r) => r.marca.toLowerCase() === marcaSlug && r.modelo.toLowerCase() === modeloSlug
-  );
-  const porMarca = listadoReset.data.filter((r) => r.marca.toLowerCase() === marcaSlug);
-  const candidatos = porMarcaModelo.length > 0 ? porMarcaModelo : porMarca;
-  candidatosVideo = candidatos.map((r) => ({ youtubeId: r.youtube_id, titulo: tituloConRespaldo(r), slug: r.slug }));
-}
+const listadoReset = await listarResetRealizados(1, 50);
+const porMarcaModelo = listadoReset.data.filter(
+  (r) => r.marca.toLowerCase() === marcaSlug && r.modelo.toLowerCase() === modeloSlug
+);
+const porMarca = listadoReset.data.filter((r) => r.marca.toLowerCase() === marcaSlug);
+const candidatosVideoResp = porMarcaModelo.length > 0 ? porMarcaModelo : porMarca;
+const candidatosVideo: CandidatoVideo[] = candidatosVideoResp.map((r) => ({
+  youtubeId: r.youtube_id,
+  titulo: tituloConRespaldo(r),
+  slug: r.slug,
+}));
 const videoResetRealizado = candidatosVideo[0] ?? null;
 const hrefResetEvidencia = buildLocalizedPath(locale, "/prueba-social/reset-evidencia/");
 const anchorResetEvidencia = videoResetRealizado
   ? `Ver la evidencia completa: ${videoResetRealizado.titulo}`
-  : `Ver evidencias reales de reset en Epson`;
+  : `Ver evidencias reales de reset en ${marca}`;
 
-// 2) Prueba Social (solo Epson): un testimonio de Trustpilot y uno Local.
-// Mismo patrón SSG + azar en cliente que el video de arriba: se traen las
-// listas completas en build, se renderiza el primer candidato de cada una
-// para el HTML estático/SEO, y el resto viaja como JSON para el <script>.
-const mostrarPruebaSocial = esEpson;
-
+// 2) Prueba Social: un testimonio de Trustpilot y uno Local. Mismo patrón
+// SSG + azar en cliente que el video de arriba: se traen las listas
+// completas en build, se renderiza el primer candidato de cada una para
+// el HTML estático/SEO, y el resto viaja como JSON para el <script>.
 interface CandidatoTrustpilot {
   imagen: string;
   destino: string;
@@ -222,33 +217,29 @@ interface CandidatoLocal {
   slug?: string;
 }
 
-let candidatosTrustpilot: CandidatoTrustpilot[] = [];
-let candidatosLocal: CandidatoLocal[] = [];
+const trustpilotList = (await listarTestimonios()).filter((tt) => tt.url_imgur?.trim() || tt.url_trustpilot_review?.trim());
+const candidatosTrustpilot: CandidatoTrustpilot[] = trustpilotList.map((tt) => ({
+  imagen: tt.url_imgur,
+  destino: tt.url_trustpilot_review?.trim() || tt.url_imgur,
+  marca: tt.marca,
+  modelo: tt.modelo,
+}));
 
-if (mostrarPruebaSocial) {
-  const trustpilotList = (await listarTestimonios()).filter((tt) => tt.url_imgur?.trim() || tt.url_trustpilot_review?.trim());
-  candidatosTrustpilot = trustpilotList.map((tt) => ({
-    imagen: tt.url_imgur,
-    destino: tt.url_trustpilot_review?.trim() || tt.url_imgur,
-    marca: tt.marca,
-    modelo: tt.modelo,
-  }));
-
-  // Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
-  // propia regla de "modelo hermano". Si todavía no existe, se cae a
-  // filtrar por marca el listado real ya existente — sin lógica de modelo
-  // hermano (esa vive en Núcleo, no se duplica acá). El endpoint propuesto
-  // devuelve un único elemento ya elegido por Núcleo (no una lista), así
-  // que en ese caso no hay nada más que azarear en el cliente.
-  const evidenciaDirecta = await obtenerEvidenciaClienteSatisfecho(marcaSlug, modeloSlug);
-  if (evidenciaDirecta) {
-    candidatosLocal = [{ url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo }];
-  } else {
-    const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
-    const dela = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
-    const candidatos = dela.length > 0 ? dela : clienteSatisfechoResp.data;
-    candidatosLocal = candidatos.map((e) => ({ url: e.html_url, titulo: tituloConRespaldo(e), slug: e.slug }));
-  }
+// Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
+// propia regla de "modelo hermano". Si todavía no existe, se cae a
+// filtrar por marca el listado real ya existente — sin lógica de modelo
+// hermano (esa vive en Núcleo, no se duplica acá). El endpoint propuesto
+// devuelve un único elemento ya elegido por Núcleo (no una lista), así
+// que en ese caso no hay nada más que azarear en el cliente.
+const evidenciaDirecta = await obtenerEvidenciaClienteSatisfecho(marcaSlug, modeloSlug);
+let candidatosLocal: CandidatoLocal[];
+if (evidenciaDirecta) {
+  candidatosLocal = [{ url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo }];
+} else {
+  const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
+  const dela = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
+  const candidatos = dela.length > 0 ? dela : clienteSatisfechoResp.data;
+  candidatosLocal = candidatos.map((e) => ({ url: e.html_url, titulo: tituloConRespaldo(e), slug: e.slug }));
 }
 
 const testimonioTrustpilot = candidatosTrustpilot[0] ?? null;
@@ -345,14 +336,12 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-1`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-1`}>
-          1{esEpson ? ")" : "."} Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+          1) Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
         </a>
       </h3>
-      {esEpson && (
-        <p data-procedimiento-pregunta-error>
-          ¿Tu Epson {modelo} presenta un mensaje de error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span>?
-        </p>
-      )}
+      <p data-procedimiento-pregunta-error>
+        ¿Tu {marca} {modelo} presenta un mensaje de error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span>?
+      </p>
     </li>
   </ol>
 
@@ -407,47 +396,28 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-2`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-2`}>
-          2{esEpson ? ")" : "."} Requisitos {esEpson ? "y Conexión USB" : ""}
+          2) Requisitos y Conexión USB
         </a>
       </h3>
-      {esEpson ? (
-        <ul>
-          <li>Impresora Epson {modelo} conectada mediante CABLE USB al computador.</li>
-          <li>Error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span> en impresora {marca} {modelo}.</li>
-          <li>PC con Windows (7, 8, 10 u 11).</li>
-          <li>Conexión a Internet estable.</li>
-          <li>
-            Realizar los pasos Asistidos (Recibe Reset asistido, no recibe Software autónomo).
-            {errorPrincipal?.modo && <> Modalidad: {errorPrincipal.modo}.</>}
-          </li>
-        </ul>
-      ) : (
-        <ul>
-          <li>Impresora {marca} {modelo} conectada mediante cable USB al computador.</li>
-          <li>PC con Windows (7, 8, 10 u 11).</li>
-          <li>Conexión a internet estable.</li>
-          <li>Realizar los pasos asistidos (no es autónomo).</li>
-        </ul>
-      )}
+      <ul>
+        <li>Impresora {marca} {modelo} conectada mediante CABLE USB al computador.</li>
+        <li>Error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span> en impresora {marca} {modelo}.</li>
+        <li>PC con Windows (7, 8, 10 u 11).</li>
+        <li>Conexión a Internet estable.</li>
+        <li>
+          Realizar los pasos Asistidos (Recibe Reset asistido, no recibe Software autónomo).
+          {errorPrincipal?.modo && <> Modalidad: {errorPrincipal.modo}.</>}
+        </li>
+      </ul>
     </li>
 
     <li>
-      {esEpson ? (
-        <>
-          <h3 id={`paso-${sourceIdBase}-3`}>
-            <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
-              3) Revisión Asistida de compatibilidad USB y Reset Disponible
-            </a>
-          </h3>
-          <p class="procedimiento-respuesta-destacada">Resultado Revisión: Compatible, Conexión USB reconocida, Lectura al 100% y Servicio Disponible</p>
-        </>
-      ) : (
-        <h3 id={`paso-${sourceIdBase}-3`}>
-          <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
-            3. Revisión Compatibilidad (Ejecución del módulo de conexión USB Redirector y Technician ID)
-          </a>
-        </h3>
-      )}
+      <h3 id={`paso-${sourceIdBase}-3`}>
+        <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
+          3) Revisión Asistida de compatibilidad USB y Reset Disponible
+        </a>
+      </h3>
+      <p class="procedimiento-respuesta-destacada">Resultado Revisión: Compatible, Conexión USB reconocida, Lectura al 100% y Servicio Disponible</p>
     </li>
   </ol>
 
@@ -460,6 +430,7 @@ const pasosProceso = [
       introTexto={t(locale, "proceso.introTexto")}
       pasos={pasosProceso}
       marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
+      prefijoNumero="3."
     >
       {!variosCompatibles && (
         <WhatsAppCTA
@@ -480,53 +451,38 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-4`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-4`}>
-          4{esEpson ? ")" : "."} Cotización y Pago{esEpson ? " o Garantía Vigente" : ""}
+          4) Cotización y Pago o Garantía Vigente
         </a>
       </h3>
-      {esEpson && <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />}
+      <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
     </li>
 
     <li>
       <h3 id={`paso-${sourceIdBase}-5`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-5`}>
-          5{esEpson ? ")" : "."} {esEpson ? `Reset Asistido en 1 minuto | ${marca} ${modelo}` : "Procedimiento"}
+          5) Reset Asistido en 1 minuto | {marca} {modelo}
         </a>
       </h3>
-      {esEpson ? (
-        videoResetRealizado ? (
-          <div class="procedimiento-video-real" data-procedimiento-video-real data-href-base={hrefResetEvidencia}>
-            <YouTubeFacade
-              youtubeId={videoResetRealizado.youtubeId}
-              titulo={videoResetRealizado.titulo}
-              reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
-            />
-            <a class="procedimiento-enlace-seo" href={`${hrefResetEvidencia}${videoResetRealizado.slug}/`}>
-              {anchorResetEvidencia} →
-            </a>
-          </div>
-        ) : (
-          <div class="procedimiento-video-placeholder">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
-              <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
-              <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
-            </svg>
-            <span class="procedimiento-video-label">Reset Asistido en 1 minuto</span>
-            <span class="procedimiento-video-nota">(evidencia en camino — aún sin video publicado para este modelo)</span>
-            <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
-          </div>
-        )
+      {videoResetRealizado ? (
+        <div class="procedimiento-video-real" data-procedimiento-video-real data-href-base={hrefResetEvidencia}>
+          <YouTubeFacade
+            youtubeId={videoResetRealizado.youtubeId}
+            titulo={videoResetRealizado.titulo}
+            reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+          />
+          <a class="procedimiento-enlace-seo" href={`${hrefResetEvidencia}${videoResetRealizado.slug}/`}>
+            {anchorResetEvidencia} →
+          </a>
+        </div>
       ) : (
-        <div class="procedimiento-videos" data-procedimiento-videos>
-          {paso5Videos.map((label, index) => (
-            <div class="procedimiento-video-placeholder" data-procedimiento-video={index === 0 && marcaSlug === "epson-sc" ? "condicional" : "fijo"}>
-              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
-                <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
-                <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
-              </svg>
-              <span class="procedimiento-video-label" data-procedimiento-video-label>{label}</span>
-              <span class="procedimiento-video-nota">(agregar el iframe de YouTube real aquí)</span>
-            </div>
-          ))}
+        <div class="procedimiento-video-placeholder">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+            <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+            <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
+          </svg>
+          <span class="procedimiento-video-label">Reset Asistido en 1 minuto</span>
+          <span class="procedimiento-video-nota">(evidencia en camino — aún sin video publicado para este modelo)</span>
+          <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
         </div>
       )}
     </li>
@@ -534,11 +490,10 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-6`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-6`}>
-          6{esEpson ? ")" : "."} Impresora {esEpson ? "Desbloqueada y lista para imprimir" : "Imprimiendo"}
+          6) Impresora Desbloqueada y lista para imprimir
         </a>
       </h3>
-      {mostrarPruebaSocial && (
-        <div class="procedimiento-prueba-social">
+      <div class="procedimiento-prueba-social">
           {testimonioLocalEmbed && (
             <div class="procedimiento-testimonio-item" data-procedimiento-testimonio-local data-href-base={hrefClienteSatisfecho}>
               <ClienteSatisfechoEmbed url={testimonioLocalEmbed.url} titulo={testimonioLocalEmbed.titulo} />
@@ -572,8 +527,7 @@ const pasosProceso = [
           <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow">
             {t(locale, "common.whatsappButton")}
           </a>
-        </div>
-      )}
+      </div>
     </li>
   </ol>
 
@@ -585,8 +539,8 @@ const pasosProceso = [
 <script>
   // Reactividad: escucha el mismo <select> de ErrorSelector.astro (por
   // sourceIdBase) y actualiza el código y la descripción larga mostrados en
-  // el Paso 1, la foto del error (solo Epson) y, solo para Epson-SC, la
-  // etiqueta condicional del primer video del Paso 5.
+  // el Paso 1 y el Paso 2, y —solo para Epson-SC— la visibilidad de la
+  // sección de sensor de tinta.
   function obtenerErrorCorto(cadena: string): string {
     if (!cadena) return "";
     const matchCodigo = cadena.match(/c[oó]digo\s+([0-9a-z]+)/i);
@@ -603,7 +557,6 @@ const pasosProceso = [
     if (select) {
       const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
       const sensorWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-sensor]");
-      const videoCondicional = raiz.querySelector<HTMLElement>('[data-procedimiento-video="condicional"] [data-procedimiento-video-label]');
       const errorLargoEls = raiz.querySelectorAll<HTMLElement>("[data-procedimiento-error-largo]");
 
       select.addEventListener("change", () => {
@@ -615,9 +568,6 @@ const pasosProceso = [
         if (codigoEl) codigoEl.textContent = codigo;
         if (descripcion) errorLargoEls.forEach((el) => (el.textContent = descripcion));
         if (sensorWrapper) sensorWrapper.hidden = !(marcaSlug === "epson-sc" && codigo === "0014BD");
-        if (videoCondicional) {
-          videoCondicional.textContent = marcaSlug === "epson-sc" && codigo === "0014BD" ? "Video Modo Inspección" : "Video Modo Reparación";
-        }
       });
     }
 
@@ -737,7 +687,12 @@ const pasosProceso = [
   }
 
   .procedimiento-detalle h3 {
-    margin: 0 0 0.4rem;
+    margin: 0 0 0.6rem;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
     scroll-margin-top: 5rem;
   }
 

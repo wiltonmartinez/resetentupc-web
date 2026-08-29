@@ -28,68 +28,93 @@ import icono6 from "../../assets/procedimiento/6.png";
 
 interface Props {
   locale: Locale;
-  modelo: string;
-  sourceIdBase: string;
+  /** Requerido salvo en modo genérico (isGeneric). */
+  modelo?: string;
+  /** Requerido salvo en modo genérico (isGeneric) — enlaza con el <select> real. */
+  sourceIdBase?: string;
   codigoErrorInicial?: string;
+  /** true en páginas sin marca/modelo real (ej. "Cómo funciona"): la
+   *  Tarjeta 1 deja de ser reactiva y las 6 tarjetas muestran texto neutral
+   *  en vez del wording específico de Epson. */
+  isGeneric?: boolean;
 }
 
-const { locale, modelo, sourceIdBase, codigoErrorInicial = "Almohadillas" } = Astro.props;
+const { locale, modelo = "", sourceIdBase = "", codigoErrorInicial = "Almohadillas", isGeneric = false } = Astro.props;
 
-const paso1Template = t(locale, "procesoReutilizable.paso1Titulo").replaceAll("{modelo}", modelo);
+const paso1Template = isGeneric ? "" : t(locale, "procesoReutilizable.paso1Titulo").replaceAll("{modelo}", modelo);
 const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
+
+/** En modo genérico no hay Sección 4 real que enlazar — el id/href quedan
+ *  vacíos (sin ancla) en vez de armar un id con sourceIdBase="". */
+const idTarjeta = (n: number) => (isGeneric ? undefined : `tarjeta-proceso-${sourceIdBase}-${n}`);
+const hrefPaso = (n: number) => (isGeneric ? "#" : `#paso-${sourceIdBase}-${n}`);
+
+const TITULOS_GENERICOS = {
+  paso1: "Identificación del error de tu impresora",
+  paso3: "Revisión Asistida de compatibilidad",
+  paso4: "Cotización y Pago o Garantía Vigente",
+  paso5: "Reset Asistido en 1 minuto",
+  paso6: "Impresora Desbloqueada y lista para imprimir",
+};
 ---
 
 <div class="pr" data-pr-source-id-base={sourceIdBase}>
   <span class="pr-badge">✅ {t(locale, "procesoReutilizable.badge")} 🔄</span>
 
   <ol class="pr-grid">
-    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-1`}>
-      <a class="pr-card-link" href={`#paso-${sourceIdBase}-1`}>
+    <li class="pr-card" id={idTarjeta(1)}>
+      <a class="pr-card-link" href={hrefPaso(1)}>
         <span class="pr-numero" aria-hidden="true">1</span>
         <Image src={icono1} alt="" width={80} height={80} class="pr-imagen" />
         <p class="pr-card-titulo">
-          {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
+          {isGeneric ? (
+            TITULOS_GENERICOS.paso1
+          ) : (
+            <>
+              {paso1Prefijo}<span class="pr-codigo-error" data-pr-codigo>{codigoErrorInicial}</span>{paso1Sufijo}
+            </>
+          )}
         </p>
       </a>
     </li>
 
-    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-2`}>
-      <a class="pr-card-link" href={`#paso-${sourceIdBase}-2`}>
+    <li class="pr-card" id={idTarjeta(2)}>
+      <a class="pr-card-link" href={hrefPaso(2)}>
         <span class="pr-numero" aria-hidden="true">2</span>
         <Image src={icono2} alt="" width={80} height={80} class="pr-imagen" />
         <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso2Titulo")}</p>
       </a>
     </li>
 
-    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-3`}>
-      <a class="pr-card-link" href={`#paso-${sourceIdBase}-3`}>
+    <li class="pr-card" id={idTarjeta(3)}>
+      <a class="pr-card-link" href={hrefPaso(3)}>
         <span class="pr-numero" aria-hidden="true">3</span>
         <Image src={icono3} alt="" width={80} height={80} class="pr-imagen" />
-        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso3TituloEpson")}</p>
+        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso3 : t(locale, "procesoReutilizable.paso3TituloEpson")}</p>
       </a>
     </li>
 
-    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-4`}>
-      <a class="pr-card-link" href={`#paso-${sourceIdBase}-4`}>
+    <li class="pr-card" id={idTarjeta(4)}>
+      <a class="pr-card-link" href={hrefPaso(4)}>
         <span class="pr-numero" aria-hidden="true">4</span>
         <Image src={icono4} alt="" width={80} height={80} class="pr-imagen" />
-        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso4TituloEpson")}</p>
+        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso4 : t(locale, "procesoReutilizable.paso4TituloEpson")}</p>
       </a>
     </li>
 
-    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-5`}>
-      <a class="pr-card-link" href={`#paso-${sourceIdBase}-5`}>
+    <li class="pr-card" id={idTarjeta(5)}>
+      <a class="pr-card-link" href={hrefPaso(5)}>
         <span class="pr-numero" aria-hidden="true">5</span>
         <Image src={icono5} alt="" width={80} height={80} class="pr-imagen" />
-        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso5TituloEpson")}</p>
+        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso5 : t(locale, "procesoReutilizable.paso5TituloEpson")}</p>
       </a>
     </li>
 
-    <li class="pr-card" id={`tarjeta-proceso-${sourceIdBase}-6`}>
-      <a class="pr-card-link" href={`#paso-${sourceIdBase}-6`}>
+    <li class="pr-card" id={idTarjeta(6)}>
+      <a class="pr-card-link" href={hrefPaso(6)}>
         <span class="pr-numero" aria-hidden="true">6</span>
         <Image src={icono6} alt="" width={80} height={80} class="pr-imagen" />
-        <p class="pr-card-titulo">{t(locale, "procesoReutilizable.paso6Titulo")}</p>
+        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso6 : t(locale, "procesoReutilizable.paso6Titulo")}</p>
       </a>
     </li>
   </ol>
@@ -178,11 +203,16 @@ const [paso1Prefijo, paso1Sufijo] = paso1Template.split("{codigoError}");
 
   .pr-numero {
     position: absolute;
-    top: 0.85rem;
-    right: 0.95rem;
-    font-size: 0.8rem;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-size: 0.72rem;
     font-weight: 700;
-    color: var(--color-text-subtle);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
   }
 
   .pr-imagen {
