@@ -51,7 +51,17 @@ const unCompatible = erroresCompatibles.length === 1 ? erroresCompatibles[0] : u
 const variosCompatibles = erroresCompatibles.length > 1;
 const hayOtros = erroresOtros.length > 0;
 const sinErrores = erroresCompatibles.length === 0 && !hayOtros;
-const errorPrincipal = erroresCompatibles[0];
+
+// Epson-SC parte seleccionado por defecto en "00080000" (en vez del primer
+// error por orden alfabético) — solo si ese código está entre los
+// confirmados para este modelo; si no, cae al comportamiento genérico.
+const ERROR_INICIAL_EPSON_SC = "epson-sc-00080000";
+const codigoErrorInicialSelector =
+  marcaSlug === "epson-sc" && erroresCompatibles.some((e) => e.error_id === ERROR_INICIAL_EPSON_SC)
+    ? ERROR_INICIAL_EPSON_SC
+    : undefined;
+const errorPrincipal =
+  erroresCompatibles.find((e) => e.error_id === codigoErrorInicialSelector) ?? erroresCompatibles[0];
 
 const tituloConPrefijo = `${t(locale, "modelo.prefijoTitulo")} ${nombreMarca} ${nombreModelo}`;
 
@@ -222,6 +232,7 @@ const pasosProceso = [
           locale={locale}
           urlPath={localizedPath}
           sourceIdBase={sourceIdBase}
+          codigoErrorInicial={codigoErrorInicialSelector}
         />
       )}
     </InfoCard>
@@ -279,17 +290,16 @@ const pasosProceso = [
   {tieneSensorTinta && (
     <div data-sensor-tinta-wrapper data-source-id-base={sourceIdBase} hidden={errorPrincipal?.error_id !== CODIGO_ERROR_SENSOR}>
       <InfoCard tone="muted">
-        <SensorLocation marcaSlug={marcaSlug} nombreMarca={nombreMarca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
-      </InfoCard>
-
-      <InfoCard tone="muted">
-        <SensorConditionComparison
-          marcaSlug={marcaSlug}
-          tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
-          tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
-          hintVerLimpio={t(locale, "modelo.sensorHintVerLimpio")}
-          hintVerSucio={t(locale, "modelo.sensorHintVerSucio")}
-        />
+        <div class="sensor-tinta-columnas">
+          <SensorLocation marcaSlug={marcaSlug} nombreMarca={nombreMarca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
+          <SensorConditionComparison
+            marcaSlug={marcaSlug}
+            tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
+            tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
+            hintVerLimpio={t(locale, "modelo.sensorHintVerLimpio")}
+            hintVerSucio={t(locale, "modelo.sensorHintVerSucio")}
+          />
+        </div>
       </InfoCard>
     </div>
   )}
@@ -311,7 +321,12 @@ const pasosProceso = [
   )}
   {marcaSlug === "epson-sc" && (
     <InfoCard tone="muted">
-      <ProcesoReutilizableEpsonSc locale={locale} modelo={nombreModelo} sourceIdBase={sourceIdBase} />
+      <ProcesoReutilizableEpsonSc
+        locale={locale}
+        modelo={nombreModelo}
+        sourceIdBase={sourceIdBase}
+        codigoErrorInicial={errorPrincipal?.error_id.replace(/^epson-sc-/i, "").toUpperCase()}
+      />
     </InfoCard>
   )}
 
@@ -426,6 +441,19 @@ const pasosProceso = [
 
   [data-sensor-tinta-wrapper][hidden] {
     display: none;
+  }
+
+  .sensor-tinta-columnas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .sensor-tinta-columnas {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
   }
 
   .modelo-cta-final {
