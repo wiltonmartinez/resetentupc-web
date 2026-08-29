@@ -156,6 +156,7 @@
   "procesoReutilizable": {
     "badge": "Proceso reutilizable",
     "paso1Titulo": "Identificación del error Almohadillas en Epson {modelo}",
+    "paso1TituloCanon": "Identificación del error 5B00/1700 en Canon {modelo}",
     "paso2Titulo": "Requisitos y conexión USB",
     "paso3Titulo": "Revisión Compatibilidad (Ejecución del módulo y Technician ID)",
     "paso4Titulo": "Cotización y Pago",
