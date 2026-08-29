@@ -1,9 +1,9 @@
 ---
-/**
- * "Sensor limpio vs Sensor sucio" — dos tarjetas de contraste, reutilizable
- * por marca (no por modelo). Datos en src/data/sensor-tinta.ts.
- * Desktop: lado a lado. Móvil: apiladas.
- */
+// Tarjeta interactiva "Sensor limpio / Sensor sucio": una sola tarjeta con
+// clic para alternar entre los dos estados (en vez de mostrar ambos lado a
+// lado), reutilizable por marca (no por modelo). Datos en
+// src/data/sensor-tinta.ts. El estado por defecto es "sucio" — es el que
+// el cliente ve primero en su equipo antes de limpiarlo.
 import { Image } from "astro:assets";
 import { getSensorLimpioImages, getSensorSucioImages } from "../../lib/sensor-images.js";
 
@@ -11,100 +11,189 @@ interface Props {
   marcaSlug: string;
   tituloLimpio: string;
   tituloSucio: string;
+  hintVerLimpio: string;
+  hintVerSucio: string;
 }
 
-const { marcaSlug, tituloLimpio, tituloSucio } = Astro.props;
+const { marcaSlug, tituloLimpio, tituloSucio, hintVerLimpio, hintVerSucio } = Astro.props;
 const imagenesLimpio = getSensorLimpioImages(marcaSlug);
 const imagenesSucio = getSensorSucioImages(marcaSlug);
 ---
 
 {(imagenesLimpio.length > 0 || imagenesSucio.length > 0) && (
-  <div class="sensor-comparacion">
-    <div class="sensor-comparacion-tarjeta">
-      <h3>{tituloLimpio}</h3>
-      <div class="sensor-comparacion-grid">
-        {imagenesLimpio.map((imagen, indice) => (
-          <div class="sensor-comparacion-imagen">
-            <Image
-              src={imagen}
-              alt={`${tituloLimpio} — referencia ${indice + 1}`}
-              width={imagen.width}
-              height={imagen.height}
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </div>
+  <div class="sensor-toggle" data-sensor-toggle>
+    <button
+      type="button"
+      class="sensor-toggle-trigger"
+      data-sensor-toggle-btn
+      aria-pressed="false"
+      data-sound="select"
+      data-titulo-limpio={tituloLimpio}
+      data-titulo-sucio={tituloSucio}
+      data-hint-limpio={hintVerLimpio}
+      data-hint-sucio={hintVerSucio}
+    >
+      <h3 class="sensor-toggle-titulo" data-sensor-toggle-titulo>{tituloSucio}</h3>
+      <span class="sensor-toggle-hint">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
+          <path
+            d="M8 12l4-4M7 9l-1.5 1.5a2.5 2.5 0 003.5 3.5L10.5 12M13 8l1.5-1.5a2.5 2.5 0 00-3.5-3.5L9.5 4.5"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span data-sensor-toggle-hint-texto>{hintVerLimpio}</span>
+      </span>
+    </button>
+
+    <div class="sensor-toggle-grid" data-sensor-toggle-grid="sucio">
+      {imagenesSucio.map((imagen, indice) => (
+        <div class="sensor-toggle-imagen">
+          <Image src={imagen} alt={`${tituloSucio} — referencia ${indice + 1}`} width={imagen.width} height={imagen.height} loading="lazy" />
+        </div>
+      ))}
     </div>
 
-    <div class="sensor-comparacion-tarjeta sensor-comparacion-tarjeta-sucio">
-      <h3>{tituloSucio}</h3>
-      <div class="sensor-comparacion-grid">
-        {imagenesSucio.map((imagen, indice) => (
-          <div class="sensor-comparacion-imagen">
-            <Image
-              src={imagen}
-              alt={`${tituloSucio} — referencia ${indice + 1}`}
-              width={imagen.width}
-              height={imagen.height}
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </div>
+    <div class="sensor-toggle-grid" data-sensor-toggle-grid="limpio" hidden>
+      {imagenesLimpio.map((imagen, indice) => (
+        <div class="sensor-toggle-imagen">
+          <Image src={imagen} alt={`${tituloLimpio} — referencia ${indice + 1}`} width={imagen.width} height={imagen.height} loading="lazy" />
+        </div>
+      ))}
     </div>
   </div>
 )}
 
-<style>
-  .sensor-comparacion {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+<script>
+  import { playFeedback } from "../../lib/sound-manager.js";
 
-  @media (min-width: 640px) {
-    .sensor-comparacion {
-      grid-template-columns: 1fr 1fr;
+  document.querySelectorAll<HTMLElement>("[data-sensor-toggle]").forEach((card) => {
+    const btn = card.querySelector<HTMLButtonElement>("[data-sensor-toggle-btn]");
+    const titulo = card.querySelector<HTMLElement>("[data-sensor-toggle-titulo]");
+    const hintTexto = card.querySelector<HTMLElement>("[data-sensor-toggle-hint-texto]");
+    const gridSucio = card.querySelector<HTMLElement>('[data-sensor-toggle-grid="sucio"]');
+    const gridLimpio = card.querySelector<HTMLElement>('[data-sensor-toggle-grid="limpio"]');
+    if (!btn || !titulo || !hintTexto || !gridSucio || !gridLimpio) return;
+
+    function mostrar(activo: HTMLElement, inactivo: HTMLElement) {
+      inactivo.hidden = true;
+      activo.hidden = false;
+      activo.classList.remove("sensor-toggle-grid-animar");
+      // Fuerza reflow para poder reiniciar la animación en cada clic.
+      void activo.offsetWidth;
+      activo.classList.add("sensor-toggle-grid-animar");
     }
+
+    btn.addEventListener("click", () => {
+      const mostrarLimpio = btn.getAttribute("aria-pressed") !== "true";
+      btn.setAttribute("aria-pressed", String(mostrarLimpio));
+      titulo.textContent = mostrarLimpio ? btn.dataset.tituloLimpio || "" : btn.dataset.tituloSucio || "";
+      hintTexto.textContent = mostrarLimpio ? btn.dataset.hintSucio || "" : btn.dataset.hintLimpio || "";
+      mostrar(mostrarLimpio ? gridLimpio : gridSucio, mostrarLimpio ? gridSucio : gridLimpio);
+      playFeedback("select");
+    });
+  });
+</script>
+
+<style>
+  .sensor-toggle {
+    display: grid;
+    gap: 0.85rem;
   }
 
-  .sensor-comparacion-tarjeta {
-    display: grid;
-    gap: 0.6rem;
-    padding: 1rem;
+  .sensor-toggle-trigger {
+    all: unset;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.75rem 1rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background: var(--color-bg-card);
+    background: var(--color-bg-muted);
+    transition: border-color 0.15s ease;
   }
 
-  .sensor-comparacion-tarjeta h3 {
+  .sensor-toggle-trigger:hover {
+    border-color: var(--color-primary);
+  }
+
+  .sensor-toggle-trigger:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .sensor-toggle-titulo {
     margin: 0;
-    text-align: center;
     color: var(--color-primary-dark);
   }
 
-  .sensor-comparacion-tarjeta-sucio h3 {
-    color: var(--color-warning-text);
+  .sensor-toggle-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
   }
 
-  .sensor-comparacion-grid {
+  .sensor-toggle-hint svg {
+    flex: none;
+  }
+
+  .sensor-toggle-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
   }
 
-  .sensor-comparacion-imagen {
+  .sensor-toggle-grid[hidden] {
+    display: none;
+  }
+
+  .sensor-toggle-grid-animar {
+    animation: sensor-toggle-fade 0.25s ease;
+  }
+
+  @keyframes sensor-toggle-fade {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sensor-toggle-grid-animar {
+      animation: none;
+    }
+  }
+
+  .sensor-toggle-imagen {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     overflow: hidden;
+    box-shadow: var(--shadow-card);
   }
 
-  .sensor-comparacion-imagen :global(img) {
+  .sensor-toggle-imagen :global(img) {
     display: block;
     width: 100%;
     height: auto;
     object-fit: cover;
     aspect-ratio: 4 / 3;
+  }
+
+  @media (max-width: 420px) {
+    .sensor-toggle-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
