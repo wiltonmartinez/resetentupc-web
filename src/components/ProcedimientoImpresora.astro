@@ -42,7 +42,7 @@ import {
   buildWhatsAppLink,
   type ErrorResuelto,
 } from "../i18n/utils";
-import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import { WHATSAPP_NUMBER, SITE_URL, TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
 import ErrorSelector from "./ErrorSelector.astro";
 import EvidenceCard from "./ui/EvidenceCard.astro";
 import VideoModal from "./ui/VideoModal.astro";
@@ -54,7 +54,12 @@ import ProcesoReutilizableEpsonSc from "./ui/ProcesoReutilizableEpsonSc.astro";
 import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
+import InfoCard from "./ui/InfoCard.astro";
+import ProcessSteps from "./ui/ProcessSteps.astro";
+import WhatsAppCTA from "./WhatsAppCTA.astro";
+import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
+import { getProcesoImage } from "../lib/proceso-images.js";
 import {
   listarErroresPorModelo,
   listarResetRealizados,
@@ -280,6 +285,47 @@ const mensajeFinalWhatsApp = buildWhatsAppMessage({
 });
 const hrefFinalWhatsApp = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeFinalWhatsApp);
 const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
+
+// Módulo "Reset Asistido 100% Remoto por conexión USB" (antes vivía en
+// ModeloPage.astro, más abajo en la página) — ahora se muestra justo
+// después del Paso 3, entre el resultado de la revisión y la Cotización.
+const imgProceso1 = getProcesoImage("paso1-descargar");
+const imgProceso2a = getProcesoImage("paso2-formulario");
+const imgProceso2b = getProcesoImage("paso2-formulario-2");
+const imgProceso3 = getProcesoImage("paso3-reconectarcableusb");
+const imgProceso4 = getProcesoImage("paso4-contactarnos");
+
+const pasosProceso = [
+  {
+    titulo: t(locale, "proceso.paso1Titulo"),
+    descripcion: t(locale, "proceso.paso1Texto"),
+    icono: "monitor" as const,
+    enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
+    imagenes: imgProceso1 ? [{ src: imgProceso1, alt: t(locale, "proceso.paso1ImagenAlt") }] : undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso2Titulo"),
+    descripcion: t(locale, "proceso.paso2Texto"),
+    icono: "conectar" as const,
+    destacado: `Technician ID: ${TECHNICIAN_ID}`,
+    imagenes: [
+      imgProceso2a && { src: imgProceso2a, alt: t(locale, "proceso.paso2ImagenAlt") },
+      imgProceso2b && { src: imgProceso2b, alt: t(locale, "proceso.paso2ImagenAlt2") },
+    ].filter((imagenPaso): imagenPaso is { src: ImageMetadata; alt: string } => Boolean(imagenPaso)),
+  },
+  {
+    titulo: t(locale, "proceso.paso3Titulo"),
+    descripcion: t(locale, "proceso.paso3Texto"),
+    icono: "usb" as const,
+    imagenes: imgProceso3 ? [{ src: imgProceso3, alt: t(locale, "proceso.paso3ImagenAlt") }] : undefined,
+  },
+  {
+    titulo: t(locale, "proceso.paso4Titulo"),
+    descripcion: t(locale, "proceso.paso4Texto"),
+    icono: "whatsapp" as const,
+    imagenes: imgProceso4 ? [{ src: imgProceso4, alt: t(locale, "proceso.paso4ImagenAlt") }] : undefined,
+  },
+];
 ---
 
 <div class="procedimiento" data-procedimiento data-source-id-base={sourceIdBase} data-marca={marcaSlug} data-fuente-errores={fuenteErrores}>
@@ -384,21 +430,42 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
         <>
           <h3>3) Revisión Asistida de compatibilidad USB y Reset Disponible</h3>
           <p class="procedimiento-respuesta-destacada">Resultado Revisión: Compatible, Conexión USB reconocida, Lectura al 100% y Servicio Disponible</p>
-          <div class="procedimiento-video-placeholder">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
-              <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
-              <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
-            </svg>
-            <span class="procedimiento-video-label">Pasos módulo USB Redirector</span>
-          </div>
         </>
       ) : (
         <h3>3. Revisión Compatibilidad (Ejecución del módulo de conexión USB Redirector y Technician ID)</h3>
       )}
     </li>
+  </ol>
 
+  <!-- Módulo "Reset Asistido 100% Remoto por conexión USB": va justo
+       después del Paso 3 (resultado de la revisión), antes del Paso 4
+       (Cotización y Pago). -->
+  <InfoCard tone="muted">
+    <ProcessSteps
+      titulo={t(locale, "proceso.titulo")}
+      introTexto={t(locale, "proceso.introTexto")}
+      pasos={pasosProceso}
+      marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
+    >
+      {!variosCompatibles && (
+        <WhatsAppCTA
+          marca={marca}
+          modelo={modelo}
+          error={errorPrincipal?.descripcion}
+          sourceId={`${sourceIdBase}-proceso`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={t(locale, "proceso.ctaContinuar")}
+        />
+      )}
+    </ProcessSteps>
+    <VideoModal archivo="proceso-demo.mp4" label={t(locale, "proceso.videoProcesoLabel")} />
+  </InfoCard>
+
+  <ol class="procedimiento-detalle">
     <li>
       <h3>4{esEpson ? ")" : "."} Cotización y Pago{esEpson ? " o Garantía Vigente" : ""}</h3>
+      {esEpson && <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />}
     </li>
 
     <li>

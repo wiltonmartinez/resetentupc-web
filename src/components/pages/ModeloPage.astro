@@ -6,15 +6,12 @@ import Breadcrumb from "../Breadcrumb.astro";
 import InfoCard from "../ui/InfoCard.astro";
 import ChecklistItem from "../ui/ChecklistItem.astro";
 import FaqAccordion from "../ui/FaqAccordion.astro";
-import ProcessSteps from "../ui/ProcessSteps.astro";
 import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
 import ProcedimientoImpresora from "../ProcedimientoImpresora.astro";
 import ErrorImage from "../ui/ErrorImage.astro";
-import VideoModal from "../ui/VideoModal.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
-import { getProcesoImage } from "../../lib/proceso-images.js";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, SITE_URL, type Locale } from "../../config/site";
+import { SITE_URL, type Locale } from "../../config/site";
 
 interface ModeloData {
   marcaSlug: string;
@@ -97,43 +94,6 @@ const breadcrumbJsonLd = {
   ],
 };
 
-const img1 = getProcesoImage("paso1-descargar");
-const img2a = getProcesoImage("paso2-formulario");
-const img2b = getProcesoImage("paso2-formulario-2");
-const img3 = getProcesoImage("paso3-reconectarcableusb");
-const img4 = getProcesoImage("paso4-contactarnos");
-
-const pasosProceso = [
-  {
-    titulo: t(locale, "proceso.paso1Titulo"),
-    descripcion: t(locale, "proceso.paso1Texto"),
-    icono: "monitor" as const,
-    enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
-    imagenes: img1 ? [{ src: img1, alt: t(locale, "proceso.paso1ImagenAlt") }] : undefined,
-  },
-  {
-    titulo: t(locale, "proceso.paso2Titulo"),
-    descripcion: t(locale, "proceso.paso2Texto"),
-    icono: "conectar" as const,
-    destacado: `Technician ID: ${TECHNICIAN_ID}`,
-    imagenes: [
-      img2a && { src: img2a, alt: t(locale, "proceso.paso2ImagenAlt") },
-      img2b && { src: img2b, alt: t(locale, "proceso.paso2ImagenAlt2") },
-    ].filter((imagenPaso): imagenPaso is { src: ImageMetadata; alt: string } => Boolean(imagenPaso)),
-  },
-  {
-    titulo: t(locale, "proceso.paso3Titulo"),
-    descripcion: t(locale, "proceso.paso3Texto"),
-    icono: "usb" as const,
-    imagenes: img3 ? [{ src: img3, alt: t(locale, "proceso.paso3ImagenAlt") }] : undefined,
-  },
-  {
-    titulo: t(locale, "proceso.paso4Titulo"),
-    descripcion: t(locale, "proceso.paso4Texto"),
-    icono: "whatsapp" as const,
-    imagenes: img4 ? [{ src: img4, alt: t(locale, "proceso.paso4ImagenAlt") }] : undefined,
-  },
-];
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(serviceJsonLd)} />
@@ -223,32 +183,11 @@ const pasosProceso = [
     </InfoCard>
   )}
 
-  <!-- Nota: el sensor de tinta (Epson-SC + 0014BD) y el índice visual 3x2
-       ("Flujo del servicio") ahora los renderiza ProcedimientoImpresora,
-       dentro de la sección "2. Confirmación del problema" de arriba. -->
-
-  <!-- 3b. Comprensión de la solución: el proceso real del servicio -->
-  <InfoCard tone="muted">
-    <ProcessSteps
-      titulo={t(locale, "proceso.titulo")}
-      introTexto={t(locale, "proceso.introTexto")}
-      pasos={pasosProceso}
-      marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
-    >
-      {!variosCompatibles && (
-        <WhatsAppCTA
-          marca={nombreMarca}
-          modelo={nombreModelo}
-          error={unCompatible?.descripcion}
-          sourceId={`${sourceIdBase}-proceso`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={t(locale, "proceso.ctaContinuar")}
-        />
-      )}
-    </ProcessSteps>
-    <VideoModal archivo="proceso-demo.mp4" label={t(locale, "proceso.videoProcesoLabel")} />
-  </InfoCard>
+  <!-- Nota: el sensor de tinta (Epson-SC + 0014BD), el índice visual 3x2
+       ("Flujo del servicio") y el módulo "Reset Asistido 100% Remoto por
+       conexión USB" ahora los renderiza ProcedimientoImpresora, dentro de
+       la sección "2. Confirmación del problema" de arriba (este último,
+       justo después del Paso 3 del desarrollo detallado). -->
 
   <!-- 4. Confianza y reducción de fricción -->
   <InfoCard tone="muted">

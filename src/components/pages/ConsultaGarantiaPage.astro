@@ -4,16 +4,23 @@ import { NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
+  /** false para embeber solo el formulario+resultado (ej. dentro de
+   *  ProcedimientoImpresora, Paso 4) sin duplicar el <h1> de esta página. */
+  mostrarTitulo?: boolean;
 }
 
-const { locale } = Astro.props;
+const { locale, mostrarTitulo = true } = Astro.props;
 
 const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
 ---
 
 <article class="garantia-page">
-  <h1>{t(locale, "consultaGarantiaPage.heading")}</h1>
-  <p class="garantia-intro">{t(locale, "consultaGarantiaPage.intro")}</p>
+  {mostrarTitulo && (
+    <>
+      <h1>{t(locale, "consultaGarantiaPage.heading")}</h1>
+      <p class="garantia-intro">{t(locale, "consultaGarantiaPage.intro")}</p>
+    </>
+  )}
 
   <form class="garantia-form" data-garantia-form data-api-url={API_URL}>
     <label for="garantia-q">{t(locale, "consultaGarantiaPage.inputLabel")}</label>
