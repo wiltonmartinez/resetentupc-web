@@ -50,11 +50,11 @@ const idTarjeta = (n: number) => (isGeneric ? undefined : `tarjeta-proceso-${sou
 const hrefPaso = (n: number) => (isGeneric ? "#" : `#paso-${sourceIdBase}-${n}`);
 
 const TITULOS_GENERICOS = {
-  paso1: "Identificación del error de tu impresora",
-  paso3: "Revisión Asistida de compatibilidad",
-  paso4: "Cotización y Pago o Garantía Vigente",
-  paso5: "Reset Asistido en 1 minuto",
-  paso6: "Impresora Desbloqueada y lista para imprimir",
+  paso1: t(locale, "procesoReutilizable.paso1TituloGenerico"),
+  paso3: t(locale, "procesoReutilizable.paso3TituloGenerico"),
+  paso4: t(locale, "procesoReutilizable.paso4Titulo"),
+  paso5: t(locale, "procesoReutilizable.paso5Titulo"),
+  paso6: t(locale, "procesoReutilizable.paso6Titulo"),
 };
 ---
 

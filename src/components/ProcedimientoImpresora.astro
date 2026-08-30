@@ -164,9 +164,21 @@ const tieneSensorTinta =
   getSensorTintaParaMarca(marcaSlug) !== null &&
   erroresCompatibles.some((e) => obtenerErrorCorto(e.descripcion) === "0014BD");
 
-// Paso 1 (Sección 4, solo Epson): la foto ya la muestra la flip card del
-// selector (Sección 1) — acá solo queda el texto reactivo.
+// Paso 1 (Sección 4): la foto ya la muestra la flip card del selector
+// (Sección 1) — acá solo queda el texto reactivo. Los templates se
+// dividen alrededor de {codigo}/{errorLargo} porque esos tramos siguen
+// viviendo en un <span> que el script actualiza en vivo al cambiar de
+// error — no se puede resolver todo con un simple replaceAll().
 const errorLargoPrincipal = errorPrincipal?.descripcion ?? "";
+const paso1TituloTemplate = t(locale, "procedimiento.paso1Titulo").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
+const [paso1TituloPrefijo, paso1TituloSufijo] = paso1TituloTemplate.split("{codigo}");
+const paso1PreguntaTemplate = t(locale, "procedimiento.paso1Pregunta").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
+const [paso1PreguntaPrefijo, paso1PreguntaSufijo] = paso1PreguntaTemplate.split("{errorLargo}");
+const paso2ReqErrorTemplate = t(locale, "procedimiento.paso2ReqError").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
+const [paso2ReqErrorPrefijo, paso2ReqErrorSufijo] = paso2ReqErrorTemplate.split("{errorLargo}");
+const paso2ModalidadTexto = errorPrincipal?.modo
+  ? t(locale, "procedimiento.paso2Modalidad").replaceAll("{modo}", errorPrincipal.modo)
+  : "";
 
 // Paso 5: video real de "reset realizado" ya publicado para
 // este modelo. Si no hay uno exacto, cae a cualquiera de la misma marca
@@ -197,9 +209,14 @@ const candidatosVideo: CandidatoVideo[] = candidatosVideoResp.map((r) => ({
 }));
 const videoResetRealizado = candidatosVideo[0] ?? null;
 const hrefResetEvidencia = buildLocalizedPath(locale, "/prueba-social/reset-evidencia/");
+// La misma plantilla ("Ver la evidencia completa: {titulo}") se usa acá
+// para el primer render (SEO/SSG) y se pasa también al cliente vía
+// data-anchor-template para cuando el <script> azarea otro video — así
+// no queda un string sin traducir escondido solo en el <script>.
+const paso5AnchorConVideoTemplate = t(locale, "procedimiento.paso5AnchorConVideo");
 const anchorResetEvidencia = videoResetRealizado
-  ? `Ver la evidencia completa: ${videoResetRealizado.titulo}`
-  : `Ver evidencias reales de reset en ${marca}`;
+  ? paso5AnchorConVideoTemplate.replace("{titulo}", videoResetRealizado.titulo)
+  : t(locale, "procedimiento.paso5AnchorSinVideo").replace("{marca}", marca);
 
 // 2) Prueba Social: un testimonio de Trustpilot y uno Local. Mismo patrón
 // SSG + azar en cliente que el video de arriba: se traen las listas
@@ -250,11 +267,16 @@ const hrefClienteSatisfechoDetalle = testimonioLocalEmbed?.slug
   ? buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${testimonioLocalEmbed.slug}/`)
   : null;
 const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/");
+// Igual que paso5AnchorConVideoTemplate: la base traducida se pasa al
+// cliente vía data-resena-template para cuando el <script> azarea otro
+// testimonio Trustpilot.
+const paso6ResenaTrustpilotTemplate = t(locale, "procedimiento.paso6ResenaTrustpilot");
 function anchorTrustpilotDe(c: CandidatoTrustpilot): string {
   const marcaModelo = [c.marca, c.modelo].filter(Boolean).join(" ");
-  return `Reseña real en Trustpilot${marcaModelo ? ": " + marcaModelo : ""}`;
+  return `${paso6ResenaTrustpilotTemplate}${marcaModelo ? ": " + marcaModelo : ""}`;
 }
 const anchorTrustpilot = testimonioTrustpilot ? anchorTrustpilotDe(testimonioTrustpilot) : "";
+const paso6LeerCasoCompletoTemplate = t(locale, "procedimiento.paso6LeerCasoCompleto");
 
 // JSON embebido para el <script> del cliente (solo cuando hay más de un
 // candidato — si hay 0 o 1, no hace falta azarear nada).
@@ -336,11 +358,11 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-1`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-1`}>
-          1) Identificación del error <span data-procedimiento-codigo>{codigoCortoInicial}</span> en {marca} {modelo}
+          1) {paso1TituloPrefijo}<span data-procedimiento-codigo>{codigoCortoInicial}</span>{paso1TituloSufijo}
         </a>
       </h3>
       <p data-procedimiento-pregunta-error>
-        ¿Tu {marca} {modelo} presenta un mensaje de error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span>?
+        {paso1PreguntaPrefijo}<span data-procedimiento-error-largo>{errorLargoPrincipal}</span>{paso1PreguntaSufijo}
       </p>
     </li>
   </ol>
@@ -396,20 +418,20 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-2`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-2`}>
-          2) Requisitos y Conexión USB
+          2) {t(locale, "procedimiento.paso2Titulo")}
         </a>
       </h3>
       <ul>
-        <li>Impresora {marca} {modelo} conectada mediante CABLE USB al computador.</li>
-        <li>Error <span data-procedimiento-error-largo>{errorLargoPrincipal}</span> en impresora {marca} {modelo}.</li>
-        <li>PC con Windows (7, 8, 10 u 11).</li>
-        <li>Conexión a Internet estable.</li>
+        <li>{t(locale, "procedimiento.paso2ReqUsb").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo)}</li>
+        <li>{paso2ReqErrorPrefijo}<span data-procedimiento-error-largo>{errorLargoPrincipal}</span>{paso2ReqErrorSufijo}</li>
+        <li>{t(locale, "procedimiento.paso2ReqWindows")}</li>
+        <li>{t(locale, "procedimiento.paso2ReqInternet")}</li>
         <li>
-          Realizar los pasos Asistidos (Recibe Reset asistido, no recibe Software autónomo).
-          {errorPrincipal?.modo && <> Modalidad: {errorPrincipal.modo}.</>}
+          {t(locale, "procedimiento.paso2ReqAsistido")}
+          {paso2ModalidadTexto && <> {paso2ModalidadTexto}</>}
         </li>
         <li data-procedimiento-requisito-sensor hidden={!esSensorInicial}>
-          Realizar limpieza 100% impecable a Sensor de tinta, Plásticos y la Almohadilla debe ser nueva antes del reset.
+          {t(locale, "procedimiento.paso2ReqSensor")}
         </li>
       </ul>
     </li>
@@ -417,10 +439,10 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-3`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
-          3) Revisión Asistida de compatibilidad USB y Reset Disponible
+          3) {t(locale, "procedimiento.paso3Titulo")}
         </a>
       </h3>
-      <p class="procedimiento-respuesta-destacada">Resultado Revisión: Compatible, Conexión USB reconocida, Lectura al 100% y Servicio Disponible</p>
+      <p class="procedimiento-respuesta-destacada">{t(locale, "procedimiento.paso3Resultado")}</p>
     </li>
   </ol>
 
@@ -454,7 +476,7 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-4`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-4`}>
-          4) Cotización y Pago o Garantía Vigente
+          4) {t(locale, "procedimiento.paso4Titulo")}
         </a>
       </h3>
       <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
@@ -463,11 +485,16 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-5`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-5`}>
-          5) Reset Asistido en 1 minuto | {marca} {modelo}
+          5) {t(locale, "procedimiento.paso5Titulo").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo)}
         </a>
       </h3>
       {videoResetRealizado ? (
-        <div class="procedimiento-video-real" data-procedimiento-video-real data-href-base={hrefResetEvidencia}>
+        <div
+          class="procedimiento-video-real"
+          data-procedimiento-video-real
+          data-href-base={hrefResetEvidencia}
+          data-anchor-template={paso5AnchorConVideoTemplate}
+        >
           <YouTubeFacade
             youtubeId={videoResetRealizado.youtubeId}
             titulo={videoResetRealizado.titulo}
@@ -483,8 +510,8 @@ const pasosProceso = [
             <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
             <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
           </svg>
-          <span class="procedimiento-video-label">Reset Asistido en 1 minuto</span>
-          <span class="procedimiento-video-nota">(evidencia en camino — aún sin video publicado para este modelo)</span>
+          <span class="procedimiento-video-label">{t(locale, "procedimiento.paso5TituloCorto")}</span>
+          <span class="procedimiento-video-nota">{t(locale, "procedimiento.paso5PlaceholderNota")}</span>
           <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
         </div>
       )}
@@ -493,24 +520,33 @@ const pasosProceso = [
     <li>
       <h3 id={`paso-${sourceIdBase}-6`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-6`}>
-          6) Impresora Desbloqueada y lista para imprimir
+          6) {t(locale, "procedimiento.paso6Titulo")}
         </a>
       </h3>
       <div class="procedimiento-prueba-social">
           {testimonioLocalEmbed && (
-            <div class="procedimiento-testimonio-item" data-procedimiento-testimonio-local data-href-base={hrefClienteSatisfecho}>
+            <div
+              class="procedimiento-testimonio-item"
+              data-procedimiento-testimonio-local
+              data-href-base={hrefClienteSatisfecho}
+              data-anchor-template={paso6LeerCasoCompletoTemplate}
+            >
               <ClienteSatisfechoEmbed url={testimonioLocalEmbed.url} titulo={testimonioLocalEmbed.titulo} />
               {hrefClienteSatisfechoDetalle && (
                 <a class="procedimiento-enlace-seo" href={hrefClienteSatisfechoDetalle}>
-                  Leer el caso completo: {testimonioLocalEmbed.titulo} →
+                  {paso6LeerCasoCompletoTemplate.replace("{titulo}", testimonioLocalEmbed.titulo)} →
                 </a>
               )}
             </div>
           )}
           {testimonioTrustpilot?.imagen && (
-            <div class="procedimiento-testimonio-item" data-procedimiento-testimonio-trustpilot>
+            <div
+              class="procedimiento-testimonio-item"
+              data-procedimiento-testimonio-trustpilot
+              data-resena-template={paso6ResenaTrustpilotTemplate}
+            >
               <a class="procedimiento-testimonio-trustpilot-link" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
-                <img src={testimonioTrustpilot.imagen} alt="Testimonio de cliente en Trustpilot" loading="lazy" />
+                <img src={testimonioTrustpilot.imagen} alt={t(locale, "procedimiento.paso6AltTrustpilot")} loading="lazy" />
               </a>
               <a
                 class="procedimiento-enlace-seo"
@@ -524,8 +560,8 @@ const pasosProceso = [
           )}
           <TrustpilotWidget />
           <div class="procedimiento-prueba-social-enlaces">
-            <a href={hrefClienteSatisfecho}>Ver más clientes satisfechos →</a>
-            <a href={hrefTestimoniosTrustpilot}>Ver testimonios en Trustpilot →</a>
+            <a href={hrefClienteSatisfecho}>{t(locale, "procedimiento.paso6VerMasClientes")} →</a>
+            <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
           </div>
           <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow">
             {t(locale, "common.whatsappButton")}
@@ -609,6 +645,7 @@ const pasosProceso = [
       const tituloEl = videoWrapper.querySelector<HTMLElement>(".youtube-card-titulo");
       const enlaceSeo = videoWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
       const hrefBase = videoWrapper.dataset.hrefBase || "";
+      const anchorTemplate = videoWrapper.dataset.anchorTemplate || "{titulo}";
 
       if (trigger) {
         trigger.setAttribute("data-youtube-id", videoElegido.youtubeId);
@@ -618,7 +655,7 @@ const pasosProceso = [
       if (tituloEl) tituloEl.textContent = videoElegido.titulo;
       if (enlaceSeo) {
         enlaceSeo.href = `${hrefBase}${videoElegido.slug}/`;
-        enlaceSeo.textContent = `Ver la evidencia completa: ${videoElegido.titulo} →`;
+        enlaceSeo.textContent = `${anchorTemplate.replace("{titulo}", videoElegido.titulo)} →`;
       }
     }
 
@@ -629,6 +666,7 @@ const pasosProceso = [
       const iframe = localWrapper.querySelector<HTMLIFrameElement>("iframe");
       const enlaceSeo = localWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
       const hrefBase = localWrapper.dataset.hrefBase || "";
+      const anchorTemplate = localWrapper.dataset.anchorTemplate || "{titulo}";
 
       if (iframe) {
         iframe.src = `${localElegido.url}${localElegido.url.includes("?") ? "&" : "?"}chat=1`;
@@ -636,7 +674,7 @@ const pasosProceso = [
       }
       if (enlaceSeo && localElegido.slug) {
         enlaceSeo.href = `${hrefBase}${localElegido.slug}/`;
-        enlaceSeo.textContent = `Leer el caso completo: ${localElegido.titulo} →`;
+        enlaceSeo.textContent = `${anchorTemplate.replace("{titulo}", localElegido.titulo)} →`;
       }
     }
 
@@ -648,7 +686,8 @@ const pasosProceso = [
       const img = trustpilotWrapper.querySelector<HTMLImageElement>("img");
       const enlaceSeo = trustpilotWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
       const marcaModelo = [trustpilotElegido.marca, trustpilotElegido.modelo].filter(Boolean).join(" ");
-      const anchor = `Reseña real en Trustpilot${marcaModelo ? ": " + marcaModelo : ""}`;
+      const resenaTemplate = trustpilotWrapper.dataset.resenaTemplate || "";
+      const anchor = `${resenaTemplate}${marcaModelo ? ": " + marcaModelo : ""}`;
 
       if (enlaceImagen) enlaceImagen.href = trustpilotElegido.destino;
       if (img) img.src = trustpilotElegido.imagen;
