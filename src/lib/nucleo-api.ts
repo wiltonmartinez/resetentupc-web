@@ -76,8 +76,17 @@ const META_VACIA: ApiMeta = { page: 1, per_page: 0, total: 0, total_pages: 0 };
 const cacheJson = new Map<string, Promise<unknown>>();
 
 async function obtenerJson<T>(ruta: string): Promise<T | null> {
-  const cacheada = cacheJson.get(ruta);
-  if (cacheada) return cacheada as Promise<T | null>;
+  // En `astro dev` el proceso vive horas/días mientras se itera contra
+  // Núcleo en vivo — cachear por proceso aquí serviría datos viejos en
+  // cada recarga hasta reiniciar el servidor. El riesgo real de fetches
+  // duplicados (miles por build) solo existe en `astro build`, donde el
+  // caché sigue activo.
+  const cacheable = !import.meta.env.DEV;
+
+  if (cacheable) {
+    const cacheada = cacheJson.get(ruta);
+    if (cacheada) return cacheada as Promise<T | null>;
+  }
 
   const promesa = (async () => {
     try {
@@ -91,7 +100,7 @@ async function obtenerJson<T>(ruta: string): Promise<T | null> {
     }
   })();
 
-  cacheJson.set(ruta, promesa);
+  if (cacheable) cacheJson.set(ruta, promesa);
   return promesa as Promise<T | null>;
 }
 
