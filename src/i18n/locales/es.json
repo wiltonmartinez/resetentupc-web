@@ -143,6 +143,7 @@
     "evidenciaErrorCaption": "Así se ve el error",
     "evidenciaSolucionCaption": "Así queda resuelto",
     "evidenciaFlipHint": "Toca para ver la solución",
+    "evidenciaFotoNoDisponible": "Foto no disponible por el momento",
     "sensorUbicacionTitulo": "Ubicación del sensor de tinta",
     "sensorLimpioTitulo": "Sensor limpio",
     "sensorSucioTitulo": "Sensor sucio",

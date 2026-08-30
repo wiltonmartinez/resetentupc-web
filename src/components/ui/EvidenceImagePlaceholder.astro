@@ -1,0 +1,46 @@
+---
+// Se muestra en vez de la foto de error/solución cuando no hay ninguna
+// disponible (ni de Núcleo, ni por error_id, ni por modelo, ni por
+// familia) — mantiene las mismas dimensiones que `.evidence-imagen` para
+// que el layout de la tarjeta no salte, sin fabricar ni romper un <img>
+// con src vacío.
+interface Props extends astroHTML.JSX.HTMLAttributes {
+  label: string;
+}
+
+const { label, class: className, ...rest } = Astro.props;
+---
+
+<div class:list={["evidence-placeholder", className]} role="img" aria-label={label} {...rest}>
+  <svg viewBox="0 0 24 24" width="32" height="32" fill="none" aria-hidden="true">
+    <rect x="3" y="5" width="18" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+    <circle cx="8.5" cy="10" r="1.5" stroke="currentColor" stroke-width="1.5" />
+    <path d="M3 16l5-4 4 3 3-2.5L21 16" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+    <path d="M4 4l16 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+  <span>{label}</span>
+</div>
+
+<style>
+  .evidence-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: var(--color-text-subtle);
+    background: var(--color-bg-card);
+  }
+  .evidence-placeholder[hidden] {
+    display: none;
+  }
+
+  .evidence-placeholder span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+</style>

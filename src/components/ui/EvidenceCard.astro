@@ -2,9 +2,10 @@
 import { Image, getImage } from "astro:assets";
 import { t } from "../../i18n/utils";
 import type { Locale } from "../../config/site";
-import { getErrorImage } from "../../lib/error-images.js";
+import { getErrorImage, getErrorImageFamiliaFallback } from "../../lib/error-images.js";
 import { getSolucionImage } from "../../lib/solucion-images.js";
 import { getModeloImage } from "../../lib/model-images.js";
+import EvidenceImagePlaceholder from "./EvidenceImagePlaceholder.astro";
 
 interface Props {
   errorId: string;
@@ -19,13 +20,14 @@ interface Props {
 
 const { errorId, modeloSlug, nombreMarca, nombreModelo, errorCaption, solucionCaption, flipHint, locale } = Astro.props;
 
-const errorImg = getErrorImage(errorId) ?? getErrorImage(modeloSlug);
+const errorImg = getErrorImage(errorId) ?? getErrorImage(modeloSlug) ?? getErrorImageFamiliaFallback(modeloSlug);
 const solucionImg = getSolucionImage(errorId) ?? getSolucionImage(modeloSlug);
 const modeloImgFallback = !solucionImg ? getModeloImage(modeloSlug) : null;
 
 const traseraDisponible = solucionImg || modeloImgFallback;
 const grupoModal = `evidence-card-${errorId}`;
 const ampliarLabel = t(locale, "imageModal.ampliarLabel");
+const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
 
 // Mismo ancho que ya usa ErrorSelector.astro para el popup — el <Image>
 // de arriba sigue sirviendo la miniatura optimizada de la tarjeta.
@@ -34,26 +36,31 @@ const solucionImgModalUrl = solucionImg ? (await getImage({ src: solucionImg, fo
 const modeloImgFallbackModalUrl = modeloImgFallback ? (await getImage({ src: modeloImgFallback, format: "webp", width: 960 })).src : "";
 ---
 
-{
-  errorImg && (
+{(
     <div class="evidence-flip">
       {traseraDisponible ? (
         <div class="evidence-flip-trigger" role="button" tabindex="0" aria-pressed="false" data-sound="select">
           <span class="evidence-flip-inner">
             <span class="evidence-face evidence-face-front">
               <span class="evidence-imagen">
-                <Image src={errorImg} alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`} width={errorImg.width} height={errorImg.height} loading="lazy" />
-                <button
-                  type="button"
-                  class="evidence-ampliar"
-                  data-modal-trigger
-                  data-modal-group={grupoModal}
-                  data-modal-src={errorImgModalUrl}
-                  data-modal-alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`}
-                  aria-label={ampliarLabel}
-                >
-                  🔍
-                </button>
+                {errorImg ? (
+                  <>
+                    <Image src={errorImg} alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`} width={errorImg.width} height={errorImg.height} loading="lazy" />
+                    <button
+                      type="button"
+                      class="evidence-ampliar"
+                      data-modal-trigger
+                      data-modal-group={grupoModal}
+                      data-modal-src={errorImgModalUrl}
+                      data-modal-alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`}
+                      aria-label={ampliarLabel}
+                    >
+                      🔍
+                    </button>
+                  </>
+                ) : (
+                  <EvidenceImagePlaceholder label={fotoNoDisponibleLabel} />
+                )}
               </span>
               <p class="evidence-caption">{errorCaption}</p>
               <span class="evidence-flip-hint">↻ {flipHint}</span>
@@ -101,24 +108,29 @@ const modeloImgFallbackModalUrl = modeloImgFallback ? (await getImage({ src: mod
       ) : (
         <div class="evidence-static">
           <span class="evidence-imagen">
-            <Image src={errorImg} alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`} width={errorImg.width} height={errorImg.height} loading="lazy" />
-            <button
-              type="button"
-              class="evidence-ampliar"
-              data-modal-trigger
-              data-modal-src={errorImgModalUrl}
-              data-modal-alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`}
-              aria-label={ampliarLabel}
-            >
-              🔍
-            </button>
+            {errorImg ? (
+              <>
+                <Image src={errorImg} alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`} width={errorImg.width} height={errorImg.height} loading="lazy" />
+                <button
+                  type="button"
+                  class="evidence-ampliar"
+                  data-modal-trigger
+                  data-modal-src={errorImgModalUrl}
+                  data-modal-alt={`Así se ve este error en la ${nombreMarca} ${nombreModelo}`}
+                  aria-label={ampliarLabel}
+                >
+                  🔍
+                </button>
+              </>
+            ) : (
+              <EvidenceImagePlaceholder label={fotoNoDisponibleLabel} />
+            )}
           </span>
           <p class="evidence-caption">{errorCaption}</p>
         </div>
       )}
     </div>
-  )
-}
+  )}
 
 <script>
   document.querySelectorAll(".evidence-flip-trigger").forEach((btn) => {

@@ -2,9 +2,10 @@
 import { getImage } from "astro:assets";
 import { buildWhatsAppMessage, buildWhatsAppLink, t, type ErrorResuelto } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
-import { getErrorImage, getErrorImageByFilename } from "../lib/error-images.js";
+import { getErrorImage, getErrorImageByFilename, getErrorImageFamiliaFallback } from "../lib/error-images.js";
 import { getSolucionImage } from "../lib/solucion-images.js";
 import { getModeloImage } from "../lib/model-images.js";
+import EvidenceImagePlaceholder from "./ui/EvidenceImagePlaceholder.astro";
 
 interface Props {
   errores: ErrorResuelto[];
@@ -31,11 +32,16 @@ const opciones = await Promise.all(
   errores.map(async (err) => {
     const message = buildWhatsAppMessage({ locale, marca, modelo, error: err.descripcion, urlOrigen });
     // Prioridad: foto_url de Núcleo (nombre de archivo explícito, ej.
-    // "almohadillas.jpg") > mapeo por error_id > mapeo por slug de modelo.
+    // "almohadillas.jpg") > mapeo por error_id > mapeo por slug de modelo
+    // > foto genérica de la familia del modelo (ej. "et-generico.png").
+    // Si ninguna existe, errorImg queda null y el frontend muestra un
+    // placeholder limpio en vez de romper el <img> o desaparecer la
+    // sección — nunca se fabrica una imagen.
     const errorImg =
       (err.foto_url ? getErrorImageByFilename(err.foto_url) : null) ??
       getErrorImage(err.error_id) ??
-      (modeloSlug ? getErrorImage(modeloSlug) : null);
+      (modeloSlug ? getErrorImage(modeloSlug) : null) ??
+      (modeloSlug ? getErrorImageFamiliaFallback(modeloSlug) : null);
     const solucionImg = getSolucionImage(err.error_id) ?? (modeloSlug ? getSolucionImage(modeloSlug) : null);
     const errorImgUrl = errorImg ? (await getImage({ src: errorImg, format: "webp", width: 480 })).src : "";
     const solucionImgUrl = solucionImg ? (await getImage({ src: solucionImg, format: "webp", width: 480 })).src : "";
@@ -67,6 +73,7 @@ for (const op of opciones) {
 
 const primera = (codigoErrorInicial && opciones.find((op) => op.errorId === codigoErrorInicial)) || opciones[0];
 const selectId = `error-select-${sourceIdBase}`;
+const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
 ---
 
 <div class="error-selector">
@@ -94,7 +101,7 @@ const selectId = `error-select-${sourceIdBase}`;
 
   <p class="error-selector-descripcion">{primera.descripcion}</p>
 
-  <div class="evidence-flip" hidden={!primera.errorImgUrl}>
+  <div class="evidence-flip">
     <div
       class="evidence-flip-trigger"
       role="button"
@@ -107,7 +114,18 @@ const selectId = `error-select-${sourceIdBase}`;
       <span class="evidence-flip-inner">
         <span class="evidence-face evidence-face-front">
           <span class="evidence-imagen">
-            <img class="error-selector-imagen-error" src={primera.errorImgUrl} alt="Así se ve este error en la impresora" loading="lazy" />
+            <img
+              class="error-selector-imagen-error"
+              src={primera.errorImgUrl}
+              alt="Así se ve este error en la impresora"
+              loading="lazy"
+              hidden={!primera.errorImgUrl}
+            />
+            <EvidenceImagePlaceholder
+              label={fotoNoDisponibleLabel}
+              class="error-selector-placeholder-error"
+              hidden={!!primera.errorImgUrl}
+            />
             <button
               type="button"
               class="evidence-ampliar evidence-ampliar-error"
@@ -116,6 +134,7 @@ const selectId = `error-select-${sourceIdBase}`;
               data-modal-src={primera.errorImgUrl}
               data-modal-alt="Así se ve este error en la impresora"
               aria-label={t(locale, "imageModal.ampliarLabel")}
+              hidden={!primera.errorImgUrl}
             >
               🔍
             </button>
@@ -146,7 +165,18 @@ const selectId = `error-select-${sourceIdBase}`;
 
     <div class="evidence-static" hidden={!!(primera.solucionImgUrl || modeloImgUrl)}>
       <span class="evidence-imagen">
-        <img class="error-selector-imagen-error-static" src={primera.errorImgUrl} alt="Así se ve este error en la impresora" loading="lazy" />
+        <img
+          class="error-selector-imagen-error-static"
+          src={primera.errorImgUrl}
+          alt="Así se ve este error en la impresora"
+          loading="lazy"
+          hidden={!primera.errorImgUrl}
+        />
+        <EvidenceImagePlaceholder
+          label={fotoNoDisponibleLabel}
+          class="error-selector-placeholder-error-static"
+          hidden={!!primera.errorImgUrl}
+        />
         <button
           type="button"
           class="evidence-ampliar evidence-ampliar-error-static"
@@ -154,6 +184,7 @@ const selectId = `error-select-${sourceIdBase}`;
           data-modal-src={primera.errorImgUrl}
           data-modal-alt="Así se ve este error en la impresora"
           aria-label={t(locale, "imageModal.ampliarLabel")}
+          hidden={!primera.errorImgUrl}
         >
           🔍
         </button>
@@ -174,11 +205,12 @@ const selectId = `error-select-${sourceIdBase}`;
     const select = container.querySelector("select");
     const cta = container.querySelector("a.whatsapp-cta");
     const desc = container.querySelector(".error-selector-descripcion");
-    const flipWrapper = container.querySelector(".evidence-flip");
     const flipTrigger = container.querySelector(".evidence-flip-trigger");
     const staticCard = container.querySelector(".evidence-static");
     const errorImg = container.querySelector(".error-selector-imagen-error");
     const errorImgStatic = container.querySelector(".error-selector-imagen-error-static");
+    const errorPlaceholder = container.querySelector(".error-selector-placeholder-error");
+    const errorPlaceholderStatic = container.querySelector(".error-selector-placeholder-error-static");
     const solucionImg = container.querySelector(".error-selector-imagen-solucion");
     const checkBadge = container.querySelector(".evidence-check");
     const ampliarError = container.querySelector(".evidence-ampliar-error");
@@ -212,17 +244,32 @@ const selectId = `error-select-${sourceIdBase}`;
       if (sourceId) cta.setAttribute("data-source-id", sourceId);
       if (desc && descripcion) desc.textContent = descripcion;
 
-      if (flipWrapper) flipWrapper.hidden = !errorUrl;
       if (flipTrigger) {
         flipTrigger.hidden = !hayTrasera;
         flipTrigger.setAttribute("aria-pressed", "false");
       }
       if (staticCard) staticCard.hidden = hayTrasera;
 
-      if (errorImg && errorUrl) errorImg.src = errorUrl;
-      if (errorImgStatic && errorUrl) errorImgStatic.src = errorUrl;
-      if (ampliarError && errorUrl) ampliarError.setAttribute("data-modal-src", errorUrl);
-      if (ampliarErrorStatic && errorUrl) ampliarErrorStatic.setAttribute("data-modal-src", errorUrl);
+      // Sin foto para este error: mostrar el placeholder limpio en vez del
+      // <img> (nunca dejar un src vacío ni desaparecer la sección).
+      if (errorImg) {
+        errorImg.hidden = !errorUrl;
+        if (errorUrl) errorImg.src = errorUrl;
+      }
+      if (errorImgStatic) {
+        errorImgStatic.hidden = !errorUrl;
+        if (errorUrl) errorImgStatic.src = errorUrl;
+      }
+      if (errorPlaceholder) errorPlaceholder.hidden = Boolean(errorUrl);
+      if (errorPlaceholderStatic) errorPlaceholderStatic.hidden = Boolean(errorUrl);
+      if (ampliarError) {
+        ampliarError.hidden = !errorUrl;
+        if (errorUrl) ampliarError.setAttribute("data-modal-src", errorUrl);
+      }
+      if (ampliarErrorStatic) {
+        ampliarErrorStatic.hidden = !errorUrl;
+        if (errorUrl) ampliarErrorStatic.setAttribute("data-modal-src", errorUrl);
+      }
       if (solucionImg) {
         if (solucionUrl) {
           solucionImg.src = solucionUrl;
@@ -331,6 +378,9 @@ const selectId = `error-select-${sourceIdBase}`;
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+  .evidence-imagen img[hidden] {
+    display: none;
   }
   .evidence-check {
     position: absolute;
