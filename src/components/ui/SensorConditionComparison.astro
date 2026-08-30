@@ -9,7 +9,9 @@
 // la tarjeta) y el reverso se superpone con position:absolute; inset:0
 // sobre esa misma caja — es el patrón estándar para flip-cards de alto
 // variable (ver también .evidence-flip en ErrorSelector.astro).
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
 import { getSensorLimpioImages, getSensorSucioImages } from "../../lib/sensor-images.js";
 
 interface Props {
@@ -18,15 +20,28 @@ interface Props {
   tituloSucio: string;
   hintVerLimpio: string;
   hintVerSucio: string;
+  locale: Locale;
 }
 
-const { marcaSlug, tituloLimpio, tituloSucio, hintVerLimpio, hintVerSucio } = Astro.props;
+const { marcaSlug, tituloLimpio, tituloSucio, hintVerLimpio, hintVerSucio, locale } = Astro.props;
 const imagenesLimpio = getSensorLimpioImages(marcaSlug);
 const imagenesSucio = getSensorSucioImages(marcaSlug);
+const ampliarLabel = t(locale, "imageModal.ampliarLabel");
+const grupoModal = `sensor-condicion-${marcaSlug}`;
+
+// URLs para el popup (960px) — el <Image> de la tarjeta sigue mostrando su
+// propia miniatura optimizada; esto solo resuelve el src grande a mostrar
+// al ampliar.
+const imagenesSucioModal = await Promise.all(
+  imagenesSucio.map(async (imagen) => (await getImage({ src: imagen, format: "webp", width: 960 })).src)
+);
+const imagenesLimpioModal = await Promise.all(
+  imagenesLimpio.map(async (imagen) => (await getImage({ src: imagen, format: "webp", width: 960 })).src)
+);
 ---
 
 {(imagenesLimpio.length > 0 || imagenesSucio.length > 0) && (
-  <button type="button" class="sensor-flip-trigger" data-sensor-flip-trigger aria-pressed="false" data-sound="select">
+  <div class="sensor-flip-trigger" role="button" tabindex="0" data-sensor-flip-trigger aria-pressed="false" data-sound="select">
     <span class="sensor-flip-inner">
       <span class="sensor-flip-cara sensor-flip-cara-frente">
         <h3 class="sensor-flip-titulo">{tituloSucio}</h3>
@@ -34,6 +49,17 @@ const imagenesSucio = getSensorSucioImages(marcaSlug);
           {imagenesSucio.map((imagen, indice) => (
             <span class="sensor-flip-imagen">
               <Image src={imagen} alt={`${tituloSucio} — referencia ${indice + 1}`} width={imagen.width} height={imagen.height} loading="lazy" />
+              <button
+                type="button"
+                class="sensor-ampliar"
+                data-modal-trigger
+                data-modal-group={grupoModal}
+                data-modal-src={imagenesSucioModal[indice]}
+                data-modal-alt={`${tituloSucio} — referencia ${indice + 1}`}
+                aria-label={ampliarLabel}
+              >
+                🔍
+              </button>
             </span>
           ))}
         </span>
@@ -46,23 +72,41 @@ const imagenesSucio = getSensorSucioImages(marcaSlug);
           {imagenesLimpio.map((imagen, indice) => (
             <span class="sensor-flip-imagen">
               <Image src={imagen} alt={`${tituloLimpio} — referencia ${indice + 1}`} width={imagen.width} height={imagen.height} loading="lazy" />
+              <button
+                type="button"
+                class="sensor-ampliar"
+                data-modal-trigger
+                data-modal-group={grupoModal}
+                data-modal-src={imagenesLimpioModal[indice]}
+                data-modal-alt={`${tituloLimpio} — referencia ${indice + 1}`}
+                aria-label={ampliarLabel}
+              >
+                🔍
+              </button>
             </span>
           ))}
         </span>
         <span class="sensor-flip-hint">👆 {hintVerSucio}</span>
       </span>
     </span>
-  </button>
+  </div>
 )}
 
 <script>
   import { playFeedback } from "../../lib/sound-manager.js";
 
-  document.querySelectorAll<HTMLButtonElement>("[data-sensor-flip-trigger]").forEach((trigger) => {
-    trigger.addEventListener("click", () => {
+  document.querySelectorAll<HTMLElement>("[data-sensor-flip-trigger]").forEach((trigger) => {
+    const toggleFlip = () => {
       const volteado = trigger.getAttribute("aria-pressed") === "true";
       trigger.setAttribute("aria-pressed", String(!volteado));
       playFeedback("select");
+    };
+    trigger.addEventListener("click", toggleFlip);
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleFlip();
+      }
     });
   });
 </script>
@@ -126,11 +170,36 @@ const imagenesSucio = getSensorSucioImages(marcaSlug);
   }
 
   .sensor-flip-imagen {
+    position: relative;
     display: block;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     overflow: hidden;
     box-shadow: var(--shadow-card);
+  }
+
+  .sensor-ampliar {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+    z-index: 1;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .sensor-ampliar:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .sensor-ampliar:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   .sensor-flip-imagen :global(img) {

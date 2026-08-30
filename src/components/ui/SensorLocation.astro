@@ -5,17 +5,25 @@
  * src/data/sensor-tinta.ts; este componente solo presenta lo que esa data
  * le entregue, así que agregar otra marca no requiere tocar este archivo.
  */
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
 import { getSensorUbicacionImages } from "../../lib/sensor-images.js";
 
 interface Props {
   marcaSlug: string;
   titulo: string;
   nombreMarca: string;
+  locale: Locale;
 }
 
-const { marcaSlug, titulo, nombreMarca } = Astro.props;
+const { marcaSlug, titulo, nombreMarca, locale } = Astro.props;
 const imagenes = getSensorUbicacionImages(marcaSlug);
+const ampliarLabel = t(locale, "imageModal.ampliarLabel");
+const grupoModal = `sensor-ubicacion-${marcaSlug}`;
+const imagenesModal = await Promise.all(
+  imagenes.map(async (imagen) => (await getImage({ src: imagen, format: "webp", width: 960 })).src)
+);
 ---
 
 {imagenes.length > 0 && (
@@ -31,6 +39,17 @@ const imagenes = getSensorUbicacionImages(marcaSlug);
             height={imagen.height}
             loading={indice === 0 ? "eager" : "lazy"}
           />
+          <button
+            type="button"
+            class="sensor-location-ampliar"
+            data-modal-trigger
+            data-modal-group={grupoModal}
+            data-modal-src={imagenesModal[indice]}
+            data-modal-alt={`Ubicación del sensor de tinta en impresoras ${nombreMarca} — referencia ${indice + 1}`}
+            aria-label={ampliarLabel}
+          >
+            🔍
+          </button>
         </div>
       ))}
     </div>
@@ -56,10 +75,35 @@ const imagenes = getSensorUbicacionImages(marcaSlug);
   }
 
   .sensor-location-imagen {
+    position: relative;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     overflow: hidden;
     background: var(--color-bg-card);
+  }
+
+  .sensor-location-ampliar {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .sensor-location-ampliar:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .sensor-location-ampliar:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   .sensor-location-imagen :global(img) {

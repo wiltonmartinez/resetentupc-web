@@ -1,11 +1,12 @@
 ---
 import { GA_MEASUREMENT_ID, HREFLANG_BY_LOCALE, SITE_URL, type Locale, type StaticPageKey } from "../config/site";
-import { buildCanonicalUrl, buildHreflangLinks, buildStaticPageCanonical, buildStaticPageHreflangLinks } from "../i18n/utils";
+import { t, buildCanonicalUrl, buildHreflangLinks, buildStaticPageCanonical, buildStaticPageHreflangLinks } from "../i18n/utils";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LanguageBanner from "../components/LanguageBanner.astro";
 import ContactHub from "../components/ContactHub.astro";
 import PurchaseNotification from "../components/PurchaseNotification.astro";
+import ImageModal from "../components/ui/ImageModal.astro";
 
 interface Props {
   title: string;
@@ -107,6 +108,13 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
       <ContactHub locale={locale} path={path} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
     )}
     {!ocultarBotonContacto && <PurchaseNotification locale={locale} />}
+    <ImageModal
+      ampliarLabel={t(locale, "imageModal.ampliarLabel")}
+      cerrarLabel={t(locale, "imageModal.cerrarLabel")}
+      anteriorLabel={t(locale, "imageModal.anteriorLabel")}
+      siguienteLabel={t(locale, "imageModal.siguienteLabel")}
+      contadorTemplate={t(locale, "imageModal.contadorTemplate")}
+    />
   </body>
 </html>
 

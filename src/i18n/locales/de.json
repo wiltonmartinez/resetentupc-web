@@ -2,6 +2,13 @@
   "meta": {
     "siteName": "ResetEnLinea.com"
   },
+  "imageModal": {
+    "ampliarLabel": "Bild vergrößern",
+    "cerrarLabel": "Schließen",
+    "anteriorLabel": "Vorheriges Bild",
+    "siguienteLabel": "Nächstes Bild",
+    "contadorTemplate": "{actual} von {total}"
+  },
   "notFound": {
     "title": "Seite nicht gefunden | ResetEnLinea.com",
     "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",

@@ -2,6 +2,13 @@
   "meta": {
     "siteName": "ResetEnLinea.com"
   },
+  "imageModal": {
+    "ampliarLabel": "이미지 확대",
+    "cerrarLabel": "닫기",
+    "anteriorLabel": "이전 이미지",
+    "siguienteLabel": "다음 이미지",
+    "contadorTemplate": "{total} 중 {actual}"
+  },
   "notFound": {
     "title": "페이지를 찾을 수 없습니다 | ResetEnLinea.com",
     "description": "찾으시는 페이지가 존재하지 않거나 이동되었습니다.",

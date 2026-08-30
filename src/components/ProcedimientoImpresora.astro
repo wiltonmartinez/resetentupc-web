@@ -391,6 +391,7 @@ const pasosProceso = [
           errorCaption={t(locale, "modelo.evidenciaErrorCaption")}
           solucionCaption={t(locale, "modelo.evidenciaSolucionCaption")}
           flipHint={t(locale, "modelo.evidenciaFlipHint")}
+          locale={locale}
         />
         <VideoModal archivo="reset-demo.mp4" label={t(locale, "modelo.videoResetLabel")} />
       </>
@@ -401,13 +402,14 @@ const pasosProceso = [
   {tieneSensorTinta && (
     <div data-procedimiento-sensor hidden={!esSensorInicial}>
       <div class="procedimiento-sensor-columnas">
-        <SensorLocation marcaSlug={marcaSlug} nombreMarca={marca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} />
+        <SensorLocation marcaSlug={marcaSlug} nombreMarca={marca} titulo={t(locale, "modelo.sensorUbicacionTitulo")} locale={locale} />
         <SensorConditionComparison
           marcaSlug={marcaSlug}
           tituloLimpio={t(locale, "modelo.sensorLimpioTitulo")}
           tituloSucio={t(locale, "modelo.sensorSucioTitulo")}
           hintVerLimpio={t(locale, "modelo.sensorHintVerLimpio")}
           hintVerSucio={t(locale, "modelo.sensorHintVerSucio")}
+          locale={locale}
         />
       </div>
     </div>
@@ -456,6 +458,7 @@ const pasosProceso = [
       pasos={pasosProceso}
       marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
       prefijoNumero="3."
+      locale={locale}
     >
       {!variosCompatibles && (
         <WhatsAppCTA

@@ -1,41 +1,136 @@
 ---
 /**
- * Visor modal genérico y reutilizable: un único <dialog> que cualquier
- * galería en la página puede abrir disparando el evento "image-modal:open"
- * con { detail: { src, alt } } — evita crear un <dialog> por cada tarjeta.
+ * Visor modal genérico y reutilizable: un único <dialog> montado una vez
+ * (en BaseLayout.astro) para todo el sitio. Cualquier imagen en cualquier
+ * página se vuelve "clicable a popup" con solo estos atributos, sin
+ * escribir JS propio:
+ *
+ *   <img data-modal-trigger data-modal-src={url} data-modal-alt={alt} />
+ *
+ * Si varias imágenes comparten el mismo data-modal-group="id", el popup
+ * las junta en una sola galería (con flechas anterior/siguiente y
+ * contador) en el orden en que aparecen en el DOM — la que se haya
+ * clickeado abre en esa posición. Sin data-modal-group, cada imagen abre
+ * sola (una "galería" de 1, sin flechas).
+ *
+ * El trigger puede ser el propio <img> o un <button>/<div> que lo envuelva
+ * (por ejemplo, un botón lupa superpuesto a una flip-card) — el modal solo
+ * lee data-modal-src/data-modal-alt del elemento con data-modal-trigger.
+ *
+ * El listener se registra en fase de CAPTURA sobre `document` y llama
+ * stopPropagation() antes de que el clic llegue al elemento real: así, un
+ * trigger anidado dentro de un botón "flip" (que también escucha click)
+ * nunca dispara ambas cosas a la vez.
  */
 interface Props {
+  ampliarLabel: string;
   cerrarLabel: string;
+  anteriorLabel: string;
+  siguienteLabel: string;
+  /** Ej. "{actual} de {total}" — se rellena en el cliente. */
+  contadorTemplate: string;
 }
 
-const { cerrarLabel } = Astro.props;
+const { cerrarLabel, anteriorLabel, siguienteLabel, contadorTemplate } = Astro.props;
 ---
 
-<dialog class="image-modal" id="image-modal">
+<dialog class="image-modal" id="image-modal" data-contador-template={contadorTemplate}>
   <button type="button" class="image-modal-close" data-image-modal-close aria-label={cerrarLabel}>×</button>
-  <img class="image-modal-img" alt="" data-image-modal-img />
+  <div class="image-modal-stage">
+    <img class="image-modal-img" alt="" data-image-modal-img />
+    <button type="button" class="image-modal-nav image-modal-prev" data-image-modal-prev aria-label={anteriorLabel} hidden>‹</button>
+    <button type="button" class="image-modal-nav image-modal-next" data-image-modal-next aria-label={siguienteLabel} hidden>›</button>
+  </div>
+  <p class="image-modal-contador" data-image-modal-contador hidden></p>
 </dialog>
 
 <script>
+  interface ImagenGaleria {
+    src: string;
+    alt: string;
+  }
+
   const dialog = document.getElementById("image-modal") as HTMLDialogElement | null;
   const img = dialog?.querySelector<HTMLImageElement>("[data-image-modal-img]");
   const closeBtn = dialog?.querySelector<HTMLButtonElement>("[data-image-modal-close]");
+  const prevBtn = dialog?.querySelector<HTMLButtonElement>("[data-image-modal-prev]");
+  const nextBtn = dialog?.querySelector<HTMLButtonElement>("[data-image-modal-next]");
+  const contadorEl = dialog?.querySelector<HTMLElement>("[data-image-modal-contador]");
+  const contadorTemplate = dialog?.dataset.contadorTemplate || "{actual} / {total}";
 
-  if (dialog && img && closeBtn) {
-    document.addEventListener("image-modal:open", (event) => {
-      const { src, alt } = (event as CustomEvent<{ src: string; alt: string }>).detail;
-      img.src = src;
-      img.alt = alt;
-      dialog.showModal();
+  if (dialog && img && closeBtn && prevBtn && nextBtn && contadorEl) {
+    let galeria: ImagenGaleria[] = [];
+    let indice = 0;
+
+    function mostrar(i: number) {
+      if (!galeria.length) return;
+      indice = ((i % galeria.length) + galeria.length) % galeria.length;
+      const actual = galeria[indice];
+      img!.src = actual.src;
+      img!.alt = actual.alt;
+
+      const hayVarias = galeria.length > 1;
+      prevBtn!.hidden = !hayVarias;
+      nextBtn!.hidden = !hayVarias;
+      contadorEl!.hidden = !hayVarias;
+      if (hayVarias) {
+        contadorEl!.textContent = contadorTemplate
+          .replace("{actual}", String(indice + 1))
+          .replace("{total}", String(galeria.length));
+      }
+    }
+
+    function abrir(nuevaGaleria: ImagenGaleria[], indiceInicial: number) {
+      galeria = nuevaGaleria.filter((item) => item.src);
+      if (!galeria.length) return;
+      mostrar(indiceInicial);
+      dialog!.showModal();
+    }
+
+    // Clic en cualquier [data-modal-trigger] del documento — en fase de
+    // captura para poder frenar el evento antes de que llegue a un botón
+    // "flip" ancestro (que también escucha click en fase de burbuja).
+    document.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target as HTMLElement | null;
+        const trigger = target?.closest<HTMLElement>("[data-modal-trigger]");
+        if (!trigger) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const grupo = trigger.dataset.modalGroup;
+        const candidatos = grupo
+          ? Array.from(document.querySelectorAll<HTMLElement>(`[data-modal-trigger][data-modal-group="${CSS.escape(grupo)}"]`))
+          : [trigger];
+
+        const nuevaGaleria = candidatos.map((el) => ({
+          src: el.dataset.modalSrc || (el instanceof HTMLImageElement ? el.currentSrc || el.src : ""),
+          alt: el.dataset.modalAlt || (el instanceof HTMLImageElement ? el.alt : ""),
+        }));
+        const indiceInicial = candidatos.indexOf(trigger);
+        abrir(nuevaGaleria, indiceInicial < 0 ? 0 : indiceInicial);
+      },
+      true,
+    );
+
+    prevBtn.addEventListener("click", () => mostrar(indice - 1));
+    nextBtn.addEventListener("click", () => mostrar(indice + 1));
+
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") mostrar(indice - 1);
+      if (event.key === "ArrowRight") mostrar(indice + 1);
     });
 
-    const cerrar = () => dialog.close();
+    const cerrar = () => dialog!.close();
     closeBtn.addEventListener("click", cerrar);
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) cerrar();
     });
     dialog.addEventListener("close", () => {
-      img.src = "";
+      img!.src = "";
+      galeria = [];
     });
   }
 </script>
@@ -45,7 +140,7 @@ const { cerrarLabel } = Astro.props;
     border: none;
     border-radius: var(--radius-md);
     padding: 0;
-    max-width: min(92vw, 480px);
+    max-width: min(92vw, 640px);
     max-height: 92vh;
     background: var(--color-bg-card);
   }
@@ -54,18 +149,23 @@ const { cerrarLabel } = Astro.props;
     background: rgba(15, 23, 42, 0.78);
   }
 
+  .image-modal-stage {
+    position: relative;
+  }
+
   .image-modal-img {
     display: block;
     width: 100%;
-    max-height: 92vh;
+    max-height: 82vh;
     object-fit: contain;
+    background: var(--color-bg-muted);
   }
 
   .image-modal-close {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    z-index: 1;
+    z-index: 2;
     width: 2.25rem;
     height: 2.25rem;
     border: none;
@@ -80,5 +180,55 @@ const { cerrarLabel } = Astro.props;
   .image-modal-close:focus-visible {
     outline: 2px solid white;
     outline-offset: 2px;
+  }
+
+  .image-modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .image-modal-nav:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .image-modal-nav:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  .image-modal-nav[hidden] {
+    display: none;
+  }
+
+  .image-modal-prev {
+    left: 0.5rem;
+  }
+
+  .image-modal-next {
+    right: 0.5rem;
+  }
+
+  .image-modal-contador {
+    margin: 0;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+  }
+
+  .image-modal-contador[hidden] {
+    display: none;
   }
 </style>

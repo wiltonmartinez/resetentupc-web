@@ -18,9 +18,10 @@ const imagen = getConversacionImage(conversacion.archivo);
       <button
         type="button"
         class="conversation-card-trigger"
-        data-conversation-trigger
-        data-full-src={imagen.src}
-        data-full-alt={conversacion.alt}
+        data-modal-trigger
+        data-modal-group="conversation-gallery"
+        data-modal-src={imagen.src}
+        data-modal-alt={conversacion.alt}
         aria-label={ampliarLabel}
       >
         <Image src={imagen} alt={conversacion.alt} width={imagen.width} height={imagen.height} loading="lazy" />

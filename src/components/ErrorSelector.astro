@@ -95,9 +95,10 @@ const selectId = `error-select-${sourceIdBase}`;
   <p class="error-selector-descripcion">{primera.descripcion}</p>
 
   <div class="evidence-flip" hidden={!primera.errorImgUrl}>
-    <button
-      type="button"
+    <div
       class="evidence-flip-trigger"
+      role="button"
+      tabindex="0"
       aria-pressed="false"
       data-sound="select"
       data-modelo-imagen={modeloImgUrl}
@@ -107,6 +108,17 @@ const selectId = `error-select-${sourceIdBase}`;
         <span class="evidence-face evidence-face-front">
           <span class="evidence-imagen">
             <img class="error-selector-imagen-error" src={primera.errorImgUrl} alt="Así se ve este error en la impresora" loading="lazy" />
+            <button
+              type="button"
+              class="evidence-ampliar evidence-ampliar-error"
+              data-modal-trigger
+              data-modal-group={`${sourceIdBase}-evidencia`}
+              data-modal-src={primera.errorImgUrl}
+              data-modal-alt="Así se ve este error en la impresora"
+              aria-label={t(locale, "imageModal.ampliarLabel")}
+            >
+              🔍
+            </button>
           </span>
           <p class="evidence-caption">{t(locale, "modelo.evidenciaErrorCaption")}</p>
           <span class="evidence-flip-hint">↻ {t(locale, "modelo.evidenciaFlipHint")}</span>
@@ -115,15 +127,36 @@ const selectId = `error-select-${sourceIdBase}`;
           <span class="evidence-imagen">
             <img class="error-selector-imagen-solucion" src={primera.solucionImgUrl || modeloImgUrl} alt="Así queda una vez resuelto" loading="lazy" />
             <span class="evidence-check" aria-hidden="true" hidden={!!primera.solucionImgUrl}>✅</span>
+            <button
+              type="button"
+              class="evidence-ampliar evidence-ampliar-solucion"
+              data-modal-trigger
+              data-modal-group={`${sourceIdBase}-evidencia`}
+              data-modal-src={primera.solucionImgUrl || modeloImgUrl}
+              data-modal-alt="Así queda una vez resuelto"
+              aria-label={t(locale, "imageModal.ampliarLabel")}
+            >
+              🔍
+            </button>
           </span>
           <p class="evidence-caption">{t(locale, "modelo.evidenciaSolucionCaption")}</p>
         </span>
       </span>
-    </button>
+    </div>
 
     <div class="evidence-static" hidden={!!(primera.solucionImgUrl || modeloImgUrl)}>
       <span class="evidence-imagen">
         <img class="error-selector-imagen-error-static" src={primera.errorImgUrl} alt="Así se ve este error en la impresora" loading="lazy" />
+        <button
+          type="button"
+          class="evidence-ampliar evidence-ampliar-error-static"
+          data-modal-trigger
+          data-modal-src={primera.errorImgUrl}
+          data-modal-alt="Así se ve este error en la impresora"
+          aria-label={t(locale, "imageModal.ampliarLabel")}
+        >
+          🔍
+        </button>
       </span>
       <p class="evidence-caption">{t(locale, "modelo.evidenciaErrorCaption")}</p>
     </div>
@@ -148,12 +181,22 @@ const selectId = `error-select-${sourceIdBase}`;
     const errorImgStatic = container.querySelector(".error-selector-imagen-error-static");
     const solucionImg = container.querySelector(".error-selector-imagen-solucion");
     const checkBadge = container.querySelector(".evidence-check");
+    const ampliarError = container.querySelector(".evidence-ampliar-error");
+    const ampliarErrorStatic = container.querySelector(".evidence-ampliar-error-static");
+    const ampliarSolucion = container.querySelector(".evidence-ampliar-solucion");
     const modeloImgUrl = flipTrigger?.dataset.modeloImagen || "";
     if (!select || !cta) return;
 
-    flipTrigger?.addEventListener("click", () => {
+    const toggleFlip = () => {
       const flipped = flipTrigger.getAttribute("aria-pressed") === "true";
       flipTrigger.setAttribute("aria-pressed", String(!flipped));
+    };
+    flipTrigger?.addEventListener("click", toggleFlip);
+    flipTrigger?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleFlip();
+      }
     });
 
     select.addEventListener("change", () => {
@@ -178,13 +221,17 @@ const selectId = `error-select-${sourceIdBase}`;
 
       if (errorImg && errorUrl) errorImg.src = errorUrl;
       if (errorImgStatic && errorUrl) errorImgStatic.src = errorUrl;
+      if (ampliarError && errorUrl) ampliarError.setAttribute("data-modal-src", errorUrl);
+      if (ampliarErrorStatic && errorUrl) ampliarErrorStatic.setAttribute("data-modal-src", errorUrl);
       if (solucionImg) {
         if (solucionUrl) {
           solucionImg.src = solucionUrl;
           if (checkBadge) checkBadge.hidden = true;
+          if (ampliarSolucion) ampliarSolucion.setAttribute("data-modal-src", solucionUrl);
         } else if (modeloImgUrl) {
           solucionImg.src = modeloImgUrl;
           if (checkBadge) checkBadge.hidden = false;
+          if (ampliarSolucion) ampliarSolucion.setAttribute("data-modal-src", modeloImgUrl);
         }
       }
       playFeedback("select");
@@ -295,6 +342,27 @@ const selectId = `error-select-${sourceIdBase}`;
   }
   .evidence-check[hidden] {
     display: none;
+  }
+  .evidence-ampliar {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .evidence-ampliar:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+  .evidence-ampliar:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
   .evidence-caption {
     margin: 0;

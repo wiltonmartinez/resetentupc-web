@@ -1,5 +1,7 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
 
 interface ImagenPaso {
   src: ImageMetadata;
@@ -24,6 +26,7 @@ interface Props {
   /** Ej. "3." para numerar como "3.1", "3.2"... cuando este módulo se
    *  embebe dentro de otro paso numerado (ver ProcedimientoImpresora). */
   prefijoNumero?: string;
+  locale: Locale;
 }
 
 const {
@@ -33,7 +36,20 @@ const {
   pasoFinalTexto,
   marcarRevisadoLabel = "Marcar paso como revisado",
   prefijoNumero = "",
+  locale,
 } = Astro.props;
+
+const ampliarLabel = t(locale, "imageModal.ampliarLabel");
+
+// URLs para el popup (960px) por paso — cada paso agrupa sus propias
+// imágenes en una sola galería (data-modal-group=`process-step-${index}`).
+const imagenesModalPorPaso = await Promise.all(
+  pasos.map((paso) =>
+    paso.imagenes
+      ? Promise.all(paso.imagenes.map(async (img) => (await getImage({ src: img.src, format: "webp", width: 960 })).src))
+      : Promise.resolve([])
+  )
+);
 ---
 
 <div class="process-steps">
@@ -106,15 +122,28 @@ const {
             <p>{paso.descripcion}</p>
             {paso.imagenes && paso.imagenes.length > 0 && (
               <div class="process-step-imagenes">
-                {paso.imagenes.map((imagenPaso) => (
-                  <Image
-                    src={imagenPaso.src}
-                    alt={imagenPaso.alt}
-                    width={imagenPaso.src.width}
-                    height={imagenPaso.src.height}
-                    loading="lazy"
-                    class="process-step-imagen"
-                  />
+                {paso.imagenes.map((imagenPaso, imgIndex) => (
+                  <span class="process-step-imagen-wrap">
+                    <Image
+                      src={imagenPaso.src}
+                      alt={imagenPaso.alt}
+                      width={imagenPaso.src.width}
+                      height={imagenPaso.src.height}
+                      loading="lazy"
+                      class="process-step-imagen"
+                    />
+                    <button
+                      type="button"
+                      class="process-step-ampliar"
+                      data-modal-trigger
+                      data-modal-group={`process-step-${index}`}
+                      data-modal-src={imagenesModalPorPaso[index][imgIndex]}
+                      data-modal-alt={imagenPaso.alt}
+                      aria-label={ampliarLabel}
+                    >
+                      🔍
+                    </button>
+                  </span>
                 ))}
               </div>
             )}
@@ -276,14 +305,43 @@ const {
     margin-top: 0.6rem;
   }
 
+  .process-step-imagen-wrap {
+    position: relative;
+    display: block;
+    flex: 1 1 240px;
+  }
+
   .process-step-imagen {
     display: block;
     max-width: 100%;
     width: 100%;
     height: auto;
-    flex: 1 1 240px;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
+  }
+
+  .process-step-ampliar {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .process-step-ampliar:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .process-step-ampliar:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   .process-step-destacado {
