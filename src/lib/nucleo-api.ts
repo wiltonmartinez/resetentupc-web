@@ -5,7 +5,8 @@
  * `fila_publica_cliente_satisfecho()` en Núcleo — no inventar campos nuevos
  * aquí sin agregarlos primero del lado de Núcleo.
  */
-import { NUCLEO_API_BASE_URL } from "../config/site";
+import { NUCLEO_API_BASE_URL, type Locale } from "../config/site";
+import { resolveErroresParaModelo, type ErrorResuelto } from "../i18n/utils";
 
 export interface ResetRealizadoPublico {
   slug: string;
@@ -164,6 +165,42 @@ export async function listarErroresPorModelo(marcaSlug: string, modeloSlug?: str
   if (modeloSlug) query.set("modelo", modeloSlug);
   const resultado = await obtenerJson<{ data: ErrorPublico[] }>(`/api/public/errores/?${query.toString()}`);
   return resultado?.data ?? [];
+}
+
+function mapearErrorPublico(e: ErrorPublico): ErrorResuelto {
+  return {
+    error_id: e.error_id,
+    nombre: e.codigo,
+    descripcion: e.descripcion,
+    codigo: e.codigo,
+    estado_servicio: e.estado_servicio,
+    tipo: e.categoria === "otros" ? undefined : e.categoria,
+    modo: e.modo,
+    foto_url: e.foto_url,
+  };
+}
+
+/**
+ * Única fuente de verdad de "¿de dónde salen los errores de este modelo?"
+ * (Núcleo primero, errores.json local como respaldo) — usada tanto por
+ * ModeloPage.astro (para decidir si hay algo que mostrar) como por
+ * ProcedimientoImpresora.astro (para renderizar el detalle). Antes cada
+ * uno hacía esta resolución por su cuenta con criterios distintos:
+ * ModeloPage.astro solo miraba errores.json local, así que un modelo con
+ * datos únicamente en Núcleo (sin entrada local) nunca llegaba a mostrar
+ * el orquestador — quedaba atrapado en el estado "sin errores confirmados"
+ * aunque Núcleo sí tuviera la data.
+ */
+export async function resolverErroresConNucleo(
+  marcaSlug: string,
+  modeloSlug: string,
+  locale: Locale
+): Promise<{ errores: ErrorResuelto[]; fuente: "nucleo" | "local" }> {
+  const erroresNucleo = await listarErroresPorModelo(marcaSlug, modeloSlug);
+  if (erroresNucleo.length > 0) {
+    return { errores: erroresNucleo.map(mapearErrorPublico), fuente: "nucleo" };
+  }
+  return { errores: resolveErroresParaModelo(marcaSlug, modeloSlug, locale), fuente: "local" };
 }
 
 /**

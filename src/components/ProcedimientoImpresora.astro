@@ -9,15 +9,17 @@
  * teniendo un componente propio por marca (Epson/Canon/Epson-SC), porque
  * cada uno usa terminología de error real y distinta para su marca.
  *
- * Datos: intenta primero Núcleo (errores por modelo, testimonios) — el
- * endpoint de errores ya está en producción, pero hoy solo tiene datos
- * cargados para "epson-sc"; "epson" y "canon" devuelven data:[] hasta que
- * el panel admin de Núcleo cargue sus errores, así que esas dos marcas
- * siguen cayendo a errores.json local (resolveErroresParaModelo) por
- * ahora — ver nucleo-api.ts. Los testimonios (Trustpilot y Cliente
- * Satisfecho) y los videos de reset realizado sí son reales hoy para
- * todas las marcas (mismos endpoints que ya usan las páginas de Prueba
- * Social) — se buscan para las 3 marcas por igual.
+ * Datos: intenta primero Núcleo (errores por modelo, testimonios), con
+ * errores.json local como respaldo si Núcleo no tiene nada cargado
+ * todavía para esa marca/modelo — ver resolverErroresConNucleo() en
+ * nucleo-api.ts, ÚNICA fuente de verdad de esta resolución (también la
+ * usa ModeloPage.astro para decidir si hay algo que mostrar; antes cada
+ * uno resolvía por su cuenta y un modelo con datos solo en Núcleo, sin
+ * respaldo local, nunca llegaba a mostrar este orquestador). Los
+ * testimonios (Trustpilot y Cliente Satisfecho) y los videos de reset
+ * realizado sí son reales hoy para todas las marcas (mismos endpoints que
+ * ya usan las páginas de Prueba Social) — se buscan para las 3 marcas por
+ * igual.
  *
  * SSG + azar en el cliente (NO SSR): las páginas de modelo son estáticas
  * (getStaticPaths, generadas en el build). El fetch a Núcleo pasa UNA vez
@@ -40,14 +42,7 @@
  * un youtube_id: si no hay ningún candidato para una marca/modelo, se
  * muestra el placeholder visible en vez de romper la sección.
  */
-import {
-  t,
-  resolveErroresParaModelo,
-  buildLocalizedPath,
-  buildWhatsAppMessage,
-  buildWhatsAppLink,
-  type ErrorResuelto,
-} from "../i18n/utils";
+import { t, buildLocalizedPath, buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
 import ErrorSelector from "./ErrorSelector.astro";
 import EvidenceCard from "./ui/EvidenceCard.astro";
@@ -67,13 +62,12 @@ import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
 import { getProcesoImage } from "../lib/proceso-images.js";
 import {
-  listarErroresPorModelo,
+  resolverErroresConNucleo,
   listarResetRealizados,
   listarTestimonios,
   listarClienteSatisfecho,
   obtenerEvidenciaClienteSatisfecho,
   tituloConRespaldo,
-  type ErrorPublico,
 } from "../lib/nucleo-api";
 
 interface Props {
@@ -114,19 +108,6 @@ function obtenerErrorCorto(cadena?: string): string {
   return cadena.trim();
 }
 
-function mapearErrorPublico(e: ErrorPublico): ErrorResuelto {
-  return {
-    error_id: e.error_id,
-    nombre: e.codigo,
-    descripcion: e.descripcion,
-    codigo: e.codigo,
-    estado_servicio: e.estado_servicio,
-    tipo: e.categoria === "otros" ? undefined : e.categoria,
-    modo: e.modo,
-    foto_url: e.foto_url,
-  };
-}
-
 // Evita que un título/URL con "</script>" dentro rompa el bloque JSON
 // embebido más abajo (ver SECCIÓN 4).
 function jsonSeguroParaScript(valor: unknown): string {
@@ -134,10 +115,7 @@ function jsonSeguroParaScript(valor: unknown): string {
 }
 
 // 1) Errores: Núcleo primero, errores.json local como respaldo.
-const erroresNucleo = await listarErroresPorModelo(marcaSlug, modeloSlug);
-const fuenteErrores = erroresNucleo.length > 0 ? "nucleo" : "local";
-const erroresResueltos =
-  fuenteErrores === "nucleo" ? erroresNucleo.map(mapearErrorPublico) : resolveErroresParaModelo(marcaSlug, modeloSlug, locale);
+const { errores: erroresResueltos, fuente: fuenteErrores } = await resolverErroresConNucleo(marcaSlug, modeloSlug, locale);
 
 const erroresCompatibles = erroresResueltos.filter((e) => e.estado_servicio === "compatible");
 const variosCompatibles = erroresCompatibles.length > 1;

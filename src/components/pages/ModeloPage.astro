@@ -1,5 +1,6 @@
 ---
-import { t, buildLocalizedPath, buildCanonicalUrl, resolveErroresParaModelo } from "../../i18n/utils";
+import { t, buildLocalizedPath, buildCanonicalUrl } from "../../i18n/utils";
+import { resolverErroresConNucleo } from "../../lib/nucleo-api";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import AyudaCTA from "../AyudaCTA.astro";
 import Breadcrumb from "../Breadcrumb.astro";
@@ -33,7 +34,7 @@ const path = `/reset/${marcaSlug}/${modeloSlug}/`;
 const localizedPath = buildLocalizedPath(locale, path);
 const sourceIdBase = `${marcaSlug}-${modeloSlug}`;
 
-const erroresResueltos = resolveErroresParaModelo(marcaSlug, modeloSlug, locale);
+const { errores: erroresResueltos } = await resolverErroresConNucleo(marcaSlug, modeloSlug, locale);
 const erroresCompatibles = erroresResueltos.filter((e) => e.estado_servicio === "compatible");
 const erroresOtros = erroresResueltos.filter((e) => e.estado_servicio !== "compatible");
 
