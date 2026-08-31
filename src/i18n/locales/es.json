@@ -207,6 +207,25 @@
     "paso6VerMasClientes": "Ver más clientes satisfechos",
     "paso6VerTestimoniosTrustpilot": "Ver testimonios en Trustpilot"
   },
+  "cotizacion": {
+    "cargando": "Cargando planes y precios...",
+    "errorCarga": "No pudimos cargar los planes en este momento. Intenta de nuevo más tarde o escríbenos por WhatsApp.",
+    "planEsencial": "Esencial",
+    "planProfesional": "Profesional",
+    "planElite": "Elite",
+    "destacadoBadge": "Más elegido",
+    "selectMetodoPago": "Selecciona tu medio de pago",
+    "selectMetodoPlaceholder": "Elige una opción",
+    "btnWhatsapp": "Solicitar por WhatsApp",
+    "btnEmail": "Recibir por correo",
+    "emailPlaceholder": "tu@correo.com",
+    "emailInvalido": "Ingresa un correo válido.",
+    "btnEnviar": "Enviar instrucciones",
+    "enviando": "Enviando...",
+    "exitoEnvio": "¡Revisa tu bandeja de entrada o SPAM!",
+    "errorEnvio": "No pudimos enviarlo. Escríbenos por WhatsApp para recibir los datos de pago.",
+    "mensajeWhatsapp": "Hola, mi impresora {marca} {modelo} está lista. Quiero el plan {plan} ({precio}) pagando con {metodo}. Solicito los datos de pago."
+  },
   "proceso": {
     "titulo": "Reset Asistido 100% Remoto por conexión USB",
     "introTexto": "Así funciona la conexión antes de escribirnos por WhatsApp:",
