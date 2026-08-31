@@ -461,7 +461,9 @@ const pasosProceso = [
           4) {t(locale, "procedimiento.paso4Titulo")}
         </a>
       </h3>
-      <ModuloCotizacion marca={marca} marcaSlug={marcaSlug} modelo={modelo} locale={locale} />
+      <InfoCard>
+        <ModuloCotizacion marca={marca} marcaSlug={marcaSlug} modelo={modelo} locale={locale} />
+      </InfoCard>
       <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
     </li>
 
