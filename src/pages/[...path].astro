@@ -15,6 +15,7 @@ const locale = detectLocaleFromPath(Astro.url.pathname);
 ---
 
 <BaseLayout
+  wide
   title={t(locale, "notFound.title")}
   description={t(locale, "notFound.description")}
   locale={locale}

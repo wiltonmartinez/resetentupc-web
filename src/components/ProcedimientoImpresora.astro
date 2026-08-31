@@ -59,7 +59,6 @@ import InfoCard from "./ui/InfoCard.astro";
 import ProcessSteps from "./ui/ProcessSteps.astro";
 import WhatsAppCTA from "./WhatsAppCTA.astro";
 import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
-import ModuloCotizacion from "./ModuloCotizacion.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
 import { getProcesoImage } from "../lib/proceso-images.js";
 import {
@@ -461,9 +460,6 @@ const pasosProceso = [
           4) {t(locale, "procedimiento.paso4Titulo")}
         </a>
       </h3>
-      <InfoCard>
-        <ModuloCotizacion marca={marca} marcaSlug={marcaSlug} modelo={modelo} locale={locale} />
-      </InfoCard>
       <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
     </li>
 

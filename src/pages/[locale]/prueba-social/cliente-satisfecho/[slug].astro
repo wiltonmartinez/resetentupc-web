@@ -28,6 +28,7 @@ const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
 
 {evidencia ? (
   <BaseLayout
+  wide
     title={`${titulo} | ResetEnLinea.com`}
     description={titulo}
     locale={locale}
@@ -37,6 +38,7 @@ const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
   </BaseLayout>
 ) : (
   <BaseLayout
+  wide
     title="Página no encontrada | ResetEnLinea.com"
     description="La página que buscas no existe o fue movida."
     locale={locale}

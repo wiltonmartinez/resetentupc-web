@@ -1,0 +1,320 @@
+[33m7e0699b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: reset: moving to 7e0699b
+[33maa9afe2[m HEAD@{1}: commit: Cambiar grid de cotización a media queries explícitos
+[33m194ad6a[m HEAD@{2}: commit: Aumentar ancho mínimo del grid de cotización a 320px
+[33m6fcaecf[m HEAD@{3}: commit: Mejorar responsive del grid de cotización con auto-fit
+[33mc12cb48[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{4}: commit: Envolver ModuloCotizacion en InfoCard para consistencia visual
+[33m7e0699b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{5}: commit: Agregar ModuloCotizacion: UI del Paso 4 (planes, metodo de pago, WhatsApp/correo)
+[33m3832176[m HEAD@{6}: commit: Agregar fallback de foto de error por familia + placeholder limpio
+[33mdcf6401[m HEAD@{7}: commit: Unificar resolucion de errores Nucleo/local entre ModeloPage y ProcedimientoImpresora
+[33m881933e[m HEAD@{8}: commit (amend): Desactivar cache de fetch a Nucleo en modo dev
+[33m1eb784c[m HEAD@{9}: commit: Desactivar cache de fetch a Nucleo en modo dev
+[33m1b083fe[m HEAD@{10}: commit: Agregar popup/galeria de imagenes a evidencia, sensor y pasos del proceso
+[33mda62165[m HEAD@{11}: commit: Internacionalizar la Seccion 4 de ProcedimientoImpresora en 8 idiomas
+[33mf227770[m HEAD@{12}: commit: Agregar requisito de limpieza de sensor para Epson-SC + error 0014BD
+[33mbde7464[m HEAD@{13}: commit: Quitar el modulo "Asi es nuestro servicio, de principio a fin" de Como Funciona
+[33mab36f1b[m HEAD@{14}: commit: Aplicar la plantilla Epson a todas las marcas; numeracion 3.N; grid en Como Funciona
+[33m4fe946a[m HEAD@{15}: commit: Enlazar cada tarjeta del grid con su titulo correspondiente (y viceversa)
+[33m6e05ac7[m HEAD@{16}: commit: Mover el modulo de proceso, quitar placeholder y embeber consulta de garantia
+[33m58ef4ac[m HEAD@{17}: commit: Paso 5: agregar marca/modelo al titulo, ocultar el titulo del video
+[33m7a9c152[m HEAD@{18}: commit: Actualizar el texto destacado del Paso 3
+[33m8317a7f[m HEAD@{19}: commit: Agregar el requisito del error detectado en Paso 2 (Epson)
+[33m2197c95[m HEAD@{20}: commit: Reordenar la pagina de modelo y limpiar el hero
+[33mdffb402[m HEAD@{21}: commit: Conectar ProcedimientoImpresora a la pagina real de modelo
+[33m98518cd[m HEAD@{22}: pull origin master: Fast-forward
+[33m6aafb87[m HEAD@{23}: checkout: moving from feature/procedimiento-impresora-componente-nucleo to master
+[33mc468a25[m HEAD@{24}: commit: Resolver foto de error por nombre de archivo (foto_url de Nucleo)
+[33m0389088[m HEAD@{25}: commit: Plantilla dinamica Epson: grid reactivo y Paso 5/6 con datos reales de Nucleo
+[33ma17cfea[m HEAD@{26}: commit: Conectar el endpoint real de errores de Nucleo y usar su campo codigo
+[33m14c4e71[m HEAD@{27}: commit: Embeber el testimonio del Paso 6 via iframe en vez de un enlace
+[33m2dfe7d2[m HEAD@{28}: commit: Agregar componente unificado ProcedimientoImpresora (Astro nativo)
+[33m6aafb87[m HEAD@{29}: checkout: moving from master to feature/procedimiento-impresora-componente-nucleo
+[33m6aafb87[m HEAD@{30}: pull origin master: Fast-forward
+[33m29cccc7[m HEAD@{31}: checkout: moving from feature/default-00080000-flip3d-dos-columnas to master
+[33m1f145b5[m HEAD@{32}: commit: Default 00080000 en Epson-SC, layout de 2 columnas y flip 3D real
+[33m29cccc7[m HEAD@{33}: checkout: moving from master to feature/default-00080000-flip3d-dos-columnas
+[33m29cccc7[m HEAD@{34}: pull origin master: Fast-forward
+[33m612333e[m HEAD@{35}: checkout: moving from feature/sensor-toggle-limpio-sucio to master
+[33mdcbfb66[m HEAD@{36}: commit: Convertir la comparacion sensor limpio/sucio en una tarjeta interactiva
+[33m612333e[m HEAD@{37}: checkout: moving from master to feature/sensor-toggle-limpio-sucio
+[33m612333e[m HEAD@{38}: pull origin master: Fast-forward
+[33mc2ba2b4[m HEAD@{39}: checkout: moving from feature/sensor-tinta-y-paso5-reactivos-0014bd to master
+[33m3604b58[m HEAD@{40}: commit: Hacer reactivos la seccion de sensor de tinta y la Tarjeta 5 (Epson-SC)
+[33mc2ba2b4[m HEAD@{41}: checkout: moving from master to feature/sensor-tinta-y-paso5-reactivos-0014bd
+[33mc2ba2b4[m HEAD@{42}: pull origin master: Fast-forward
+[33m2c145b3[m HEAD@{43}: checkout: moving from fix/reclasificar-error-0014bd-epson-sc-bloqueo to master
+[33mffc76e3[m HEAD@{44}: commit: Reclasificar error 0014BD (Epson-SC) como bloqueo simple compatible
+[33m2c145b3[m HEAD@{45}: checkout: moving from master to fix/reclasificar-error-0014bd-epson-sc-bloqueo
+[33m2c145b3[m HEAD@{46}: pull origin master: Fast-forward
+[33m97d28d9[m HEAD@{47}: checkout: moving from feature/tarjeta1-reactiva-epson-sc to master
+[33mad8b840[m HEAD@{48}: commit: Hacer reactiva la Tarjeta 1 del Proceso Reutilizable Epson-SC
+[33m97d28d9[m HEAD@{49}: checkout: moving from master to feature/tarjeta1-reactiva-epson-sc
+[33m97d28d9[m HEAD@{50}: pull origin master: Fast-forward
+[33m54ca619[m HEAD@{51}: checkout: moving from feature/proceso-reutilizable-variante-epson-sc to master
+[33m895309f[m HEAD@{52}: commit: Agregar variante Epson-SC del Proceso Reutilizable de 6 pasos
+[33m54ca619[m HEAD@{53}: checkout: moving from master to feature/proceso-reutilizable-variante-epson-sc
+[33m54ca619[m HEAD@{54}: pull origin master: Fast-forward
+[33mfe69793[m HEAD@{55}: checkout: moving from feature/proceso-reutilizable-variante-canon to master
+[33m871c430[m HEAD@{56}: commit: Agregar variante Canon del Proceso Reutilizable de 6 pasos
+[33mfe69793[m HEAD@{57}: checkout: moving from master to feature/proceso-reutilizable-variante-canon
+[33mfe69793[m HEAD@{58}: pull origin master: Fast-forward
+[33m65ec5b7[m HEAD@{59}: checkout: moving from feature/proceso-reutilizable-6-pasos-epson to master
+[33m5ecfb3d[m HEAD@{60}: commit: Agregar seccion "Proceso Reutilizable" de 6 pasos en paginas de modelo Epson
+[33m65ec5b7[m HEAD@{61}: checkout: moving from master to feature/proceso-reutilizable-6-pasos-epson
+[33m65ec5b7[m HEAD@{62}: pull origin master: Fast-forward
+[33m8a463a9[m HEAD@{63}: checkout: moving from feature/quitar-live-chat-crisp-y-ocultar-hub-como-funciona to master
+[33m05ca535[m HEAD@{64}: commit: Quitar Crisp (Live Chat) del sitio y ocultar el hub flotante en Como funciona
+[33m8a463a9[m HEAD@{65}: checkout: moving from master to feature/quitar-live-chat-crisp-y-ocultar-hub-como-funciona
+[33m8a463a9[m HEAD@{66}: pull origin master: Fast-forward
+[33mb8549de[m HEAD@{67}: checkout: moving from copy/simplificar-paso1-aviso-espera-cta-destacado to master
+[33ma3efa9b[m HEAD@{68}: commit: Simplificar el paso 1, agregar aviso de espera y destacar el CTA en Como funciona
+[33mb8549de[m HEAD@{69}: checkout: moving from master to copy/simplificar-paso1-aviso-espera-cta-destacado
+[33mb8549de[m HEAD@{70}: pull origin master: Fast-forward
+[33m3e87c79[m HEAD@{71}: checkout: moving from feature/menu-simplificado-cta-contacto to master
+[33m8f50329[m HEAD@{72}: commit: Simplificar el menú y convertir Contacto en botón CTA
+[33m3e87c79[m HEAD@{73}: checkout: moving from master to feature/menu-simplificado-cta-contacto
+[33m3e87c79[m HEAD@{74}: pull origin master: Fast-forward
+[33m7fee3f8[m HEAD@{75}: checkout: moving from copy/optimizar-mensaje-whatsapp-inicial to master
+[33m6f71d11[m HEAD@{76}: commit: Optimizar el mensaje inicial de WhatsApp (copywriting conversacional)
+[33m7fee3f8[m HEAD@{77}: checkout: moving from master to copy/optimizar-mensaje-whatsapp-inicial
+[33m7fee3f8[m HEAD@{78}: pull origin master: Fast-forward
+[33me61755d[m HEAD@{79}: checkout: moving from feature/menu-efecto-pestana-activa to master
+[33m79efd51[m HEAD@{80}: commit: Resaltar la página actual en el menú con efecto de pestaña
+[33me61755d[m HEAD@{81}: checkout: moving from master to feature/menu-efecto-pestana-activa
+[33me61755d[m HEAD@{82}: pull origin master: Fast-forward
+[33m9cf6d68[m HEAD@{83}: checkout: moving from fix/contact-hub-cerrado-intercepta-clics to master
+[33mcfada0e[m HEAD@{84}: commit: Corregir clics interceptados por el panel cerrado de ContactHub
+[33m9cf6d68[m HEAD@{85}: checkout: moving from master to fix/contact-hub-cerrado-intercepta-clics
+[33m9cf6d68[m HEAD@{86}: pull origin master: Fast-forward
+[33m1d06adf[m HEAD@{87}: checkout: moving from feature/caja-flotante-todas-paginas to master
+[33mbef41de[m HEAD@{88}: commit: Mantener el catálogo de la portada con caja más ancha (1200px)
+[33m41eceda[m HEAD@{89}: commit: Extender la caja flotante a todas las páginas del sitio
+[33m1d06adf[m HEAD@{90}: checkout: moving from master to feature/caja-flotante-todas-paginas
+[33m1d06adf[m HEAD@{91}: pull origin master: Fast-forward
+[33m3763fab[m HEAD@{92}: checkout: moving from feature/catalogo-layout-caja to master
+[33m82fbdf0[m HEAD@{93}: commit: Rediseñar el catálogo de modelos como caja flotante sobre fondo oscuro
+[33m3763fab[m HEAD@{94}: checkout: moving from master to feature/catalogo-layout-caja
+[33m3763fab[m HEAD@{95}: pull: Fast-forward
+[33mac1c216[m HEAD@{96}: checkout: moving from feature/simplificar-boton-destacado to master
+[33m8a1bf0e[m HEAD@{97}: commit: Simplificar el botón destacado: "Solicitar Reset Ahora", sin ícono ni insignia
+[33mac1c216[m HEAD@{98}: checkout: moving from master to feature/simplificar-boton-destacado
+[33mac1c216[m HEAD@{99}: pull: Fast-forward
+[33m04aa3bc[m HEAD@{100}: checkout: moving from fix/espacios-hero-margenes-navegador to master
+[33m9e50210[m HEAD@{101}: commit: Quitar espacios verticales duplicados en el hero de la portada
+[33m04aa3bc[m HEAD@{102}: checkout: moving from master to fix/espacios-hero-margenes-navegador
+[33m04aa3bc[m HEAD@{103}: pull: Fast-forward
+[33m73e0deb[m HEAD@{104}: checkout: moving from fix/submenu-prueba-social-contraste-iconos to master
+[33m0dbb2f6[m HEAD@{105}: commit: Corregir contraste del submenú Prueba Social y agregar íconos
+[33m73e0deb[m HEAD@{106}: checkout: moving from master to fix/submenu-prueba-social-contraste-iconos
+[33m73e0deb[m HEAD@{107}: pull: Fast-forward
+[33m3d629ed[m HEAD@{108}: checkout: moving from feature/contacto-titulo-y-quitar-tarjeta to master
+[33m1a4a0ea[m HEAD@{109}: commit: Página Contacto: cambiar título y quitar tarjeta de intro verde
+[33m3d629ed[m HEAD@{110}: checkout: moving from master to feature/contacto-titulo-y-quitar-tarjeta
+[33m3d629ed[m HEAD@{111}: pull: Fast-forward
+[33me8d43f9[m HEAD@{112}: checkout: moving from fix/panel-busqueda-sin-foto-negrita to master
+[33m4613eee[m HEAD@{113}: commit: Panel de búsqueda: quitar foto, mostrar título en negrita, y corregir bug de estilos nunca aplicados
+[33me8d43f9[m HEAD@{114}: checkout: moving from master to fix/panel-busqueda-sin-foto-negrita
+[33me8d43f9[m HEAD@{115}: pull: Fast-forward
+[33mad13690[m HEAD@{116}: checkout: moving from style/quitar-cta-vieja-modelo to master
+[33m4a5c1d1[m HEAD@{117}: commit: Quitar la sección de cierre vieja ("¿Listo para resolverlo?") de las páginas de modelo
+[33mad13690[m HEAD@{118}: checkout: moving from master to style/quitar-cta-vieja-modelo
+[33mad13690[m HEAD@{119}: pull: Fast-forward
+[33me0c7d2e[m HEAD@{120}: checkout: moving from feature/cta-destacado-paginas-modelo to master
+[33m7d473df[m HEAD@{121}: commit: Agregar botón destacado en las páginas de modelo (inicio y final)
+[33me0c7d2e[m HEAD@{122}: checkout: moving from master to feature/cta-destacado-paginas-modelo
+[33me0c7d2e[m HEAD@{123}: pull: Fast-forward
+[33m47d8364[m HEAD@{124}: checkout: moving from feature/whatsapp-directo-popup to master
+[33m773fe7f[m HEAD@{125}: commit: Agregar botón "Chat WhatsApp Directo" al popup y quitar Continuar
+[33m47d8364[m HEAD@{126}: checkout: moving from master to feature/whatsapp-directo-popup
+[33m47d8364[m HEAD@{127}: pull: Fast-forward
+[33m6326fd5[m HEAD@{128}: checkout: moving from style/boton-hero-efecto-hover to master
+[33mc7a209e[m HEAD@{129}: commit: Efecto de "presionado" al pasar el mouse sobre el botón del hero
+[33m6326fd5[m HEAD@{130}: checkout: moving from master to style/boton-hero-efecto-hover
+[33m6326fd5[m HEAD@{131}: pull: Fast-forward
+[33m8833c9a[m HEAD@{132}: checkout: moving from feature/boton-hero-destacado to master
+[33m7a1db08[m HEAD@{133}: commit: Destacar el botón del hero: verde, ícono de chat y aviso de 1 mensaje
+[33m8833c9a[m HEAD@{134}: checkout: moving from master to feature/boton-hero-destacado
+[33m8833c9a[m HEAD@{135}: pull: Fast-forward
+[33md0c6666[m HEAD@{136}: checkout: moving from style/hero-una-linea-menu-oscuro to master
+[33m480d158[m HEAD@{137}: commit: Título/subtítulo del hero en una sola línea, nuevo texto del botón y menú a tema oscuro
+[33md0c6666[m HEAD@{138}: checkout: moving from master to style/hero-una-linea-menu-oscuro
+[33md0c6666[m HEAD@{139}: pull: Fast-forward
+[33meddbec6[m HEAD@{140}: checkout: moving from style/menu-una-linea-iconos to master
+[33m1f5b33b[m HEAD@{141}: commit: Rediseñar el menú principal: una sola línea, iconos y apariencia profesional
+[33meddbec6[m HEAD@{142}: checkout: moving from master to style/menu-una-linea-iconos
+[33meddbec6[m HEAD@{143}: pull: Fast-forward
+[33m9640024[m HEAD@{144}: checkout: moving from feature/pagina-consulta-garantia to master
+[33m7d4c4b4[m HEAD@{145}: commit: Agregar página pública "Consulta de Garantía" en los 8 idiomas
+[33m9640024[m HEAD@{146}: checkout: moving from master to feature/pagina-consulta-garantia
+[33m9640024[m HEAD@{147}: pull: Fast-forward
+[33ma0276ba[m HEAD@{148}: checkout: moving from seo/acortar-titulos-fr-ru-de to master
+[33m0f5cea6[m HEAD@{149}: commit: SEO: acortar título/descripción de modelo en francés, ruso y alemán
+[33ma0276ba[m HEAD@{150}: checkout: moving from master to seo/acortar-titulos-fr-ru-de
+[33ma0276ba[m HEAD@{151}: pull: Fast-forward
+[33me0bfc40[m HEAD@{152}: checkout: moving from style/quitar-trustpilot-header to master
+[33m4c9ced0[m HEAD@{153}: commit: Quitar el widget de Trustpilot del header, junto al logo
+[33me0bfc40[m HEAD@{154}: checkout: moving from master to style/quitar-trustpilot-header
+[33me0bfc40[m HEAD@{155}: pull: Fast-forward
+[33md0299e5[m HEAD@{156}: checkout: moving from feature/trustpilot-widget-header-y-modelo to master
+[33m33d9e7f[m HEAD@{157}: commit: Agregar widget de Trustpilot junto al logo y en las páginas de modelo
+[33md0299e5[m HEAD@{158}: checkout: moving from master to feature/trustpilot-widget-header-y-modelo
+[33md0299e5[m HEAD@{159}: pull: Fast-forward
+[33m2a2139c[m HEAD@{160}: checkout: moving from seo/indexar-prueba-social-y-faqschema to master
+[33mdc93dd5[m HEAD@{161}: commit: SEO: indexar Prueba Social y agregar schema FAQPage
+[33m2a2139c[m HEAD@{162}: checkout: moving from master to seo/indexar-prueba-social-y-faqschema
+[33m2a2139c[m HEAD@{163}: pull: Fast-forward
+[33m151fa99[m HEAD@{164}: checkout: moving from feature/livechat-en-formulario-contacto to master
+[33mff82038[m HEAD@{165}: commit: Agregar botón de Chat en vivo al primer paso del formulario de contacto
+[33m151fa99[m HEAD@{166}: checkout: moving from master to feature/livechat-en-formulario-contacto
+[33m151fa99[m HEAD@{167}: pull: Fast-forward
+[33mbd00a81[m HEAD@{168}: checkout: moving from style/boton-chat-en-vivo-azul to master
+[33m06f14ab[m HEAD@{169}: commit: Cambiar el botón "Chat en vivo" a azul para que resalte más
+[33mbd00a81[m HEAD@{170}: checkout: moving from master to style/boton-chat-en-vivo-azul
+[33mbd00a81[m HEAD@{171}: pull: Fast-forward
+[33m8e1792e[m HEAD@{172}: checkout: moving from feature/submenu-prueba-social to master
+[33m21cc242[m HEAD@{173}: commit: Agregar submenú desplegable a Prueba Social en el menú principal
+[33m8e1792e[m HEAD@{174}: checkout: moving from master to feature/submenu-prueba-social
+[33m8e1792e[m HEAD@{175}: pull: Fast-forward
+[33mf5d11a0[m HEAD@{176}: checkout: moving from fix/livechat-estado-persistido to master
+[33ma885479[m HEAD@{177}: commit: Corregir que Chat en vivo no abría si Crisp ya estaba "abierto"
+[33mf5d11a0[m HEAD@{178}: checkout: moving from master to fix/livechat-estado-persistido
+[33mf5d11a0[m HEAD@{179}: pull: Fast-forward
+[33m7a7c6d4[m HEAD@{180}: checkout: moving from feature/reactivar-livechat to master
+[33mef4a73f[m HEAD@{181}: commit: Reactivar el canal de Chat en vivo en el panel de contacto
+[33m7a7c6d4[m HEAD@{182}: checkout: moving from master to feature/reactivar-livechat
+[33m7a7c6d4[m HEAD@{183}: pull: Fast-forward
+[33m6cad6ad[m HEAD@{184}: checkout: moving from feature/ocultar-livechat-temporal to master
+[33mb2ac78c[m HEAD@{185}: commit: Ocultar temporalmente el canal de Chat en vivo del panel de contacto
+[33m6cad6ad[m HEAD@{186}: checkout: moving from master to feature/ocultar-livechat-temporal
+[33m6cad6ad[m HEAD@{187}: commit: Esperar activamente a que Crisp esté listo en vez de usar sus ganchos
+[33mcf35c0f[m HEAD@{188}: commit: Usar CRISP_READY_TRIGGER en vez de onload del script
+[33m4e5ed06[m HEAD@{189}: pull: Fast-forward
+[33m193c0cf[m HEAD@{190}: checkout: moving from fix/livechat-eventos-crisp to master
+[33m6d22ecd[m HEAD@{191}: commit: Corregir que el chat en vivo no mostraba su ventana (eventos Crisp)
+[33m193c0cf[m HEAD@{192}: checkout: moving from master to fix/livechat-eventos-crisp
+[33m193c0cf[m HEAD@{193}: pull: Fast-forward
+[33m3d62050[m HEAD@{194}: checkout: moving from master to master
+[33m3d62050[m HEAD@{195}: checkout: moving from fix/livechat-no-abre to master
+[33mc00a350[m HEAD@{196}: commit: Corregir que el chat en vivo no abría en ningún idioma
+[33m3d62050[m HEAD@{197}: checkout: moving from master to fix/livechat-no-abre
+[33m3d62050[m HEAD@{198}: pull origin master: Fast-forward
+[33m9abc557[m HEAD@{199}: checkout: moving from feature/idioma-coreano to master
+[33me46cc1f[m HEAD@{200}: commit: Agregar idioma coreano (8vo idioma del sitio)
+[33m9abc557[m HEAD@{201}: checkout: moving from master to feature/idioma-coreano
+[33m9abc557[m HEAD@{202}: pull origin master: Fast-forward
+[33m9ef5162[m HEAD@{203}: checkout: moving from fix/ocultar-burbuja-crisp to master
+[33m15eb5d1[m HEAD@{204}: commit: Ocultar de forma confiable la burbuja propia de Crisp
+[33m9ef5162[m HEAD@{205}: checkout: moving from master to fix/ocultar-burbuja-crisp
+[33m9ef5162[m HEAD@{206}: pull origin master: Fast-forward
+[33mac53205[m HEAD@{207}: checkout: moving from fix/livechat-siempre-visible to master
+[33mb3c8b0e[m HEAD@{208}: commit: Mostrar siempre Live Chat; WhatsApp solo se oculta donde no aplica
+[33mac53205[m HEAD@{209}: checkout: moving from master to fix/livechat-siempre-visible
+[33mac53205[m HEAD@{210}: pull origin master: Fast-forward
+[33m08a1532[m HEAD@{211}: checkout: moving from feature/contact-hub-unificado to master
+[33m5398f00[m HEAD@{212}: commit: Consolidar los 3 widgets flotantes en un solo Hub de contacto
+[33m08a1532[m HEAD@{213}: checkout: moving from master to feature/contact-hub-unificado
+[33m08a1532[m HEAD@{214}: pull origin master: Fast-forward
+[33m3d34a50[m HEAD@{215}: checkout: moving from feature/crisp-chat to master
+[33m1d69efc[m HEAD@{216}: commit: Agregar chat de Crisp y permitir sus dominios en la CSP
+[33m3d34a50[m HEAD@{217}: checkout: moving from master to feature/crisp-chat
+[33m3d34a50[m HEAD@{218}: pull origin master: Fast-forward
+[33m7faccda[m HEAD@{219}: checkout: moving from feature/rediseno-tarjeta-revision to master
+[33m4e6dc04[m HEAD@{220}: commit: Rediseñar la tarjeta de "requiere revisión adicional"
+[33m7faccda[m HEAD@{221}: checkout: moving from master to feature/rediseno-tarjeta-revision
+[33m7faccda[m HEAD@{222}: pull origin master: Fast-forward
+[33m3816c22[m HEAD@{223}: checkout: moving from feature/imagen-error-requiere-revision to master
+[33me2cbd7d[m HEAD@{224}: commit: Mostrar la imagen real del error en la sección "requiere revisión"
+[33m3816c22[m HEAD@{225}: checkout: moving from master to feature/imagen-error-requiere-revision
+[33m3816c22[m HEAD@{226}: pull origin master: Fast-forward
+[33m3322c42[m HEAD@{227}: checkout: moving from fix/reclasificar-p400-p1430-epson to master
+[33m044732f[m HEAD@{228}: commit: Corregir marca de P400 y P1430: son Epson, no Epson-SC
+[33m3322c42[m HEAD@{229}: checkout: moving from master to fix/reclasificar-p400-p1430-epson
+[33m3322c42[m HEAD@{230}: pull origin master: Fast-forward
+[33mce6f52d[m HEAD@{231}: checkout: moving from fix/tarjeta-vacia-error-requiere-revision to master
+[33ma4cead6[m HEAD@{232}: commit: Corregir tarjeta vacía cuando un modelo solo tiene errores "requiere revisión"
+[33mce6f52d[m HEAD@{233}: checkout: moving from master to fix/tarjeta-vacia-error-requiere-revision
+[33mce6f52d[m HEAD@{234}: pull origin master: Fast-forward
+[33mc073cae[m HEAD@{235}: checkout: moving from feature/verificacion-yandex-webmaster to master
+[33mdbb49ac[m HEAD@{236}: commit: Agregar archivo de verificación de Yandex Webmaster
+[33mc073cae[m HEAD@{237}: checkout: moving from master to feature/verificacion-yandex-webmaster
+[33mc073cae[m HEAD@{238}: pull origin master: Fast-forward
+[33mfe1293b[m HEAD@{239}: checkout: moving from feature/verificacion-bing-webmaster to master
+[33m1f13078[m HEAD@{240}: commit: Agregar archivo de verificación de Bing Webmaster Tools
+[33mfe1293b[m HEAD@{241}: checkout: moving from master to feature/verificacion-bing-webmaster
+[33mfe1293b[m HEAD@{242}: pull origin master: Fast-forward
+[33mf80f83d[m HEAD@{243}: checkout: moving from feature/epson-sc-0014bd-todos-modelos to master
+[33m43bd2be[m HEAD@{244}: commit: Extender el error 0014BD (Epson-SC) a todos los modelos del catálogo
+[33mf80f83d[m HEAD@{245}: checkout: moving from master to feature/epson-sc-0014bd-todos-modelos
+[33mf80f83d[m HEAD@{246}: pull origin master: Fast-forward
+[33mf9901fa[m HEAD@{247}: checkout: moving from feature/rediseno-popup-compra to master
+[33m1c9009e[m HEAD@{248}: commit: Rediseñar la notificación de compra para más visibilidad y clics
+[33mf9901fa[m HEAD@{249}: checkout: moving from master to feature/rediseno-popup-compra
+[33mf9901fa[m HEAD@{250}: pull origin master: Fast-forward
+[33mdbfbbd2[m HEAD@{251}: checkout: moving from feature/cta-servicio-no-producto to master
+[33mc71c58d[m HEAD@{252}: commit: Corregir texto del CTA de la notificación de compra
+[33mdbfbbd2[m HEAD@{253}: checkout: moving from master to feature/cta-servicio-no-producto
+[33mdbfbbd2[m HEAD@{254}: pull origin master: Fast-forward
+[33m61b454b[m HEAD@{255}: checkout: moving from feature/popup-confeti-mas-tiempo to master
+[33m8956564[m HEAD@{256}: commit: Más confeti y más tiempo para dar clic en la notificación de compra
+[33m61b454b[m HEAD@{257}: checkout: moving from master to feature/popup-confeti-mas-tiempo
+[33m61b454b[m HEAD@{258}: pull origin master: Fast-forward
+[33mecd4d49[m HEAD@{259}: checkout: moving from feature/notificacion-compra-reciente to master
+[33maf626e3[m HEAD@{260}: commit: Agregar notificación de "compra reciente" con sonido y confeti
+[33mecd4d49[m HEAD@{261}: checkout: moving from master to feature/notificacion-compra-reciente
+[33mecd4d49[m HEAD@{262}: commit: Permitir static.cloudflareinsights.com en la CSP
+[33mdfea7b3[m HEAD@{263}: commit: Corregir aplicación de cabeceras de seguridad: usar public/_headers
+[33m3c163d9[m HEAD@{264}: commit: Forzar que toda solicitud pase por el Worker (run_worker_first)
+[33m8d57f18[m HEAD@{265}: pull origin master: Fast-forward
+[33m9f9d803[m HEAD@{266}: checkout: moving from feature/seguridad-seo-i18n-terminos to master
+[33mc7a970a[m HEAD@{267}: commit: Seguridad, SEO y traducción completa de Términos y Condiciones
+[33m9f9d803[m HEAD@{268}: checkout: moving from master to feature/seguridad-seo-i18n-terminos
+[33m9f9d803[m HEAD@{269}: pull origin master: Fast-forward
+[33mf6aa47c[m HEAD@{270}: checkout: moving from feature/terminos-y-condiciones to master
+[33me974b32[m HEAD@{271}: commit: Agregar página real de Términos y Condiciones con botones para compartir
+[33mf6aa47c[m HEAD@{272}: checkout: moving from master to feature/terminos-y-condiciones
+[33mf6aa47c[m HEAD@{273}: commit: Conexión técnica: mostrar las imágenes reales del proceso (bug de claves)
+[33m28c91b1[m HEAD@{274}: commit: Agregar estructura reutilizable de sensor de tinta para la familia Epson-SC
+[33m19c3f48[m HEAD@{275}: commit: Agregar las imágenes de src/assets/proceso/ que faltaban commitear
+[33m925ff29[m HEAD@{276}: commit: SEO: agregar rel="nofollow" a todos los enlaces externos
+[33m66f021a[m HEAD@{277}: commit: Testimonios Trustpilot: orden aleatorio en cada visita
+[33m470a57d[m HEAD@{278}: commit: Testimonios Trustpilot: reemplazar el iframe de reseña por tarjeta clicable
+[33mb3614db[m HEAD@{279}: commit: Testimonios Trustpilot: vista previa tipo link-preview para url_trustpilot_review
+[33mf040de5[m HEAD@{280}: commit: Testimonios Trustpilot: reemplazar el iframe de reseña por tarjeta clicable
+[33md9daed8[m HEAD@{281}: commit: Testimonios Trustpilot: soportar url_trustpilot_review embebida en iframe
+[33md78d2b4[m HEAD@{282}: commit: Corregir contrato real de Testimonios Trustpilot (url_imgur, no url_trustpilot_foto/url_resena)
+[33md897b11[m HEAD@{283}: commit: Testimonios Trustpilot: 1 imagen por fila para que se lea la reseña
+[33m6eb9d42[m HEAD@{284}: commit: Agregar schema.org Review a los posts de Cliente Satisfecho y Reset Evidencia
+[33m3ebeb4c[m HEAD@{285}: commit: Agregar el tercer silo de Prueba Social: Testimonios Trustpilot
+[33m68a1a23[m HEAD@{286}: commit: Actualizar 2 textos que quedaron desactualizados en en/pt/fr/it
+[33m254be14[m HEAD@{287}: commit: Traducir nav.pruebaSocial y nav.ruleta en en/pt/fr/it
+[33m24eb8bf[m HEAD@{288}: commit: Prueba Social, Ruleta y Reset Evidencia se mantienen en el idioma elegido
+[33m2f1f427[m HEAD@{289}: commit: No mostrar el 404 siempre en español + evitar links rotos al cambiar idioma
+[33m06d033d[m HEAD@{290}: pull origin master: Fast-forward
+[33ma3b4775[m HEAD@{291}: checkout: moving from feature/idiomas-aleman-ruso to master
+[33mbe058a1[m HEAD@{292}: commit: Agregar alemán (de) y ruso (ru) como idiomas soportados
+[33ma3b4775[m HEAD@{293}: checkout: moving from master to feature/idiomas-aleman-ruso
+[33ma3b4775[m HEAD@{294}: commit: Cambiar título del modal de contacto a "¿Qué necesitas hacer hoy?"
+[33m3e89831[m HEAD@{295}: commit: Reset Evidencia: no dejar la frase de contenido coja sin duración
+[33maccb97d[m HEAD@{296}: commit: Reset Evidencia: título/slug se generan una sola vez en Núcleo, no en vivo
+[33m36a0a4b[m HEAD@{297}: commit: Reset Evidencia: agregar al contenido las mismas palabras clave del título
+[33m6745cca[m HEAD@{298}: commit: Reproducir el video real en Reset Evidencia + duración vía API de YouTube
+[33mc979513[m HEAD@{299}: commit: Redirigir 301 la ruta vieja de Reset Realizados a Reset Evidencia
+[33m4ea0c66[m HEAD@{300}: commit: Renombrar Resets Realizados a Reset Evidencia (/prueba-social/reset-evidencia/)
+[33m7bf4efb[m HEAD@{301}: commit: Corregir el embed de Cliente Satisfecho: apuntar al sub-recurso del chat
+[33mbd9c406[m HEAD@{302}: commit: Conectar Prueba Social a la API pública real de Núcleo
+[33m5cff727[m HEAD@{303}: commit: Cliente Satisfecho: slug reset-marca-modelo-pais-medioPago + 5 idiomas
+[33m065ff8f[m HEAD@{304}: commit: Cliente Satisfecho: generar el slug siempre desde los 5 campos
+[33mb8e7812[m HEAD@{305}: commit: Resets Realizados: índice liviano + página de detalle por slug
+[33mf98d46e[m HEAD@{306}: commit: Cliente Satisfecho: HTML renderizado 9:16 en vez de imágenes
+[33m9c4f8e9[m HEAD@{307}: commit: Separar Prueba Social en páginas de índice propias
+[33m2978ecc[m HEAD@{308}: commit: Centralizar Prueba Social: galería de conversaciones, videos y tabs
+[33mb709e54[m HEAD@{309}: merge origin/master: Fast-forward
+[33mfd13110[m HEAD@{310}: checkout: moving from master to master
+[33mfd13110[m HEAD@{311}: commit: Reordenar flujo de Contáctanos, marca obligatoria y agregar país/pago/precio
+[33m4fc507b[m HEAD@{312}: commit: Renombrar marca a ResetEnLinea.com y mejorar formulario de contacto
+[33m7fec1ab[m HEAD@{313}: commit: Menu hamburguesa movil, boton flotante tipo burbuja, hero y eslogan, enlaces cortos de WhatsApp
+[33md764b39[m HEAD@{314}: pull origin master: Fast-forward
+[33m6d4abe3[m HEAD@{315}: checkout: moving from feature/rediseno-formulario-contacto to master
+[33m28e95a9[m[33m ([m[1;31morigin/feature/rediseno-formulario-contacto[m[33m, [m[1;32mfeature/rediseno-formulario-contacto[m[33m)[m HEAD@{316}: commit: Rediseñar formulario de contacto, embeber Ruleta/Prueba Social, ocultar modelos incompletos
+[33m6d4abe3[m HEAD@{317}: checkout: moving from master to feature/rediseno-formulario-contacto
+[33m6d4abe3[m HEAD@{318}: commit: Desplegar a produccion en Cloudflare Workers y agregar redirecciones SEO
+[33mae71f57[m HEAD@{319}: commit (initial): Initial commit: sitio ResetEnLinea (Astro, 5 idiomas, 170 modelos)

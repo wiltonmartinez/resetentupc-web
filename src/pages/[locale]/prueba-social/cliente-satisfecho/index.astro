@@ -26,6 +26,7 @@ const { data: evidencias, meta } = localeValida ? await listarClienteSatisfecho(
 
 {localeValida ? (
   <BaseLayout
+  wide
     title={t(locale, "clienteSatisfechoPage.title")}
     description={t(locale, "clienteSatisfechoPage.description")}
     locale={locale}
@@ -35,6 +36,7 @@ const { data: evidencias, meta } = localeValida ? await listarClienteSatisfecho(
   </BaseLayout>
 ) : (
   <BaseLayout
+  wide
     title="Página no encontrada | ResetEnLinea.com"
     description="La página que buscas no existe o fue movida."
     locale={locale}

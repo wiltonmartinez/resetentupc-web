@@ -27,6 +27,7 @@ const { data: resets, meta } = localeValida
 
 {localeValida ? (
   <BaseLayout
+  wide
     title={t(locale, "resetRealizadosPage.title")}
     description={t(locale, "resetRealizadosPage.description")}
     locale={locale}
@@ -36,6 +37,7 @@ const { data: resets, meta } = localeValida
   </BaseLayout>
 ) : (
   <BaseLayout
+  wide
     title="Página no encontrada | ResetEnLinea.com"
     description="La página que buscas no existe o fue movida."
     locale={locale}
