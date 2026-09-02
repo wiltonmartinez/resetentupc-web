@@ -1,24 +1,78 @@
 ---
-export const prerender = false;
-
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ResetEvidenciaIndexPage from "../../../components/pages/ResetEvidenciaIndexPage.astro";
-import { listarResetRealizados } from "../../../lib/nucleo-api";
-import { t } from "../../../i18n/utils";
+import { NUCLEO_API_BASE_URL } from "../../../config/site";
+import { generateResetEvidenciaSlug } from "../../../lib/slug-generator";
 
 const locale = "es" as const;
+let evidencias: any[] = [];
+let fetchError = false;
 
-const paginaSolicitada = Number.parseInt(Astro.url.searchParams.get("page") ?? "1", 10);
-const pagina = Number.isFinite(paginaSolicitada) && paginaSolicitada > 0 ? paginaSolicitada : 1;
-const { data: resets, meta } = await listarResetRealizados(pagina, 12);
+try {
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/evidencias/reset/`, { timeout: 5000 });
+  if (response.ok) {
+    const data = await response.json();
+    evidencias = Array.isArray(data) ? data.filter((e: any) => e.publicado !== false) : [];
+  }
+} catch (error) {
+  console.error("Error fetching evidencias:", error);
+  fetchError = true;
+}
+
+const evidenciasConSlug = evidencias.map((e) => ({
+  ...e,
+  slug: generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.errorCorto, e.pais, e.tiempo),
+}));
 ---
 
 <BaseLayout
-  wide
-  title={t(locale, "resetRealizadosPage.title")}
-  description={t(locale, "resetRealizadosPage.description")}
+  title="Reset Evidencia - Prueba Social"
+  description="Videos comprobando contador en 0% después del reset"
   locale={locale}
   path="/prueba-social/reset-evidencia/"
+  wide
 >
-  <ResetEvidenciaIndexPage locale={locale} resets={resets} meta={meta} />
+  <section class="evidencia-header">
+    <h1>Reset Evidencia</h1>
+    <p>Videos comprobando que el contador llega a 0% tras el reset</p>
+  </section>
+
+  <section class="evidencia-grid">
+    {fetchError && <div class="error-message">No pudimos cargar las evidencias.</div>}
+    {!fetchError && evidenciasConSlug.length === 0 && <div class="empty-message">No hay evidencias disponibles.</div>}
+    {evidenciasConSlug.length > 0 && (
+      <div class="grid">
+        {evidenciasConSlug.map((evidencia) => (
+          <a href={`/prueba-social/reset-evidencia/${evidencia.slug}/`} class="evidencia-item">
+            <div class="evidencia-thumbnail"><span>▶️</span></div>
+            <div class="evidencia-info">
+              <div class="badges">
+                <span class="badge">{evidencia.marca}</span>
+                <span class="badge">{evidencia.tiempo}</span>
+              </div>
+              <h3>{evidencia.modelo}</h3>
+              <p>{evidencia.pais}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
 </BaseLayout>
+
+<style>
+  .evidencia-header { padding: 3rem 1rem; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); text-align: center; }
+  .evidencia-header h1 { font-size: 2.5rem; font-weight: 700; color: #1e40af; margin: 0 0 0.5rem 0; }
+  .evidencia-header p { font-size: 1.1rem; color: #1e7cbf; margin: 0; }
+  .evidencia-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  .evidencia-item { display: flex; flex-direction: column; background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+  .evidencia-item:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transform: translateY(-4px); }
+  .evidencia-thumbnail { width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+  .evidencia-info { padding: 1.25rem; }
+  .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #dbeafe; color: #1e40af; }
+  .evidencia-info h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
+  .evidencia-info p { font-size: 0.85rem; color: #9ca3af; margin: 0.5rem 0 0 0; }
+  .error-message, .empty-message { padding: 2rem; text-align: center; border-radius: 12px; background: #dbeafe; color: #1e40af; }
+  @media (max-width: 768px) { .evidencia-header h1 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+</style>

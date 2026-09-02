@@ -1,0 +1,287 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER } from "../../../config/site";
+import { parseDiagnosticoSlug, generateDiagnosticoSlug } from "../../../lib/slug-generator";
+
+const locale = "es" as const;
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect("/prueba-social/diagnostico-gratis/");
+}
+
+const parsed = parseDiagnosticoSlug(slug);
+if (!parsed) {
+  return Astro.redirect("/prueba-social/diagnostico-gratis/");
+}
+
+let diagnostico: any = null;
+let fetchError = false;
+
+try {
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/evidencias/diagnosticos/`, {
+    timeout: 5000,
+  });
+  if (response.ok) {
+    const data = await response.json();
+    const diagnosticos = Array.isArray(data) ? data : [];
+    const found = diagnosticos.find(
+      (d: any) =>
+        generateDiagnosticoSlug(d.marca, d.modelo, d.error) === slug &&
+        d.publicado !== false
+    );
+    diagnostico = found;
+  }
+} catch (error) {
+  console.error("Error fetching diagnostico:", error);
+  fetchError = true;
+}
+
+if (!diagnostico) {
+  return Astro.redirect("/prueba-social/diagnostico-gratis/");
+}
+
+const extractYoutubeId = (url: string): string | null => {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+    /^([a-zA-Z0-9_-]{11})$/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+};
+
+const youtubeId = diagnostico.enlace_youtube ? extractYoutubeId(diagnostico.enlace_youtube) : null;
+const whatsappMessage = `Hola, vi el diagnóstico de ${diagnostico.marca} ${diagnostico.modelo} (${diagnostico.error}) y quiero saber si mi impresora tiene el mismo problema.`;
+const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
+---
+
+<BaseLayout
+  title={`Diagnóstico: ${diagnostico.marca} ${diagnostico.modelo} - ResetEnLinea`}
+  description={`Análisis en vivo: ${diagnostico.error} en ${diagnostico.marca} ${diagnostico.modelo}`}
+  locale={locale}
+  path={`/prueba-social/diagnostico-gratis/${slug}/`}
+  wide
+>
+  <article class="diagnostico-detail">
+    <header class="detail-header">
+      <a href="/prueba-social/diagnostico-gratis/" class="back-link">← Volver a diagnósticos</a>
+      <h1>{diagnostico.marca} {diagnostico.modelo}</h1>
+      <p class="subtitle">{diagnostico.error}</p>
+      <div class="meta">
+        <span class="meta-item">📍 {diagnostico.codigo_pais}</span>
+      </div>
+    </header>
+
+    <section class="detail-video">
+      {youtubeId ? (
+        <iframe
+          width="100%"
+          height="600"
+          src={`https://www.youtube.com/embed/${youtubeId}`}
+          title={`Diagnóstico ${diagnostico.marca} ${diagnostico.modelo}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      ) : (
+        <div class="video-placeholder">
+          <p>Video no disponible</p>
+        </div>
+      )}
+    </section>
+
+    <section class="detail-content">
+      <div class="content-main">
+        <h2>Análisis del Problema</h2>
+        <p>
+          Este diagnóstico muestra cómo nuestro software detecta <strong>{diagnostico.error}</strong> en una {diagnostico.marca} {diagnostico.modelo}.
+          El análisis en vivo permite identificar exactamente qué componente de tu impresora necesita atención.
+        </p>
+
+        <h2>Próximos Pasos</h2>
+        <p>
+          Si tu impresora presenta un problema similar, contáctanos por WhatsApp para obtener una solución personalizada.
+          Nuestro equipo te ayudará a resolver el problema de la forma más rápida y segura.
+        </p>
+      </div>
+
+      <aside class="content-cta">
+        <div class="cta-box">
+          <h3>¿Tu impresora tiene este problema?</h3>
+          <p>Obtén un diagnóstico personalizado</p>
+          <a href={whatsappLink} class="cta-button">
+            Contactar por WhatsApp
+          </a>
+        </div>
+      </aside>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .diagnostico-detail {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .detail-header {
+    padding: 2rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #10b981;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: #059669;
+  }
+
+  .detail-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subtitle {
+    font-size: 1.3rem;
+    color: #6b7280;
+    margin: 0 0 1rem 0;
+  }
+
+  .meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 0.95rem;
+    color: #9ca3af;
+  }
+
+  .detail-video {
+    padding: 2rem 1rem;
+    background: #000;
+    aspect-ratio: 16 / 9;
+  }
+
+  .detail-video iframe {
+    border-radius: 8px;
+  }
+
+  .video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+  }
+
+  .detail-content {
+    padding: 2rem 1rem;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .content-main {
+    line-height: 1.8;
+  }
+
+  .content-main h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-main h2:first-child {
+    margin-top: 0;
+  }
+
+  .content-main p {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-cta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    position: sticky;
+    top: 100px;
+  }
+
+  .cta-box h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .cta-box p {
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem 0;
+    opacity: 0.9;
+    color: white;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: #059669;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .detail-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .detail-video {
+      aspect-ratio: auto;
+      min-height: 300px;
+    }
+
+    .detail-content {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .cta-box {
+      position: static;
+    }
+  }
+</style>

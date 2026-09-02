@@ -1,52 +1,89 @@
 ---
-export const prerender = false;
-
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ClienteSatisfechoDetailPage from "../../../components/pages/ClienteSatisfechoDetailPage.astro";
-import { obtenerClienteSatisfechoPorSlug, tituloConRespaldo } from "../../../lib/nucleo-api";
-import { buildLocalizedPath, t } from "../../../i18n/utils";
+import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER } from "../../../config/site";
+import { parseClienteSatisfechoSlug, generateClienteSatisfechoSlug } from "../../../lib/slug-generator";
 
 const locale = "es" as const;
 const { slug } = Astro.params;
-const evidencia = slug ? await obtenerClienteSatisfechoPorSlug(slug) : null;
 
-if (!evidencia) {
-  Astro.response.status = 404;
+if (!slug) return Astro.redirect("/prueba-social/cliente-satisfecho/");
+
+const parsed = parseClienteSatisfechoSlug(slug);
+if (!parsed) return Astro.redirect("/prueba-social/cliente-satisfecho/");
+
+let cliente: any = null;
+
+try {
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/clientes-satisfechos/`, { timeout: 5000 });
+  if (response.ok) {
+    const data = await response.json();
+    const found = Array.isArray(data) ? data.find(
+      (c: any) => generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago) === slug && c.publicado !== false
+    ) : null;
+    cliente = found;
+  }
+} catch (error) {
+  console.error("Error fetching cliente:", error);
 }
 
-const titulo = evidencia ? tituloConRespaldo(evidencia) : "";
+if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
 ---
 
-{evidencia ? (
-  <BaseLayout
+<BaseLayout
+  title={`${cliente.accion} ${cliente.marca} ${cliente.modelo} - ResetEnLinea`}
+  description={`Testimonio real: ${cliente.accion} ${cliente.marca} ${cliente.modelo} en ${cliente.pais}`}
+  locale={locale}
+  path={`/prueba-social/cliente-satisfecho/${slug}/`}
   wide
-    title={`${titulo} | ResetEnLinea.com`}
-    description={titulo}
-    locale={locale}
-    path={`/prueba-social/cliente-satisfecho/${evidencia.slug}/`}
-  >
-    <ClienteSatisfechoDetailPage locale={locale} evidencia={evidencia} />
-  </BaseLayout>
-) : (
-  <BaseLayout
-  wide
-    title="Página no encontrada | ResetEnLinea.com"
-    description="La página que buscas no existe o fue movida."
-    locale={locale}
-    path="/prueba-social/cliente-satisfecho/no-encontrado/"
-    noindex
-  >
-    <section class="not-found">
-      <h1>Página no encontrada</h1>
-      <p>La página que buscas no existe o fue movida.</p>
-      <a href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}>{t(locale, "clienteSatisfechoPage.volverLink")}</a>
+>
+  <article class="cliente-detail">
+    <header class="detail-header">
+      <a href="/prueba-social/cliente-satisfecho/" class="back-link">← Volver a clientes</a>
+      <h1>{cliente.accion} {cliente.marca} {cliente.modelo}</h1>
+      <div class="meta">
+        <span>📍 {cliente.pais}</span>
+        <span>💳 {cliente.medioPago}</span>
+      </div>
+    </header>
+
+    <section class="detail-content">
+      <div class="content-main">
+        <h2>Conversación en WhatsApp</h2>
+        <div class="chat-placeholder">
+          <p>Captura de conversación</p>
+        </div>
+        <p>
+          {cliente.nombre} en {cliente.pais} realizó un {cliente.accion} de su {cliente.marca} {cliente.modelo} de forma segura
+          y rápida. El proceso se completó correctamente y el cliente confirmó que su impresora funciona perfectamente.
+        </p>
+      </div>
+
+      <aside class="content-cta">
+        <div class="cta-box">
+          <h3>¿También quieres resolver tu problema?</h3>
+          <p>Contáctanos por WhatsApp</p>
+          <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola, como ${cliente.nombre} quiero hacer un ${cliente.accion} a mi ${cliente.marca} ${cliente.modelo}`)}`} class="cta-button">Contactar por WhatsApp</a>
+        </div>
+      </aside>
     </section>
-  </BaseLayout>
-)}
+  </article>
+</BaseLayout>
 
 <style>
-  .not-found {
-    text-align: center;
-    padding: 3rem 0;
-  }
+  .cliente-detail { max-width: 1200px; margin: 0 auto; }
+  .detail-header { padding: 2rem 1rem; border-bottom: 1px solid #e5e7eb; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #be185d; text-decoration: none; font-weight: 600; }
+  .back-link:hover { color: #9f1239; }
+  .detail-header h1 { font-size: 2.5rem; font-weight: 700; color: #1f2937; margin: 0 0 1rem 0; }
+  .meta { display: flex; gap: 1.5rem; font-size: 0.95rem; color: #9ca3af; }
+  .detail-content { padding: 2rem 1rem; display: grid; grid-template-columns: 1fr 300px; gap: 2rem; max-width: 1200px; margin: 0 auto; }
+  .content-main h2 { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin: 0 0 1rem 0; }
+  .content-main p { color: #6b7280; font-size: 0.95rem; line-height: 1.8; }
+  .chat-placeholder { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); padding: 2rem; border-radius: 12px; text-align: center; margin: 1.5rem 0; color: #9f1239; }
+  .content-cta { display: flex; }
+  .cta-box { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: 12px; text-align: center; position: sticky; top: 100px; }
+  .cta-box h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem 0; }
+  .cta-box p { font-size: 0.9rem; margin: 0 0 1.5rem 0; opacity: 0.9; }
+  .cta-button { display: inline-block; padding: 0.75rem 1.5rem; background: white; color: #059669; text-decoration: none; font-weight: 700; border-radius: 8px; }
+  @media (max-width: 768px) { .detail-header h1 { font-size: 1.8rem; } .detail-content { grid-template-columns: 1fr; } .cta-box { position: static; } }
 </style>

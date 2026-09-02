@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const locale = "es" as const;
+
+const testimonios = [
+  { id: 1, nombre: "Cliente 1", rating: 5, ciudad: "Bogotá" },
+  { id: 2, nombre: "Cliente 2", rating: 5, ciudad: "México" },
+  { id: 3, nombre: "Cliente 3", rating: 5, ciudad: "Buenos Aires" },
+  { id: 4, nombre: "Cliente 4", rating: 5, ciudad: "Lima" },
+  { id: 5, nombre: "Cliente 5", rating: 5, ciudad: "Santiago" },
+  { id: 6, nombre: "Cliente 6", rating: 5, ciudad: "Medellín" },
+];
+
+const testimoniosAleatorios = [...testimonios].sort(() => Math.random() - 0.5);
+---
+
+<BaseLayout
+  title="Testimonios Trustpilot - Prueba Social"
+  description="Evaluaciones verificadas de clientes satisfechos en Trustpilot"
+  locale={locale}
+  path="/prueba-social/testimonios-trustpilot/"
+  wide
+>
+  <section class="testimonios-header">
+    <h1>Testimonios Trustpilot</h1>
+    <p>Evaluaciones verificadas de clientes satisfechos</p>
+  </section>
+
+  <section class="testimonios-grid">
+    <div class="grid">
+      {testimoniosAleatorios.map((testimonio) => (
+        <div class="testimonio-card">
+          <div class="stars">
+            {'⭐'.repeat(testimonio.rating)}
+          </div>
+          <div class="testimonio-content">
+            <p>Servicio profesional, rápido y confiable. Altamente recomendado.</p>
+          </div>
+          <div class="testimonio-author">
+            <p class="nombre">{testimonio.nombre}</p>
+            <p class="ciudad">{testimonio.ciudad}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="trustpilot-widget">
+      <h2>Ver todas nuestras evaluaciones</h2>
+      <p>Visita nuestro perfil en Trustpilot para ver todas las evaluaciones de clientes satisfechos</p>
+      <a href="https://es.trustpilot.com/review/resetokey.com" target="_blank" rel="noopener noreferrer" class="trustpilot-link">
+        Ir a Trustpilot →
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .testimonios-header { padding: 3rem 1rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); text-align: center; }
+  .testimonios-header h1 { font-size: 2.5rem; font-weight: 700; color: #92400e; margin: 0 0 0.5rem 0; }
+  .testimonios-header p { font-size: 1.1rem; color: #b45309; margin: 0; }
+  .testimonios-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+  .testimonio-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: box-shadow 0.3s ease; }
+  .testimonio-card:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+  .stars { font-size: 1.2rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testimonio-content { margin-bottom: 1rem; }
+  .testimonio-content p { color: #6b7280; line-height: 1.6; margin: 0; }
+  .testimonio-author { border-top: 1px solid #e5e7eb; padding-top: 1rem; }
+  .nombre { font-weight: 700; color: #1f2937; margin: 0; font-size: 0.95rem; }
+  .ciudad { color: #9ca3af; font-size: 0.85rem; margin: 0.25rem 0 0 0; }
+  .trustpilot-widget { text-align: center; padding: 2rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; }
+  .trustpilot-widget h2 { font-size: 1.8rem; font-weight: 700; color: #92400e; margin: 0 0 0.5rem 0; }
+  .trustpilot-widget p { color: #b45309; margin: 0 0 1.5rem 0; }
+  .trustpilot-link { display: inline-block; padding: 0.75rem 2rem; background: #f59e0b; color: white; text-decoration: none; font-weight: 700; border-radius: 8px; transition: background 0.3s ease; }
+  .trustpilot-link:hover { background: #d97706; }
+  @media (max-width: 768px) { .testimonios-header h1 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+</style>

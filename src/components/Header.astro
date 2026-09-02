@@ -25,13 +25,14 @@ function staticPagePathSinPrefijo(pageKey: StaticPageKey): string {
 const inicioPath = "/";
 const comoFuncionaPath = staticPagePathSinPrefijo("comoFunciona");
 const pruebaSocialPath = "/prueba-social/";
-const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
+const diagnosticoGratisPath = "/prueba-social/diagnostico-gratis/";
+const testimoniosPath = "/prueba-social/testimonios-trustpilot/";
 const resetEvidenciaPath = "/prueba-social/reset-evidencia/";
-const testimoniosPath = "/prueba-social/testimonios-truspilot/";
+const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
 const preguntasFrecuentesPath = staticPagePathSinPrefijo("preguntasFrecuentes");
 const consultaGarantiaPath = staticPagePathSinPrefijo("consultaGarantia");
 
-const pruebaSocialActivo = [pruebaSocialPath, clienteSatisfechoPath, resetEvidenciaPath, testimoniosPath].includes(
+const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimoniosPath, resetEvidenciaPath, clienteSatisfechoPath].includes(
   path
 );
 ---
@@ -110,19 +111,30 @@ const pruebaSocialActivo = [pruebaSocialPath, clienteSatisfechoPath, resetEviden
           <ul class="site-nav-submenu">
             <li>
               <a
-                href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}
-                class:list={{ "is-active": path === clienteSatisfechoPath }}
+                href={buildLocalizedPath(locale, "/prueba-social/testimonios-trustpilot/")}
+                class:list={{ "is-active": path === testimoniosPath }}
               >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                   <path
-                    d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
+                    d="M12 3.5 14.5 9l6 .6-4.6 4 1.4 5.9L12 16.6l-5.3 2.9 1.4-5.9-4.6-4 6-.6L12 3.5Z"
                     stroke="currentColor"
-                    stroke-width="1.6"
+                    stroke-width="1.4"
                     stroke-linejoin="round"
                   />
-                  <path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
                 </svg>
-                <span>{t(locale, "pruebaSocialPage.conversacionesTitulo")}</span>
+                <span>{t(locale, "pruebaSocialPage.testimoniosTitulo")}</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href={buildLocalizedPath(locale, "/prueba-social/diagnostico-gratis/")}
+                class:list={{ "is-active": path === diagnosticoGratisPath }}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.6" />
+                  <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                <span>Diagnóstico Gratis</span>
               </a>
             </li>
             <li>
@@ -139,18 +151,19 @@ const pruebaSocialActivo = [pruebaSocialPath, clienteSatisfechoPath, resetEviden
             </li>
             <li>
               <a
-                href={buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/")}
-                class:list={{ "is-active": path === testimoniosPath }}
+                href={buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/")}
+                class:list={{ "is-active": path === clienteSatisfechoPath }}
               >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
                   <path
-                    d="M12 3.5 14.5 9l6 .6-4.6 4 1.4 5.9L12 16.6l-5.3 2.9 1.4-5.9-4.6-4 6-.6L12 3.5Z"
+                    d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
                     stroke="currentColor"
-                    stroke-width="1.4"
+                    stroke-width="1.6"
                     stroke-linejoin="round"
                   />
+                  <path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
                 </svg>
-                <span>{t(locale, "pruebaSocialPage.testimoniosTitulo")}</span>
+                <span>{t(locale, "pruebaSocialPage.conversacionesTitulo")}</span>
               </a>
             </li>
           </ul>

@@ -1,24 +1,91 @@
 ---
-export const prerender = false;
-
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ClienteSatisfechoIndexPage from "../../../components/pages/ClienteSatisfechoIndexPage.astro";
-import { listarClienteSatisfecho } from "../../../lib/nucleo-api";
-import { t } from "../../../i18n/utils";
+import { NUCLEO_API_BASE_URL } from "../../../config/site";
+import { generateClienteSatisfechoSlug } from "../../../lib/slug-generator";
 
 const locale = "es" as const;
 
-const paginaSolicitada = Number.parseInt(Astro.url.searchParams.get("page") ?? "1", 10);
-const pagina = Number.isFinite(paginaSolicitada) && paginaSolicitada > 0 ? paginaSolicitada : 1;
-const { data: evidencias, meta } = await listarClienteSatisfecho(pagina, 12);
+let clientes: any[] = [];
+let fetchError = false;
+
+try {
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/clientes-satisfechos/`, {
+    timeout: 5000,
+  });
+  if (response.ok) {
+    const data = await response.json();
+    clientes = Array.isArray(data) ? data.filter((c: any) => c.publicado !== false) : [];
+  }
+} catch (error) {
+  console.error("Error fetching clientes:", error);
+  fetchError = true;
+}
+
+const clientesConSlug = clientes.map((c) => ({
+  ...c,
+  slug: generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago),
+}));
 ---
 
 <BaseLayout
-  wide
-  title={t(locale, "clienteSatisfechoPage.title")}
-  description={t(locale, "clienteSatisfechoPage.description")}
+  title="Clientes Satisfechos - Prueba Social"
+  description="Conversaciones reales de WhatsApp de clientes que resolvieron su problema"
   locale={locale}
   path="/prueba-social/cliente-satisfecho/"
+  wide
 >
-  <ClienteSatisfechoIndexPage locale={locale} evidencias={evidencias} meta={meta} />
+  <section class="clientes-header">
+    <div class="header-content">
+      <h1>Clientes Satisfechos</h1>
+      <p>Capturas de WhatsApp reales de usuarios que resolvieron su problema</p>
+    </div>
+  </section>
+
+  <section class="clientes-grid">
+    {fetchError && (
+      <div class="error-message">No pudimos cargar los testimonios. Por favor, intenta más tarde.</div>
+    )}
+    {!fetchError && clientesConSlug.length === 0 && (
+      <div class="empty-message">No hay testimonios disponibles en este momento.</div>
+    )}
+    {clientesConSlug.length > 0 && (
+      <div class="grid">
+        {clientesConSlug.map((cliente) => (
+          <a href={`/prueba-social/cliente-satisfecho/${cliente.slug}/`} class="cliente-item">
+            <div class="cliente-thumbnail"><span class="chat-icon">💬</span></div>
+            <div class="cliente-info">
+              <div class="badges">
+                <span class="badge accion">{cliente.accion}</span>
+                <span class="badge marca">{cliente.marca}</span>
+              </div>
+              <h3>{cliente.modelo}</h3>
+              <p>{cliente.pais}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
 </BaseLayout>
+
+<style>
+  .clientes-header { padding: 3rem 1rem; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); text-align: center; }
+  .header-content { max-width: 800px; margin: 0 auto; }
+  .clientes-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #9f1239; }
+  .clientes-header p { font-size: 1.1rem; color: #be185d; }
+  .clientes-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  .cliente-item { display: flex; flex-direction: column; background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+  .cliente-item:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transform: translateY(-4px); }
+  .cliente-thumbnail { width: 100%; aspect-ratio: 4 / 5; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); display: flex; align-items: center; justify-content: center; }
+  .chat-icon { font-size: 3rem; }
+  .cliente-info { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
+  .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge.accion { background: #fce7f3; color: #9f1239; }
+  .badge.marca { background: #dcfce7; color: #166534; }
+  .cliente-info h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
+  .cliente-info p { font-size: 0.85rem; color: #9ca3af; margin: 0; }
+  .error-message, .empty-message { padding: 2rem; text-align: center; border-radius: 12px; background: #fce7f3; color: #9f1239; border: 1px solid #fbcfe8; }
+  @media (max-width: 768px) { .clientes-header h1 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+</style>

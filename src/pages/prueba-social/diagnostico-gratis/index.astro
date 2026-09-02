@@ -1,0 +1,212 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { NUCLEO_API_BASE_URL } from "../../../config/site";
+import { t } from "../../../i18n/utils";
+import { generateDiagnosticoSlug } from "../../../lib/slug-generator";
+
+const locale = "es" as const;
+
+let diagnosticos: any[] = [];
+let fetchError = false;
+
+try {
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/evidencias/diagnosticos/`, {
+    timeout: 5000,
+  });
+  if (response.ok) {
+    const data = await response.json();
+    diagnosticos = Array.isArray(data) ? data.filter((d: any) => d.publicado !== false) : [];
+  }
+} catch (error) {
+  console.error("Error fetching diagnosticos:", error);
+  fetchError = true;
+}
+
+const diagnosticosConSlug = diagnosticos.map((d) => ({
+  ...d,
+  slug: generateDiagnosticoSlug(d.marca, d.modelo, d.error),
+}));
+---
+
+<BaseLayout
+  title="Diagnósticos Gratuitos - Prueba Social"
+  description="Análisis en vivo de tu impresora con nuestro software avanzado"
+  locale={locale}
+  path="/prueba-social/diagnostico-gratis/"
+  wide
+>
+  <section class="diagnostico-gratis-header">
+    <div class="header-content">
+      <h1>Diagnósticos Gratuitos</h1>
+      <p>Mira cómo nuestro software detecta y resuelve problemas en tu impresora</p>
+    </div>
+  </section>
+
+  <section class="diagnostico-gratis-grid">
+    {fetchError && (
+      <div class="error-message">
+        No pudimos cargar los diagnósticos. Por favor, intenta más tarde.
+      </div>
+    )}
+
+    {!fetchError && diagnosticosConSlug.length === 0 && (
+      <div class="empty-message">
+        No hay diagnósticos disponibles en este momento.
+      </div>
+    )}
+
+    {diagnosticosConSlug.length > 0 && (
+      <div class="grid">
+        {diagnosticosConSlug.map((diag) => (
+          <a href={`/prueba-social/diagnostico-gratis/${diag.slug}/`} class="diagnostico-item">
+            <div class="diagnostico-thumbnail">
+              {diag.enlace_youtube && <span class="play-icon">▶️</span>}
+            </div>
+            <div class="diagnostico-info">
+              <div class="badges">
+                <span class="badge marca">{diag.marca}</span>
+                <span class="badge modelo">{diag.modelo}</span>
+              </div>
+              <h3>{diag.error}</h3>
+              <p>{diag.codigo_pais}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .diagnostico-gratis-header {
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    text-align: center;
+  }
+
+  .header-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .diagnostico-gratis-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1e40af;
+  }
+
+  .diagnostico-gratis-header p {
+    font-size: 1.1rem;
+    color: #1e7cbf;
+  }
+
+  .diagnostico-gratis-grid {
+    padding: 3rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .diagnostico-item {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .diagnostico-item:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+
+  .diagnostico-thumbnail {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .play-icon {
+    font-size: 2rem;
+  }
+
+  .diagnostico-info {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .badge.marca {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .badge.modelo {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .diagnostico-info h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  .diagnostico-info p {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin: 0;
+  }
+
+  .error-message,
+  .empty-message {
+    padding: 2rem;
+    text-align: center;
+    border-radius: 12px;
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+  }
+
+  @media (max-width: 768px) {
+    .diagnostico-gratis-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
