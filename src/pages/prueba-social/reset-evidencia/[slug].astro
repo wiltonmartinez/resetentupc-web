@@ -3,6 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER } from "../../../config/site";
 import { parseResetEvidenciaSlug, generateResetEvidenciaSlug } from "../../../lib/slug-generator";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
+import { extractYoutubeId, buildYoutubeEmbedUrl } from "../../../lib/youtube";
 
 export const prerender = false;
 
@@ -25,16 +26,8 @@ try {
 
 if (!evidencia) return Astro.redirect("/prueba-social/reset-evidencia/");
 
-const youtubeId = evidencia.youtube_id || (evidencia.enlace_youtube ? (
-  (() => {
-    const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/, /^([a-zA-Z0-9_-]{11})$/];
-    for (const pattern of patterns) {
-      const match = evidencia.enlace_youtube.match(pattern);
-      if (match) return match[1];
-    }
-    return null;
-  })()
-) : null);
+const youtubeId = extractYoutubeId(evidencia.youtube_id) || extractYoutubeId(evidencia.enlace_youtube);
+const youtubeEmbedUrl = youtubeId ? buildYoutubeEmbedUrl(youtubeId) : null;
 ---
 
 <BaseLayout
@@ -55,8 +48,15 @@ const youtubeId = evidencia.youtube_id || (evidencia.enlace_youtube ? (
     </header>
 
     <section class="detail-video">
-      {youtubeId ? (
-        <iframe width="100%" height="600" src={`https://www.youtube.com/embed/${youtubeId}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      {youtubeEmbedUrl ? (
+        <iframe
+          width="100%"
+          height="600"
+          src={youtubeEmbedUrl}
+          title={`Video: reset ${evidencia.marca} ${evidencia.modelo}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
       ) : (
         <div class="video-placeholder"><p>Video no disponible</p></div>
       )}

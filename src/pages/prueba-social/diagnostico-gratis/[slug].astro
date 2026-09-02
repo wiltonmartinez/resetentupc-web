@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER } from "../../../config/site";
 import { generateDiagnosticoSlug } from "../../../lib/slug-generator";
+import { extractYoutubeId, buildYoutubeEmbedUrl } from "../../../lib/youtube";
 
 export const prerender = false;
 
@@ -38,20 +39,8 @@ if (!diagnostico) {
   return Astro.redirect("/prueba-social/diagnostico-gratis/");
 }
 
-const extractYoutubeId = (url: string): string | null => {
-  if (!url) return null;
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
-    /^([a-zA-Z0-9_-]{11})$/,
-  ];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-  return null;
-};
-
-const youtubeId = diagnostico.enlace_youtube ? extractYoutubeId(diagnostico.enlace_youtube) : null;
+const youtubeId = extractYoutubeId(diagnostico.enlace_youtube);
+const youtubeEmbedUrl = youtubeId ? buildYoutubeEmbedUrl(youtubeId) : null;
 const whatsappMessage = `Hola, vi el diagnóstico de ${diagnostico.marca} ${diagnostico.modelo} (${diagnostico.error}) y quiero saber si mi impresora tiene el mismo problema.`;
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
 ---
@@ -74,11 +63,11 @@ const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent
     </header>
 
     <section class="detail-video">
-      {youtubeId ? (
+      {youtubeEmbedUrl ? (
         <iframe
           width="100%"
           height="600"
-          src={`https://www.youtube.com/embed/${youtubeId}`}
+          src={youtubeEmbedUrl}
           title={`Diagnóstico ${diagnostico.marca} ${diagnostico.modelo}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
