@@ -3,6 +3,8 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateClienteSatisfechoSlug } from "../../../lib/slug-generator";
 
+export const prerender = false;
+
 const locale = "es" as const;
 
 let clientes: any[] = [];

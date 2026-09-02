@@ -3,6 +3,8 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateResetEvidenciaSlug } from "../../../lib/slug-generator";
 
+export const prerender = false;
+
 const locale = "es" as const;
 let evidencias: any[] = [];
 let fetchError = false;

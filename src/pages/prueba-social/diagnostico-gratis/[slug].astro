@@ -3,6 +3,8 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER } from "../../../config/site";
 import { parseDiagnosticoSlug, generateDiagnosticoSlug } from "../../../lib/slug-generator";
 
+export const prerender = false;
+
 const locale = "es" as const;
 
 const { slug } = Astro.params;
