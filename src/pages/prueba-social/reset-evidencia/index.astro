@@ -40,17 +40,19 @@ const evidenciasConSlug = evidencias.map((e) => ({
     {fetchError && <div class="error-message">No pudimos cargar las evidencias.</div>}
     {!fetchError && evidenciasConSlug.length === 0 && <div class="empty-message">No hay evidencias disponibles.</div>}
     {evidenciasConSlug.length > 0 && (
-      <div class="grid">
+      <div class="cards-grid">
         {evidenciasConSlug.map((evidencia) => (
-          <a href={`/prueba-social/reset-evidencia/${evidencia.slug}/`} class="evidencia-item">
-            <div class="evidencia-thumbnail"><span>▶️</span></div>
-            <div class="evidencia-info">
-              <div class="badges">
-                <span class="badge">{evidencia.marca}</span>
-                <span class="badge">{evidencia.tiempo}</span>
+          <a href={`/prueba-social/reset-evidencia/${evidencia.slug}/`} class="card">
+            <div class="card-thumbnail">
+              <span class="play-icon">▶️</span>
+            </div>
+            <div class="card-body">
+              <h3>{evidencia.marca} {evidencia.modelo}</h3>
+              <div class="card-badges">
+                {evidencia.error && <span class="badge error">{evidencia.error}</span>}
+                {evidencia.pais && <span class="badge country">{evidencia.pais}</span>}
+                {evidencia.duracion_video && <span class="badge duration">⏱ {evidencia.duracion_video}</span>}
               </div>
-              <h3>{evidencia.modelo}</h3>
-              <p>{evidencia.pais}</p>
             </div>
           </a>
         ))}
@@ -63,16 +65,87 @@ const evidenciasConSlug = evidencias.map((e) => ({
   .evidencia-header { padding: 3rem 1rem; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); text-align: center; }
   .evidencia-header h1 { font-size: 2.5rem; font-weight: 700; color: #1e40af; margin: 0 0 0.5rem 0; }
   .evidencia-header p { font-size: 1.1rem; color: #1e7cbf; margin: 0; }
-  .evidencia-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-  .evidencia-item { display: flex; flex-direction: column; background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
-  .evidencia-item:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transform: translateY(-4px); }
-  .evidencia-thumbnail { width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-  .evidencia-info { padding: 1.25rem; }
-  .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
-  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #dbeafe; color: #1e40af; }
-  .evidencia-info h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
-  .evidencia-info p { font-size: 0.85rem; color: #9ca3af; margin: 0.5rem 0 0 0; }
-  .error-message, .empty-message { padding: 2rem; text-align: center; border-radius: 12px; background: #dbeafe; color: #1e40af; }
-  @media (max-width: 768px) { .evidencia-header h1 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+  .evidencia-grid { max-width: 1200px; margin: 0 auto; }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    border-color: #1e40af;
+  }
+
+  .card-thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .play-icon {
+    font-size: 2.5rem;
+    opacity: 0.6;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .card-body h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .card-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge.error { background: #fee2e2; color: #991b1b; }
+  .badge.country { background: #dbeafe; color: #1e40af; }
+  .badge.duration { background: #dcfce7; color: #166534; }
+
+  .error-message, .empty-message { margin: 2rem; padding: 2rem; text-align: center; border-radius: 12px; background: #dbeafe; color: #1e40af; }
+
+  @media (max-width: 768px) {
+    .evidencia-header h1 { font-size: 1.8rem; }
+    .cards-grid { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
+  }
 </style>

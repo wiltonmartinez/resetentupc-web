@@ -50,17 +50,18 @@ const clientesConSlug = clientes.map((c) => ({
       <div class="empty-message">No hay testimonios disponibles en este momento.</div>
     )}
     {clientesConSlug.length > 0 && (
-      <div class="grid">
+      <div class="cards-grid">
         {clientesConSlug.map((cliente) => (
-          <a href={`/prueba-social/cliente-satisfecho/${cliente.slug}/`} class="cliente-item">
-            <div class="cliente-thumbnail"><span class="chat-icon">💬</span></div>
-            <div class="cliente-info">
-              <div class="badges">
-                <span class="badge accion">{cliente.accion}</span>
-                <span class="badge marca">{cliente.marca}</span>
+          <a href={`/prueba-social/cliente-satisfecho/${cliente.slug}/`} class="card">
+            <div class="card-thumbnail">
+              <span class="chat-icon">💬</span>
+            </div>
+            <div class="card-body">
+              <h3>{cliente.marca} {cliente.modelo}</h3>
+              <div class="card-badges">
+                {cliente.error && <span class="badge error">{cliente.error}</span>}
+                {cliente.pais && <span class="badge country">{cliente.pais}</span>}
               </div>
-              <h3>{cliente.modelo}</h3>
-              <p>{cliente.pais}</p>
             </div>
           </a>
         ))}
@@ -74,19 +75,86 @@ const clientesConSlug = clientes.map((c) => ({
   .header-content { max-width: 800px; margin: 0 auto; }
   .clientes-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #9f1239; }
   .clientes-header p { font-size: 1.1rem; color: #be185d; }
-  .clientes-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-  .cliente-item { display: flex; flex-direction: column; background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
-  .cliente-item:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); transform: translateY(-4px); }
-  .cliente-thumbnail { width: 100%; aspect-ratio: 4 / 5; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); display: flex; align-items: center; justify-content: center; }
-  .chat-icon { font-size: 3rem; }
-  .cliente-info { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; gap: 0.75rem; }
-  .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-  .badge.accion { background: #fce7f3; color: #9f1239; }
-  .badge.marca { background: #dcfce7; color: #166534; }
-  .cliente-info h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
-  .cliente-info p { font-size: 0.85rem; color: #9ca3af; margin: 0; }
-  .error-message, .empty-message { padding: 2rem; text-align: center; border-radius: 12px; background: #fce7f3; color: #9f1239; border: 1px solid #fbcfe8; }
-  @media (max-width: 768px) { .clientes-header h1 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+  .clientes-grid { max-width: 1200px; margin: 0 auto; }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    border-color: #9f1239;
+  }
+
+  .card-thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chat-icon {
+    font-size: 2.5rem;
+    opacity: 0.6;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .card-body h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .card-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge.error { background: #fee2e2; color: #991b1b; }
+  .badge.country { background: #fce7f3; color: #9f1239; }
+
+  .error-message, .empty-message { margin: 2rem; padding: 2rem; text-align: center; border-radius: 12px; background: #fce7f3; color: #9f1239; border: 1px solid #fbcfe8; }
+
+  @media (max-width: 768px) {
+    .clientes-header h1 { font-size: 1.8rem; }
+    .cards-grid { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
+  }
 </style>
