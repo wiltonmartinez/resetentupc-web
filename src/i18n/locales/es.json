@@ -207,6 +207,20 @@
     "paso6VerMasClientes": "Ver más clientes satisfechos",
     "paso6VerTestimoniosTrustpilot": "Ver testimonios en Trustpilot"
   },
+  "pruebaSocial": {
+    "titulo": "Diagnósticos Gratuitos — Prueba Social",
+    "descripcion": "Explora diagnósticos reales de impresoras en diferentes marcas, modelos y situaciones. Aprende cómo funcionan nuestros resets antes de contratar.",
+    "filtrarPorMarca": "Filtrar por Marca",
+    "todasLasMarcas": "Todas las marcas",
+    "filtrarPorModelo": "Filtrar por Modelo",
+    "todosLosModelos": "Todos los modelos",
+    "sinDatos": "No hay diagnósticos disponibles en este momento.",
+    "sinResultados": "No encontramos diagnósticos con esos filtros.",
+    "tipo": "Tipo",
+    "pais": "País",
+    "verVideo": "Ver video del diagnóstico",
+    "consultarPorWhatsapp": "Consultar por WhatsApp"
+  },
   "cotizacion": {
     "cargando": "Cargando planes y precios...",
     "errorCarga": "No pudimos cargar los planes en este momento. Intenta de nuevo más tarde o escríbenos por WhatsApp.",

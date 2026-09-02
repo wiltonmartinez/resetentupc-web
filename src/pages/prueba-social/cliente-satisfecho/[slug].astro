@@ -24,6 +24,17 @@ try {
 }
 
 if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
+
+// El backend expone la captura de la conversación como una página HTML
+// completa (exportación estilo WhatsApp), no como una imagen suelta —
+// por eso se embebe en <iframe>, no en <img>. html_url ya viene con
+// dominio completo, pero si en el futuro llegara relativa (empieza con
+// "/"), se concatena con NUCLEO_API_BASE_URL para que no se rompa.
+const capturaUrl: string | null = cliente.html_url
+  ? cliente.html_url.startsWith("/")
+    ? `${NUCLEO_API_BASE_URL}${cliente.html_url}`
+    : cliente.html_url
+  : null;
 ---
 
 <BaseLayout
@@ -46,9 +57,22 @@ if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
     <section class="detail-content">
       <div class="content-main">
         <h2>Caso de Cliente Satisfecho</h2>
-        <div class="chat-placeholder">
-          <p>Captura de conversación en WhatsApp</p>
-        </div>
+        {capturaUrl ? (
+          <div class="chat-frame-wrapper">
+            <iframe
+              src={capturaUrl}
+              title="Captura de conversación de WhatsApp"
+              class="chat-frame"
+              loading="lazy"
+              sandbox="allow-same-origin"
+            ></iframe>
+          </div>
+        ) : (
+          <div class="chat-placeholder">
+            <span class="chat-placeholder-icon">💬</span>
+            <p>Captura de conversación no disponible</p>
+          </div>
+        )}
         <p>
           Cliente de {cliente.pais} tenía un problema con su {cliente.marca} {cliente.modelo} ({cliente.error}).
           Resolvimos el issue de forma segura y rápida. El cliente confirmó que su impresora funciona correctamente.
@@ -76,11 +100,26 @@ if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
   .detail-content { padding: 2rem 1rem; display: grid; grid-template-columns: 1fr 300px; gap: 2rem; max-width: 1200px; margin: 0 auto; }
   .content-main h2 { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin: 0 0 1rem 0; }
   .content-main p { color: #6b7280; font-size: 0.95rem; line-height: 1.8; }
-  .chat-placeholder { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); padding: 2rem; border-radius: 12px; text-align: center; margin: 1.5rem 0; color: #9f1239; }
+  .chat-frame-wrapper {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  .chat-frame {
+    display: block;
+    width: 100%;
+    height: 640px;
+    border: none;
+    background: #efeae2;
+  }
+  .chat-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); padding: 2rem; border-radius: 12px; text-align: center; margin: 1.5rem 0; color: #6b21a8; }
+  .chat-placeholder-icon { font-size: 2.5rem; opacity: 0.7; }
   .content-cta { display: flex; }
   .cta-box { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: 12px; text-align: center; position: sticky; top: 100px; }
   .cta-box h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem 0; }
   .cta-box p { font-size: 0.9rem; margin: 0 0 1.5rem 0; opacity: 0.9; }
   .cta-button { display: inline-block; padding: 0.75rem 1.5rem; background: white; color: #059669; text-decoration: none; font-weight: 700; border-radius: 8px; }
-  @media (max-width: 768px) { .detail-header h1 { font-size: 1.8rem; } .detail-content { grid-template-columns: 1fr; } .cta-box { position: static; } }
+  @media (max-width: 768px) { .detail-header h1 { font-size: 1.8rem; } .detail-content { grid-template-columns: 1fr; } .cta-box { position: static; } .chat-frame { height: 480px; } }
 </style>
