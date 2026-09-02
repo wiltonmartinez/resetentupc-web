@@ -9,12 +9,17 @@ let clientes: any[] = [];
 let fetchError = false;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/clientes-satisfechos/`, {
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`, {
     timeout: 5000,
   });
   if (response.ok) {
     const data = await response.json();
-    clientes = Array.isArray(data) ? data.filter((c: any) => c.publicado !== false) : [];
+
+    if (data?.data && Array.isArray(data.data)) {
+      clientes = data.data;
+    } else if (Array.isArray(data)) {
+      clientes = data;
+    }
   }
 } catch (error) {
   console.error("Error fetching clientes:", error);
@@ -23,7 +28,7 @@ try {
 
 const clientesConSlug = clientes.map((c) => ({
   ...c,
-  slug: generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago),
+  slug: c.slug || generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago),
 }));
 ---
 

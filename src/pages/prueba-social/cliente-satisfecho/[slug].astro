@@ -14,11 +14,12 @@ if (!parsed) return Astro.redirect("/prueba-social/cliente-satisfecho/");
 let cliente: any = null;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/clientes-satisfechos/`, { timeout: 5000 });
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`, { timeout: 5000 });
   if (response.ok) {
     const data = await response.json();
-    const found = Array.isArray(data) ? data.find(
-      (c: any) => generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago) === slug && c.publicado !== false
+    const clientes = data?.data || data;
+    const found = Array.isArray(clientes) ? clientes.find(
+      (c: any) => (c.slug === slug || generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago) === slug)
     ) : null;
     cliente = found;
   }
@@ -30,8 +31,8 @@ if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
 ---
 
 <BaseLayout
-  title={`${cliente.accion} ${cliente.marca} ${cliente.modelo} - ResetEnLinea`}
-  description={`Testimonio real: ${cliente.accion} ${cliente.marca} ${cliente.modelo} en ${cliente.pais}`}
+  title={`${cliente.marca} ${cliente.modelo} - Caso Real - ResetEnLinea`}
+  description={`Testimonio real: ${cliente.marca} ${cliente.modelo} con ${cliente.error} en ${cliente.pais}`}
   locale={locale}
   path={`/prueba-social/cliente-satisfecho/${slug}/`}
   wide
@@ -39,22 +40,22 @@ if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
   <article class="cliente-detail">
     <header class="detail-header">
       <a href="/prueba-social/cliente-satisfecho/" class="back-link">← Volver a clientes</a>
-      <h1>{cliente.accion} {cliente.marca} {cliente.modelo}</h1>
+      <h1>{cliente.marca} {cliente.modelo}</h1>
       <div class="meta">
+        <span>⚠️ {cliente.error}</span>
         <span>📍 {cliente.pais}</span>
-        <span>💳 {cliente.medioPago}</span>
       </div>
     </header>
 
     <section class="detail-content">
       <div class="content-main">
-        <h2>Conversación en WhatsApp</h2>
+        <h2>Caso de Cliente Satisfecho</h2>
         <div class="chat-placeholder">
-          <p>Captura de conversación</p>
+          <p>Captura de conversación en WhatsApp</p>
         </div>
         <p>
-          {cliente.nombre} en {cliente.pais} realizó un {cliente.accion} de su {cliente.marca} {cliente.modelo} de forma segura
-          y rápida. El proceso se completó correctamente y el cliente confirmó que su impresora funciona perfectamente.
+          Cliente de {cliente.pais} tenía un problema con su {cliente.marca} {cliente.modelo} ({cliente.error}).
+          Resolvimos el issue de forma segura y rápida. El cliente confirmó que su impresora funciona correctamente.
         </p>
       </div>
 
@@ -62,7 +63,7 @@ if (!cliente) return Astro.redirect("/prueba-social/cliente-satisfecho/");
         <div class="cta-box">
           <h3>¿También quieres resolver tu problema?</h3>
           <p>Contáctanos por WhatsApp</p>
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola, como ${cliente.nombre} quiero hacer un ${cliente.accion} a mi ${cliente.marca} ${cliente.modelo}`)}`} class="cta-button">Contactar por WhatsApp</a>
+          <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola, vi el caso de ${cliente.marca} ${cliente.modelo} con ${cliente.error} y quiero más información`)}`} class="cta-button">Contactar por WhatsApp</a>
         </div>
       </aside>
     </section>

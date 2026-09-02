@@ -14,11 +14,12 @@ if (!parsed) return Astro.redirect("/prueba-social/reset-evidencia/");
 let evidencia: any = null;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/evidencias/reset/`, { timeout: 5000 });
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`, { timeout: 5000 });
   if (response.ok) {
     const data = await response.json();
-    const found = Array.isArray(data) ? data.find(
-      (e: any) => generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.errorCorto, e.pais, e.tiempo) === slug && e.publicado !== false
+    const evidencias = data?.data || data;
+    const found = Array.isArray(evidencias) ? evidencias.find(
+      (e: any) => (e.slug === slug || generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.error, e.pais, e.duracion_video) === slug)
     ) : null;
     evidencia = found;
   }
@@ -28,22 +29,21 @@ try {
 
 if (!evidencia) return Astro.redirect("/prueba-social/reset-evidencia/");
 
-const extractYoutubeId = (url: string): string | null => {
-  if (!url) return null;
-  const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/, /^([a-zA-Z0-9_-]{11})$/];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-  return null;
-};
-
-const youtubeId = evidencia.enlace_youtube ? extractYoutubeId(evidencia.enlace_youtube) : null;
+const youtubeId = evidencia.youtube_id || (evidencia.enlace_youtube ? (
+  (() => {
+    const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/, /^([a-zA-Z0-9_-]{11})$/];
+    for (const pattern of patterns) {
+      const match = evidencia.enlace_youtube.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  })()
+) : null);
 ---
 
 <BaseLayout
-  title={`${evidencia.marca} ${evidencia.modelo} - Reset en ${evidencia.tiempo} - ResetEnLinea`}
-  description={`Video: Reset exitoso ${evidencia.marca} ${evidencia.modelo} en ${evidencia.pais} - Contador en 0%`}
+  title={`${evidencia.marca} ${evidencia.modelo} - Reset Evidencia - ResetEnLinea`}
+  description={`Video: Reset exitoso ${evidencia.marca} ${evidencia.modelo} en ${evidencia.pais} - ${evidencia.duracion_video}`}
   locale={locale}
   path={`/prueba-social/reset-evidencia/${slug}/`}
   wide
@@ -53,7 +53,7 @@ const youtubeId = evidencia.enlace_youtube ? extractYoutubeId(evidencia.enlace_y
       <a href="/prueba-social/reset-evidencia/" class="back-link">← Volver a evidencias</a>
       <h1>{evidencia.marca} {evidencia.modelo}</h1>
       <div class="meta">
-        <span>⏱️ {evidencia.tiempo}</span>
+        <span>⏱️ {evidencia.duracion_video}</span>
         <span>📍 {evidencia.pais}</span>
       </div>
     </header>
@@ -68,9 +68,9 @@ const youtubeId = evidencia.enlace_youtube ? extractYoutubeId(evidencia.enlace_y
 
     <section class="detail-content">
       <div class="content-main">
-        <h2>Comprobación de Reset</h2>
-        <p>Este video muestra el reset exitoso de una <strong>{evidencia.marca} {evidencia.modelo}</strong> realizado en <strong>{evidencia.pais}</strong>. El proceso se completó en <strong>{evidencia.tiempo}</strong> y el contador se restableció a 0% correctamente.</p>
-        <h2>¿Por qué es importante?</h2>
+        <h2>Reset Exitoso</h2>
+        <p>Este video muestra el reset exitoso de una <strong>{evidencia.marca} {evidencia.modelo}</strong> realizado en <strong>{evidencia.pais}</strong>. El proceso se completó en <strong>{evidencia.duracion_video}</strong>. Error resuelto: <strong>{evidencia.error}</strong></p>
+        <h2>Validación del Reset</h2>
         <p>La comprobación visual del contador en 0% garantiza que el reset se realizó correctamente y que tu impresora está lista para continuar funcionando sin restricciones.</p>
       </div>
 

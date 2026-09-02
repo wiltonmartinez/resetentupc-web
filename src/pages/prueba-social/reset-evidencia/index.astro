@@ -8,10 +8,15 @@ let evidencias: any[] = [];
 let fetchError = false;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/evidencias/reset/`, { timeout: 5000 });
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`, { timeout: 5000 });
   if (response.ok) {
     const data = await response.json();
-    evidencias = Array.isArray(data) ? data.filter((e: any) => e.publicado !== false) : [];
+
+    if (data?.data && Array.isArray(data.data)) {
+      evidencias = data.data;
+    } else if (Array.isArray(data)) {
+      evidencias = data;
+    }
   }
 } catch (error) {
   console.error("Error fetching evidencias:", error);
@@ -20,7 +25,7 @@ try {
 
 const evidenciasConSlug = evidencias.map((e) => ({
   ...e,
-  slug: generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.errorCorto, e.pais, e.tiempo),
+  slug: e.slug || generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.error, e.pais, e.duracion_video),
 }));
 ---
 
