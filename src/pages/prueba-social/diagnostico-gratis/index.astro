@@ -26,7 +26,7 @@ try {
 
 const diagnosticosConSlug = diagnosticos.map((d) => ({
   ...d,
-  slug: generateDiagnosticoSlug(d.marca, d.modelo, d.error),
+  slug: d.slug || generateDiagnosticoSlug(d.marca, d.modelo, d.error),
 }));
 ---
 
@@ -81,7 +81,7 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
 <style>
   .diagnostico-gratis-header {
     padding: 3rem 1rem;
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
     text-align: center;
   }
 
@@ -94,12 +94,12 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color: #1e40af;
+    color: #9a3412;
   }
 
   .diagnostico-gratis-header p {
     font-size: 1.1rem;
-    color: #1e7cbf;
+    color: #c2410c;
   }
 
   .diagnostico-gratis-grid {
@@ -130,7 +130,7 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
   .card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-    border-color: #1e40af;
+    border-color: #9a3412;
   }
 
   .card-thumbnail {
@@ -184,8 +184,8 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
   }
 
   .badge.country {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #ffedd5;
+    color: #9a3412;
   }
 
   .error-message,
@@ -194,9 +194,9 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
     padding: 2rem;
     text-align: center;
     border-radius: 12px;
-    background: #dbeafe;
-    color: #1e40af;
-    border: 1px solid #bfdbfe;
+    background: #ffedd5;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
   }
 
   @media (max-width: 768px) {

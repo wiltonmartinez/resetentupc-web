@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateResetEvidenciaSlug } from "../../../lib/slug-generator";
+import { fetchAllPages } from "../../../lib/fetch-paginated";
 
 export const prerender = false;
 
@@ -10,11 +11,7 @@ let evidencias: any[] = [];
 let fetchError = false;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`, { timeout: 10000 });
-  if (response.ok) {
-    const data = await response.json();
-    evidencias = data?.data && Array.isArray(data.data) ? data.data : [];
-  }
+  evidencias = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`);
 } catch (error) {
   console.error("Error fetching evidencias:", error);
   fetchError = true;

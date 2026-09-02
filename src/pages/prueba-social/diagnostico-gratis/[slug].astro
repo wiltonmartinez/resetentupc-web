@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER } from "../../../config/site";
-import { parseDiagnosticoSlug, generateDiagnosticoSlug } from "../../../lib/slug-generator";
+import { generateDiagnosticoSlug } from "../../../lib/slug-generator";
 
 export const prerender = false;
 
@@ -10,11 +10,6 @@ const locale = "es" as const;
 const { slug } = Astro.params;
 
 if (!slug) {
-  return Astro.redirect("/prueba-social/diagnostico-gratis/");
-}
-
-const parsed = parseDiagnosticoSlug(slug);
-if (!parsed) {
   return Astro.redirect("/prueba-social/diagnostico-gratis/");
 }
 
@@ -30,7 +25,7 @@ try {
     const diagnosticos = data?.diagnosticos && Array.isArray(data.diagnosticos) ? data.diagnosticos : [];
     const found = diagnosticos.find(
       (d: any) =>
-        generateDiagnosticoSlug(d.marca, d.modelo, d.error) === slug
+        d.slug === slug || generateDiagnosticoSlug(d.marca, d.modelo, d.error) === slug
     );
     diagnostico = found;
   }

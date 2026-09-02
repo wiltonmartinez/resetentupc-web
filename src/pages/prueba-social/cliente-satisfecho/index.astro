@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateClienteSatisfechoSlug } from "../../../lib/slug-generator";
+import { fetchAllPages } from "../../../lib/fetch-paginated";
 
 export const prerender = false;
 
@@ -11,14 +12,7 @@ let clientes: any[] = [];
 let fetchError = false;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`, {
-    timeout: 10000,
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    clientes = data?.data && Array.isArray(data.data) ? data.data : [];
-  }
+  clientes = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`);
 } catch (error) {
   console.error("Error fetching clientes:", error);
   fetchError = true;
