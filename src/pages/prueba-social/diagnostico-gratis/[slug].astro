@@ -21,15 +21,14 @@ let fetchError = false;
 
 try {
   const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/evidencias/diagnosticos/`, {
-    timeout: 5000,
+    timeout: 10000,
   });
   if (response.ok) {
     const data = await response.json();
-    const diagnosticos = Array.isArray(data) ? data : [];
+    const diagnosticos = data?.diagnosticos && Array.isArray(data.diagnosticos) ? data.diagnosticos : [];
     const found = diagnosticos.find(
       (d: any) =>
-        generateDiagnosticoSlug(d.marca, d.modelo, d.error) === slug &&
-        d.publicado !== false
+        generateDiagnosticoSlug(d.marca, d.modelo, d.error) === slug
     );
     diagnostico = found;
   }

@@ -14,13 +14,11 @@ if (!parsed) return Astro.redirect("/prueba-social/reset-evidencia/");
 let evidencia: any = null;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`, { timeout: 5000 });
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`, { timeout: 10000 });
   if (response.ok) {
     const data = await response.json();
-    const evidencias = data?.data || data;
-    const found = Array.isArray(evidencias) ? evidencias.find(
-      (e: any) => (e.slug === slug || generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.error, e.pais, e.duracion_video) === slug)
-    ) : null;
+    const evidencias = data?.data && Array.isArray(data.data) ? data.data : [];
+    const found = evidencias.find((e: any) => e.slug === slug);
     evidencia = found;
   }
 } catch (error) {

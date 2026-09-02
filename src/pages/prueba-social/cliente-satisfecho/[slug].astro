@@ -14,13 +14,11 @@ if (!parsed) return Astro.redirect("/prueba-social/cliente-satisfecho/");
 let cliente: any = null;
 
 try {
-  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`, { timeout: 5000 });
+  const response = await fetch(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`, { timeout: 10000 });
   if (response.ok) {
     const data = await response.json();
-    const clientes = data?.data || data;
-    const found = Array.isArray(clientes) ? clientes.find(
-      (c: any) => (c.slug === slug || generateClienteSatisfechoSlug(c.accion, c.marca, c.modelo, c.pais, c.medioPago) === slug)
-    ) : null;
+    const clientes = data?.data && Array.isArray(data.data) ? data.data : [];
+    const found = clientes.find((c: any) => c.slug === slug);
     cliente = found;
   }
 } catch (error) {
