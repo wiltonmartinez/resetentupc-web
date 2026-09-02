@@ -85,6 +85,42 @@ const capturaUrl: string | null = cliente.html_url
           <p>Contáctanos por WhatsApp</p>
           <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola, vi el caso de ${cliente.marca} ${cliente.modelo} con ${cliente.error} y quiero más información`)}`} class="cta-button">Contactar por WhatsApp</a>
         </div>
+
+        <div class="info-box">
+          <h3>Ficha del servicio</h3>
+          <dl class="info-list">
+            <div class="info-row">
+              <dt>Marca</dt>
+              <dd>{cliente.marca}</dd>
+            </div>
+            <div class="info-row">
+              <dt>Modelo</dt>
+              <dd>{cliente.modelo}</dd>
+            </div>
+            {cliente.error && (
+              <div class="info-row">
+                <dt>Problema resuelto</dt>
+                <dd>{cliente.error}</dd>
+              </div>
+            )}
+            {cliente.pais && (
+              <div class="info-row">
+                <dt>País</dt>
+                <dd>{cliente.pais}</dd>
+              </div>
+            )}
+            {cliente.fecha_publicacion && (
+              <div class="info-row">
+                <dt>Fecha del servicio</dt>
+                <dd>{new Date(cliente.fecha_publicacion).toLocaleDateString("es", { year: "numeric", month: "long", day: "numeric" })}</dd>
+              </div>
+            )}
+            <div class="info-row">
+              <dt>Categoría</dt>
+              <dd>Reset de impresora asistido</dd>
+            </div>
+          </dl>
+        </div>
       </aside>
     </section>
   </article>
@@ -116,10 +152,19 @@ const capturaUrl: string | null = cliente.html_url
   }
   .chat-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); padding: 2rem; border-radius: 12px; text-align: center; margin: 1.5rem 0; color: #6b21a8; }
   .chat-placeholder-icon { font-size: 2.5rem; opacity: 0.7; }
-  .content-cta { display: flex; }
-  .cta-box { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: 12px; text-align: center; position: sticky; top: 100px; }
+  .content-cta { display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 100px; align-self: start; }
+  .cta-box { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: 12px; text-align: center; }
   .cta-box h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem 0; }
   .cta-box p { font-size: 0.9rem; margin: 0 0 1.5rem 0; opacity: 0.9; }
   .cta-button { display: inline-block; padding: 0.75rem 1.5rem; background: white; color: #059669; text-decoration: none; font-weight: 700; border-radius: 8px; }
-  @media (max-width: 768px) { .detail-header h1 { font-size: 1.8rem; } .detail-content { grid-template-columns: 1fr; } .cta-box { position: static; } .chat-frame { height: 480px; } }
+
+  .info-box { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; }
+  .info-box h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0 0 1rem 0; }
+  .info-list { margin: 0; }
+  .info-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #f3f4f6; }
+  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-row dt { font-size: 0.8rem; color: #9ca3af; margin: 0; white-space: nowrap; }
+  .info-row dd { font-size: 0.85rem; color: #1f2937; font-weight: 600; margin: 0; text-align: right; }
+
+  @media (max-width: 768px) { .detail-header h1 { font-size: 1.8rem; } .detail-content { grid-template-columns: 1fr; } .content-cta { position: static; } .chat-frame { height: 480px; } }
 </style>
