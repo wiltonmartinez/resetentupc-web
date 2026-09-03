@@ -44,6 +44,17 @@ const testimoniosConImagen = testimonios
   .filter((t) => t.imagenUrl);
 
 const testimoniosAleatorios = shuffle(testimoniosConImagen);
+
+const uniqueSorted = (values: (string | undefined)[]) =>
+  [...new Set(values.filter((v): v is string => Boolean(v)))].sort((a, b) => a.localeCompare(b, "es"));
+
+// Muchos testimonios traen marca/pais vacíos desde el backend (son
+// opcionales) — para los selects solo listamos los valores reales que
+// existan; el fallback "desconocido/a" se usa aparte, solo en los
+// data-attributes de las tarjetas, para que esos registros sigan siendo
+// filtrables de forma consistente en vez de quedar con dataset vacío.
+const paises = uniqueSorted(testimoniosAleatorios.map((t) => t.pais));
+const marcas = uniqueSorted(testimoniosAleatorios.map((t) => t.marca));
 ---
 
 <BaseLayout
@@ -63,22 +74,43 @@ const testimoniosAleatorios = shuffle(testimoniosConImagen);
     {!fetchError && testimoniosAleatorios.length === 0 && <div class="empty-message">No hay testimonios disponibles en este momento.</div>}
 
     {testimoniosAleatorios.length > 0 && (
-      <div class="grid">
-        {testimoniosAleatorios.map((t) => {
-          const alt = t.marca ? `Testimonio Trustpilot - ${t.marca} ${t.modelo}` : "Testimonio Trustpilot";
-          return (
-            <div class="testimonio-card">
-              <img src={t.imagenUrl} alt={alt} class="testimonio-image" loading="lazy" />
-              {(t.marca || t.pais) && (
-                <div class="testimonio-meta">
-                  {t.marca && <span class="badge">{t.marca} {t.modelo}</span>}
-                  {t.pais && <span class="badge">{t.pais}</span>}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <>
+        <div class="filters-bar">
+          <select class="filter-select" data-filter="pais" aria-label="Filtrar por país">
+            <option value="all">Todos los países</option>
+            {paises.map((p) => <option value={p}>{p}</option>)}
+          </select>
+          <select class="filter-select" data-filter="marca" aria-label="Filtrar por marca">
+            <option value="all">Todas las marcas</option>
+            {marcas.map((m) => <option value={m}>{m}</option>)}
+          </select>
+          <button type="button" class="filter-apply" id="btn-filtrar">Filtrar</button>
+          <button type="button" class="filter-reset" id="filter-reset" hidden>Limpiar filtros</button>
+        </div>
+
+        <p class="filter-empty" id="filter-empty" hidden>No hay resultados con estos filtros.</p>
+
+        <div class="grid" id="cards-grid">
+          {testimoniosAleatorios.map((t) => {
+            const alt = t.marca ? `Testimonio Trustpilot - ${t.marca} ${t.modelo}` : "Testimonio Trustpilot";
+            return (
+              <div
+                class="testimonio-card"
+                data-pais={t.pais?.toLowerCase() || "desconocido"}
+                data-marca={t.marca?.toLowerCase() || "desconocida"}
+              >
+                <img src={t.imagenUrl} alt={alt} class="testimonio-image" loading="lazy" />
+                {(t.marca || t.pais) && (
+                  <div class="testimonio-meta">
+                    {t.marca && <span class="badge">{t.marca} {t.modelo}</span>}
+                    {t.pais && <span class="badge">{t.pais}</span>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>
     )}
 
     <div class="trustpilot-widget">
@@ -91,11 +123,127 @@ const testimoniosAleatorios = shuffle(testimoniosConImagen);
   </section>
 </BaseLayout>
 
+<script>
+  const emptyMessage = document.getElementById("filter-empty") as HTMLElement | null;
+  const resetButton = document.getElementById("filter-reset") as HTMLButtonElement | null;
+  const filtrarButton = document.getElementById("btn-filtrar") as HTMLButtonElement | null;
+  const paisSelect = document.querySelector<HTMLSelectElement>('[data-filter="pais"]');
+  const marcaSelect = document.querySelector<HTMLSelectElement>('[data-filter="marca"]');
+
+  // Las cards tienen `display: block` explícito en su CSS. Esa regla
+  // comparte especificidad con la del user-agent para [hidden], y como la
+  // hoja de estilos de la página se carga después, gana sobre él — por eso
+  // el ocultamiento se hace con card.style.display (estilo inline, máxima
+  // especificidad) en vez del atributo hidden.
+  const aplicarFiltros = () => {
+    const selectPais = (paisSelect?.value || "all").toLowerCase();
+    const selectMarca = (marcaSelect?.value || "all").toLowerCase();
+
+    const cards = document.querySelectorAll<HTMLElement>(".testimonio-card");
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const cardPais = card.dataset.pais || "";
+      const cardMarca = card.dataset.marca || "";
+
+      const coincidePais = selectPais === "all" || selectPais === cardPais;
+      const coincideMarca = selectMarca === "all" || selectMarca === cardMarca;
+
+      if (coincidePais && coincideMarca) {
+        card.style.display = "block";
+        visibleCount += 1;
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    if (emptyMessage) emptyMessage.hidden = visibleCount !== 0;
+
+    const hayFiltrosActivos = selectPais !== "all" || selectMarca !== "all";
+    if (resetButton) resetButton.hidden = !hayFiltrosActivos;
+  };
+
+  [paisSelect, marcaSelect].forEach((select) => {
+    select?.addEventListener("change", aplicarFiltros);
+  });
+
+  filtrarButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    aplicarFiltros();
+  });
+
+  resetButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    [paisSelect, marcaSelect].forEach((select) => {
+      if (select) select.value = "all";
+    });
+    aplicarFiltros();
+  });
+</script>
+
 <style>
   .testimonios-header { padding: 3rem 1rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); text-align: center; }
   .testimonios-header h1 { font-size: 2.5rem; font-weight: 700; color: #92400e; margin: 0 0 0.5rem 0; }
   .testimonios-header p { font-size: 1.1rem; color: #b45309; margin: 0; }
   .testimonios-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
+
+  .filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .filter-select {
+    flex: 1 1 180px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #92400e;
+    box-shadow: 0 0 0 3px rgba(146, 64, 14, 0.15);
+  }
+
+  .filter-apply {
+    flex: 0 0 auto;
+    padding: 0.6rem 1.5rem;
+    border: 1px solid #92400e;
+    border-radius: 8px;
+    background: #92400e;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .filter-apply:hover {
+    background: #78350f;
+  }
+
+  .filter-reset {
+    flex: 0 0 auto;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .filter-reset:hover {
+    background: #f3f4f6;
+  }
 
   .grid {
     display: grid;
