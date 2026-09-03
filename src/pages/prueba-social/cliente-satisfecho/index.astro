@@ -98,6 +98,7 @@ const errorMarcas = marcasPorValor((c) => c.error);
             <option value="">Todas las modalidades</option>
             {modalidades.map((m) => <option value={m}>{m}</option>)}
           </select>
+          <button type="button" class="filter-apply" id="btn-filtrar">Filtrar</button>
           <button type="button" class="filter-reset" id="filter-reset" hidden>Limpiar filtros</button>
         </div>
 
@@ -136,6 +137,7 @@ const errorMarcas = marcasPorValor((c) => c.error);
   const grid = document.getElementById("cards-grid");
   const emptyMessage = document.getElementById("filter-empty");
   const resetButton = document.getElementById("filter-reset") as HTMLButtonElement | null;
+  const filtrarButton = document.getElementById("btn-filtrar") as HTMLButtonElement | null;
   const selects = Array.from(document.querySelectorAll<HTMLSelectElement>(".filter-select"));
   const marcaSelect = document.querySelector<HTMLSelectElement>('[data-filter="marca"]');
   const dependentSelects = [
@@ -146,7 +148,12 @@ const errorMarcas = marcasPorValor((c) => c.error);
   if (grid) {
     const cards = Array.from(grid.querySelectorAll<HTMLAnchorElement>(".card"));
 
-    const applyFilters = () => {
+    // Función aislada: lee el valor actual de cada select y muestra/oculta
+    // las tarjetas según corresponda. Se dispara tanto al cambiar cualquier
+    // select (filtrado automático) como al hacer clic en "Filtrar"
+    // (disparo explícito) — ambos caminos llaman exactamente a esta misma
+    // función, así que el resultado siempre es idéntico.
+    const aplicarFiltros = () => {
       const active = selects
         .map((select) => ({ key: select.dataset.filter!, value: select.value }))
         .filter((f) => f.value !== "");
@@ -186,17 +193,19 @@ const errorMarcas = marcasPorValor((c) => c.error);
 
     marcaSelect?.addEventListener("change", () => {
       updateDependentOptions(marcaSelect.value);
-      applyFilters();
+      aplicarFiltros();
     });
 
     selects
       .filter((select) => select !== marcaSelect)
-      .forEach((select) => select.addEventListener("change", applyFilters));
+      .forEach((select) => select.addEventListener("change", aplicarFiltros));
+
+    filtrarButton?.addEventListener("click", aplicarFiltros);
 
     resetButton?.addEventListener("click", () => {
       selects.forEach((select) => (select.value = ""));
       updateDependentOptions("");
-      applyFilters();
+      aplicarFiltros();
     });
   }
 </script>
@@ -234,6 +243,23 @@ const errorMarcas = marcasPorValor((c) => c.error);
 
   .filter-select option[hidden] {
     display: none;
+  }
+
+  .filter-apply {
+    flex: 0 0 auto;
+    padding: 0.6rem 1.5rem;
+    border: 1px solid #6b21a8;
+    border-radius: 8px;
+    background: #6b21a8;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .filter-apply:hover {
+    background: #581c87;
   }
 
   .filter-reset {
