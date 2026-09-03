@@ -3,6 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateResetEvidenciaSlug } from "../../../lib/slug-generator";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
+import { extractYoutubeId } from "../../../lib/youtube";
 
 export const prerender = false;
 
@@ -19,11 +20,15 @@ try {
 
 const MODALIDAD_LARGA = "Reset Asistido 100% Remoto por conexión USB";
 
-const evidenciasConSlug = evidencias.map((e) => ({
-  ...e,
-  slug: e.slug || generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.error, e.pais, e.duracion_video),
-  modalidad: MODALIDAD_LARGA,
-}));
+const evidenciasConSlug = evidencias.map((e) => {
+  const youtubeId = extractYoutubeId(e.youtube_id) || extractYoutubeId(e.enlace_youtube);
+  return {
+    ...e,
+    slug: e.slug || generateResetEvidenciaSlug(e.accion, e.marca, e.modelo, e.error, e.pais, e.duracion_video),
+    modalidad: MODALIDAD_LARGA,
+    thumbnailUrl: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : null,
+  };
+});
 
 const uniqueSorted = (values: (string | undefined)[]) =>
   [...new Set(values.filter((v): v is string => Boolean(v)))].sort((a, b) => a.localeCompare(b, "es"));
@@ -109,7 +114,19 @@ const errorMarcas = marcasPorValor((e) => e.error);
               data-modalidad={evidencia.modalidad}
             >
               <div class="card-thumbnail">
-                <span class="play-icon">▶️</span>
+                {evidencia.thumbnailUrl ? (
+                  <>
+                    <img
+                      src={evidencia.thumbnailUrl}
+                      alt={`Miniatura del video: ${evidencia.marca} ${evidencia.modelo}`}
+                      class="thumbnail-image"
+                      loading="lazy"
+                    />
+                    <span class="play-icon play-icon-overlay">▶️</span>
+                  </>
+                ) : (
+                  <span class="play-icon">▶️</span>
+                )}
               </div>
               <div class="card-body">
                 <h3>{evidencia.marca} {evidencia.modelo}</h3>
@@ -297,17 +314,41 @@ const errorMarcas = marcasPorValor((e) => e.error);
   }
 
   .card-thumbnail {
+    position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #f3f4f6;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+  }
+
+  .thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .play-icon {
     font-size: 2.5rem;
     opacity: 0.6;
+  }
+
+  .play-icon-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 1.3rem;
+    opacity: 1;
   }
 
   .card-body {
