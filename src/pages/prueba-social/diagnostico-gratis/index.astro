@@ -24,10 +24,22 @@ try {
   fetchError = true;
 }
 
+const MODALIDAD_LARGA = "Reset Asistido 100% Remoto por conexión USB";
+
 const diagnosticosConSlug = diagnosticos.map((d) => ({
   ...d,
   slug: d.slug || generateDiagnosticoSlug(d.marca, d.modelo, d.error),
+  modalidad: MODALIDAD_LARGA,
 }));
+
+const uniqueSorted = (values: (string | undefined)[]) =>
+  [...new Set(values.filter((v): v is string => Boolean(v)))].sort((a, b) => a.localeCompare(b, "es"));
+
+const marcas = uniqueSorted(diagnosticosConSlug.map((d) => d.marca));
+const modelos = uniqueSorted(diagnosticosConSlug.map((d) => d.modelo));
+const errores = uniqueSorted(diagnosticosConSlug.map((d) => d.error));
+const paises = uniqueSorted(diagnosticosConSlug.map((d) => d.codigo_pais));
+const modalidades = uniqueSorted(diagnosticosConSlug.map((d) => d.modalidad));
 ---
 
 <BaseLayout
@@ -58,25 +70,95 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
     )}
 
     {diagnosticosConSlug.length > 0 && (
-      <div class="cards-grid">
-        {diagnosticosConSlug.map((diag) => (
-          <a href={`/prueba-social/diagnostico-gratis/${diag.slug}/`} class="card">
-            <div class="card-thumbnail">
-              <span class="play-icon">▶️</span>
-            </div>
-            <div class="card-body">
-              <h3>{diag.marca} {diag.modelo}</h3>
-              <div class="card-badges">
-                {diag.error && <span class="badge error">{diag.error}</span>}
-                {diag.codigo_pais && <span class="badge country">{diag.codigo_pais}</span>}
+      <>
+        <div class="filters-bar">
+          <select class="filter-select" data-filter="marca" aria-label="Filtrar por marca">
+            <option value="">Todas las marcas</option>
+            {marcas.map((m) => <option value={m}>{m}</option>)}
+          </select>
+          <select class="filter-select" data-filter="modelo" aria-label="Filtrar por modelo">
+            <option value="">Todos los modelos</option>
+            {modelos.map((m) => <option value={m}>{m}</option>)}
+          </select>
+          <select class="filter-select" data-filter="error" aria-label="Filtrar por error">
+            <option value="">Todos los errores</option>
+            {errores.map((e) => <option value={e}>{e}</option>)}
+          </select>
+          <select class="filter-select" data-filter="pais" aria-label="Filtrar por país">
+            <option value="">Todos los países</option>
+            {paises.map((p) => <option value={p}>{p}</option>)}
+          </select>
+          <select class="filter-select" data-filter="modalidad" aria-label="Filtrar por modalidad">
+            <option value="">Todas las modalidades</option>
+            {modalidades.map((m) => <option value={m}>{m}</option>)}
+          </select>
+          <button type="button" class="filter-reset" id="filter-reset" hidden>Limpiar filtros</button>
+        </div>
+
+        <p class="filter-empty" id="filter-empty" hidden>No hay resultados con estos filtros.</p>
+
+        <div class="cards-grid" id="cards-grid">
+          {diagnosticosConSlug.map((diag) => (
+            <a
+              href={`/prueba-social/diagnostico-gratis/${diag.slug}/`}
+              class="card"
+              data-marca={diag.marca}
+              data-modelo={diag.modelo}
+              data-error={diag.error}
+              data-pais={diag.codigo_pais}
+              data-modalidad={diag.modalidad}
+            >
+              <div class="card-thumbnail">
+                <span class="play-icon">▶️</span>
               </div>
-            </div>
-          </a>
-        ))}
-      </div>
+              <div class="card-body">
+                <h3>{diag.marca} {diag.modelo}</h3>
+                <div class="card-badges">
+                  {diag.error && <span class="badge error">{diag.error}</span>}
+                  {diag.codigo_pais && <span class="badge country">{diag.codigo_pais}</span>}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </>
     )}
   </section>
 </BaseLayout>
+
+<script>
+  const grid = document.getElementById("cards-grid");
+  const emptyMessage = document.getElementById("filter-empty");
+  const resetButton = document.getElementById("filter-reset") as HTMLButtonElement | null;
+  const selects = Array.from(document.querySelectorAll<HTMLSelectElement>(".filter-select"));
+
+  if (grid) {
+    const cards = Array.from(grid.querySelectorAll<HTMLAnchorElement>(".card"));
+
+    const applyFilters = () => {
+      const active = selects
+        .map((select) => ({ key: select.dataset.filter!, value: select.value }))
+        .filter((f) => f.value !== "");
+
+      let visibleCount = 0;
+      for (const card of cards) {
+        const matches = active.every((f) => card.dataset[f.key] === f.value);
+        card.hidden = !matches;
+        if (matches) visibleCount += 1;
+      }
+
+      if (emptyMessage) emptyMessage.hidden = visibleCount !== 0;
+      if (resetButton) resetButton.hidden = active.length === 0;
+    };
+
+    selects.forEach((select) => select.addEventListener("change", applyFilters));
+
+    resetButton?.addEventListener("click", () => {
+      selects.forEach((select) => (select.value = ""));
+      applyFilters();
+    });
+  }
+</script>
 
 <style>
   .diagnostico-gratis-header {
@@ -105,6 +187,56 @@ const diagnosticosConSlug = diagnosticos.map((d) => ({
   .diagnostico-gratis-grid {
     max-width: 1200px;
     margin: 0 auto;
+  }
+
+  .filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 2rem 2rem 0;
+  }
+
+  .filter-select {
+    flex: 1 1 180px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #9a3412;
+    box-shadow: 0 0 0 3px rgba(154, 52, 18, 0.15);
+  }
+
+  .filter-reset {
+    flex: 0 0 auto;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .filter-reset:hover {
+    background: #f3f4f6;
+  }
+
+  .filter-empty {
+    margin: 1.5rem 2rem 0;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 12px;
+    background: #f9fafb;
+    color: #6b7280;
   }
 
   .cards-grid {
