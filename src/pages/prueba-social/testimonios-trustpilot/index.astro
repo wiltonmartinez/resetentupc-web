@@ -66,8 +66,8 @@ const testimoniosAleatorios = shuffle(testimoniosConImagen);
       <div class="grid">
         {testimoniosAleatorios.map((t) => {
           const alt = t.marca ? `Testimonio Trustpilot - ${t.marca} ${t.modelo}` : "Testimonio Trustpilot";
-          const content = (
-            <>
+          return (
+            <div class="testimonio-card">
               <img src={t.imagenUrl} alt={alt} class="testimonio-image" loading="lazy" />
               {(t.marca || t.pais) && (
                 <div class="testimonio-meta">
@@ -75,15 +75,7 @@ const testimoniosAleatorios = shuffle(testimoniosConImagen);
                   {t.pais && <span class="badge">{t.pais}</span>}
                 </div>
               )}
-            </>
-          );
-
-          return t.url_trustpilot_review ? (
-            <a href={t.url_trustpilot_review} target="_blank" rel="noopener noreferrer" class="testimonio-card">
-              {content}
-            </a>
-          ) : (
-            <div class="testimonio-card">{content}</div>
+            </div>
           );
         })}
       </div>
@@ -107,9 +99,15 @@ const testimoniosAleatorios = shuffle(testimoniosConImagen);
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 2rem;
     margin-bottom: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   .testimonio-card {
@@ -169,6 +167,5 @@ const testimoniosAleatorios = shuffle(testimoniosConImagen);
 
   @media (max-width: 768px) {
     .testimonios-header h1 { font-size: 1.8rem; }
-    .grid { grid-template-columns: 1fr; }
   }
 </style>
