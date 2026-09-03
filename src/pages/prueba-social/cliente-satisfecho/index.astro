@@ -29,11 +29,29 @@ const clientesConSlug = clientes.map((c) => ({
 const uniqueSorted = (values: (string | undefined)[]) =>
   [...new Set(values.filter((v): v is string => Boolean(v)))].sort((a, b) => a.localeCompare(b, "es"));
 
+// Para cada valor de modelo/error, qué marca(s) lo usan — permite que el
+// filtro de marca oculte en cascada las opciones de modelo/error que no
+// aplican. Un mismo valor puede aparecer bajo más de una marca, por eso se
+// guarda como conjunto y se serializa separado por espacios en data-marca.
+const marcasPorValor = (getValue: (item: any) => string | undefined) => {
+  const map = new Map<string, Set<string>>();
+  for (const item of clientesConSlug) {
+    const value = getValue(item);
+    if (!value || !item.marca) continue;
+    if (!map.has(value)) map.set(value, new Set());
+    map.get(value)!.add(item.marca);
+  }
+  return map;
+};
+
 const marcas = uniqueSorted(clientesConSlug.map((c) => c.marca));
 const modelos = uniqueSorted(clientesConSlug.map((c) => c.modelo));
 const errores = uniqueSorted(clientesConSlug.map((c) => c.error));
 const paises = uniqueSorted(clientesConSlug.map((c) => c.pais));
 const modalidades = uniqueSorted(clientesConSlug.map((c) => c.modalidad));
+
+const modeloMarcas = marcasPorValor((c) => c.modelo);
+const errorMarcas = marcasPorValor((c) => c.error);
 ---
 
 <BaseLayout
@@ -65,12 +83,12 @@ const modalidades = uniqueSorted(clientesConSlug.map((c) => c.modalidad));
             {marcas.map((m) => <option value={m}>{m}</option>)}
           </select>
           <select class="filter-select" data-filter="modelo" aria-label="Filtrar por modelo">
-            <option value="">Todos los modelos</option>
-            {modelos.map((m) => <option value={m}>{m}</option>)}
+            <option value="" data-marca="todas">Todos los modelos</option>
+            {modelos.map((m) => <option value={m} data-marca={[...(modeloMarcas.get(m) ?? [])].join(" ")}>{m}</option>)}
           </select>
           <select class="filter-select" data-filter="error" aria-label="Filtrar por error">
-            <option value="">Todos los errores</option>
-            {errores.map((e) => <option value={e}>{e}</option>)}
+            <option value="" data-marca="todas">Todos los errores</option>
+            {errores.map((e) => <option value={e} data-marca={[...(errorMarcas.get(e) ?? [])].join(" ")}>{e}</option>)}
           </select>
           <select class="filter-select" data-filter="pais" aria-label="Filtrar por país">
             <option value="">Todos los países</option>
@@ -119,6 +137,11 @@ const modalidades = uniqueSorted(clientesConSlug.map((c) => c.modalidad));
   const emptyMessage = document.getElementById("filter-empty");
   const resetButton = document.getElementById("filter-reset") as HTMLButtonElement | null;
   const selects = Array.from(document.querySelectorAll<HTMLSelectElement>(".filter-select"));
+  const marcaSelect = document.querySelector<HTMLSelectElement>('[data-filter="marca"]');
+  const dependentSelects = [
+    document.querySelector<HTMLSelectElement>('[data-filter="modelo"]'),
+    document.querySelector<HTMLSelectElement>('[data-filter="error"]'),
+  ].filter((select): select is HTMLSelectElement => select !== null);
 
   if (grid) {
     const cards = Array.from(grid.querySelectorAll<HTMLAnchorElement>(".card"));
@@ -139,10 +162,40 @@ const modalidades = uniqueSorted(clientesConSlug.map((c) => c.modalidad));
       if (resetButton) resetButton.hidden = active.length === 0;
     };
 
-    selects.forEach((select) => select.addEventListener("change", applyFilters));
+    // Filtros vinculados: al elegir marca, ocultamos en modelo/error las
+    // opciones que no pertenecen a esa marca. Si la opción actualmente
+    // seleccionada queda oculta, reseteamos ese select a su valor por
+    // defecto para no dejar un filtro "fantasma" aplicado.
+    const updateDependentOptions = (marcaValue: string) => {
+      for (const select of dependentSelects) {
+        let selectedWasHidden = false;
+
+        for (const option of Array.from(select.options)) {
+          if (option.value === "") continue;
+
+          const optionMarcas = (option.dataset.marca || "").split(" ").filter(Boolean);
+          const matches = marcaValue === "" || optionMarcas.includes(marcaValue);
+
+          option.hidden = !matches;
+          if (!matches && option.selected) selectedWasHidden = true;
+        }
+
+        if (selectedWasHidden) select.value = "";
+      }
+    };
+
+    marcaSelect?.addEventListener("change", () => {
+      updateDependentOptions(marcaSelect.value);
+      applyFilters();
+    });
+
+    selects
+      .filter((select) => select !== marcaSelect)
+      .forEach((select) => select.addEventListener("change", applyFilters));
 
     resetButton?.addEventListener("click", () => {
       selects.forEach((select) => (select.value = ""));
+      updateDependentOptions("");
       applyFilters();
     });
   }
@@ -177,6 +230,10 @@ const modalidades = uniqueSorted(clientesConSlug.map((c) => c.modalidad));
     outline: none;
     border-color: #6b21a8;
     box-shadow: 0 0 0 3px rgba(107, 33, 168, 0.15);
+  }
+
+  .filter-select option[hidden] {
+    display: none;
   }
 
   .filter-reset {
