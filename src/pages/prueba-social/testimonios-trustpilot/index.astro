@@ -1,49 +1,93 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { NUCLEO_API_BASE_URL } from "../../../config/site";
+import { fetchAllPages } from "../../../lib/fetch-paginated";
+
+export const prerender = false;
 
 const locale = "es" as const;
 
-const testimonios = [
-  { id: 1, nombre: "Cliente 1", rating: 5, ciudad: "Bogotá" },
-  { id: 2, nombre: "Cliente 2", rating: 5, ciudad: "México" },
-  { id: 3, nombre: "Cliente 3", rating: 5, ciudad: "Buenos Aires" },
-  { id: 4, nombre: "Cliente 4", rating: 5, ciudad: "Lima" },
-  { id: 5, nombre: "Cliente 5", rating: 5, ciudad: "Santiago" },
-  { id: 6, nombre: "Cliente 6", rating: 5, ciudad: "Medellín" },
-];
+let testimonios: any[] = [];
+let fetchError = false;
 
-const testimoniosAleatorios = [...testimonios].sort(() => Math.random() - 0.5);
+try {
+  testimonios = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/testimonios/`);
+} catch (error) {
+  console.error("Error fetching testimonios:", error);
+  fetchError = true;
+}
+
+// Fisher-Yates: orden aleatorio distinto en cada carga de página (requisito
+// de negocio), sin sesgar los primeros elementos como haría un sort con
+// comparador random.
+const shuffle = <T,>(array: T[]): T[] => {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
+
+const testimoniosConImagen = testimonios
+  .map((t) => ({
+    ...t,
+    // url_imgur ya viene absoluta desde el backend, pero si en el futuro
+    // llegara relativa (empieza con "/"), se concatena con
+    // NUCLEO_API_BASE_URL para que la imagen no se rompa.
+    imagenUrl: t.url_imgur
+      ? t.url_imgur.startsWith("/")
+        ? `${NUCLEO_API_BASE_URL}${t.url_imgur}`
+        : t.url_imgur
+      : null,
+  }))
+  .filter((t) => t.imagenUrl);
+
+const testimoniosAleatorios = shuffle(testimoniosConImagen);
 ---
 
 <BaseLayout
   title="Testimonios Trustpilot - Prueba Social"
-  description="Evaluaciones verificadas de clientes satisfechos en Trustpilot"
+  description="Capturas reales de evaluaciones de clientes en Trustpilot"
   locale={locale}
   path="/prueba-social/testimonios-trustpilot/"
   wide
 >
   <section class="testimonios-header">
     <h1>Testimonios Trustpilot</h1>
-    <p>Evaluaciones verificadas de clientes satisfechos</p>
+    <p>Capturas reales de evaluaciones de clientes satisfechos</p>
   </section>
 
   <section class="testimonios-grid">
-    <div class="grid">
-      {testimoniosAleatorios.map((testimonio) => (
-        <div class="testimonio-card">
-          <div class="stars">
-            {'⭐'.repeat(testimonio.rating)}
-          </div>
-          <div class="testimonio-content">
-            <p>Servicio profesional, rápido y confiable. Altamente recomendado.</p>
-          </div>
-          <div class="testimonio-author">
-            <p class="nombre">{testimonio.nombre}</p>
-            <p class="ciudad">{testimonio.ciudad}</p>
-          </div>
-        </div>
-      ))}
-    </div>
+    {fetchError && <div class="error-message">No pudimos cargar los testimonios. Por favor, intenta más tarde.</div>}
+    {!fetchError && testimoniosAleatorios.length === 0 && <div class="empty-message">No hay testimonios disponibles en este momento.</div>}
+
+    {testimoniosAleatorios.length > 0 && (
+      <div class="grid">
+        {testimoniosAleatorios.map((t) => {
+          const alt = t.marca ? `Testimonio Trustpilot - ${t.marca} ${t.modelo}` : "Testimonio Trustpilot";
+          const content = (
+            <>
+              <img src={t.imagenUrl} alt={alt} class="testimonio-image" loading="lazy" />
+              {(t.marca || t.pais) && (
+                <div class="testimonio-meta">
+                  {t.marca && <span class="badge">{t.marca} {t.modelo}</span>}
+                  {t.pais && <span class="badge">{t.pais}</span>}
+                </div>
+              )}
+            </>
+          );
+
+          return t.url_trustpilot_review ? (
+            <a href={t.url_trustpilot_review} target="_blank" rel="noopener noreferrer" class="testimonio-card">
+              {content}
+            </a>
+          ) : (
+            <div class="testimonio-card">{content}</div>
+          );
+        })}
+      </div>
+    )}
 
     <div class="trustpilot-widget">
       <h2>Ver todas nuestras evaluaciones</h2>
@@ -60,19 +104,71 @@ const testimoniosAleatorios = [...testimonios].sort(() => Math.random() - 0.5);
   .testimonios-header h1 { font-size: 2.5rem; font-weight: 700; color: #92400e; margin: 0 0 0.5rem 0; }
   .testimonios-header p { font-size: 1.1rem; color: #b45309; margin: 0; }
   .testimonios-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-  .testimonio-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); transition: box-shadow 0.3s ease; }
-  .testimonio-card:hover { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
-  .stars { font-size: 1.2rem; margin-bottom: 1rem; letter-spacing: 2px; }
-  .testimonio-content { margin-bottom: 1rem; }
-  .testimonio-content p { color: #6b7280; line-height: 1.6; margin: 0; }
-  .testimonio-author { border-top: 1px solid #e5e7eb; padding-top: 1rem; }
-  .nombre { font-weight: 700; color: #1f2937; margin: 0; font-size: 0.95rem; }
-  .ciudad { color: #9ca3af; font-size: 0.85rem; margin: 0.25rem 0 0 0; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .testimonio-card {
+    display: block;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .testimonio-card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .testimonio-image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .testimonio-meta {
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .error-message, .empty-message {
+    padding: 2rem;
+    text-align: center;
+    border-radius: 12px;
+    background: #fef3c7;
+    color: #92400e;
+    margin-bottom: 2rem;
+  }
+
   .trustpilot-widget { text-align: center; padding: 2rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; }
   .trustpilot-widget h2 { font-size: 1.8rem; font-weight: 700; color: #92400e; margin: 0 0 0.5rem 0; }
   .trustpilot-widget p { color: #b45309; margin: 0 0 1.5rem 0; }
   .trustpilot-link { display: inline-block; padding: 0.75rem 2rem; background: #f59e0b; color: white; text-decoration: none; font-weight: 700; border-radius: 8px; transition: background 0.3s ease; }
   .trustpilot-link:hover { background: #d97706; }
-  @media (max-width: 768px) { .testimonios-header h1 { font-size: 1.8rem; } .grid { grid-template-columns: 1fr; } }
+
+  @media (max-width: 768px) {
+    .testimonios-header h1 { font-size: 1.8rem; }
+    .grid { grid-template-columns: 1fr; }
+  }
 </style>
