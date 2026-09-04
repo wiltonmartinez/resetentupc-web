@@ -82,7 +82,17 @@ const errorMarcas = marcasPorValor((d) => d.error);
       {(bannerVideo || bannerImage) && (
         <div class="header-banner-col">
           {bannerVideo ? (
-            <video class="header-banner" autoplay loop muted playsinline aria-label="Video de Diagnósticos Gratuitos">
+            <video
+              class="header-banner"
+              autoplay
+              loop
+              muted
+              playsinline
+              disablePictureInPicture
+              controlsList="nodownload noremoteplayback nofullscreen"
+              oncontextmenu="return false"
+              aria-label="Video de Diagnósticos Gratuitos"
+            >
               <source src={bannerVideo} type="video/mp4" />
             </video>
           ) : (
