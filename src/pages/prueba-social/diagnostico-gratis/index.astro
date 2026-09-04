@@ -5,9 +5,10 @@ import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { t } from "../../../i18n/utils";
 import { generateDiagnosticoSlug } from "../../../lib/slug-generator";
 import { extractYoutubeId } from "../../../lib/youtube";
-import { getPruebaSocialBanner } from "../../../lib/prueba-social-banners";
+import { getPruebaSocialBanner, getPruebaSocialBannerVideo } from "../../../lib/prueba-social-banners";
 
 const bannerImage = getPruebaSocialBanner("diagnostico");
+const bannerVideo = getPruebaSocialBannerVideo("diagnostico");
 
 export const prerender = false;
 
@@ -77,10 +78,16 @@ const errorMarcas = marcasPorValor((d) => d.error);
   wide
 >
   <section class="diagnostico-gratis-header">
-    <div class:list={["header-columns", { "has-banner": Boolean(bannerImage) }]}>
-      {bannerImage && (
+    <div class:list={["header-columns", { "has-banner": Boolean(bannerVideo || bannerImage) }]}>
+      {(bannerVideo || bannerImage) && (
         <div class="header-banner-col">
-          <Image src={bannerImage} alt="Diagnósticos Gratuitos" class="header-banner" widths={[400, 800, 1200]} sizes="(min-width: 768px) 50vw, 100vw" />
+          {bannerVideo ? (
+            <video class="header-banner" autoplay loop muted playsinline aria-label="Video de Diagnósticos Gratuitos">
+              <source src={bannerVideo} type="video/mp4" />
+            </video>
+          ) : (
+            <Image src={bannerImage} alt="Diagnósticos Gratuitos" class="header-banner" widths={[400, 800, 1200]} sizes="(min-width: 768px) 50vw, 100vw" />
+          )}
         </div>
       )}
       <div class="header-content">
@@ -311,6 +318,7 @@ const errorMarcas = marcasPorValor((d) => d.error);
     max-height: 360px;
     object-fit: cover;
     border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   }
 
   .header-content {

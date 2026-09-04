@@ -17,3 +17,15 @@ for (const [path, mod] of Object.entries(modules)) {
 export function getPruebaSocialBanner(folder) {
   return bannersByFolder.get(folder)?.image ?? null;
 }
+
+const videoModules = import.meta.glob("/src/assets/prueba-social/*/banner-video.{mp4,webm}", { eager: true });
+
+const videosByFolder = new Map();
+for (const [path, mod] of Object.entries(videoModules)) {
+  const folder = path.split("/").at(-2);
+  videosByFolder.set(folder, mod.default);
+}
+
+export function getPruebaSocialBannerVideo(folder) {
+  return videosByFolder.get(folder) ?? null;
+}
