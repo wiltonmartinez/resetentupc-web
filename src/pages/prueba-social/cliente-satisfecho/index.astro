@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TrustpilotWidget from "../../../components/TrustpilotWidget.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateClienteSatisfechoSlug } from "../../../lib/slug-generator";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
@@ -72,6 +73,7 @@ const errorMarcas = marcasPorValor((c) => c.error);
     <div class="header-content">
       <h1>Clientes Satisfechos</h1>
       <p>Capturas de WhatsApp reales de usuarios que resolvieron su problema</p>
+      <TrustpilotWidget />
     </div>
   </section>
 

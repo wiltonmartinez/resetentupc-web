@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TrustpilotWidget from "../../../components/TrustpilotWidget.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
 import { getPruebaSocialBanner } from "../../../lib/prueba-social-banners";
@@ -73,6 +74,7 @@ const marcas = uniqueSorted(testimoniosAleatorios.map((t) => t.marca));
     )}
     <h1>Testimonios Trustpilot</h1>
     <p>Capturas reales de evaluaciones de clientes satisfechos</p>
+    <TrustpilotWidget />
   </section>
 
   <section class="testimonios-grid">

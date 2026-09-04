@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TrustpilotWidget from "../../../components/TrustpilotWidget.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateResetEvidenciaSlug } from "../../../lib/slug-generator";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
@@ -76,6 +77,7 @@ const errorMarcas = marcasPorValor((e) => e.error);
     )}
     <h1>Reset Evidencia</h1>
     <p>Videos comprobando que el contador llega a 0% tras el reset</p>
+    <TrustpilotWidget />
   </section>
 
   <section class="evidencia-grid">
