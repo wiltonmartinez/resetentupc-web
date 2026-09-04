@@ -1,9 +1,13 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateResetEvidenciaSlug } from "../../../lib/slug-generator";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
 import { extractYoutubeId } from "../../../lib/youtube";
+import { getPruebaSocialBanner } from "../../../lib/prueba-social-banners";
+
+const bannerImage = getPruebaSocialBanner("reset-evidencia");
 
 export const prerender = false;
 
@@ -67,6 +71,9 @@ const errorMarcas = marcasPorValor((e) => e.error);
   wide
 >
   <section class="evidencia-header">
+    {bannerImage && (
+      <Image src={bannerImage} alt="Reset Evidencia" class="header-banner" widths={[400, 800, 1200]} sizes="100vw" />
+    )}
     <h1>Reset Evidencia</h1>
     <p>Videos comprobando que el contador llega a 0% tras el reset</p>
   </section>
@@ -259,6 +266,10 @@ const errorMarcas = marcasPorValor((e) => e.error);
   .evidencia-header { padding: 3rem 1rem; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); text-align: center; }
   .evidencia-header h1 { font-size: 2.5rem; font-weight: 700; color: #166534; margin: 0 0 0.5rem 0; }
   .evidencia-header p { font-size: 1.1rem; color: #15803d; margin: 0; }
+  .header-banner { display: block; width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; margin: 0 auto 2rem; max-width: 1200px; }
+  @media (max-width: 768px) {
+    .header-banner { max-height: 200px; border-radius: 0; margin-bottom: 1.5rem; }
+  }
   .evidencia-grid { max-width: 1200px; margin: 0 auto; }
 
   .filters-bar {

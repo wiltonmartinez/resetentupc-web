@@ -1,11 +1,14 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
+import { getPruebaSocialBanner } from "../../../lib/prueba-social-banners";
 
 export const prerender = false;
 
 const locale = "es" as const;
+const bannerImage = getPruebaSocialBanner("testimonios");
 
 let testimonios: any[] = [];
 let fetchError = false;
@@ -65,6 +68,9 @@ const marcas = uniqueSorted(testimoniosAleatorios.map((t) => t.marca));
   wide
 >
   <section class="testimonios-header">
+    {bannerImage && (
+      <Image src={bannerImage} alt="Testimonios Trustpilot" class="header-banner" widths={[400, 800, 1200]} sizes="100vw" />
+    )}
     <h1>Testimonios Trustpilot</h1>
     <p>Capturas reales de evaluaciones de clientes satisfechos</p>
   </section>
@@ -185,6 +191,10 @@ const marcas = uniqueSorted(testimoniosAleatorios.map((t) => t.marca));
   .testimonios-header { padding: 3rem 1rem; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); text-align: center; }
   .testimonios-header h1 { font-size: 2.5rem; font-weight: 700; color: #92400e; margin: 0 0 0.5rem 0; }
   .testimonios-header p { font-size: 1.1rem; color: #b45309; margin: 0; }
+  .header-banner { display: block; width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; margin: 0 auto 2rem; max-width: 1200px; }
+  @media (max-width: 768px) {
+    .header-banner { max-height: 200px; border-radius: 0; margin-bottom: 1.5rem; }
+  }
   .testimonios-grid { padding: 3rem 1rem; max-width: 1200px; margin: 0 auto; }
 
   .filters-bar {

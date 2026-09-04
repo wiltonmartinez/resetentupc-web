@@ -10,6 +10,7 @@ export const TARGETS = [
   "src/assets/errores",
   "src/assets/soluciones",
   "src/assets/proceso",
+  "src/assets/prueba-social",
 ];
 
 export const SOURCE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg"]);

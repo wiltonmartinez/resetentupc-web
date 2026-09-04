@@ -1,9 +1,13 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { t } from "../../../i18n/utils";
 import { generateDiagnosticoSlug } from "../../../lib/slug-generator";
 import { extractYoutubeId } from "../../../lib/youtube";
+import { getPruebaSocialBanner } from "../../../lib/prueba-social-banners";
+
+const bannerImage = getPruebaSocialBanner("diagnostico");
 
 export const prerender = false;
 
@@ -73,9 +77,16 @@ const errorMarcas = marcasPorValor((d) => d.error);
   wide
 >
   <section class="diagnostico-gratis-header">
-    <div class="header-content">
-      <h1>Diagnósticos Gratuitos</h1>
-      <p>Mira cómo nuestro software detecta y resuelve problemas en tu impresora</p>
+    <div class:list={["header-columns", { "has-banner": Boolean(bannerImage) }]}>
+      {bannerImage && (
+        <div class="header-banner-col">
+          <Image src={bannerImage} alt="Diagnósticos Gratuitos" class="header-banner" widths={[400, 800, 1200]} sizes="(min-width: 768px) 50vw, 100vw" />
+        </div>
+      )}
+      <div class="header-content">
+        <h1>Diagnósticos Gratuitos</h1>
+        <p>Mira cómo nuestro software detecta y resuelve problemas en tu impresora</p>
+      </div>
     </div>
   </section>
 
@@ -274,9 +285,42 @@ const errorMarcas = marcasPorValor((d) => d.error);
     text-align: center;
   }
 
+  .header-columns {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .header-columns.has-banner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+    text-align: left;
+  }
+
+  @media (min-width: 768px) {
+    .header-columns.has-banner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .header-banner {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
   .header-content {
     max-width: 800px;
     margin: 0 auto;
+  }
+
+  .has-banner .header-content {
+    max-width: none;
+    margin: 0;
   }
 
   .diagnostico-gratis-header h1 {

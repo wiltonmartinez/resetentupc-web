@@ -1,8 +1,12 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { NUCLEO_API_BASE_URL } from "../../../config/site";
 import { generateClienteSatisfechoSlug } from "../../../lib/slug-generator";
 import { fetchAllPages } from "../../../lib/fetch-paginated";
+import { getPruebaSocialBanner } from "../../../lib/prueba-social-banners";
+
+const bannerImage = getPruebaSocialBanner("conversaciones");
 
 export const prerender = false;
 
@@ -62,6 +66,9 @@ const errorMarcas = marcasPorValor((c) => c.error);
   wide
 >
   <section class="clientes-header">
+    {bannerImage && (
+      <Image src={bannerImage} alt="Clientes Satisfechos" class="header-banner" widths={[400, 800, 1200]} sizes="100vw" />
+    )}
     <div class="header-content">
       <h1>Clientes Satisfechos</h1>
       <p>Capturas de WhatsApp reales de usuarios que resolvieron su problema</p>
@@ -253,6 +260,10 @@ const errorMarcas = marcasPorValor((c) => c.error);
 
 <style>
   .clientes-header { padding: 3rem 1rem; background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); text-align: center; }
+  .header-banner { display: block; width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; margin: 0 auto 2rem; max-width: 1200px; }
+  @media (max-width: 768px) {
+    .header-banner { max-height: 200px; border-radius: 0; margin-bottom: 1.5rem; }
+  }
   .header-content { max-width: 800px; margin: 0 auto; }
   .clientes-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #6b21a8; }
   .clientes-header p { font-size: 1.1rem; color: #7e22ce; }
