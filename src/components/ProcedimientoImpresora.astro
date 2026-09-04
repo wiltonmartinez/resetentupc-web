@@ -27,7 +27,7 @@
  * testimonio local y Trustpilot de Paso 6) — el HTML estático renderiza el
  * primer candidato de cada lista (para que Googlebot vea un enlace/video
  * real desde el primer render), y el resto de la lista se embebe como JSON
- * en la página. Un <script> del lado del cliente elige uno al azar por
+ * en la página. Un script del lado del cliente elige uno al azar por
  * visitante y actualiza el DOM (ver más abajo) — así se logra variedad
  * real por visita sin convertir el sitio a SSR ni depender de Núcleo en
  * vivo para que la página cargue. Este componente NO usa React (el
@@ -167,8 +167,8 @@ const paso2ModalidadTexto = errorPrincipal?.modo
 //
 // SSG + azar en cliente: se trae la lista COMPLETA de candidatos; el HTML
 // estático (build) renderiza SIEMPRE el primero (para SEO), y el resto
-// viaja como JSON para que el <script> del cliente elija uno al azar por
-// visitante — ver SECCIÓN 4 y el <script> al final del archivo.
+// viaja como JSON para que el script del cliente elija uno al azar por
+// visitante — ver SECCIÓN 4 y el script al final del archivo.
 interface CandidatoVideo {
   youtubeId: string;
   titulo: string;
@@ -189,8 +189,8 @@ const videoResetRealizado = candidatosVideo[0] ?? null;
 const hrefResetEvidencia = buildLocalizedPath(locale, "/prueba-social/reset-evidencia/");
 // La misma plantilla ("Ver la evidencia completa: {titulo}") se usa acá
 // para el primer render (SEO/SSG) y se pasa también al cliente vía
-// data-anchor-template para cuando el <script> azarea otro video — así
-// no queda un string sin traducir escondido solo en el <script>.
+// data-anchor-template para cuando el script azarea otro video — así
+// no queda un string sin traducir escondido solo en el script.
 const paso5AnchorConVideoTemplate = t(locale, "procedimiento.paso5AnchorConVideo");
 const anchorResetEvidencia = videoResetRealizado
   ? paso5AnchorConVideoTemplate.replace("{titulo}", videoResetRealizado.titulo)
@@ -199,7 +199,7 @@ const anchorResetEvidencia = videoResetRealizado
 // 2) Prueba Social: un testimonio de Trustpilot y uno Local. Mismo patrón
 // SSG + azar en cliente que el video de arriba: se traen las listas
 // completas en build, se renderiza el primer candidato de cada una para
-// el HTML estático/SEO, y el resto viaja como JSON para el <script>.
+// el HTML estático/SEO, y el resto viaja como JSON para el script.
 interface CandidatoTrustpilot {
   imagen: string;
   destino: string;
@@ -246,7 +246,7 @@ const hrefClienteSatisfechoDetalle = testimonioLocalEmbed?.slug
   : null;
 const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/");
 // Igual que paso5AnchorConVideoTemplate: la base traducida se pasa al
-// cliente vía data-resena-template para cuando el <script> azarea otro
+// cliente vía data-resena-template para cuando el script azarea otro
 // testimonio Trustpilot.
 const paso6ResenaTrustpilotTemplate = t(locale, "procedimiento.paso6ResenaTrustpilot");
 function anchorTrustpilotDe(c: CandidatoTrustpilot): string {
@@ -256,7 +256,7 @@ function anchorTrustpilotDe(c: CandidatoTrustpilot): string {
 const anchorTrustpilot = testimonioTrustpilot ? anchorTrustpilotDe(testimonioTrustpilot) : "";
 const paso6LeerCasoCompletoTemplate = t(locale, "procedimiento.paso6LeerCasoCompleto");
 
-// JSON embebido para el <script> del cliente (solo cuando hay más de un
+// JSON embebido para el script del cliente (solo cuando hay más de un
 // candidato — si hay 0 o 1, no hace falta azarear nada).
 const candidatosParaCliente = jsonSeguroParaScript({
   videos: candidatosVideo.length > 1 ? candidatosVideo : [],
