@@ -256,7 +256,8 @@
     "copiarIdLabel": "Copier l'ID du technicien",
     "copiadoLabel": "Copié !",
     "jugarRuletaCta": "Jouer maintenant",
-    "cerrarRuletaLabel": "Fermer la roulette"
+    "cerrarRuletaLabel": "Fermer la roulette",
+    "selectorModeloListaPlaceholder": "Sélectionnez votre modèle"
   },
   "faq": {
     "title": "Questions fréquentes | ResetEnLinea.com",

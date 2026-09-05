@@ -302,7 +302,8 @@
     "copiarIdLabel": "기술자 ID 복사",
     "copiadoLabel": "복사됨!",
     "jugarRuletaCta": "지금 플레이",
-    "cerrarRuletaLabel": "룰렛 닫기"
+    "cerrarRuletaLabel": "룰렛 닫기",
+    "selectorModeloListaPlaceholder": "모델을 선택하세요"
   },
   "faq": {
     "title": "자주 묻는 질문 | ResetEnLinea.com",

@@ -143,6 +143,19 @@ const marcasSelector = [
   { id: "epson-sc", label: "Epson-SC", errores: ["0014BD", "00000008 - 00080000", "00000004 - 00040000"] },
 ];
 
+// Listas de modelos frecuentes para acelerar la seleccion (en vez de escribir
+// a mano) cuando la combinacion marca+error lo amerita: Epson + Almohadillas
+// (el error mas comun) y Canon (cualquiera de sus errores).
+const modelosEpsonAlmohadillas = [
+  "L3250", "L1250", "L4260", "L555", "L3150", "L3210", "L4150", "ET-2400", "ET-2870", "L120",
+  "L355", "L495", "L575", "M2120", "ET-2710", "ET-2750", "ET-2760", "ET-2800", "ET-2860",
+  "ET-4550", "ET-4700", "ET-4800", "L210", "L220", "L380", "L396", "L1210", "L1300", "L3060",
+  "L3110", "L3160", "L4160", "L5290", "M1120", "WF-3730", "XP-235", "XP-320", "XP-400", "XP-2150",
+];
+const modelosCanon = [
+  "G1100", "G1110", "G2110", "G2100", "G3100", "G3110", "G4100", "G4110", "G5010", "G6010", "G7010",
+];
+
 const modeloEjemplo = t(locale, "comoFuncionaProceso.resumenModeloEjemplo");
 const cascadaDefaults: Record<CascadaToken, string> = {
   marca: marcasSelector[0].label,
@@ -307,7 +320,7 @@ const erroresTab = [
         ))}
       </div>
     ))}
-    <div class="selector-modelo-wrap" data-selector-modelo-wrap>
+    <div class="selector-modelo-wrap" data-selector-modelo-wrap data-almohadillas-label={errorDefaultLabel}>
       <label for="selector-modelo-input">{t(locale, "comoFuncionaProceso.selectorModeloLabel")}</label>
       <input
         type="text"
@@ -316,6 +329,18 @@ const erroresTab = [
         data-modelo-ejemplo={modeloEjemplo}
         placeholder={t(locale, "comoFuncionaProceso.selectorModeloPlaceholder")}
       />
+      <select class="selector-modelo-lista" data-selector-modelo-lista="epson" hidden>
+        <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
+        {modelosEpsonAlmohadillas.map((modelo) => (
+          <option value={modelo}>{modelo}</option>
+        ))}
+      </select>
+      <select class="selector-modelo-lista" data-selector-modelo-lista="canon" hidden>
+        <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
+        {modelosCanon.map((modelo) => (
+          <option value={modelo}>{modelo}</option>
+        ))}
+      </select>
     </div>
   </section>
 
@@ -659,6 +684,16 @@ const erroresTab = [
     const erroresPaneles = raiz.querySelectorAll<HTMLElement>("[data-selector-errores-panel]");
     const modeloWrap = raiz.querySelector<HTMLElement>("[data-selector-modelo-wrap]");
     const modeloInput = raiz.querySelector<HTMLInputElement>("[data-selector-modelo]");
+    const listaEpson = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="epson"]');
+    const listaCanon = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="canon"]');
+    const almohadillasLabel = modeloWrap?.dataset.almohadillasLabel ?? "";
+    let marcaActivaId = "";
+
+    const actualizarModelo = (valor: string) => {
+      document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
+        el.textContent = valor;
+      });
+    };
 
     marcaBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -670,6 +705,7 @@ const erroresTab = [
         if (modeloWrap) modeloWrap.style.display = "none";
 
         const marcaValor = btn.dataset.value ?? "";
+        marcaActivaId = marcaValor;
         document.querySelectorAll<HTMLElement>("[data-cascada-marca]").forEach((el) => {
           el.textContent = btn.textContent?.trim() ?? "";
         });
@@ -689,13 +725,32 @@ const erroresTab = [
         document.querySelectorAll<HTMLElement>("[data-cascada-error]").forEach((el) => {
           el.textContent = valor;
         });
+
+        // Epson + Almohadillas y Canon (cualquier error) muestran una lista
+        // de modelos frecuentes en vez del campo de texto libre, para elegir
+        // con un clic en lugar de escribir.
+        const mostrarListaEpson = marcaActivaId === "epson" && valor === almohadillasLabel;
+        const mostrarListaCanon = marcaActivaId === "canon";
+        if (modeloInput) modeloInput.hidden = mostrarListaEpson || mostrarListaCanon;
+        if (listaEpson) {
+          listaEpson.hidden = !mostrarListaEpson;
+          if (!mostrarListaEpson) listaEpson.value = "";
+        }
+        if (listaCanon) {
+          listaCanon.hidden = !mostrarListaCanon;
+          if (!mostrarListaCanon) listaCanon.value = "";
+        }
+        if (mostrarListaEpson || mostrarListaCanon) actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
       });
     });
 
     modeloInput?.addEventListener("input", () => {
-      const valor = modeloInput.value.trim() || modeloInput.dataset.modeloEjemplo || "";
-      document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
-        el.textContent = valor;
+      actualizarModelo(modeloInput.value.trim() || modeloInput.dataset.modeloEjemplo || "");
+    });
+
+    [listaEpson, listaCanon].forEach((lista) => {
+      lista?.addEventListener("change", () => {
+        actualizarModelo(lista.value || modeloInput?.dataset.modeloEjemplo || "");
       });
     });
   });
@@ -1023,6 +1078,21 @@ const erroresTab = [
   }
 
   .selector-modelo-wrap input:focus {
+    outline: none;
+    border-color: #1d4ed8;
+  }
+
+  .selector-modelo-lista {
+    padding: 0.6rem 0.9rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font: inherit;
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .selector-modelo-lista:focus {
     outline: none;
     border-color: #1d4ed8;
   }

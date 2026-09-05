@@ -340,7 +340,8 @@
     "copiarIdLabel": "Copiar ID de técnico",
     "copiadoLabel": "¡Copiado!",
     "jugarRuletaCta": "Jugar ahora",
-    "cerrarRuletaLabel": "Cerrar ruleta"
+    "cerrarRuletaLabel": "Cerrar ruleta",
+    "selectorModeloListaPlaceholder": "Selecciona tu modelo"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",

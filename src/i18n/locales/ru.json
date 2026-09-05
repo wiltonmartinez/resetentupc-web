@@ -302,7 +302,8 @@
     "copiarIdLabel": "Скопировать ID техника",
     "copiadoLabel": "Скопировано!",
     "jugarRuletaCta": "Играть сейчас",
-    "cerrarRuletaLabel": "Закрыть рулетку"
+    "cerrarRuletaLabel": "Закрыть рулетку",
+    "selectorModeloListaPlaceholder": "Выберите свою модель"
   },
   "faq": {
     "title": "Частые вопросы | ResetEnLinea.com",

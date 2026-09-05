@@ -302,7 +302,8 @@
     "copiarIdLabel": "Techniker-ID kopieren",
     "copiadoLabel": "Kopiert!",
     "jugarRuletaCta": "Jetzt spielen",
-    "cerrarRuletaLabel": "Glücksrad schließen"
+    "cerrarRuletaLabel": "Glücksrad schließen",
+    "selectorModeloListaPlaceholder": "Wähle dein Modell"
   },
   "faq": {
     "title": "Häufige Fragen | ResetEnLinea.com",
