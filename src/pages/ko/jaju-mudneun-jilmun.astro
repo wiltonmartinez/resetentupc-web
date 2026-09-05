@@ -1,18 +1,4 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import PreguntasFrecuentesPage from "../../components/pages/PreguntasFrecuentesPage.astro";
-import { t, buildStaticPagePath } from "../../i18n/utils";
-
-const locale = "ko" as const;
+export const prerender = false;
+return Astro.redirect("/ko/iyong-bangbeop/#preguntas-frecuentes", 301);
 ---
-
-<BaseLayout
-  wide
-  title={t(locale, "faq.title")}
-  description={t(locale, "faq.description")}
-  locale={locale}
-  path={buildStaticPagePath(locale, "preguntasFrecuentes")}
-  pageKey="preguntasFrecuentes"
->
-  <PreguntasFrecuentesPage locale={locale} />
-</BaseLayout>

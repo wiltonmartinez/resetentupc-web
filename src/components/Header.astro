@@ -29,7 +29,6 @@ const diagnosticoGratisPath = "/prueba-social/diagnostico-gratis/";
 const testimoniosPath = "/prueba-social/testimonios-trustpilot/";
 const resetEvidenciaPath = "/prueba-social/reset-evidencia/";
 const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
-const preguntasFrecuentesPath = staticPagePathSinPrefijo("preguntasFrecuentes");
 const consultaGarantiaPath = staticPagePathSinPrefijo("consultaGarantia");
 
 const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimoniosPath, resetEvidenciaPath, clienteSatisfechoPath].includes(
@@ -169,8 +168,8 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
           </ul>
         </div>
         <a
-          href={buildStaticPagePath(locale, "preguntasFrecuentes")}
-          class:list={{ "is-active": path === preguntasFrecuentesPath }}
+          href={`${buildStaticPagePath(locale, "comoFunciona")}#preguntas-frecuentes`}
+          class:list={{ "is-active": path === comoFuncionaPath }}
         >
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
             <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" />

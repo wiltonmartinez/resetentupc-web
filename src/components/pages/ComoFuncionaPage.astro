@@ -57,7 +57,6 @@ try {
 }
 
 const resumenPasos = [
-  { icono: "🔍", titulo: t(locale, "comoFuncionaProceso.resumenPaso1") },
   { icono: "🔌", titulo: t(locale, "procesoReutilizable.paso2Titulo") },
   { icono: "✅", titulo: t(locale, "procesoReutilizable.paso3Titulo") },
   { icono: "💳", titulo: t(locale, "procesoReutilizable.paso4Titulo") },
@@ -65,12 +64,26 @@ const resumenPasos = [
   { icono: "🖨️", titulo: t(locale, "procesoReutilizable.paso6Titulo") },
 ];
 
-const paso2Requisitos = [
-  t(locale, "comoFuncionaProceso.paso2ReqUsb"),
-  t(locale, "comoFuncionaProceso.paso2ReqErrorVerificado"),
-  t(locale, "procedimiento.paso2ReqWindows"),
-  t(locale, "procedimiento.paso2ReqInternet"),
-  t(locale, "procedimiento.paso2ReqAsistido"),
+// Selector de diagnóstico (marca -> error -> modelo, cascada por JS): el
+// error elegido se propaga a cada [data-cascada-error] de la página (tarjeta
+// 1 del resumen, título del Paso 1, y el bullet "Error ___ verificado" del
+// Paso 2), para que el mismo texto aparezca en todos lados. Las plantillas
+// "{error}" ya vienen partidas en prefijo/sufijo porque el texto alrededor
+// cambia según el idioma.
+const splitTemplate = (template: string): [string, string] => {
+  const [prefix, suffix] = template.split("{error}");
+  return [prefix, suffix ?? ""];
+};
+
+const [resumenPaso1Prefix, resumenPaso1Suffix] = splitTemplate(t(locale, "comoFuncionaProceso.resumenPaso1"));
+const [paso2ErrorPrefix, paso2ErrorSuffix] = splitTemplate(t(locale, "comoFuncionaProceso.paso2ReqErrorVerificado"));
+const errorDefaultLabel = t(locale, "comoFuncionaProceso.errorAlmohadillasLabel");
+const otroErrorLabel = t(locale, "comoFuncionaProceso.otroErrorLabel");
+
+const marcasSelector = [
+  { id: "epson", label: "Epson", errores: [errorDefaultLabel, "E-11", otroErrorLabel] },
+  { id: "canon", label: "Canon", errores: ["5B00", "1700", "P07", "E-08", otroErrorLabel] },
+  { id: "epson-sc", label: "Epson-SC", errores: ["0014BD", "00000008 - 00080000", "00000004 - 00040000"] },
 ];
 
 const subpasosConexion = [
@@ -85,7 +98,19 @@ const subpasosConexion = [
   { numero: "3.4", titulo: t(locale, "proceso.paso4Titulo"), texto: t(locale, "proceso.paso4Texto") },
 ];
 
-const faqItems = t(locale, "faq.items").slice(0, 3);
+const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.pregunta,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.respuesta,
+    },
+  })),
+};
 const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
 
 const beneficios = [
@@ -133,6 +158,8 @@ const erroresTab = [
 ];
 ---
 
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
 <article class="como-funciona">
   <h1>{t(locale, "comoFunciona.heading")}</h1>
 
@@ -161,13 +188,48 @@ const erroresTab = [
     </div>
   </section>
 
+  <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada -->
+  <section class="selector-diagnostico" data-selector-diagnostico>
+    <h2 class="selector-titulo">{t(locale, "comoFuncionaProceso.selectorTitulo")}</h2>
+    <div class="selector-marcas" role="radiogroup">
+      {marcasSelector.map((marca) => (
+        <button type="button" class="selector-btn" data-selector-marca data-value={marca.id} data-sound="select">
+          {marca.label}
+        </button>
+      ))}
+    </div>
+    {marcasSelector.map((marca) => (
+      <div class="selector-errores" data-selector-errores-panel={marca.id}>
+        {marca.errores.map((error) => (
+          <button type="button" class="selector-btn selector-btn-error" data-selector-error data-value={error} data-sound="select">
+            {error}
+          </button>
+        ))}
+      </div>
+    ))}
+    <div class="selector-modelo-wrap" data-selector-modelo-wrap>
+      <label for="selector-modelo-input">{t(locale, "comoFuncionaProceso.selectorModeloLabel")}</label>
+      <input
+        type="text"
+        id="selector-modelo-input"
+        data-selector-modelo
+        placeholder={t(locale, "comoFuncionaProceso.selectorModeloPlaceholder")}
+      />
+    </div>
+  </section>
+
   <!-- BLOQUE 1: Grid de resumen -->
   <section class="resumen-grid" aria-label={t(locale, "comoFuncionaProceso.tituloResumen")}>
     <h2 class="resumen-titulo">{t(locale, "comoFuncionaProceso.tituloResumen")}</h2>
     <div class="resumen-cards">
+      <a class="resumen-card" href="#paso-como-funciona-1">
+        <span class="resumen-badge">1</span>
+        <span class="resumen-icono" aria-hidden="true">🔍</span>
+        <p>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</p>
+      </a>
       {resumenPasos.map((paso, index) => (
-        <a class="resumen-card" href={`#paso-como-funciona-${index + 1}`}>
-          <span class="resumen-badge">{index + 1}</span>
+        <a class="resumen-card" href={`#paso-como-funciona-${index + 2}`}>
+          <span class="resumen-badge">{index + 2}</span>
           <span class="resumen-icono" aria-hidden="true">{paso.icono}</span>
           <p>{paso.titulo}</p>
         </a>
@@ -183,7 +245,7 @@ const erroresTab = [
         <span class="detalle-linea" aria-hidden="true" />
       </div>
       <div class="detalle-contenido">
-        <h3>{t(locale, "comoFuncionaProceso.resumenPaso1")}</h3>
+        <h3>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</h3>
         <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
           {erroresTab.map((error, index) => (
             <div data-tab-panel={error.id} hidden={index !== 0}>
@@ -212,9 +274,11 @@ const erroresTab = [
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso2Titulo")}</h3>
         <ul class="detalle-requisitos">
-          {paso2Requisitos.map((req) => (
-            <li>{req}</li>
-          ))}
+          <li>{t(locale, "comoFuncionaProceso.paso2ReqUsb")}</li>
+          <li>{paso2ErrorPrefix}<span data-cascada-error>{errorDefaultLabel}</span>{paso2ErrorSuffix}</li>
+          <li>{t(locale, "procedimiento.paso2ReqWindows")}</li>
+          <li>{t(locale, "procedimiento.paso2ReqInternet")}</li>
+          <li>{t(locale, "procedimiento.paso2ReqAsistido")}</li>
         </ul>
       </div>
     </div>
@@ -327,11 +391,47 @@ const erroresTab = [
     />
   </section>
 
-  <section class="faq-final">
+  <section class="faq-final" id="preguntas-frecuentes">
     <h2>{t(locale, "faq.heading")}</h2>
     <FaqAccordion items={faqItems} />
   </section>
 </article>
+
+<script>
+  // Selector de diagnóstico: marca -> error -> modelo, en cascada. El texto
+  // del error elegido se propaga a cada [data-cascada-error] de la página
+  // (tarjeta 1 del resumen, título del Paso 1, bullet del Paso 2) para que
+  // el mismo nombre de error aparezca coherente en todas partes.
+  document.querySelectorAll<HTMLElement>("[data-selector-diagnostico]").forEach((raiz) => {
+    const marcaBtns = raiz.querySelectorAll<HTMLButtonElement>("[data-selector-marca]");
+    const erroresPaneles = raiz.querySelectorAll<HTMLElement>("[data-selector-errores-panel]");
+    const modeloWrap = raiz.querySelector<HTMLElement>("[data-selector-modelo-wrap]");
+
+    marcaBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        marcaBtns.forEach((b) => b.classList.toggle("selector-btn-activo", b === btn));
+        erroresPaneles.forEach((panel) => {
+          panel.style.display = panel.dataset.selectorErroresPanel === btn.dataset.value ? "flex" : "none";
+        });
+        raiz.querySelectorAll<HTMLElement>("[data-selector-error]").forEach((b) => b.classList.remove("selector-btn-activo"));
+        if (modeloWrap) modeloWrap.style.display = "none";
+      });
+    });
+
+    raiz.querySelectorAll<HTMLButtonElement>("[data-selector-error]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const panel = btn.closest<HTMLElement>("[data-selector-errores-panel]");
+        panel?.querySelectorAll<HTMLElement>("[data-selector-error]").forEach((b) => b.classList.toggle("selector-btn-activo", b === btn));
+        if (modeloWrap) modeloWrap.style.display = "grid";
+
+        const valor = btn.dataset.value ?? "";
+        document.querySelectorAll<HTMLElement>("[data-cascada-error]").forEach((el) => {
+          el.textContent = valor;
+        });
+      });
+    });
+  });
+</script>
 
 <style>
   .como-funciona {
@@ -412,6 +512,83 @@ const erroresTab = [
     margin: 0;
     font-weight: 600;
     font-size: 0.92rem;
+  }
+
+  /* Selector de diagnóstico */
+  .selector-diagnostico {
+    display: grid;
+    gap: 1.1rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .selector-titulo {
+    margin: 0;
+    font-size: 1.3rem;
+  }
+
+  .selector-marcas,
+  .selector-errores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .selector-errores {
+    display: none;
+  }
+
+  .selector-btn {
+    padding: 0.6rem 1.1rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .selector-btn:hover {
+    border-color: #1d4ed8;
+  }
+
+  .selector-btn-activo {
+    border-color: #1d4ed8;
+    background: #1d4ed8;
+    color: white;
+  }
+
+  .selector-modelo-wrap {
+    display: none;
+    gap: 0.4rem;
+    max-width: 320px;
+  }
+
+  .selector-modelo-wrap label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .selector-modelo-wrap input {
+    padding: 0.6rem 0.9rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font: inherit;
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+  }
+
+  .selector-modelo-wrap input:focus {
+    outline: none;
+    border-color: #1d4ed8;
   }
 
   /* BLOQUE 1 */

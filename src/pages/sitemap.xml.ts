@@ -11,7 +11,6 @@ import modelos from "../data/modelos-muestra.json";
 
 const STATIC_PAGE_KEYS: StaticPageKey[] = [
   "comoFunciona",
-  "preguntasFrecuentes",
   "contacto",
   "terminosCondiciones",
   "consultaGarantia",
