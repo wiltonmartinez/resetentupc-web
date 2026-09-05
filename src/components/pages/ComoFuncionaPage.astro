@@ -12,14 +12,49 @@ import { t, buildStaticPagePath } from "../../i18n/utils";
 import FaqAccordion from "../ui/FaqAccordion.astro";
 import Tabs from "../ui/Tabs.astro";
 import EvidenceCard from "../ui/EvidenceCard.astro";
+import YouTubeFacade from "../ui/YouTubeFacade.astro";
+import ClienteSatisfechoEmbed from "../ui/ClienteSatisfechoEmbed.astro";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+import { fetchAllPages } from "../../lib/fetch-paginated";
+import { extractYoutubeId } from "../../lib/youtube";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
+
+// Evidencia real embebida en los pasos 5 y 6 -- un caso al azar (elegido en
+// build time, se renueva en cada deploy) desde los mismos catalogos
+// publicos de Prueba Social. Si Nucleo no responde o no hay candidatos
+// validos, se cae al placeholder existente sin romper la pagina.
+let videoEvidenciaAleatorio: { youtubeId: string; titulo: string } | null = null;
+try {
+  const evidencias = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`);
+  const conVideo = evidencias
+    .map((e: any) => ({ ...e, youtubeId: extractYoutubeId(e.youtube_id) || extractYoutubeId(e.enlace_youtube) }))
+    .filter((e: any) => e.youtubeId);
+  if (conVideo.length > 0) {
+    const elegido = conVideo[Math.floor(Math.random() * conVideo.length)];
+    videoEvidenciaAleatorio = { youtubeId: elegido.youtubeId, titulo: `${elegido.marca} ${elegido.modelo}` };
+  }
+} catch (error) {
+  console.error("Error fetching reset-realizados para Cómo Funciona:", error);
+}
+
+let clienteAleatorio: { url: string; titulo: string } | null = null;
+try {
+  const clientes = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`);
+  const conCaptura = clientes.filter((c: any) => c.html_url);
+  if (conCaptura.length > 0) {
+    const elegido = conCaptura[Math.floor(Math.random() * conCaptura.length)];
+    const url = elegido.html_url.startsWith("/") ? `${NUCLEO_API_BASE_URL}${elegido.html_url}` : elegido.html_url;
+    clienteAleatorio = { url, titulo: `${elegido.marca} ${elegido.modelo}` };
+  }
+} catch (error) {
+  console.error("Error fetching cliente-satisfecho para Cómo Funciona:", error);
+}
 
 const resumenPasos = [
   { icono: "🔍", titulo: t(locale, "comoFuncionaProceso.resumenPaso1") },
@@ -235,10 +270,18 @@ const erroresTab = [
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso5Titulo")}</h3>
         <span class="tiempo-destacado">{t(locale, "procedimiento.paso5TituloCorto")}</span>
-        <div class="video-placeholder">
-          <video controls preload="none" aria-label={t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")} />
-          <span class="video-placeholder-caption">{t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")}</span>
-        </div>
+        {videoEvidenciaAleatorio ? (
+          <YouTubeFacade
+            youtubeId={videoEvidenciaAleatorio.youtubeId}
+            titulo={videoEvidenciaAleatorio.titulo}
+            reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+          />
+        ) : (
+          <div class="video-placeholder">
+            <video controls preload="none" aria-label={t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")} />
+            <span class="video-placeholder-caption">{t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")}</span>
+          </div>
+        )}
       </div>
     </div>
 
@@ -248,21 +291,27 @@ const erroresTab = [
       </div>
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso6Titulo")}</h3>
-        <div class="chat-simulado">
-          <div class="chat-simulado-header">
-            <span class="chat-simulado-avatar">R</span>
-            <span class="chat-simulado-nombre">ResetEnLinea</span>
-            <svg class="chat-simulado-icono" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
-            </svg>
-          </div>
-          <div class="chat-simulado-body">
-            <span class="chat-burbuja chat-burbuja-in" />
-            <span class="chat-burbuja chat-burbuja-out" />
-            <span class="chat-burbuja chat-burbuja-in" />
-          </div>
-        </div>
-        <span class="chat-simulado-caption">{t(locale, "comoFuncionaProceso.paso6ChatPlaceholder")}</span>
+        {clienteAleatorio ? (
+          <ClienteSatisfechoEmbed url={clienteAleatorio.url} titulo={clienteAleatorio.titulo} />
+        ) : (
+          <>
+            <div class="chat-simulado">
+              <div class="chat-simulado-header">
+                <span class="chat-simulado-avatar">R</span>
+                <span class="chat-simulado-nombre">ResetEnLinea</span>
+                <svg class="chat-simulado-icono" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
+                </svg>
+              </div>
+              <div class="chat-simulado-body">
+                <span class="chat-burbuja chat-burbuja-in" />
+                <span class="chat-burbuja chat-burbuja-out" />
+                <span class="chat-burbuja chat-burbuja-in" />
+              </div>
+            </div>
+            <span class="chat-simulado-caption">{t(locale, "comoFuncionaProceso.paso6ChatPlaceholder")}</span>
+          </>
+        )}
       </div>
     </div>
   </section>
