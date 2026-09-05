@@ -8,6 +8,7 @@
  * que usa ProcedimientoImpresora.astro en las páginas de modelo reales),
  * más un namespace propio "comoFuncionaProceso" solo para lo que no existía.
  */
+import { Image } from "astro:assets";
 import { t, buildStaticPagePath } from "../../i18n/utils";
 import FaqAccordion from "../ui/FaqAccordion.astro";
 import Tabs from "../ui/Tabs.astro";
@@ -18,6 +19,15 @@ import WhatsAppCTA from "../WhatsAppCTA.astro";
 import { fetchAllPages } from "../../lib/fetch-paginated";
 import { extractYoutubeId } from "../../lib/youtube";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
+import iconoReset from "../../assets/beneficios/icono-reset.png";
+import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
+import iconoInstalaciones from "../../assets/beneficios/icono-instalaciones.png";
+import iconoSeguridad from "../../assets/beneficios/icono-seguridad.png";
+import iconoRespaldo from "../../assets/beneficios/icono-respaldo.png";
+import iconoReembolso from "../../assets/beneficios/icono-reembols.png";
+import iconoCertificado from "../../assets/beneficios/icono-certificado.png";
+import iconoSoporte from "../../assets/beneficios/icono-soporte.png";
+import iconoSorteos from "../../assets/beneficios/icono-sorteos.png";
 
 interface Props {
   locale: Locale;
@@ -114,13 +124,15 @@ const faqSchema = {
 const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
 
 const beneficios = [
-  { icono: "⚡", texto: t(locale, "comoFuncionaProceso.beneficio1") },
-  { icono: "🚫", texto: t(locale, "comoFuncionaProceso.beneficio2") },
-  { icono: "💻", texto: t(locale, "comoFuncionaProceso.beneficio3") },
-  { icono: "🛡️", texto: t(locale, "comoFuncionaProceso.beneficio4") },
-  { icono: "♻️", texto: t(locale, "comoFuncionaProceso.beneficio5") },
-  { icono: "📜", texto: t(locale, "comoFuncionaProceso.beneficio6") },
-  { icono: "🕒", texto: t(locale, "comoFuncionaProceso.beneficio7") },
+  { icono: iconoReset, titulo: t(locale, "comoFuncionaProceso.beneficio1Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio1Texto") },
+  { icono: iconoTraslados, titulo: t(locale, "comoFuncionaProceso.beneficio2Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio2Texto") },
+  { icono: iconoInstalaciones, titulo: t(locale, "comoFuncionaProceso.beneficio3Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio3Texto") },
+  { icono: iconoSeguridad, titulo: t(locale, "comoFuncionaProceso.beneficio4Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio4Texto") },
+  { icono: iconoRespaldo, titulo: t(locale, "comoFuncionaProceso.beneficio5Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio5Texto") },
+  { icono: iconoReembolso, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
+  { icono: iconoCertificado, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
+  { icono: iconoSoporte, titulo: t(locale, "comoFuncionaProceso.beneficio8Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio8Texto") },
+  { icono: iconoSorteos, titulo: t(locale, "comoFuncionaProceso.beneficio9Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio9Texto") },
 ];
 
 // Tabs del Paso 1: un ejemplo real por marca (imagen real del error, via
@@ -177,11 +189,17 @@ const erroresTab = [
 
   <!-- Grid de beneficios -->
   <section class="beneficios-grid">
-    <h2 class="beneficios-titulo">{t(locale, "comoFuncionaProceso.beneficiosTitulo")}</h2>
+    <div class="beneficios-header">
+      <h2 class="beneficios-titulo">{t(locale, "comoFuncionaProceso.beneficiosTitulo")}</h2>
+      <p class="beneficios-subtitulo">{t(locale, "comoFuncionaProceso.beneficiosSubtitulo")}</p>
+    </div>
     <div class="beneficios-cards">
       {beneficios.map((beneficio) => (
         <div class="beneficio-card">
-          <span class="beneficio-icono" aria-hidden="true">{beneficio.icono}</span>
+          <div class="beneficio-icono-wrap">
+            <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+          </div>
+          <h3>{beneficio.titulo}</h3>
           <p>{beneficio.texto}</p>
         </div>
       ))}
@@ -481,37 +499,96 @@ const erroresTab = [
   }
 
   /* Grid de beneficios */
+  .beneficios-grid {
+    margin-top: 4rem;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .beneficios-header {
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto 2.5rem;
+  }
+
   .beneficios-titulo {
-    margin: 0 0 1.25rem;
-    font-size: 1.4rem;
+    margin: 0 0 0.75rem;
+    font-size: 1.6rem;
+  }
+
+  .beneficios-subtitulo {
+    margin: 0;
+    color: var(--color-text-muted, #4b5563);
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   .beneficios-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.1rem;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .beneficios-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .beneficios-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .beneficio-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 1.25rem;
-    border-radius: 16px;
-    background: var(--color-bg-card);
-    box-shadow: var(--shadow-card);
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 1rem;
+    background: #ffffff;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transition: box-shadow 300ms, transform 300ms;
   }
 
-  .beneficio-icono {
-    font-size: 1.6rem;
-    line-height: 1;
+  .beneficio-card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.25rem);
+  }
+
+  .beneficio-icono-wrap {
+    width: 5rem;
+    height: 5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .beneficio-icono-wrap :global(img) {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .beneficio-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
   }
 
   .beneficio-card p {
     margin: 0;
-    font-weight: 600;
+    font-weight: 400;
     font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--color-text-muted, #4b5563);
   }
 
   /* Selector de diagnóstico */
