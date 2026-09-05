@@ -10,6 +10,8 @@
  */
 import { t, buildStaticPagePath } from "../../i18n/utils";
 import FaqAccordion from "../ui/FaqAccordion.astro";
+import Tabs from "../ui/Tabs.astro";
+import EvidenceCard from "../ui/EvidenceCard.astro";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
@@ -50,6 +52,40 @@ const subpasosConexion = [
 
 const faqItems = t(locale, "faq.items").slice(0, 3);
 const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
+
+// Tabs del Paso 1: un ejemplo real por marca (imagen real del error, via
+// error-images.js con fallback por modeloSlug ya que "epson-almohadillas" y
+// "canon-5b00" no tienen una foto propia, solo por modelo — a diferencia de
+// "epson-sc-0014bd" que sí tiene su propia foto de error y de solución).
+const erroresTab = [
+  {
+    id: "epson-almohadillas",
+    label: "Epson Almohadillas",
+    errorId: "epson-almohadillas",
+    modeloSlug: "l3110",
+    nombreMarca: "Epson",
+    nombreModelo: "L3110",
+    pregunta: t(locale, "comoFuncionaProceso.paso1Pregunta"),
+  },
+  {
+    id: "canon-5b00",
+    label: "Canon 5B00",
+    errorId: "canon-5b00",
+    modeloSlug: "g3110",
+    nombreMarca: "Canon",
+    nombreModelo: "G3110",
+    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaCanon"),
+  },
+  {
+    id: "epson-sc-0014bd",
+    label: "Epson-SC 0014BD",
+    errorId: "epson-sc-0014bd",
+    modeloSlug: "epson-sc-0014bd",
+    nombreMarca: "Epson-SC",
+    nombreModelo: "F570",
+    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc"),
+  },
+];
 ---
 
 <article class="como-funciona">
@@ -78,15 +114,23 @@ const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
       </div>
       <div class="detalle-contenido">
         <h3>{t(locale, "comoFuncionaProceso.resumenPaso1")}</h3>
-        <p>{t(locale, "comoFuncionaProceso.paso1Pregunta")}</p>
-        <div class="imagen-placeholder">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
-            <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
-            <circle cx="8" cy="10" r="1.6" fill="currentColor" />
-            <path d="M4 16.5 9 12l3.5 3 4-4 3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <span>{t(locale, "comoFuncionaProceso.paso1ImagenPlaceholder")}</span>
-        </div>
+        <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
+          {erroresTab.map((error, index) => (
+            <div data-tab-panel={error.id} hidden={index !== 0}>
+              <p>{error.pregunta}</p>
+              <EvidenceCard
+                errorId={error.errorId}
+                modeloSlug={error.modeloSlug}
+                nombreMarca={error.nombreMarca}
+                nombreModelo={error.nombreModelo}
+                errorCaption={t(locale, "modelo.evidenciaErrorCaption")}
+                solucionCaption={t(locale, "modelo.evidenciaSolucionCaption")}
+                flipHint={t(locale, "modelo.evidenciaFlipHint")}
+                locale={locale}
+              />
+            </div>
+          ))}
+        </Tabs>
       </div>
     </div>
 
@@ -391,7 +435,6 @@ const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
     color: #b91c1c;
   }
 
-  .imagen-placeholder,
   .video-placeholder {
     display: flex;
     flex-direction: column;

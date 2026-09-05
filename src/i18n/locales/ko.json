@@ -245,6 +245,8 @@
     "resumenPaso1": "프린터의 잉크 패드 오류 확인",
     "paso1Pregunta": "프린터에 \"잉크 패드 수명이 다했습니다\"와 같은 메시지가 표시되나요?",
     "paso1ImagenPlaceholder": "Epson Status Monitor 스크린샷을 넣을 공간",
+    "paso1PreguntaCanon": "Canon 프린터에 오류 코드 5B00(잉크 흡수체 가득 참)이 표시되나요?",
+    "paso1PreguntaEpsonSc": "Epson-SC 프린터에 오류 코드 0014BD(막힘)가 표시되나요?",
     "paso2ReqUsb": "USB 케이블로 컴퓨터에 연결된 프린터.",
     "paso2ReqErrorVerificado": "\"잉크 패드 수명이 다했습니다\" 오류 확인됨.",
     "tituloModuloSeguro": "기술자와의 연결 방식",

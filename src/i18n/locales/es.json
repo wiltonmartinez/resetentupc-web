@@ -283,6 +283,8 @@
     "resumenPaso1": "Identificación del error ALMOHADILLAS en tu impresora",
     "paso1Pregunta": "¿Tu impresora muestra un mensaje como \"Una almohadilla de tinta llegó al final de su vida útil\"?",
     "paso1ImagenPlaceholder": "Espacio para la captura del Epson Status Monitor",
+    "paso1PreguntaCanon": "¿Tu Canon muestra el código de error 5B00 (Absorbedor de tinta lleno)?",
+    "paso1PreguntaEpsonSc": "¿Tu Epson-SC muestra el código de error 0014BD (bloqueo)?",
     "paso2ReqUsb": "Impresora conectada mediante CABLE USB al computador.",
     "paso2ReqErrorVerificado": "Error \"Una almohadilla de tinta llegó al final de su vida útil\" verificado.",
     "tituloModuloSeguro": "Cómo funciona la conexión con el técnico",

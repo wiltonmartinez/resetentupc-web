@@ -199,6 +199,8 @@
     "resumenPaso1": "Identificação do erro de ALMOFADAS na sua impressora",
     "paso1Pregunta": "Sua impressora mostra uma mensagem como \"Uma almofada de tinta chegou ao fim de sua vida útil\"?",
     "paso1ImagenPlaceholder": "Espaço para a captura de tela do Epson Status Monitor",
+    "paso1PreguntaCanon": "Sua Canon mostra o código de erro 5B00 (Absorvedor de tinta cheio)?",
+    "paso1PreguntaEpsonSc": "Sua Epson-SC mostra o código de erro 0014BD (bloqueio)?",
     "paso2ReqUsb": "Impressora conectada ao computador por CABO USB.",
     "paso2ReqErrorVerificado": "Erro \"Uma almofada de tinta chegou ao fim de sua vida útil\" verificado.",
     "tituloModuloSeguro": "Como funciona a conexão com o técnico",

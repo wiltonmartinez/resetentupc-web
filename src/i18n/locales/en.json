@@ -199,6 +199,8 @@
     "resumenPaso1": "Identifying the INK PAD error on your printer",
     "paso1Pregunta": "Does your printer show a message like \"An ink pad has reached the end of its service life\"?",
     "paso1ImagenPlaceholder": "Space for the Epson Status Monitor screenshot",
+    "paso1PreguntaCanon": "Does your Canon show error code 5B00 (Ink absorber full)?",
+    "paso1PreguntaEpsonSc": "Does your Epson-SC show error code 0014BD (blockage)?",
     "paso2ReqUsb": "Printer connected to the computer via USB CABLE.",
     "paso2ReqErrorVerificado": "Error \"An ink pad has reached the end of its service life\" verified.",
     "tituloModuloSeguro": "How the connection with the technician works",

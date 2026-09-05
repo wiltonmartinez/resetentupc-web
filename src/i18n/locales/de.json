@@ -245,6 +245,8 @@
     "resumenPaso1": "Identifizierung des TINTENKISSEN-Fehlers an deinem Drucker",
     "paso1Pregunta": "Zeigt dein Drucker eine Meldung wie \"Ein Tintenkissen hat das Ende seiner Lebensdauer erreicht\" an?",
     "paso1ImagenPlaceholder": "Platz für den Screenshot des Epson Status Monitor",
+    "paso1PreguntaCanon": "Zeigt dein Canon-Drucker den Fehlercode 5B00 (Tintenauffangbehälter voll) an?",
+    "paso1PreguntaEpsonSc": "Zeigt dein Epson-SC-Drucker den Fehlercode 0014BD (Blockierung) an?",
     "paso2ReqUsb": "Drucker über ein USB-KABEL mit dem Computer verbunden.",
     "paso2ReqErrorVerificado": "Fehler \"Ein Tintenkissen hat das Ende seiner Lebensdauer erreicht\" bestätigt.",
     "tituloModuloSeguro": "So funktioniert die Verbindung mit dem Techniker",

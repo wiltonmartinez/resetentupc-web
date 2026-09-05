@@ -199,6 +199,8 @@
     "resumenPaso1": "Identificazione dell'errore dei TAMPONI DI INCHIOSTRO sulla tua stampante",
     "paso1Pregunta": "La tua stampante mostra un messaggio come \"Un tampone di inchiostro ha raggiunto la fine della sua vita utile\"?",
     "paso1ImagenPlaceholder": "Spazio per lo screenshot dell'Epson Status Monitor",
+    "paso1PreguntaCanon": "La tua Canon mostra il codice errore 5B00 (Assorbitore di inchiostro pieno)?",
+    "paso1PreguntaEpsonSc": "La tua Epson-SC mostra il codice errore 0014BD (blocco)?",
     "paso2ReqUsb": "Stampante collegata al computer tramite CAVO USB.",
     "paso2ReqErrorVerificado": "Errore \"Un tampone di inchiostro ha raggiunto la fine della sua vita utile\" verificato.",
     "tituloModuloSeguro": "Come funziona la connessione con il tecnico",

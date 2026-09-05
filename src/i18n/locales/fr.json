@@ -199,6 +199,8 @@
     "resumenPaso1": "Identification de l'erreur des TAMPONS ENCREURS sur votre imprimante",
     "paso1Pregunta": "Votre imprimante affiche-t-elle un message du type « Un tampon encreur a atteint la fin de sa durée de vie » ?",
     "paso1ImagenPlaceholder": "Espace réservé à la capture d'écran de l'Epson Status Monitor",
+    "paso1PreguntaCanon": "Votre Canon affiche-t-elle le code d'erreur 5B00 (Absorbeur d'encre plein) ?",
+    "paso1PreguntaEpsonSc": "Votre Epson-SC affiche-t-elle le code d'erreur 0014BD (blocage) ?",
     "paso2ReqUsb": "Imprimante connectée à l'ordinateur via un CÂBLE USB.",
     "paso2ReqErrorVerificado": "Erreur « Un tampon encreur a atteint la fin de sa durée de vie » vérifiée.",
     "tituloModuloSeguro": "Comment fonctionne la connexion avec le technicien",
