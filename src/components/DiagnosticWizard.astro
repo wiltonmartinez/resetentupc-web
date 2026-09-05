@@ -1,0 +1,488 @@
+---
+/**
+ * Wizard interactivo de "Cómo funciona": el usuario elige marca/modelo/error
+ * y confirma requisitos (fase 1), y al enviar se revela un resultado
+ * simulado con el proceso en 4 tarjetas + CTA de WhatsApp con los datos ya
+ * cargados (fase 2/3). Sin recargas de página — todo el show/hide y armado
+ * del mensaje de WhatsApp ocurre en el <script> de abajo con Vanilla JS.
+ *
+ * El paso "Conexión Segura" usa el Technician ID y el link de descarga
+ * reales (TECHNICIAN_ID / USB_REDIRECTOR_DOWNLOAD_URL), no un placeholder,
+ * porque ya existen y son los mismos que usa el resto del sitio.
+ */
+import { t } from "../i18n/utils";
+import { WHATSAPP_NUMBER, SITE_URL, TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
+
+interface Props {
+  locale: Locale;
+  path: string;
+}
+
+const { locale, path } = Astro.props;
+
+const urlOrigen = `${SITE_URL}${path}`;
+
+const marcas = [
+  { id: "epson", label: t(locale, "comoFuncionaWizard.marcaEpson") },
+  { id: "canon", label: t(locale, "comoFuncionaWizard.marcaCanon") },
+  { id: "epson-sc", label: t(locale, "comoFuncionaWizard.marcaEpsonSc") },
+];
+
+const errores = [
+  { id: "almohadillas", label: t(locale, "comoFuncionaWizard.errorAlmohadillas") },
+  { id: "5b00", label: t(locale, "comoFuncionaWizard.errorCanon5b00") },
+  { id: "luces", label: t(locale, "comoFuncionaWizard.errorLuces") },
+  { id: "otro", label: t(locale, "comoFuncionaWizard.errorOtro") },
+];
+---
+
+<div
+  class="wizard"
+  data-wizard
+  data-whatsapp-number={WHATSAPP_NUMBER}
+  data-url-origen={urlOrigen}
+  data-banner-template={t(locale, "comoFuncionaWizard.resultadoBanner")}
+  data-mensaje-template={t(locale, "comoFuncionaWizard.whatsappMensaje")}
+>
+  <div class="wizard-form" data-wizard-form>
+    <h2 class="wizard-titulo">{t(locale, "comoFuncionaWizard.tituloForm")}</h2>
+
+    <div class="wizard-field">
+      <span class="wizard-field-label">{t(locale, "comoFuncionaWizard.marcaLabel")}</span>
+      <div class="wizard-opciones-grid" role="radiogroup">
+        {marcas.map((marca) => (
+          <button type="button" class="wizard-opcion-btn" data-marca-btn data-value={marca.id} data-sound="select">
+            {marca.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="wizard-field">
+      <label class="wizard-field-label" for="wizard-modelo">{t(locale, "comoFuncionaWizard.modeloLabel")}</label>
+      <input
+        id="wizard-modelo"
+        type="text"
+        class="wizard-input"
+        placeholder={t(locale, "comoFuncionaWizard.modeloPlaceholder")}
+        data-modelo-input
+      />
+    </div>
+
+    <div class="wizard-field">
+      <span class="wizard-field-label">{t(locale, "comoFuncionaWizard.errorLabel")}</span>
+      <div class="wizard-opciones-grid" role="radiogroup">
+        {errores.map((error) => (
+          <button type="button" class="wizard-opcion-btn" data-error-btn data-value={error.id} data-sound="select">
+            {error.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="wizard-field">
+      <span class="wizard-field-label">{t(locale, "comoFuncionaWizard.requisitosLabel")}</span>
+      <label class="wizard-checkbox">
+        <input type="checkbox" data-req-windows />
+        {t(locale, "comoFuncionaWizard.requisitoWindows")}
+      </label>
+      <label class="wizard-checkbox">
+        <input type="checkbox" data-req-usb />
+        {t(locale, "comoFuncionaWizard.requisitoUsb")}
+      </label>
+    </div>
+
+    <p class="wizard-aviso" data-wizard-aviso hidden>{t(locale, "comoFuncionaWizard.avisoCampos")}</p>
+
+    <button type="button" class="wizard-submit" data-wizard-submit data-sound="confirm">
+      {t(locale, "comoFuncionaWizard.botonVerificar")}
+    </button>
+  </div>
+
+  <div class="wizard-resultado" data-wizard-resultado>
+    <div class="wizard-banner-exito" data-wizard-banner></div>
+
+    <div class="wizard-pasos-grid">
+      <div class="wizard-paso-card">
+        <span class="wizard-paso-numero">1</span>
+        <h3>{t(locale, "comoFuncionaWizard.paso1Titulo")}</h3>
+        <p>{t(locale, "comoFuncionaWizard.paso1Texto")}</p>
+      </div>
+
+      <div class="wizard-paso-card">
+        <span class="wizard-paso-numero">2</span>
+        <h3>{t(locale, "comoFuncionaWizard.paso2Titulo")}</h3>
+        <details class="wizard-detalle">
+          <summary>{t(locale, "comoFuncionaWizard.paso2VerMas")}</summary>
+          <p>{t(locale, "comoFuncionaWizard.paso2Texto")}</p>
+          <p class="wizard-technician-id">Technician ID: <strong>{TECHNICIAN_ID}</strong></p>
+          <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="wizard-detalle-enlace">
+            {t(locale, "comoFuncionaWizard.paso2Enlace")}
+          </a>
+        </details>
+      </div>
+
+      <div class="wizard-paso-card">
+        <span class="wizard-paso-numero">3</span>
+        <h3>{t(locale, "comoFuncionaWizard.paso3Titulo")}</h3>
+        <p>{t(locale, "comoFuncionaWizard.paso3Texto")}</p>
+      </div>
+
+      <div class="wizard-paso-card">
+        <span class="wizard-paso-numero">4</span>
+        <h3>{t(locale, "comoFuncionaWizard.paso4Titulo")}</h3>
+        <p>{t(locale, "comoFuncionaWizard.paso4Texto")}</p>
+      </div>
+    </div>
+
+    <div class="wizard-condiciones">
+      <span class="wizard-condicion">✓ {t(locale, "comoFuncionaWizard.condicionSeguro")}</span>
+      <span class="wizard-condicion">✓ {t(locale, "comoFuncionaWizard.condicionSinDesarmar")}</span>
+      <span class="wizard-condicion">✓ {t(locale, "comoFuncionaWizard.condicionSoporte")}</span>
+    </div>
+
+    <a
+      class="wizard-cta-whatsapp"
+      data-wizard-whatsapp
+      data-source-id="como-funciona-wizard"
+      data-sound="confirm"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+    >
+      {t(locale, "comoFuncionaWizard.ctaWhatsapp")}
+    </a>
+
+    <button type="button" class="wizard-corregir" data-wizard-corregir data-sound="select">
+      {t(locale, "comoFuncionaWizard.volver")}
+    </button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-wizard]").forEach((wizard) => {
+    const form = wizard.querySelector<HTMLElement>("[data-wizard-form]");
+    const resultado = wizard.querySelector<HTMLElement>("[data-wizard-resultado]");
+    const aviso = wizard.querySelector<HTMLElement>("[data-wizard-aviso]");
+    const modeloInput = wizard.querySelector<HTMLInputElement>("[data-modelo-input]");
+    const reqWindows = wizard.querySelector<HTMLInputElement>("[data-req-windows]");
+    const reqUsb = wizard.querySelector<HTMLInputElement>("[data-req-usb]");
+    const submitBtn = wizard.querySelector<HTMLButtonElement>("[data-wizard-submit]");
+    const corregirBtn = wizard.querySelector<HTMLButtonElement>("[data-wizard-corregir]");
+    const bannerEl = wizard.querySelector<HTMLElement>("[data-wizard-banner]");
+    const whatsappLink = wizard.querySelector<HTMLAnchorElement>("[data-wizard-whatsapp]");
+    const marcaBtns = wizard.querySelectorAll<HTMLButtonElement>("[data-marca-btn]");
+    const errorBtns = wizard.querySelectorAll<HTMLButtonElement>("[data-error-btn]");
+
+    if (!form || !resultado || !aviso || !modeloInput || !reqWindows || !reqUsb || !submitBtn || !corregirBtn || !bannerEl || !whatsappLink) {
+      return;
+    }
+
+    marcaBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        marcaBtns.forEach((b) => b.classList.toggle("wizard-opcion-btn-activo", b === btn));
+      });
+    });
+
+    errorBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        errorBtns.forEach((b) => b.classList.toggle("wizard-opcion-btn-activo", b === btn));
+      });
+    });
+
+    submitBtn.addEventListener("click", () => {
+      const marcaBtn = wizard.querySelector<HTMLButtonElement>("[data-marca-btn].wizard-opcion-btn-activo");
+      const errorBtn = wizard.querySelector<HTMLButtonElement>("[data-error-btn].wizard-opcion-btn-activo");
+      const modelo = modeloInput.value.trim();
+
+      if (!marcaBtn || !errorBtn || !modelo || !reqWindows.checked || !reqUsb.checked) {
+        aviso.hidden = false;
+        return;
+      }
+      aviso.hidden = true;
+
+      const marcaLabel = marcaBtn.textContent?.trim() ?? "";
+      const errorLabel = errorBtn.textContent?.trim() ?? "";
+
+      const bannerTemplate = wizard.dataset.bannerTemplate ?? "";
+      bannerEl.textContent = bannerTemplate.replaceAll("{marca}", marcaLabel).replaceAll("{modelo}", modelo);
+
+      const mensajeTemplate = wizard.dataset.mensajeTemplate ?? "";
+      const urlOrigen = wizard.dataset.urlOrigen ?? "";
+      const mensaje = `${mensajeTemplate
+        .replaceAll("{marca}", marcaLabel)
+        .replaceAll("{modelo}", modelo)
+        .replaceAll("{error}", errorLabel)}\n\n${urlOrigen}`;
+
+      whatsappLink.href = `https://wa.me/${wizard.dataset.whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
+
+      // form/resultado tienen display:grid propio en su CSS, que empata en
+      // especificidad con la regla [hidden] del navegador y gana por orden de
+      // carga — por eso el ocultamiento se hace con style.display (inline,
+      // maxima especificidad) en vez del atributo hidden.
+      form.style.display = "none";
+      resultado.style.display = "grid";
+      resultado.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    corregirBtn.addEventListener("click", () => {
+      resultado.style.display = "none";
+      form.style.display = "grid";
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+</script>
+
+<style>
+  .wizard {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .wizard-form {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--color-border);
+  }
+
+  .wizard-titulo {
+    margin: 0;
+    font-size: 1.3rem;
+  }
+
+  .wizard-field {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .wizard-field-label {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .wizard-opciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .wizard-opcion-btn {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      transform 0.1s ease;
+  }
+
+  .wizard-opcion-btn:hover {
+    border-color: var(--color-primary);
+  }
+
+  .wizard-opcion-btn-activo {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .wizard-input {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font: inherit;
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+  }
+
+  .wizard-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  .wizard-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .wizard-checkbox input {
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  .wizard-aviso {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+    font-weight: 600;
+  }
+
+  .wizard-submit {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-floating);
+    transition: background-color 0.15s ease;
+  }
+
+  .wizard-submit:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .wizard-resultado {
+    display: none;
+    gap: 1.5rem;
+  }
+
+  .wizard-banner-exito {
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg);
+    background: #dcfce7;
+    color: #166534;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  .wizard-pasos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .wizard-paso-card {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .wizard-paso-card:hover {
+    box-shadow: var(--shadow-floating);
+    transform: translateY(-2px);
+  }
+
+  .wizard-paso-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    font-weight: 800;
+  }
+
+  .wizard-paso-card h3 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .wizard-paso-card p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .wizard-detalle summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .wizard-detalle p {
+    margin: 0.5rem 0;
+  }
+
+  .wizard-technician-id {
+    font-family: monospace;
+  }
+
+  .wizard-detalle-enlace {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  .wizard-condiciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+  }
+
+  .wizard-condicion {
+    font-weight: 700;
+    color: #166534;
+  }
+
+  .wizard-cta-whatsapp {
+    display: block;
+    text-align: center;
+    padding: 1.1rem 1.5rem;
+    border-radius: var(--radius-full);
+    background: #25d366;
+    color: #062f1a;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-decoration: none;
+    box-shadow: var(--shadow-floating);
+    transition: background-color 0.15s ease;
+  }
+
+  .wizard-cta-whatsapp:hover {
+    background: #1fb958;
+  }
+
+  .wizard-corregir {
+    justify-self: center;
+    padding: 0.6rem 1.25rem;
+    border: none;
+    background: none;
+    color: var(--color-text-subtle);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  @media (max-width: 480px) {
+    .wizard-form {
+      padding: 1rem;
+    }
+  }
+</style>

@@ -1,96 +1,23 @@
 ---
 import { t, buildStaticPagePath } from "../../i18n/utils";
-import InfoCard from "../ui/InfoCard.astro";
-import ProcessSteps from "../ui/ProcessSteps.astro";
-import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
-import WhatsAppCTA from "../WhatsAppCTA.astro";
-import TrustpilotWidget from "../TrustpilotWidget.astro";
-import { getProcesoImage } from "../../lib/proceso-images.js";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+import DiagnosticWizard from "../DiagnosticWizard.astro";
+import type { Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
-
-const img1 = getProcesoImage("paso1-descargar");
-const img2a = getProcesoImage("paso2-formulario");
-const img2b = getProcesoImage("paso2-formulario-2");
-const img3 = getProcesoImage("paso3-reconectarcableusb");
-const img4 = getProcesoImage("paso4-contactarnos");
-
-const pasosProceso = [
-  {
-    titulo: t(locale, "proceso.paso1Titulo"),
-    descripcion: t(locale, "proceso.paso1Texto"),
-    icono: "monitor" as const,
-    enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
-    imagenes: img1 ? [{ src: img1, alt: t(locale, "proceso.paso1ImagenAlt") }] : undefined,
-  },
-  {
-    titulo: t(locale, "proceso.paso2Titulo"),
-    descripcion: t(locale, "proceso.paso2Texto"),
-    icono: "conectar" as const,
-    destacado: `Technician ID: ${TECHNICIAN_ID}`,
-    imagenes: [
-      img2a && { src: img2a, alt: t(locale, "proceso.paso2ImagenAlt") },
-      img2b && { src: img2b, alt: t(locale, "proceso.paso2ImagenAlt2") },
-    ].filter((imagenPaso): imagenPaso is { src: ImageMetadata; alt: string } => Boolean(imagenPaso)),
-  },
-  {
-    titulo: t(locale, "proceso.paso3Titulo"),
-    descripcion: t(locale, "proceso.paso3Texto"),
-    icono: "usb" as const,
-    imagenes: img3 ? [{ src: img3, alt: t(locale, "proceso.paso3ImagenAlt") }] : undefined,
-  },
-  {
-    titulo: t(locale, "proceso.paso4Titulo"),
-    descripcion: t(locale, "proceso.paso4Texto"),
-    icono: "whatsapp" as const,
-    imagenes: img4 ? [{ src: img4, alt: t(locale, "proceso.paso4ImagenAlt") }] : undefined,
-  },
-];
 ---
 
 <article class="como-funciona">
   <h1>{t(locale, "comoFunciona.heading")}</h1>
-
-  <InfoCard tone="muted">
-    <ProcesoReutilizable locale={locale} isGeneric />
-    <ProcessSteps
-      titulo={t(locale, "proceso.titulo")}
-      introTexto={t(locale, "proceso.introTexto")}
-      pasos={pasosProceso}
-      marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
-      prefijoNumero="3."
-      locale={locale}
-    >
-      <TrustpilotWidget />
-      <InfoCard tone="warning">
-        <p class="proceso-aviso-espera">
-          <strong>{t(locale, "proceso.avisoEsperaTitulo")}:</strong> {t(locale, "proceso.avisoEsperaTexto")}
-        </p>
-      </InfoCard>
-      <WhatsAppCTA
-        sourceId="como-funciona-proceso"
-        label={t(locale, "proceso.ctaContinuar")}
-        locale={locale}
-        urlPath={buildStaticPagePath(locale, "comoFunciona")}
-        destacado
-      />
-    </ProcessSteps>
-  </InfoCard>
+  <DiagnosticWizard locale={locale} path={buildStaticPagePath(locale, "comoFunciona")} />
 </article>
 
 <style>
   .como-funciona {
     display: grid;
     gap: var(--space-sm);
-  }
-
-  .proceso-aviso-espera {
-    margin: 0;
-    color: var(--color-warning-text);
   }
 </style>
