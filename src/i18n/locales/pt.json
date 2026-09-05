@@ -252,7 +252,9 @@
     "resumenPasoTitulo5": "Reset Assistido em 1 Minuto",
     "resumenPasoTexto5": "Com assistência ao vivo para o seu equipamento {marca} {modelo}, executamos o procedimento de forma remota e segura para zerar o contador.",
     "resumenPasoTitulo6": "Impressora Desbloqueada e Pronta",
-    "resumenPasoTexto6": "Seu equipamento fica totalmente operacional, sem bloqueios e pronto para retomar suas impressões imediatamente."
+    "resumenPasoTexto6": "Seu equipamento fica totalmente operacional, sem bloqueios e pronto para retomar suas impressões imediatamente.",
+    "copiarIdLabel": "Copiar ID do técnico",
+    "copiadoLabel": "Copiado!"
   },
   "faq": {
     "title": "Perguntas frequentes | ResetEnLinea.com",

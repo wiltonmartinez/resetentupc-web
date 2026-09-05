@@ -336,7 +336,9 @@
     "resumenPasoTitulo5": "Reset Asistido en 1 Minuto",
     "resumenPasoTexto5": "Con la asistencia en vivo para tu equipo {marca} {modelo}, ejecutamos el procedimiento de forma remota y segura para dejar el contador en cero.",
     "resumenPasoTitulo6": "Impresora Desbloqueada y Lista",
-    "resumenPasoTexto6": "Tu equipo queda completamente operativo, sin bloqueos y listo para reanudar tus impresiones de inmediato."
+    "resumenPasoTexto6": "Tu equipo queda completamente operativo, sin bloqueos y listo para reanudar tus impresiones de inmediato.",
+    "copiarIdLabel": "Copiar ID de técnico",
+    "copiadoLabel": "¡Copiado!"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",

@@ -504,7 +504,27 @@ const erroresTab = [
               <p>{sub.texto}</p>
               {sub.numero === "3.2" && (
                 <p class="subpaso-technician-id">
-                  Technician ID: <strong>{TECHNICIAN_ID}</strong>
+                  Technician ID:{" "}
+                  <button
+                    type="button"
+                    class="subpaso-copy-btn"
+                    data-copy-value={TECHNICIAN_ID}
+                    aria-label={t(locale, "comoFuncionaProceso.copiarIdLabel")}
+                  >
+                    <strong>{TECHNICIAN_ID}</strong>
+                    <svg class="subpaso-copy-icono" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path
+                        d="M7.5 7.5V5a1.2 1.2 0 0 1 1.2-1.2h6.1A1.2 1.2 0 0 1 16 5v6.1a1.2 1.2 0 0 1-1.2 1.2H12.4M7.5 7.5H5.2A1.2 1.2 0 0 0 4 8.7v6.1A1.2 1.2 0 0 0 5.2 16h6.1a1.2 1.2 0 0 0 1.2-1.2v-2.3M7.5 7.5h4.9a1.2 1.2 0 0 1 1.2 1.2v4.9"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span class="subpaso-copy-feedback" data-copy-feedback>
+                      {t(locale, "comoFuncionaProceso.copiadoLabel")}
+                    </span>
+                  </button>
                 </p>
               )}
               {sub.enlace && (
@@ -653,6 +673,28 @@ const erroresTab = [
       document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
         el.textContent = valor;
       });
+    });
+  });
+
+  // Boton "copiar" del ID de tecnico (Paso 3.2): copia al portapapeles y
+  // muestra un tooltip de confirmacion breve.
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-value]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const valor = btn.dataset.copyValue ?? "";
+      try {
+        await navigator.clipboard.writeText(valor);
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = valor;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      btn.classList.add("copiado");
+      window.setTimeout(() => btn.classList.remove("copiado"), 1500);
     });
   });
 </script>
@@ -1136,6 +1178,61 @@ const erroresTab = [
 
   .subpaso-technician-id {
     font-family: monospace;
+  }
+
+  .subpaso-copy-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-family: monospace;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .subpaso-copy-btn:hover {
+    background: var(--color-bg-muted);
+    border-color: #1d4ed8;
+  }
+
+  .subpaso-copy-icono {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex-shrink: 0;
+    color: #1d4ed8;
+  }
+
+  .subpaso-copy-feedback {
+    position: absolute;
+    bottom: calc(100% + 0.4rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    background: #16a34a;
+    color: white;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .subpaso-copy-btn.copiado .subpaso-copy-feedback {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
   .subpaso-enlace {

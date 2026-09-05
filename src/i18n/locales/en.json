@@ -252,7 +252,9 @@
     "resumenPasoTitulo5": "Assisted Reset in 1 Minute",
     "resumenPasoTexto5": "With live assistance for your {marca} {modelo}, we run the procedure remotely and securely to reset the counter to zero.",
     "resumenPasoTitulo6": "Printer Unlocked and Ready",
-    "resumenPasoTexto6": "Your printer is fully operational again, unblocked and ready to resume printing right away."
+    "resumenPasoTexto6": "Your printer is fully operational again, unblocked and ready to resume printing right away.",
+    "copiarIdLabel": "Copy technician ID",
+    "copiadoLabel": "Copied!"
   },
   "faq": {
     "title": "Frequently asked questions | ResetEnLinea.com",

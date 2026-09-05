@@ -298,7 +298,9 @@
     "resumenPasoTitulo5": "Assistierter Reset in 1 Minute",
     "resumenPasoTexto5": "Mit Live-Unterstützung für dein Gerät {marca} {modelo} führen wir den Vorgang aus der Ferne und sicher durch, um den Zähler auf null zu setzen.",
     "resumenPasoTitulo6": "Drucker Entsperrt und Einsatzbereit",
-    "resumenPasoTexto6": "Dein Gerät ist wieder voll funktionsfähig, entsperrt und bereit, sofort weiterzudrucken."
+    "resumenPasoTexto6": "Dein Gerät ist wieder voll funktionsfähig, entsperrt und bereit, sofort weiterzudrucken.",
+    "copiarIdLabel": "Techniker-ID kopieren",
+    "copiadoLabel": "Kopiert!"
   },
   "faq": {
     "title": "Häufige Fragen | ResetEnLinea.com",

@@ -252,7 +252,9 @@
     "resumenPasoTitulo5": "Réinitialisation Assistée en 1 Minute",
     "resumenPasoTexto5": "Avec une assistance en direct pour votre {marca} {modelo}, nous exécutons la procédure à distance et en toute sécurité pour remettre le compteur à zéro.",
     "resumenPasoTitulo6": "Imprimante Débloquée et Prête",
-    "resumenPasoTexto6": "Votre appareil est de nouveau pleinement opérationnel, débloqué et prêt à reprendre vos impressions immédiatement."
+    "resumenPasoTexto6": "Votre appareil est de nouveau pleinement opérationnel, débloqué et prêt à reprendre vos impressions immédiatement.",
+    "copiarIdLabel": "Copier l'ID du technicien",
+    "copiadoLabel": "Copié !"
   },
   "faq": {
     "title": "Questions fréquentes | ResetEnLinea.com",

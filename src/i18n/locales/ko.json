@@ -298,7 +298,9 @@
     "resumenPasoTitulo5": "1분 만에 완료되는 어시스트 리셋",
     "resumenPasoTexto5": "{marca} {modelo} 기기에 대한 실시간 지원으로 원격으로 안전하게 절차를 실행하여 카운터를 0으로 재설정합니다.",
     "resumenPasoTitulo6": "잠금 해제되어 사용 준비 완료된 프린터",
-    "resumenPasoTexto6": "기기가 완전히 정상 작동 상태로 돌아와 잠금이 해제되었으며 바로 인쇄를 재개할 수 있습니다."
+    "resumenPasoTexto6": "기기가 완전히 정상 작동 상태로 돌아와 잠금이 해제되었으며 바로 인쇄를 재개할 수 있습니다.",
+    "copiarIdLabel": "기술자 ID 복사",
+    "copiadoLabel": "복사됨!"
   },
   "faq": {
     "title": "자주 묻는 질문 | ResetEnLinea.com",

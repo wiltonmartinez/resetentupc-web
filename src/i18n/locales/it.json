@@ -252,7 +252,9 @@
     "resumenPasoTitulo5": "Reset Assistito in 1 Minuto",
     "resumenPasoTexto5": "Con assistenza dal vivo per il tuo {marca} {modelo}, eseguiamo la procedura da remoto e in sicurezza per azzerare il contatore.",
     "resumenPasoTitulo6": "Stampante Sbloccata e Pronta",
-    "resumenPasoTexto6": "Il tuo dispositivo torna pienamente operativo, sbloccato e pronto per riprendere le stampe immediatamente."
+    "resumenPasoTexto6": "Il tuo dispositivo torna pienamente operativo, sbloccato e pronto per riprendere le stampe immediatamente.",
+    "copiarIdLabel": "Copia ID tecnico",
+    "copiadoLabel": "Copiato!"
   },
   "faq": {
     "title": "Domande frequenti | ResetEnLinea.com",
