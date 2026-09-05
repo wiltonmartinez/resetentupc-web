@@ -206,7 +206,20 @@
     "tituloModuloSeguro": "How the connection with the technician works",
     "paso4Texto": "Payment is only made after confirming your device's compatibility. If you already have an active warranty, you don't pay again — it's applied automatically.",
     "paso5VideoPlaceholder": "Live reset evidence video — coming soon",
-    "paso6ChatPlaceholder": "Real customer testimonial — coming soon"
+    "paso6ChatPlaceholder": "Real customer testimonial — coming soon",
+    "introTituloQueEs": "What exactly is it?",
+    "introParrafo1": "Printers have an internal print counter. When this counter reaches 100% (known as the ink pad error or 5B00), the device locks itself digitally as a safety measure to prevent ink spills.",
+    "introParrafo2": "Our Assisted Reset means you don't have to deal with complicated programs, difficult manuals, or put your computer at risk. A real technician guides you over WhatsApp, creates a secure bridge through your USB cable, and resets that counter back to 0% from our server.",
+    "introDestacado": "You just plug in the cable — we handle the technical work!",
+    "introAclaracion": "Important note: we don't sell self-service programs. We deliver a direct solution to your printer's board.",
+    "beneficiosTitulo": "Benefits of our service",
+    "beneficio1": "1-Minute Reset",
+    "beneficio2": "Zero Travel or Waiting",
+    "beneficio3": "Zero Installations",
+    "beneficio4": "100% Safe",
+    "beneficio5": "Reusable Warranty",
+    "beneficio6": "Warranty Certificate (12 to 15 months)",
+    "beneficio7": "24/7 Support"
   },
   "faq": {
     "title": "Frequently asked questions | ResetEnLinea.com",

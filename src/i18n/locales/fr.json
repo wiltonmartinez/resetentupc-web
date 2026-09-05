@@ -206,7 +206,20 @@
     "tituloModuloSeguro": "Comment fonctionne la connexion avec le technicien",
     "paso4Texto": "Le paiement n'est effectué qu'après confirmation de la compatibilité de votre appareil. Si vous avez déjà une garantie active, vous ne payez pas à nouveau : elle est appliquée automatiquement.",
     "paso5VideoPlaceholder": "Vidéo de la réinitialisation en direct — bientôt disponible",
-    "paso6ChatPlaceholder": "Témoignage réel d'un client — bientôt disponible"
+    "paso6ChatPlaceholder": "Témoignage réel d'un client — bientôt disponible",
+    "introTituloQueEs": "De quoi s'agit-il exactement ?",
+    "introParrafo1": "Les imprimantes ont un compteur interne d'impressions. Lorsque ce compteur atteint 100 % (connu sous le nom d'erreur des tampons encreurs ou 5B00), l'appareil se verrouille numériquement par sécurité pour éviter les débordements d'encre.",
+    "introParrafo2": "Notre Réinitialisation Assistée signifie que vous n'avez pas à gérer des programmes compliqués, des manuels difficiles, ni à mettre votre ordinateur en danger. Un technicien réel vous accompagne sur WhatsApp, crée un pont sécurisé via votre câble USB et remet ce compteur à 0 % depuis notre serveur.",
+    "introDestacado": "Vous branchez simplement le câble, nous faisons le travail technique !",
+    "introAclaracion": "Précision importante : nous ne vendons pas de programmes en libre-service. Nous fournissons une solution directe sur la carte de votre imprimante.",
+    "beneficiosTitulo": "Avantages de notre service",
+    "beneficio1": "Réinitialisation en 1 minute",
+    "beneficio2": "Zéro déplacement ni attente",
+    "beneficio3": "Zéro installation",
+    "beneficio4": "100 % sécurisé",
+    "beneficio5": "Garantie réutilisable",
+    "beneficio6": "Certificat de garantie (12 à 15 mois)",
+    "beneficio7": "Assistance 24/7"
   },
   "faq": {
     "title": "Questions fréquentes | ResetEnLinea.com",

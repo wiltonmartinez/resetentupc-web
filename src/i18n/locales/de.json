@@ -252,7 +252,20 @@
     "tituloModuloSeguro": "So funktioniert die Verbindung mit dem Techniker",
     "paso4Texto": "Die Zahlung erfolgt erst, nachdem die Kompatibilität deines Geräts bestätigt wurde. Wenn du bereits eine gültige Garantie hast, zahlst du nicht erneut — sie wird automatisch angewendet.",
     "paso5VideoPlaceholder": "Video mit Live-Nachweis des Resets — demnächst verfügbar",
-    "paso6ChatPlaceholder": "Echtes Kundenzeugnis — demnächst verfügbar"
+    "paso6ChatPlaceholder": "Echtes Kundenzeugnis — demnächst verfügbar",
+    "introTituloQueEs": "Was genau ist das?",
+    "introParrafo1": "Drucker haben einen internen Druckzähler. Wenn dieser Zähler 100 % erreicht (bekannt als Tintenkissen-Fehler oder 5B00), sperrt sich das Gerät aus Sicherheitsgründen digital, um ein Auslaufen von Tinte zu verhindern.",
+    "introParrafo2": "Unser Assistierter Reset bedeutet, dass du dich nicht mit komplizierten Programmen oder schwierigen Anleitungen herumschlagen oder deinen Computer gefährden musst. Ein echter Techniker begleitet dich per WhatsApp, baut über dein USB-Kabel eine sichere Verbindung auf und setzt diesen Zähler von unserem Server aus wieder auf 0 % zurück.",
+    "introDestacado": "Du schließt nur das Kabel an, wir übernehmen die technische Arbeit!",
+    "introAclaracion": "Wichtiger Hinweis: Wir verkaufen keine Selbstbedienungsprogramme. Wir liefern eine direkte Lösung für die Platine deines Druckers.",
+    "beneficiosTitulo": "Vorteile unseres Service",
+    "beneficio1": "Reset in 1 Minute",
+    "beneficio2": "Keine Fahrten oder Wartezeiten",
+    "beneficio3": "Keine Installationen",
+    "beneficio4": "100 % sicher",
+    "beneficio5": "Wiederverwendbare Garantie",
+    "beneficio6": "Garantiezertifikat (12 bis 15 Monate)",
+    "beneficio7": "24/7-Support"
   },
   "faq": {
     "title": "Häufige Fragen | ResetEnLinea.com",

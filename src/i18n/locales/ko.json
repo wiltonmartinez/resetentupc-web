@@ -252,7 +252,20 @@
     "tituloModuloSeguro": "기술자와의 연결 방식",
     "paso4Texto": "결제는 장비의 호환성을 확인한 후에만 이루어집니다. 이미 유효한 보증이 있는 경우 다시 결제하지 않고 자동으로 적용됩니다.",
     "paso5VideoPlaceholder": "실시간 리셋 증거 영상 — 곧 제공 예정",
-    "paso6ChatPlaceholder": "실제 고객 후기 — 곧 제공 예정"
+    "paso6ChatPlaceholder": "실제 고객 후기 — 곧 제공 예정",
+    "introTituloQueEs": "정확히 무엇인가요?",
+    "introParrafo1": "프린터에는 내부 인쇄 카운터가 있습니다. 이 카운터가 100%에 도달하면(잉크 패드 오류 또는 5B00으로 알려짐), 잉크 유출을 방지하기 위해 안전상의 이유로 장치가 디지털 방식으로 잠깁니다.",
+    "introParrafo2": "저희의 지원 리셋은 복잡한 프로그램이나 어려운 매뉴얼을 다루거나 컴퓨터를 위험에 빠뜨릴 필요가 없다는 것을 의미합니다. 실제 기술자가 WhatsApp을 통해 안내하며, USB 케이블을 통해 안전한 연결을 만들고 저희 서버에서 그 카운터를 다시 0%로 재설정합니다.",
+    "introDestacado": "고객님은 케이블만 연결하시면 됩니다. 기술적인 작업은 저희가 합니다!",
+    "introAclaracion": "중요 안내: 저희는 셀프서비스 프로그램을 판매하지 않습니다. 프린터 기판에 대한 직접적인 해결책을 제공합니다.",
+    "beneficiosTitulo": "저희 서비스의 장점",
+    "beneficio1": "1분 리셋",
+    "beneficio2": "이동 및 대기 시간 없음",
+    "beneficio3": "설치 불필요",
+    "beneficio4": "100% 안전",
+    "beneficio5": "재사용 가능한 보증",
+    "beneficio6": "보증서 (12~15개월)",
+    "beneficio7": "24/7 지원"
   },
   "faq": {
     "title": "자주 묻는 질문 | ResetEnLinea.com",

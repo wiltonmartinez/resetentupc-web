@@ -290,7 +290,20 @@
     "tituloModuloSeguro": "Cómo funciona la conexión con el técnico",
     "paso4Texto": "El pago se realiza solo después de validar la compatibilidad de tu equipo. Si ya cuentas con garantía vigente, no pagas de nuevo: se aplica directamente.",
     "paso5VideoPlaceholder": "Video de evidencia del reset en vivo — próximamente",
-    "paso6ChatPlaceholder": "Testimonio real de cliente — próximamente"
+    "paso6ChatPlaceholder": "Testimonio real de cliente — próximamente",
+    "introTituloQueEs": "¿Qué es exactamente?",
+    "introParrafo1": "Las impresoras tienen un contador interno de impresiones. Cuando este contador llega al 100% (conocido como error de almohadillas o 5B00), el equipo se bloquea digitalmente por seguridad para evitar derrames de tinta.",
+    "introParrafo2": "Nuestro Reset Asistido significa que no tienes que lidiar con programas complicados, manuales difíciles ni poner en riesgo tu computador. Un técnico real te acompaña por WhatsApp, crea un puente seguro a través de tu cable USB y reinicia ese contador nuevamente al 0% desde nuestro servidor.",
+    "introDestacado": "Tú solo conectas el cable, ¡nosotros hacemos el trabajo técnico!",
+    "introAclaracion": "Aclaración importante: no vendemos programas de autoservicio. Entregamos una solución directa a la placa de tu impresora.",
+    "beneficiosTitulo": "Beneficios de nuestro servicio",
+    "beneficio1": "Reset en 1 Minuto",
+    "beneficio2": "Cero Traslados ni Esperas",
+    "beneficio3": "Cero Instalaciones",
+    "beneficio4": "100% Seguro",
+    "beneficio5": "Garantía Reutilizable",
+    "beneficio6": "Certificado de Garantía (12 a 15 meses)",
+    "beneficio7": "Atención 24/7"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",

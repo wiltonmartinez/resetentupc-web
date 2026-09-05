@@ -53,6 +53,16 @@ const subpasosConexion = [
 const faqItems = t(locale, "faq.items").slice(0, 3);
 const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
 
+const beneficios = [
+  { icono: "⚡", texto: t(locale, "comoFuncionaProceso.beneficio1") },
+  { icono: "🚫", texto: t(locale, "comoFuncionaProceso.beneficio2") },
+  { icono: "💻", texto: t(locale, "comoFuncionaProceso.beneficio3") },
+  { icono: "🛡️", texto: t(locale, "comoFuncionaProceso.beneficio4") },
+  { icono: "♻️", texto: t(locale, "comoFuncionaProceso.beneficio5") },
+  { icono: "📜", texto: t(locale, "comoFuncionaProceso.beneficio6") },
+  { icono: "🕒", texto: t(locale, "comoFuncionaProceso.beneficio7") },
+];
+
 // Tabs del Paso 1: un ejemplo real por marca (imagen real del error, via
 // error-images.js con fallback por modeloSlug ya que "epson-almohadillas" y
 // "canon-5b00" no tienen una foto propia, solo por modelo — a diferencia de
@@ -90,6 +100,31 @@ const erroresTab = [
 
 <article class="como-funciona">
   <h1>{t(locale, "comoFunciona.heading")}</h1>
+
+  <!-- Título y contexto breve -->
+  <section class="intro-contexto">
+    <h2 class="intro-titulo">{t(locale, "proceso.titulo")}</h2>
+    <div class="intro-texto">
+      <h3>{t(locale, "comoFuncionaProceso.introTituloQueEs")}</h3>
+      <p>{t(locale, "comoFuncionaProceso.introParrafo1")}</p>
+      <p>{t(locale, "comoFuncionaProceso.introParrafo2")}</p>
+      <p class="intro-destacado">{t(locale, "comoFuncionaProceso.introDestacado")}</p>
+      <p class="intro-aclaracion">{t(locale, "comoFuncionaProceso.introAclaracion")}</p>
+    </div>
+  </section>
+
+  <!-- Grid de beneficios -->
+  <section class="beneficios-grid">
+    <h2 class="beneficios-titulo">{t(locale, "comoFuncionaProceso.beneficiosTitulo")}</h2>
+    <div class="beneficios-cards">
+      {beneficios.map((beneficio) => (
+        <div class="beneficio-card">
+          <span class="beneficio-icono" aria-hidden="true">{beneficio.icono}</span>
+          <p>{beneficio.texto}</p>
+        </div>
+      ))}
+    </div>
+  </section>
 
   <!-- BLOQUE 1: Grid de resumen -->
   <section class="resumen-grid" aria-label={t(locale, "comoFuncionaProceso.tituloResumen")}>
@@ -253,6 +288,81 @@ const erroresTab = [
   .como-funciona {
     display: grid;
     gap: 2.5rem;
+  }
+
+  /* Título y contexto breve */
+  .intro-contexto {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .intro-titulo {
+    margin: 0;
+    font-size: 1.6rem;
+  }
+
+  .intro-texto {
+    display: grid;
+    gap: 0.9rem;
+    text-align: left;
+  }
+
+  .intro-texto h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .intro-texto p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    line-height: 1.65;
+  }
+
+  .intro-texto .intro-destacado {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .intro-aclaracion {
+    font-style: italic;
+    font-size: 0.88rem;
+  }
+
+  /* Grid de beneficios */
+  .beneficios-titulo {
+    margin: 0 0 1.25rem;
+    font-size: 1.4rem;
+  }
+
+  .beneficios-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.1rem;
+  }
+
+  .beneficio-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .beneficio-icono {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .beneficio-card p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.92rem;
   }
 
   /* BLOQUE 1 */
