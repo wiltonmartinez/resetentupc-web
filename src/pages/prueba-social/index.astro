@@ -11,6 +11,7 @@ const getIcon = (type: string): string => {
     magnifier: "🔍",
     play: "▶️",
     chat: "💬",
+    roulette: "🎡",
   };
   return iconos[type] || "→";
 };
@@ -43,6 +44,13 @@ const silos = [
     descripcion: "Capturas de WhatsApp de clientes que resolvieron su problema",
     href: "/prueba-social/cliente-satisfecho/",
     icono: "chat",
+  },
+  {
+    id: "ruleta",
+    titulo: t(locale, "ruletaPage.heading"),
+    descripcion: t(locale, "ruletaPage.description"),
+    href: "/ruleta/",
+    icono: "roulette",
   },
 ];
 ---
