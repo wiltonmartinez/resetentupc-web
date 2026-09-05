@@ -22,21 +22,25 @@ const categorias = [
     href: buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/"),
     titulo: t(locale, "pruebaSocialPage.conversacionesTitulo"),
     texto: t(locale, "pruebaSocialPage.conversacionesTexto"),
+    icono: "💬",
   },
   {
     href: buildLocalizedPath(locale, "/prueba-social/reset-evidencia/"),
     titulo: t(locale, "pruebaSocialPage.resetsTitulo"),
     texto: t(locale, "pruebaSocialPage.resetsTexto"),
+    icono: "▶️",
   },
   {
     href: buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/"),
     titulo: t(locale, "pruebaSocialPage.testimoniosTitulo"),
     texto: t(locale, "pruebaSocialPage.testimoniosTexto"),
+    icono: "⭐",
   },
   {
     href: buildLocalizedPath(locale, "/ruleta/"),
     titulo: t(locale, "ruletaPage.heading"),
     texto: t(locale, "ruletaPage.description"),
+    icono: "🎡",
   },
 ];
 ---
@@ -57,6 +61,7 @@ const categorias = [
   <section class="prueba-social-categorias">
     {categorias.map((categoria) => (
       <a class="prueba-social-categoria" href={categoria.href}>
+        <div class="prueba-social-categoria-icono" aria-hidden="true">{categoria.icono}</div>
         <h2>{categoria.titulo}</h2>
         <p>{categoria.texto}</p>
         <span class="prueba-social-categoria-enlace" aria-hidden="true">→</span>
@@ -103,6 +108,11 @@ const categorias = [
 
   .prueba-social-categoria:hover {
     border-color: var(--color-primary);
+  }
+
+  .prueba-social-categoria-icono {
+    font-size: 2rem;
+    line-height: 1;
   }
 
   .prueba-social-categoria h2 {
