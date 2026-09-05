@@ -300,7 +300,9 @@
     "resumenPasoTitulo6": "Принтер разблокирован и готов",
     "resumenPasoTexto6": "Ваше устройство снова полностью работоспособно, разблокировано и готово немедленно возобновить печать.",
     "copiarIdLabel": "Скопировать ID техника",
-    "copiadoLabel": "Скопировано!"
+    "copiadoLabel": "Скопировано!",
+    "jugarRuletaCta": "Играть сейчас",
+    "cerrarRuletaLabel": "Закрыть рулетку"
   },
   "faq": {
     "title": "Частые вопросы | ResetEnLinea.com",

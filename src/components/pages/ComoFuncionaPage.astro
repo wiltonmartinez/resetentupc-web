@@ -18,7 +18,7 @@ import ClienteSatisfechoEmbed from "../ui/ClienteSatisfechoEmbed.astro";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import { fetchAllPages } from "../../lib/fetch-paginated";
 import { extractYoutubeId } from "../../lib/youtube";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, RULETA_URL, type Locale } from "../../config/site";
 import iconoReset from "../../assets/beneficios/icono-reset.png";
 import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
 import iconoInstalaciones from "../../assets/beneficios/icono-instalaciones.png";
@@ -92,7 +92,7 @@ try {
 // activa en el selector de diagnostico de abajo decide cual serie se muestra
 // (Epson por defecto); el toggle es puramente visual en el cliente porque las
 // 3 series ya vienen renderizadas en el HTML (ver [data-marca-icono] en el
-// <script> mas abajo).
+// script de mas abajo).
 const procedimientoImagenes: Record<string, ImageMetadata[]> = {
   epson: [procEpson1, procEpson2, procEpson3, procEpson4, procEpson5, procEpson6],
   canon: [procCanon1, procCanon2, procCanon3, procCanon4, procCanon5, procCanon6],
@@ -189,7 +189,7 @@ const beneficios = [
   { icono: iconoReembolso, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
   { icono: iconoCertificado, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
   { icono: iconoSoporte, titulo: t(locale, "comoFuncionaProceso.beneficio8Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio8Texto") },
-  { icono: iconoSorteos, titulo: t(locale, "comoFuncionaProceso.beneficio9Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio9Texto") },
+  { id: "sorteos", icono: iconoSorteos, titulo: t(locale, "comoFuncionaProceso.beneficio9Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio9Texto") },
 ];
 
 // Tabs del Paso 1: un ejemplo real por marca (imagen real del error, via
@@ -251,16 +251,45 @@ const erroresTab = [
       <p class="beneficios-subtitulo">{t(locale, "comoFuncionaProceso.beneficiosSubtitulo")}</p>
     </div>
     <div class="beneficios-cards">
-      {beneficios.map((beneficio) => (
-        <div class="beneficio-card">
-          <div class="beneficio-icono-wrap">
-            <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+      {beneficios.map((beneficio) =>
+        beneficio.id === "sorteos" ? (
+          <button
+            type="button"
+            class="beneficio-card beneficio-card-clickable"
+            data-ruleta-trigger
+            aria-haspopup="dialog"
+          >
+            <div class="beneficio-icono-wrap">
+              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+            </div>
+            <h3>{beneficio.titulo}</h3>
+            <p>{beneficio.texto}</p>
+            <span class="beneficio-cta">{t(locale, "comoFuncionaProceso.jugarRuletaCta")}</span>
+          </button>
+        ) : (
+          <div class="beneficio-card">
+            <div class="beneficio-icono-wrap">
+              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+            </div>
+            <h3>{beneficio.titulo}</h3>
+            <p>{beneficio.texto}</p>
           </div>
-          <h3>{beneficio.titulo}</h3>
-          <p>{beneficio.texto}</p>
-        </div>
-      ))}
+        )
+      )}
     </div>
+
+    <dialog class="ruleta-dialog" data-ruleta-dialog aria-label={t(locale, "ruletaPage.heading")}>
+      <button type="button" class="ruleta-dialog-close" data-ruleta-close aria-label={t(locale, "comoFuncionaProceso.cerrarRuletaLabel")}>
+        ×
+      </button>
+      <div class="ruleta-dialog-header">
+        <h3>{t(locale, "ruletaPage.heading")}</h3>
+        <p>{t(locale, "ruletaPage.texto")}</p>
+      </div>
+      <div class="ruleta-dialog-embed">
+        <iframe data-ruleta-iframe data-src={RULETA_URL} title={t(locale, "ruletaPage.heading")} loading="lazy"></iframe>
+      </div>
+    </dialog>
   </section>
 
   <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada -->
@@ -696,6 +725,26 @@ const erroresTab = [
       window.setTimeout(() => btn.classList.remove("copiado"), 1500);
     });
   });
+
+  // Popup de la ruleta (tarjeta "Sorteos y Premios Diarios"): el iframe solo
+  // carga su src la primera vez que se abre el dialog, para no cargar el
+  // juego en cada visita a la pagina.
+  document.querySelectorAll<HTMLButtonElement>("[data-ruleta-trigger]").forEach((trigger) => {
+    const dialog = trigger.closest("section")?.querySelector<HTMLDialogElement>("[data-ruleta-dialog]");
+    const iframe = dialog?.querySelector<HTMLIFrameElement>("[data-ruleta-iframe]");
+    const closeBtn = dialog?.querySelector<HTMLButtonElement>("[data-ruleta-close]");
+    if (!dialog || !iframe || !closeBtn) return;
+
+    trigger.addEventListener("click", () => {
+      if (!iframe.src && iframe.dataset.src) iframe.src = iframe.dataset.src;
+      dialog.showModal();
+    });
+
+    closeBtn.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  });
 </script>
 
 <style>
@@ -807,6 +856,87 @@ const erroresTab = [
   .beneficio-card:hover {
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     transform: translateY(-0.25rem);
+  }
+
+  .beneficio-card-clickable {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .beneficio-cta {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    background: #1d4ed8;
+    color: white;
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+
+  .ruleta-dialog {
+    position: relative;
+    border: none;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    max-width: min(92vw, 480px);
+    width: 100%;
+  }
+
+  .ruleta-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .ruleta-dialog-close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .ruleta-dialog-header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .ruleta-dialog-header h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.2rem;
+  }
+
+  .ruleta-dialog-header p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .ruleta-dialog-embed {
+    aspect-ratio: 4 / 5;
+    max-height: 65vh;
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+
+  .ruleta-dialog-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
   .beneficio-icono-wrap {

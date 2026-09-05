@@ -338,7 +338,9 @@
     "resumenPasoTitulo6": "Impresora Desbloqueada y Lista",
     "resumenPasoTexto6": "Tu equipo queda completamente operativo, sin bloqueos y listo para reanudar tus impresiones de inmediato.",
     "copiarIdLabel": "Copiar ID de técnico",
-    "copiadoLabel": "¡Copiado!"
+    "copiadoLabel": "¡Copiado!",
+    "jugarRuletaCta": "Jugar ahora",
+    "cerrarRuletaLabel": "Cerrar ruleta"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",

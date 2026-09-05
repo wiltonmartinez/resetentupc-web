@@ -254,7 +254,9 @@
     "resumenPasoTitulo6": "Stampante Sbloccata e Pronta",
     "resumenPasoTexto6": "Il tuo dispositivo torna pienamente operativo, sbloccato e pronto per riprendere le stampe immediatamente.",
     "copiarIdLabel": "Copia ID tecnico",
-    "copiadoLabel": "Copiato!"
+    "copiadoLabel": "Copiato!",
+    "jugarRuletaCta": "Gioca ora",
+    "cerrarRuletaLabel": "Chiudi la ruota"
   },
   "faq": {
     "title": "Domande frequenti | ResetEnLinea.com",

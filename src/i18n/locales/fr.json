@@ -254,7 +254,9 @@
     "resumenPasoTitulo6": "Imprimante Débloquée et Prête",
     "resumenPasoTexto6": "Votre appareil est de nouveau pleinement opérationnel, débloqué et prêt à reprendre vos impressions immédiatement.",
     "copiarIdLabel": "Copier l'ID du technicien",
-    "copiadoLabel": "Copié !"
+    "copiadoLabel": "Copié !",
+    "jugarRuletaCta": "Jouer maintenant",
+    "cerrarRuletaLabel": "Fermer la roulette"
   },
   "faq": {
     "title": "Questions fréquentes | ResetEnLinea.com",
