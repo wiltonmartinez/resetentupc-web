@@ -2,7 +2,6 @@
 import { t, buildLocalizedPath, buildCanonicalUrl } from "../../i18n/utils";
 import { resolverErroresConNucleo } from "../../lib/nucleo-api";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
-import AyudaCTA from "../AyudaCTA.astro";
 import Breadcrumb from "../Breadcrumb.astro";
 import InfoCard from "../ui/InfoCard.astro";
 import ChecklistItem from "../ui/ChecklistItem.astro";
@@ -215,7 +214,15 @@ const breadcrumbJsonLd = {
   </InfoCard>
 
   <div class="modelo-cta-final">
-    <AyudaCTA sourceId={`${sourceIdBase}-final-destacado`} label={t(locale, "home.heroCta")} destacado />
+    <WhatsAppCTA
+      marca={nombreMarca}
+      modelo={nombreModelo}
+      sourceId={`${sourceIdBase}-final-destacado`}
+      urlPath={localizedPath}
+      locale={locale}
+      label={t(locale, "home.heroCta")}
+      destacado
+    />
   </div>
 </article>
 

@@ -1,6 +1,6 @@
 ---
 import { t, buildLocalizedPath, findErroresConfirmadosForModelo } from "../../i18n/utils";
-import AyudaCTA from "../AyudaCTA.astro";
+import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import ModeloImage from "../ui/ModeloImage.astro";
 import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
@@ -104,7 +104,13 @@ const seriesDisponibles = Array.from(
   <h1>{t(locale, "proceso.titulo")}</h1>
   <p class="hero-tagline"><em>{t(locale, "home.heroTagline")}</em></p>
   <TrustpilotWidget />
-  <AyudaCTA sourceId="home-hero" label={t(locale, "home.heroCta")} destacado />
+  <WhatsAppCTA
+    sourceId="home-hero"
+    label={t(locale, "home.heroCta")}
+    locale={locale}
+    urlPath={buildLocalizedPath(locale, "/")}
+    destacado
+  />
 </section>
 
 <section class="modelos">

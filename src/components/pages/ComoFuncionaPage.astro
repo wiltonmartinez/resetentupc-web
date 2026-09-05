@@ -1,9 +1,9 @@
 ---
-import { t } from "../../i18n/utils";
+import { t, buildStaticPagePath } from "../../i18n/utils";
 import InfoCard from "../ui/InfoCard.astro";
 import ProcessSteps from "../ui/ProcessSteps.astro";
 import ProcesoReutilizable from "../ui/ProcesoReutilizable.astro";
-import AyudaCTA from "../AyudaCTA.astro";
+import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import { getProcesoImage } from "../../lib/proceso-images.js";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
@@ -72,7 +72,13 @@ const pasosProceso = [
           <strong>{t(locale, "proceso.avisoEsperaTitulo")}:</strong> {t(locale, "proceso.avisoEsperaTexto")}
         </p>
       </InfoCard>
-      <AyudaCTA sourceId="como-funciona-proceso" label={t(locale, "proceso.ctaContinuar")} destacado />
+      <WhatsAppCTA
+        sourceId="como-funciona-proceso"
+        label={t(locale, "proceso.ctaContinuar")}
+        locale={locale}
+        urlPath={buildStaticPagePath(locale, "comoFunciona")}
+        destacado
+      />
     </ProcessSteps>
   </InfoCard>
 </article>

@@ -5,7 +5,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TrustpilotWidget from "../../components/TrustpilotWidget.astro";
 import InfoCard from "../../components/ui/InfoCard.astro";
-import AyudaCTA from "../../components/AyudaCTA.astro";
+import WhatsAppCTA from "../../components/WhatsAppCTA.astro";
 import { t, buildLocalizedPath } from "../../i18n/utils";
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../config/site";
 
@@ -66,7 +66,12 @@ const categorias = [
 
   <InfoCard tone="accent">
     <h2>{t(locale, "pruebaSocialPage.ctaTitulo")}</h2>
-    <AyudaCTA sourceId="prueba-social-cta" label={t(locale, "pruebaSocialPage.ctaBoton")} />
+    <WhatsAppCTA
+      sourceId="prueba-social-cta"
+      label={t(locale, "pruebaSocialPage.ctaBoton")}
+      locale={locale}
+      urlPath={buildLocalizedPath(locale, "/prueba-social/")}
+    />
   </InfoCard>
 </BaseLayout>
 

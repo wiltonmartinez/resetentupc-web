@@ -6,8 +6,9 @@
  *
  * El <dialog>+<ContactForm> de abajo NO pertenece a este botón: es la única
  * instancia de ese formulario en la página, y otros elementos del sitio
- * (AyudaCTA, ContactCard) la abren vía [data-abrir-formulario-contacto].
- * Se mantiene aquí, oculta, para no romper esos flujos de Cotización/Garantía.
+ * (ContactCard, en la página de Contacto) la abren vía
+ * [data-abrir-formulario-contacto]. Se mantiene aquí, oculta, para no romper
+ * ese flujo de Cotización/Garantía.
  */
 import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
