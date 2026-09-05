@@ -282,10 +282,6 @@ const erroresTab = [
       <button type="button" class="ruleta-dialog-close" data-ruleta-close aria-label={t(locale, "comoFuncionaProceso.cerrarRuletaLabel")}>
         ×
       </button>
-      <div class="ruleta-dialog-header">
-        <h3>{t(locale, "ruletaPage.heading")}</h3>
-        <p>{t(locale, "ruletaPage.texto")}</p>
-      </div>
       <div class="ruleta-dialog-embed">
         <iframe data-ruleta-iframe data-src={RULETA_URL} title={t(locale, "ruletaPage.heading")} loading="lazy"></iframe>
       </div>
@@ -881,9 +877,9 @@ const erroresTab = [
     position: relative;
     border: none;
     border-radius: 1rem;
-    padding: 1.5rem;
+    padding: 2.75rem 1rem 1rem;
     max-width: min(94vw, 560px);
-    max-height: 92vh;
+    max-height: 96vh;
     width: 100%;
     overflow-y: auto;
   }
@@ -911,25 +907,9 @@ const erroresTab = [
     cursor: pointer;
   }
 
-  .ruleta-dialog-header {
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-
-  .ruleta-dialog-header h3 {
-    margin: 0 0 0.4rem;
-    font-size: 1.2rem;
-  }
-
-  .ruleta-dialog-header p {
-    margin: 0;
-    color: var(--color-text-subtle);
-    font-size: 0.9rem;
-  }
-
   .ruleta-dialog-embed {
     width: 100%;
-    height: min(75vh, 720px);
+    height: min(88vh, 760px);
     border: 1px solid var(--color-border);
     border-radius: 0.75rem;
     overflow: hidden;
