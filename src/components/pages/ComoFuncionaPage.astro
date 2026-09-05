@@ -1,23 +1,527 @@
 ---
+/**
+ * Página "Cómo funciona" reestructurada en 3 bloques: resumen visual de 6
+ * pasos, desglose detallado de cada paso (silos expandidos con línea lateral
+ * conectora), y CTA + FAQ. Contenido genérico (no atado a un modelo real) —
+ * reutiliza los textos ya validados y traducidos a los 8 idiomas de los
+ * namespaces "procesoReutilizable", "procedimiento" y "proceso" (los mismos
+ * que usa ProcedimientoImpresora.astro en las páginas de modelo reales),
+ * más un namespace propio "comoFuncionaProceso" solo para lo que no existía.
+ */
 import { t, buildStaticPagePath } from "../../i18n/utils";
-import DiagnosticWizard from "../DiagnosticWizard.astro";
-import type { Locale } from "../../config/site";
+import FaqAccordion from "../ui/FaqAccordion.astro";
+import WhatsAppCTA from "../WhatsAppCTA.astro";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
+
+const resumenPasos = [
+  { icono: "🔍", titulo: t(locale, "comoFuncionaProceso.resumenPaso1") },
+  { icono: "🔌", titulo: t(locale, "procesoReutilizable.paso2Titulo") },
+  { icono: "✅", titulo: t(locale, "procesoReutilizable.paso3Titulo") },
+  { icono: "💳", titulo: t(locale, "procesoReutilizable.paso4Titulo") },
+  { icono: "⚡", titulo: t(locale, "procesoReutilizable.paso5Titulo") },
+  { icono: "🖨️", titulo: t(locale, "procesoReutilizable.paso6Titulo") },
+];
+
+const paso2Requisitos = [
+  t(locale, "comoFuncionaProceso.paso2ReqUsb"),
+  t(locale, "comoFuncionaProceso.paso2ReqErrorVerificado"),
+  t(locale, "procedimiento.paso2ReqWindows"),
+  t(locale, "procedimiento.paso2ReqInternet"),
+  t(locale, "procedimiento.paso2ReqAsistido"),
+];
+
+const subpasosConexion = [
+  {
+    numero: "3.1",
+    titulo: t(locale, "proceso.paso1Titulo"),
+    texto: t(locale, "proceso.paso1Texto"),
+    enlace: t(locale, "proceso.paso1Enlace"),
+  },
+  { numero: "3.2", titulo: t(locale, "proceso.paso2Titulo"), texto: t(locale, "proceso.paso2Texto") },
+  { numero: "3.3", titulo: t(locale, "proceso.paso3Titulo"), texto: t(locale, "proceso.paso3Texto") },
+  { numero: "3.4", titulo: t(locale, "proceso.paso4Titulo"), texto: t(locale, "proceso.paso4Texto") },
+];
+
+const faqItems = t(locale, "faq.items").slice(0, 3);
+const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
 ---
 
 <article class="como-funciona">
   <h1>{t(locale, "comoFunciona.heading")}</h1>
-  <DiagnosticWizard locale={locale} path={buildStaticPagePath(locale, "comoFunciona")} />
+
+  <!-- BLOQUE 1: Grid de resumen -->
+  <section class="resumen-grid" aria-label={t(locale, "comoFuncionaProceso.tituloResumen")}>
+    <h2 class="resumen-titulo">{t(locale, "comoFuncionaProceso.tituloResumen")}</h2>
+    <div class="resumen-cards">
+      {resumenPasos.map((paso, index) => (
+        <a class="resumen-card" href={`#paso-como-funciona-${index + 1}`}>
+          <span class="resumen-badge">{index + 1}</span>
+          <span class="resumen-icono" aria-hidden="true">{paso.icono}</span>
+          <p>{paso.titulo}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- BLOQUE 2: Desglose detallado -->
+  <section class="detalle-lista">
+    <div class="detalle-paso" id="paso-como-funciona-1">
+      <div class="detalle-riel">
+        <span class="detalle-numero">1</span>
+        <span class="detalle-linea" aria-hidden="true" />
+      </div>
+      <div class="detalle-contenido">
+        <h3>{t(locale, "comoFuncionaProceso.resumenPaso1")}</h3>
+        <p>{t(locale, "comoFuncionaProceso.paso1Pregunta")}</p>
+        <div class="imagen-placeholder">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true">
+            <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+            <circle cx="8" cy="10" r="1.6" fill="currentColor" />
+            <path d="M4 16.5 9 12l3.5 3 4-4 3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>{t(locale, "comoFuncionaProceso.paso1ImagenPlaceholder")}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-paso" id="paso-como-funciona-2">
+      <div class="detalle-riel">
+        <span class="detalle-numero">2</span>
+        <span class="detalle-linea" aria-hidden="true" />
+      </div>
+      <div class="detalle-contenido">
+        <h3>{t(locale, "procesoReutilizable.paso2Titulo")}</h3>
+        <ul class="detalle-requisitos">
+          {paso2Requisitos.map((req) => (
+            <li>{req}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="detalle-paso" id="paso-como-funciona-3">
+      <div class="detalle-riel">
+        <span class="detalle-numero">3</span>
+        <span class="detalle-linea" aria-hidden="true" />
+      </div>
+      <div class="detalle-contenido">
+        <h3>{t(locale, "procesoReutilizable.paso3Titulo")}</h3>
+        <p class="banner-exito">{t(locale, "procedimiento.paso3Resultado")}</p>
+
+        <h4 class="subtitulo-modulo">{t(locale, "comoFuncionaProceso.tituloModuloSeguro")}</h4>
+        <div class="subpasos-grid">
+          {subpasosConexion.map((sub) => (
+            <div class="subpaso-card">
+              <span class="subpaso-numero">{sub.numero}</span>
+              <h5>{sub.titulo}</h5>
+              <p>{sub.texto}</p>
+              {sub.numero === "3.2" && (
+                <p class="subpaso-technician-id">
+                  Technician ID: <strong>{TECHNICIAN_ID}</strong>
+                </p>
+              )}
+              {sub.enlace && (
+                <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
+                  {sub.enlace}
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-paso" id="paso-como-funciona-4">
+      <div class="detalle-riel">
+        <span class="detalle-numero">4</span>
+        <span class="detalle-linea" aria-hidden="true" />
+      </div>
+      <div class="detalle-contenido">
+        <h3>{t(locale, "procesoReutilizable.paso4Titulo")}</h3>
+        <p>{t(locale, "comoFuncionaProceso.paso4Texto")}</p>
+      </div>
+    </div>
+
+    <div class="detalle-paso" id="paso-como-funciona-5">
+      <div class="detalle-riel">
+        <span class="detalle-numero">5</span>
+        <span class="detalle-linea" aria-hidden="true" />
+      </div>
+      <div class="detalle-contenido">
+        <h3>{t(locale, "procesoReutilizable.paso5Titulo")}</h3>
+        <span class="tiempo-destacado">{t(locale, "procedimiento.paso5TituloCorto")}</span>
+        <div class="video-placeholder">
+          <video controls preload="none" aria-label={t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")} />
+          <span class="video-placeholder-caption">{t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detalle-paso" id="paso-como-funciona-6">
+      <div class="detalle-riel">
+        <span class="detalle-numero">6</span>
+      </div>
+      <div class="detalle-contenido">
+        <h3>{t(locale, "procesoReutilizable.paso6Titulo")}</h3>
+        <div class="chat-simulado">
+          <div class="chat-simulado-header">
+            <span class="chat-simulado-avatar">R</span>
+            <span class="chat-simulado-nombre">ResetEnLinea</span>
+            <svg class="chat-simulado-icono" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
+            </svg>
+          </div>
+          <div class="chat-simulado-body">
+            <span class="chat-burbuja chat-burbuja-in" />
+            <span class="chat-burbuja chat-burbuja-out" />
+            <span class="chat-burbuja chat-burbuja-in" />
+          </div>
+        </div>
+        <span class="chat-simulado-caption">{t(locale, "comoFuncionaProceso.paso6ChatPlaceholder")}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOQUE 3: CTA + FAQ -->
+  <section class="cta-final">
+    <WhatsAppCTA
+      sourceId="como-funciona-final"
+      label={t(locale, "contactHub.whatsapp")}
+      locale={locale}
+      urlPath={whatsappUrlPath}
+      destacado
+    />
+  </section>
+
+  <section class="faq-final">
+    <h2>{t(locale, "faq.heading")}</h2>
+    <FaqAccordion items={faqItems} />
+  </section>
 </article>
 
 <style>
   .como-funciona {
     display: grid;
-    gap: var(--space-sm);
+    gap: 2.5rem;
+  }
+
+  /* BLOQUE 1 */
+  .resumen-titulo {
+    margin: 0 0 1.25rem;
+    font-size: 1.4rem;
+  }
+
+  .resumen-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1.1rem;
+  }
+
+  .resumen-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: var(--color-text);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .resumen-card:hover {
+    box-shadow: var(--shadow-floating);
+    transform: translateY(-2px);
+  }
+
+  .resumen-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    font-weight: 800;
+    font-size: 0.85rem;
+  }
+
+  .resumen-icono {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .resumen-card p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+
+  /* BLOQUE 2 */
+  .detalle-lista {
+    display: grid;
+    gap: 0;
+  }
+
+  .detalle-paso {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1.25rem;
+  }
+
+  .detalle-riel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .detalle-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    font-weight: 800;
+  }
+
+  .detalle-linea {
+    flex-grow: 1;
+    width: 3px;
+    min-height: 1.5rem;
+    background: #22c55e;
+    margin: 0.35rem 0;
+  }
+
+  .detalle-contenido {
+    padding-bottom: 2rem;
+  }
+
+  .detalle-contenido h3 {
+    margin: 0.3rem 0 0.75rem;
+    font-size: 1.2rem;
+  }
+
+  .detalle-requisitos {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .banner-exito {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: #dcfce7;
+    color: #166534;
+    font-weight: 700;
+  }
+
+  .subtitulo-modulo {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+    color: var(--color-text-subtle);
+  }
+
+  .subpasos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .subpaso-card {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding: 1.1rem;
+    border-radius: 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .subpaso-numero {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    color: var(--color-primary-dark);
+    font-weight: 800;
+    font-size: 0.8rem;
+  }
+
+  .subpaso-card h5 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .subpaso-card p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .subpaso-technician-id {
+    font-family: monospace;
+  }
+
+  .subpaso-enlace {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .imagen-placeholder,
+  .video-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    border: 2px dashed var(--color-border);
+    border-radius: 14px;
+    color: var(--color-text-subtle);
+    text-align: center;
+  }
+
+  .video-placeholder video {
+    display: none;
+  }
+
+  .video-placeholder-caption {
+    font-size: 0.85rem;
+  }
+
+  .tiempo-destacado {
+    display: inline-block;
+    margin: 0 0 1rem;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  .chat-simulado {
+    width: min(320px, 100%);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .chat-simulado-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background: #128c7e;
+  }
+
+  .chat-simulado-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    color: #128c7e;
+    font-size: 0.75rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chat-simulado-nombre {
+    flex: 1;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .chat-simulado-icono {
+    opacity: 0.85;
+    color: white;
+  }
+
+  .chat-simulado-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    background: #e5ddd5;
+  }
+
+  .chat-burbuja {
+    display: block;
+    height: 1.6rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.08);
+  }
+
+  .chat-burbuja-in {
+    align-self: flex-start;
+    width: 68%;
+    background: #ffffff;
+    border-top-left-radius: 2px;
+  }
+
+  .chat-burbuja-out {
+    align-self: flex-end;
+    width: 55%;
+    background: #d9fdd3;
+    border-top-right-radius: 2px;
+  }
+
+  .chat-simulado-caption {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-text-subtle);
+  }
+
+  /* BLOQUE 3 */
+  .cta-final {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cta-final :global(.whatsapp-cta) {
+    font-size: 1.15rem;
+    padding: 1.1rem 2.5rem;
+  }
+
+  .faq-final h2 {
+    margin: 0 0 1rem;
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 640px) {
+    .detalle-paso {
+      grid-template-columns: 2rem 1fr;
+      gap: 0.85rem;
+    }
+
+    .detalle-numero {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.9rem;
+    }
   }
 </style>
