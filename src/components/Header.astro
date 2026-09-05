@@ -167,7 +167,10 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             </li>
           </ul>
         </div>
-        <a
+        {
+          // Oculto a pedido: enlace "Preguntas Frecuentes" del menu. Se deja
+          // comentado (no eliminado) para poder reactivarlo facilmente.
+          /* <a
           href={`${buildStaticPagePath(locale, "comoFunciona")}#preguntas-frecuentes`}
           class:list={{ "is-active": path === comoFuncionaPath }}
         >
@@ -182,7 +185,8 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             <circle cx="12" cy="16.6" r="0.9" fill="currentColor" />
           </svg>
           <span>{t(locale, "nav.preguntasFrecuentes")}</span>
-        </a>
+        </a> */
+        }
         <a
           href={buildStaticPagePath(locale, "consultaGarantia")}
           class:list={{ "is-active": path === consultaGarantiaPath }}
