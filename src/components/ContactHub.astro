@@ -1,19 +1,15 @@
 ---
 /**
- * Hub de contacto único: consolida en un solo botón flotante lo que antes
- * eran varios elementos superpuestos (botón "Contáctanos", botón directo de
- * WhatsApp). El panel ofrece los accesos rápidos que tenía el modal
- * (Cotización/Garantía abren el mismo ContactForm ya preseleccionado;
- * Ruleta lleva a /ruleta/) y, debajo, el canal de WhatsApp — visible en
- * todos los idiomas EXCEPTO donde no es el canal habitual: hoy eso es "ru"
- * (Rusia/Europa del Este usa Telegram mucho más que WhatsApp) y "ko" (Corea
- * del Sur usa KakaoTalk, WhatsApp tiene adopción marginal ahí).
+ * Botón flotante de WhatsApp: enlace directo, sin menú intermedio. No
+ * visible en "ru" (Rusia/Europa del Este usa Telegram) ni "ko" (Corea del
+ * Sur usa KakaoTalk) — WhatsApp tiene adopción marginal en esos mercados.
  *
- * No incluye Telegram ni KakaoTalk: el negocio no tiene esos canales
- * configurados todavía — agregar un botón a un canal inexistente sería
- * mostrarle al usuario una opción que no lleva a ningún lado.
+ * El <dialog>+<ContactForm> de abajo NO pertenece a este botón: es la única
+ * instancia de ese formulario en la página, y otros elementos del sitio
+ * (AyudaCTA, ContactCard) la abren vía [data-abrir-formulario-contacto].
+ * Se mantiene aquí, oculta, para no romper esos flujos de Cotización/Garantía.
  */
-import { t, buildLocalizedPath, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
+import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
 import ContactForm from "./ui/ContactForm.astro";
 
@@ -31,156 +27,49 @@ const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
 const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
 const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
-const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
 ---
 
-<div class="contact-hub" data-contact-hub>
-  <button
-    type="button"
-    class="contact-hub-fab"
-    data-hub-toggle
-    data-sound="select"
-    aria-haspopup="true"
-    aria-expanded="false"
-    aria-label={t(locale, "contactHub.abrirLabel")}
-  >
-    <span class="contact-hub-badge" aria-hidden="true">1</span>
-    <svg class="contact-hub-icon-chat" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
-      <path
-        d="M4 5h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 3V7a1 1 0 0 1 1-1Z"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linejoin="round"
-      />
-      <path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-    </svg>
-    <svg class="contact-hub-icon-close" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
-      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-    </svg>
-  </button>
-
-  <div class="contact-hub-panel" data-hub-panel hidden>
-    <p class="contact-hub-titulo">{t(locale, "contactHub.titulo")}</p>
-
-    <div class="contact-hub-acciones">
-      <button
-        type="button"
-        class="contact-hub-item"
-        data-abrir-formulario-contacto="wilton"
-        data-tipo="cotizacion"
-        data-hub-abrir-form
-        data-analytics-event="contact_hub_cotizacion"
-        data-sound="select"
-      >
-        <span aria-hidden="true">💰</span> {t(locale, "contactHub.cotizacion")}
-      </button>
-      <button
-        type="button"
-        class="contact-hub-item"
-        data-abrir-formulario-contacto="wilton"
-        data-tipo="garantia"
-        data-hub-abrir-form
-        data-analytics-event="contact_hub_garantia"
-        data-sound="select"
-      >
-        <span aria-hidden="true">🛡️</span> {t(locale, "contactHub.garantia")}
-      </button>
-      <a class="contact-hub-item" href={rutaRuleta} data-analytics-event="contact_hub_ruleta" data-sound="select">
-        <span aria-hidden="true">🎡</span> {t(locale, "contactHub.ruleta")}
-      </a>
-    </div>
-
-    {mostrarWhatsapp && (
-      <div class="contact-hub-canal">
-        <a
-          class="contact-hub-canal-btn contact-hub-canal-whatsapp"
-          href={whatsappHref}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          data-sound="confirm"
-          data-analytics-event="contact_hub_whatsapp"
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-            <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z" />
-          </svg>
-          {t(locale, "contactHub.whatsapp")}
-        </a>
-      </div>
-    )}
+{mostrarWhatsapp && (
+  <div class="contact-hub">
+    <a
+      class="contact-hub-fab"
+      href={whatsappHref}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      data-sound="confirm"
+      data-analytics-event="contact_hub_whatsapp"
+      aria-label={t(locale, "contactHub.whatsapp")}
+    >
+      <span class="contact-hub-badge" aria-hidden="true">1</span>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true">
+        <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z" />
+      </svg>
+    </a>
   </div>
+)}
 
-  <dialog class="contact-hub-dialog" data-hub-dialog>
-    <button type="button" class="contact-hub-dialog-close" data-sound="select" aria-label={t(locale, "contactForm.cerrarModal")}>
-      ×
-    </button>
-    <h2>{t(locale, "contactForm.tituloModal")}</h2>
-    <ContactForm locale={locale} marcaDefault={marcaDefault} modeloDefault={modeloDefault} idPrefix="cf-hub" />
-  </dialog>
-</div>
+<dialog class="contact-hub-dialog" data-hub-dialog>
+  <button type="button" class="contact-hub-dialog-close" data-sound="select" aria-label={t(locale, "contactForm.cerrarModal")}>
+    ×
+  </button>
+  <h2>{t(locale, "contactForm.tituloModal")}</h2>
+  <ContactForm locale={locale} marcaDefault={marcaDefault} modeloDefault={modeloDefault} idPrefix="cf-hub" />
+</dialog>
 
 <script>
   import { trackEvent } from "../lib/analytics.js";
 
-  document.querySelectorAll<HTMLElement>("[data-contact-hub]").forEach((hub) => {
-    const toggle = hub.querySelector<HTMLButtonElement>("[data-hub-toggle]");
-    const panel = hub.querySelector<HTMLElement>("[data-hub-panel]");
-    const dialog = hub.querySelector<HTMLDialogElement>("[data-hub-dialog]");
-    const closeDialogBtn = hub.querySelector("[data-hub-dialog] .contact-hub-dialog-close");
-    if (!toggle || !panel) return;
+  const dialog = document.querySelector<HTMLDialogElement>("[data-hub-dialog]");
+  const closeDialogBtn = document.querySelector<HTMLButtonElement>("[data-hub-dialog] .contact-hub-dialog-close");
 
-    function abrirPanel() {
-      panel.hidden = false;
-      requestAnimationFrame(() => panel.classList.add("contact-hub-panel-visible"));
-      toggle.setAttribute("aria-expanded", "true");
-      hub.classList.add("contact-hub-abierto");
-    }
+  closeDialogBtn?.addEventListener("click", () => dialog?.close());
+  dialog?.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
 
-    function cerrarPanel() {
-      panel.classList.remove("contact-hub-panel-visible");
-      toggle.setAttribute("aria-expanded", "false");
-      hub.classList.remove("contact-hub-abierto");
-      setTimeout(() => {
-        panel.hidden = true;
-      }, 200);
-    }
-
-    toggle.addEventListener("click", () => {
-      if (panel.hidden) {
-        abrirPanel();
-        trackEvent("contact_hub_open");
-      } else {
-        cerrarPanel();
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      if (panel.hidden) return;
-      if (hub.contains(event.target as Node)) return;
-      cerrarPanel();
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !panel.hidden) cerrarPanel();
-    });
-
-    // Los accesos rápidos que abren el ContactForm cierran el panel del hub
-    // (el diálogo modal ya cubre la pantalla, no tiene sentido dejar los dos
-    // abiertos a la vez).
-    hub.querySelectorAll("[data-hub-abrir-form]").forEach((btn) => {
-      btn.addEventListener("click", () => cerrarPanel());
-    });
-
-    closeDialogBtn?.addEventListener("click", () => dialog?.close());
-    dialog?.addEventListener("click", (event) => {
-      if (event.target === dialog) dialog.close();
-    });
-
-    // Analítica: cualquier elemento del hub con data-analytics-event dispara
-    // un evento de GA4 al hacer clic (no hace nada si GA4 no está configurado).
-    hub.querySelectorAll<HTMLElement>("[data-analytics-event]").forEach((el) => {
-      el.addEventListener("click", () => {
-        trackEvent(el.dataset.analyticsEvent || "");
-      });
+  document.querySelectorAll<HTMLElement>(".contact-hub [data-analytics-event]").forEach((el) => {
+    el.addEventListener("click", () => {
+      trackEvent(el.dataset.analyticsEvent || "");
     });
   });
 </script>
@@ -191,15 +80,6 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
     right: var(--space-sm);
     bottom: var(--space-sm);
     z-index: 45;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.75rem;
-    /* El panel colapsado sigue ocupando su espacio en este contenedor flex
-       (opacity:0, no display:none, para poder animar la apertura), así que
-       sin esto el contenedor entero (hasta 300x420px) interceptaría clics
-       de cualquier elemento de la página que quede debajo de esa zona. */
-    pointer-events: none;
   }
 
   .contact-hub-fab {
@@ -209,34 +89,15 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
     justify-content: center;
     width: 3.5rem;
     height: 3.5rem;
-    border: none;
     border-radius: 50%;
-    background: var(--color-primary);
-    color: white;
-    cursor: pointer;
+    background: var(--color-whatsapp);
+    color: var(--color-whatsapp-ink);
     box-shadow: var(--shadow-floating);
     animation: contact-hub-pulso 2.4s ease-in-out infinite;
-    pointer-events: auto;
   }
 
   .contact-hub-fab:hover {
-    background: var(--color-primary-dark);
-  }
-
-  .contact-hub-icon-close {
-    display: none;
-  }
-
-  .contact-hub-abierto .contact-hub-fab {
-    animation: none;
-  }
-
-  .contact-hub-abierto .contact-hub-icon-chat {
-    display: none;
-  }
-
-  .contact-hub-abierto .contact-hub-icon-close {
-    display: block;
+    background: var(--color-whatsapp-dark);
   }
 
   .contact-hub-badge {
@@ -257,10 +118,6 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
     line-height: 1;
   }
 
-  .contact-hub-abierto .contact-hub-badge {
-    display: none;
-  }
-
   @keyframes contact-hub-pulso {
     0%,
     100% {
@@ -277,95 +134,6 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
     }
   }
 
-  .contact-hub-panel {
-    display: grid;
-    gap: 0.85rem;
-    width: min(300px, calc(100vw - 2 * var(--space-sm)));
-    padding: 1.1rem;
-    border-radius: var(--radius-lg);
-    background: var(--color-bg-card);
-    box-shadow: var(--shadow-floating);
-    border: 1px solid var(--color-border);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(10px) scale(0.97);
-    transform-origin: bottom right;
-    transition:
-      opacity 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .contact-hub-panel-visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-  }
-
-  .contact-hub-titulo {
-    margin: 0;
-    font-weight: 700;
-    color: var(--color-text);
-  }
-
-  .contact-hub-acciones {
-    display: grid;
-    gap: 0.5rem;
-  }
-
-  .contact-hub-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background: var(--color-bg-muted);
-    color: var(--color-text);
-    font: inherit;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    text-align: left;
-  }
-
-  .contact-hub-item:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary-dark);
-  }
-
-  .contact-hub-canal {
-    display: grid;
-    gap: 0.5rem;
-    padding-top: 0.6rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .contact-hub-canal-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: var(--radius-sm);
-    font: inherit;
-    font-weight: 700;
-    font-size: 0.92rem;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .contact-hub-canal-whatsapp {
-    background: var(--color-whatsapp);
-    color: var(--color-whatsapp-ink);
-  }
-
-  .contact-hub-canal-whatsapp:hover {
-    background: var(--color-whatsapp-dark);
-  }
-
   .contact-hub-dialog {
     position: fixed;
     margin: auto;
@@ -377,7 +145,6 @@ const rutaRuleta = buildLocalizedPath(locale, "/ruleta/");
     overflow-y: auto;
     background: var(--color-bg-card);
     box-shadow: var(--shadow-floating);
-    pointer-events: auto;
   }
 
   .contact-hub-dialog::backdrop {
