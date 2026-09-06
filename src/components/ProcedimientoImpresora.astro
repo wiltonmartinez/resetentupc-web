@@ -158,6 +158,19 @@ const paso2ModalidadTexto = errorPrincipal?.modo
   ? t(locale, "procedimiento.paso2Modalidad").replaceAll("{modo}", errorPrincipal.modo)
   : "";
 
+// CTA de WhatsApp del embudo AIDA, uno por seccion del proceso (ver
+// modelo.ctaIndiceProcesos..ctaPaso6 en los locales) — cada uno con su
+// propio source_id para trazabilidad, mencionando siempre {marca}/{modelo}.
+const conMarcaModelo = (key: string) => t(locale, key).replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
+const ctaIndiceProcesosLabel = conMarcaModelo("modelo.ctaIndiceProcesos");
+const ctaPaso1Label = conMarcaModelo("modelo.ctaPaso1");
+const ctaPaso2Label = conMarcaModelo("modelo.ctaPaso2");
+const ctaPaso3Label = conMarcaModelo("modelo.ctaPaso3");
+const ctaPaso4Label = conMarcaModelo("modelo.ctaPaso4");
+const ctaPaso5Label = conMarcaModelo("modelo.ctaPaso5");
+const ctaPaso5Nota = conMarcaModelo("modelo.ctaPaso5Nota");
+const ctaPaso6Label = conMarcaModelo("modelo.ctaPaso6");
+
 // Paso 5: video real de "reset realizado" ya publicado para
 // este modelo. Si no hay uno exacto, cae a cualquiera de la misma marca
 // (respaldo simple por marca; el respaldo real "por modelo hermano" lo
@@ -325,6 +338,18 @@ const subpasosConexion = [
     <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
   )}
 
+  <div class="procedimiento-cta-seccion">
+    <WhatsAppCTA
+      marca={marca}
+      modelo={modelo}
+      sourceId={`${sourceIdBase}-indice`}
+      urlPath={localizedPath}
+      locale={locale}
+      label={ctaIndiceProcesosLabel}
+      elevar
+    />
+  </div>
+
   <!-- Paso 1 ("Identificación del error"): sube justo después del grid,
        antes del selector — comparte el mismo <select> reactivo. -->
   <ol class="procedimiento-detalle">
@@ -337,6 +362,18 @@ const subpasosConexion = [
       <p data-procedimiento-pregunta-error>
         {paso1PreguntaPrefijo}<span data-procedimiento-error-largo>{errorLargoPrincipal}</span>{paso1PreguntaSufijo}
       </p>
+      <div class="procedimiento-cta-seccion">
+        <WhatsAppCTA
+          marca={marca}
+          modelo={modelo}
+          error={errorPrincipal?.descripcion}
+          sourceId={`${sourceIdBase}-paso1`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={ctaPaso1Label}
+          elevar
+        />
+      </div>
     </li>
   </ol>
 
@@ -409,6 +446,18 @@ const subpasosConexion = [
           {t(locale, "procedimiento.paso2ReqSensor")}
         </li>
       </ul>
+      <div class="procedimiento-cta-seccion">
+        <WhatsAppCTA
+          marca={marca}
+          modelo={modelo}
+          error={errorPrincipal?.descripcion}
+          sourceId={`${sourceIdBase}-paso2`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={ctaPaso2Label}
+          elevar
+        />
+      </div>
     </li>
 
     <li>
@@ -418,6 +467,18 @@ const subpasosConexion = [
         </a>
       </h3>
       <p class="procedimiento-respuesta-destacada">{t(locale, "procedimiento.paso3Resultado")}</p>
+      <div class="procedimiento-cta-seccion">
+        <WhatsAppCTA
+          marca={marca}
+          modelo={modelo}
+          error={errorPrincipal?.descripcion}
+          sourceId={`${sourceIdBase}-paso3`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={ctaPaso3Label}
+          elevar
+        />
+      </div>
     </li>
   </ol>
 
@@ -473,19 +534,6 @@ const subpasosConexion = [
         </div>
       ))}
     </div>
-    {!variosCompatibles && (
-      <div class="subpasos-cta">
-        <WhatsAppCTA
-          marca={marca}
-          modelo={modelo}
-          error={errorPrincipal?.descripcion}
-          sourceId={`${sourceIdBase}-proceso`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={t(locale, "proceso.ctaContinuar")}
-        />
-      </div>
-    )}
     <VideoModal archivo="proceso-demo.mp4" label={t(locale, "proceso.videoProcesoLabel")} />
   </InfoCard>
 
@@ -499,6 +547,18 @@ const subpasosConexion = [
       <InfoCard>
         <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
       </InfoCard>
+      <div class="procedimiento-cta-seccion">
+        <WhatsAppCTA
+          marca={marca}
+          modelo={modelo}
+          error={errorPrincipal?.descripcion}
+          sourceId={`${sourceIdBase}-paso4`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={ctaPaso4Label}
+          elevar
+        />
+      </div>
     </li>
 
     <li>
@@ -507,6 +567,7 @@ const subpasosConexion = [
           5) {t(locale, "procedimiento.paso5Titulo").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo)}
         </a>
       </h3>
+      <p class="procedimiento-video-aclaracion">{ctaPaso5Nota}</p>
       {videoResetRealizado ? (
         <div
           class="procedimiento-video-real"
@@ -534,6 +595,18 @@ const subpasosConexion = [
           <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
         </div>
       )}
+      <div class="procedimiento-cta-seccion">
+        <WhatsAppCTA
+          marca={marca}
+          modelo={modelo}
+          error={errorPrincipal?.descripcion}
+          sourceId={`${sourceIdBase}-paso5`}
+          urlPath={localizedPath}
+          locale={locale}
+          label={ctaPaso5Label}
+          elevar
+        />
+      </div>
     </li>
 
     <li>
@@ -578,8 +651,8 @@ const subpasosConexion = [
             <a href={hrefClienteSatisfecho}>{t(locale, "procedimiento.paso6VerMasClientes")} →</a>
             <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
           </div>
-          <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow">
-            {t(locale, "common.whatsappButton")}
+          <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow" data-sound="confirm">
+            {ctaPaso6Label}
           </a>
       </div>
     </li>
@@ -884,6 +957,39 @@ const subpasosConexion = [
 
   .whatsapp-cta:hover {
     background: #1fb958;
+  }
+
+  /* CTA del embudo AIDA (uno por seccion del proceso): fondo verde, texto
+     blanco y elevacion en hover — misma variante que WhatsAppCTA.astro
+     (elevar), duplicada aca porque este boton final es markup propio, no
+     el componente compartido. */
+  .procedimiento-cta-seccion {
+    text-align: center;
+  }
+
+  .procedimiento-whatsapp-final {
+    color: #ffffff;
+    font-weight: 700;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .procedimiento-whatsapp-final:hover {
+    color: #ffffff;
+    transform: translateY(-0.2rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .procedimiento-video-aclaracion {
+    margin: 0 0 0.75rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-muted);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
   }
 
   .subtitulo-modulo {

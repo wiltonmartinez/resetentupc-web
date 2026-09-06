@@ -83,6 +83,7 @@ const atencionExplicacion = (
 // copy generico (no depende de marca/modelo) — solo el titulo de la seccion
 // menciona el equipo especifico.
 const interesTitulo = t(locale, "modelo.interesTitulo").replaceAll("{marca}", nombreMarca).replaceAll("{modelo}", nombreModelo);
+const ctaBeneficiosLabel = t(locale, "modelo.ctaBeneficios").replaceAll("{marca}", nombreMarca).replaceAll("{modelo}", nombreModelo);
 const beneficios = [
   { icono: iconoReset, titulo: t(locale, "comoFuncionaProceso.beneficio1Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio1Texto") },
   { icono: iconoTraslados, titulo: t(locale, "comoFuncionaProceso.beneficio2Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio2Texto") },
@@ -211,6 +212,19 @@ const breadcrumbJsonLd = {
           </div>
         )
       )}
+    </div>
+
+    <div class="modelo-cta-seccion">
+      <WhatsAppCTA
+        marca={nombreMarca}
+        modelo={nombreModelo}
+        sourceId={`${sourceIdBase}-beneficios`}
+        urlPath={localizedPath}
+        locale={locale}
+        label={ctaBeneficiosLabel}
+        elevar
+      />
+      <p class="modelo-cta-subtexto">{t(locale, "modelo.ctaBeneficiosSubtexto")}</p>
     </div>
 
     <dialog class="ruleta-dialog" data-ruleta-dialog aria-label={t(locale, "ruletaPage.heading")}>
@@ -768,6 +782,19 @@ const breadcrumbJsonLd = {
   }
 
   .modelo-accion-banner-subtitulo {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
+  }
+
+  .modelo-cta-seccion {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .modelo-cta-subtexto {
     margin: 0;
     color: var(--color-text-subtle);
     font-size: 0.85rem;

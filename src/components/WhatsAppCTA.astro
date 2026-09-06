@@ -11,9 +11,13 @@ interface Props {
   locale: Locale;
   label: string;
   destacado?: boolean;
+  /** Efecto hover de elevación (translateY + sombra), para los CTA del
+   *  embudo AIDA de la página de modelo. Opt-in: no afecta los usos
+   *  existentes de este componente en el resto del sitio. */
+  elevar?: boolean;
 }
 
-const { marca, modelo, error, sourceId, urlPath, locale, label, destacado = false } = Astro.props;
+const { marca, modelo, error, sourceId, urlPath, locale, label, destacado = false, elevar = false } = Astro.props;
 
 const urlOrigen = `${SITE_URL}${urlPath}`;
 const message = buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen });
@@ -21,7 +25,7 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
 ---
 
 <a
-  class:list={["whatsapp-cta", { "whatsapp-cta-destacado": destacado }]}
+  class:list={["whatsapp-cta", { "whatsapp-cta-destacado": destacado, "whatsapp-cta-elevar": elevar }]}
   href={href}
   data-source-id={sourceId}
   data-sound="confirm"
@@ -43,6 +47,21 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
   }
   .whatsapp-cta:hover {
     background: #1fb958;
+  }
+
+  .whatsapp-cta-elevar {
+    color: #ffffff;
+    font-weight: 700;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .whatsapp-cta-elevar:hover {
+    color: #ffffff;
+    transform: translateY(-0.2rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   .whatsapp-cta-destacado {
