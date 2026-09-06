@@ -233,19 +233,25 @@ for (let i = testimoniosDestacadosPool.length - 1; i > 0; i--) {
 const testimoniosDestacados = testimoniosDestacadosPool.slice(0, 3);
 
 // Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
-// propia regla de "modelo hermano". Si todavía no existe, se cae a
-// filtrar por marca el listado real ya existente — sin lógica de modelo
-// hermano (esa vive en Núcleo, no se duplica acá). El endpoint propuesto
-// devuelve un único elemento ya elegido por Núcleo (no una lista), así
-// que en ese caso no hay nada más que azarear en el cliente.
+// propia regla de "modelo hermano". Si todavía no existe (o no hay
+// evidencia directa para este modelo), se cae al listado general
+// filtrado en el mismo orden que el video del Paso 5: primero modelo
+// exacto, si no hay nada entonces cualquiera de la misma marca, y solo
+// si tampoco hay nada de la marca se usa el listado completo. El
+// endpoint propuesto devuelve un único elemento ya elegido por Núcleo
+// (no una lista), así que en ese caso no hay nada más que azarear en
+// el cliente.
 const evidenciaDirecta = await obtenerEvidenciaClienteSatisfecho(marcaSlug, modeloSlug);
 let candidatosLocal: CandidatoLocal[];
 if (evidenciaDirecta) {
   candidatosLocal = [{ url: evidenciaDirecta.html_url, titulo: evidenciaDirecta.titulo }];
 } else {
   const clienteSatisfechoResp = await listarClienteSatisfecho(1, 50);
-  const dela = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
-  const candidatos = dela.length > 0 ? dela : clienteSatisfechoResp.data;
+  const porModeloExacto = clienteSatisfechoResp.data.filter(
+    (e) => e.marca.toLowerCase() === marcaSlug && e.modelo.toLowerCase() === modeloSlug
+  );
+  const porMarca = clienteSatisfechoResp.data.filter((e) => e.marca.toLowerCase() === marcaSlug);
+  const candidatos = porModeloExacto.length > 0 ? porModeloExacto : porMarca.length > 0 ? porMarca : clienteSatisfechoResp.data;
   candidatosLocal = candidatos.map((e) => ({ url: e.html_url, titulo: tituloConRespaldo(e), slug: e.slug }));
 }
 
