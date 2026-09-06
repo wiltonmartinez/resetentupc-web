@@ -587,11 +587,16 @@ const erroresTab = [
         <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
           {erroresTab.map((error, index) => (
             <div data-tab-panel={error.id} hidden={index !== 0}>
-              <p>
-                {renderTemplateParts(error.pregunta, cascadaDefaults).map((part) =>
-                  part.token ? <span {...{ [`data-cascada-${part.token}`]: true }}>{part.text}</span> : part.text
-                )}
-              </p>
+              {/*
+                El modelo aqui NO usa el cascade dinamico [data-cascada-modelo]:
+                la foto de evidencia de cada pestana es fija (siempre el mismo
+                modelo real, ej. L3110 para Epson, G3110 para Canon, F570 para
+                Epson-SC), asi que el texto debe coincidir con esa foto en vez
+                de con el modelo que el usuario elija en el selector de arriba
+                — evita la incoherencia de decir "M2120" sobre una captura que
+                literalmente dice "L3110" en pantalla.
+              */}
+              <p>{error.pregunta.replace("{modelo}", error.nombreModelo)}</p>
               <EvidenceCard
                 errorId={error.errorId}
                 modeloSlug={error.modeloSlug}
