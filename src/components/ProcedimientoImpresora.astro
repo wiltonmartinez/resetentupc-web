@@ -255,7 +255,6 @@ if (evidenciaDirecta) {
   candidatosLocal = candidatos.map((e) => ({ url: e.html_url, titulo: tituloConRespaldo(e), slug: e.slug }));
 }
 
-const testimonioTrustpilot = candidatosTrustpilot[0] ?? null;
 const testimonioLocalEmbed = candidatosLocal[0] ?? null;
 
 const hrefClienteSatisfecho = buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/");
@@ -263,23 +262,16 @@ const hrefClienteSatisfechoDetalle = testimonioLocalEmbed?.slug
   ? buildLocalizedPath(locale, `/prueba-social/cliente-satisfecho/${testimonioLocalEmbed.slug}/`)
   : null;
 const hrefTestimoniosTrustpilot = buildLocalizedPath(locale, "/prueba-social/testimonios-truspilot/");
-// Igual que paso5AnchorConVideoTemplate: la base traducida se pasa al
-// cliente vía data-resena-template para cuando el script azarea otro
-// testimonio Trustpilot.
-const paso6ResenaTrustpilotTemplate = t(locale, "procedimiento.paso6ResenaTrustpilot");
-function anchorTrustpilotDe(c: CandidatoTrustpilot): string {
-  const marcaModelo = [c.marca, c.modelo].filter(Boolean).join(" ");
-  return `${paso6ResenaTrustpilotTemplate}${marcaModelo ? ": " + marcaModelo : ""}`;
-}
-const anchorTrustpilot = testimonioTrustpilot ? anchorTrustpilotDe(testimonioTrustpilot) : "";
 const paso6LeerCasoCompletoTemplate = t(locale, "procedimiento.paso6LeerCasoCompleto");
 
 // JSON embebido para el script del cliente (solo cuando hay más de un
-// candidato — si hay 0 o 1, no hace falta azarear nada).
+// candidato — si hay 0 o 1, no hace falta azarear nada). El testimonio
+// Trustpilot individual ya no se muestra acá (ver seccion "prueba-social-
+// resenas" mas arriba, con 3 al azar), asi que no hace falta reenviar ese
+// candidato para reazarear en el cliente.
 const candidatosParaCliente = jsonSeguroParaScript({
   videos: candidatosVideo.length > 1 ? candidatosVideo : [],
   local: candidatosLocal.length > 1 ? candidatosLocal : [],
-  trustpilot: candidatosTrustpilot.length > 1 ? candidatosTrustpilot : [],
 });
 
 // Módulo Contacto WhatsApp (cierre del Paso 6): CTA final con su propio
@@ -581,25 +573,6 @@ const subpasosConexion = [
               </div>
             </section>
           )}
-          {testimonioTrustpilot?.imagen && (
-            <div
-              class="procedimiento-testimonio-item"
-              data-procedimiento-testimonio-trustpilot
-              data-resena-template={paso6ResenaTrustpilotTemplate}
-            >
-              <a class="procedimiento-testimonio-trustpilot-link" href={testimonioTrustpilot.destino} target="_blank" rel="noopener noreferrer nofollow">
-                <img src={testimonioTrustpilot.imagen} alt={t(locale, "procedimiento.paso6AltTrustpilot")} loading="lazy" />
-              </a>
-              <a
-                class="procedimiento-enlace-seo"
-                href={testimonioTrustpilot.destino}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-              >
-                {anchorTrustpilot} →
-              </a>
-            </div>
-          )}
           <TrustpilotWidget />
           <div class="procedimiento-prueba-social-enlaces">
             <a href={hrefClienteSatisfecho}>{t(locale, "procedimiento.paso6VerMasClientes")} →</a>
@@ -612,7 +585,7 @@ const subpasosConexion = [
     </li>
   </ol>
 
-  {(candidatosVideo.length > 1 || candidatosLocal.length > 1 || candidatosTrustpilot.length > 1) && (
+  {(candidatosVideo.length > 1 || candidatosLocal.length > 1) && (
     <script type="application/json" data-procedimiento-candidatos set:html={candidatosParaCliente} />
   )}
 </div>
@@ -667,7 +640,6 @@ const subpasosConexion = [
     let candidatos: {
       videos?: { youtubeId: string; titulo: string; slug: string }[];
       local?: { url: string; titulo: string; slug?: string }[];
-      trustpilot?: { imagen: string; destino: string; marca: string; modelo: string }[];
     };
     try {
       candidatos = JSON.parse(candidatosScript.textContent || "{}");
@@ -720,24 +692,6 @@ const subpasosConexion = [
       }
     }
 
-    // Paso 6: testimonio Trustpilot
-    const trustpilotElegido = alAzar(candidatos.trustpilot);
-    const trustpilotWrapper = raiz.querySelector<HTMLElement>("[data-procedimiento-testimonio-trustpilot]");
-    if (trustpilotElegido && trustpilotWrapper) {
-      const enlaceImagen = trustpilotWrapper.querySelector<HTMLAnchorElement>(".procedimiento-testimonio-trustpilot-link");
-      const img = trustpilotWrapper.querySelector<HTMLImageElement>("img");
-      const enlaceSeo = trustpilotWrapper.querySelector<HTMLAnchorElement>(".procedimiento-enlace-seo");
-      const marcaModelo = [trustpilotElegido.marca, trustpilotElegido.modelo].filter(Boolean).join(" ");
-      const resenaTemplate = trustpilotWrapper.dataset.resenaTemplate || "";
-      const anchor = `${resenaTemplate}${marcaModelo ? ": " + marcaModelo : ""}`;
-
-      if (enlaceImagen) enlaceImagen.href = trustpilotElegido.destino;
-      if (img) img.src = trustpilotElegido.imagen;
-      if (enlaceSeo) {
-        enlaceSeo.href = trustpilotElegido.destino;
-        enlaceSeo.textContent = `${anchor} →`;
-      }
-    }
   });
 
   // Boton "copiar" del ID de tecnico (subtarjeta 3.2): copia al portapapeles
@@ -899,19 +853,6 @@ const subpasosConexion = [
     gap: 0.4rem;
     justify-items: center;
     max-width: 320px;
-  }
-
-  .procedimiento-testimonio-trustpilot-link {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    line-height: 0;
-  }
-
-  .procedimiento-testimonio-trustpilot-link img {
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-md);
   }
 
   .procedimiento-prueba-social-enlaces {
