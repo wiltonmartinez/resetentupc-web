@@ -2,7 +2,6 @@
 import { t, buildStaticPagePath } from "../../i18n/utils";
 import InfoCard from "../ui/InfoCard.astro";
 import ContactCard from "../ui/ContactCard.astro";
-import ContactForm from "../ui/ContactForm.astro";
 import type { Locale } from "../../config/site";
 
 interface Props {
@@ -12,16 +11,10 @@ interface Props {
 const { locale } = Astro.props;
 const path = buildStaticPagePath(locale, "contacto");
 const whatsappLabel = t(locale, "common.whatsappButton");
-const mensajeLabel = t(locale, "contacto.enviarMensaje");
 ---
 
 <article class="contacto-page">
   <h1>{t(locale, "contacto.heading")}</h1>
-
-  <InfoCard tone="muted">
-    <h2>{t(locale, "contactForm.tituloModal")}</h2>
-    <ContactForm locale={locale} idPrefix="cf-contacto" />
-  </InfoCard>
 
   <InfoCard tone="muted">
     <h2>{t(locale, "contacto.equipoTitulo")}</h2>
@@ -30,23 +23,19 @@ const mensajeLabel = t(locale, "contacto.enviarMensaje");
         nombre="Wilton Martínez Escorcia"
         rol={t(locale, "contacto.rolWilton")}
         whatsapp="573016928346"
-        recipientKey="wilton"
         sourceId="contacto-equipo-wilton"
         urlPath={path}
         locale={locale}
         whatsappLabel={whatsappLabel}
-        mensajeLabel={mensajeLabel}
       />
       <ContactCard
         nombre="Diana Cabana Orozco"
         rol={t(locale, "contacto.rolDiana")}
         whatsapp="573006279131"
-        recipientKey="diana"
         sourceId="contacto-equipo-diana"
         urlPath={path}
         locale={locale}
         whatsappLabel={whatsappLabel}
-        mensajeLabel={mensajeLabel}
       />
     </div>
     <p class="contacto-ubicacion">
