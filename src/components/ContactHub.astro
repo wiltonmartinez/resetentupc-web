@@ -3,17 +3,10 @@
  * Botón flotante de WhatsApp: enlace directo, sin menú intermedio. No
  * visible en "ru" (Rusia/Europa del Este usa Telegram) ni "ko" (Corea del
  * Sur usa KakaoTalk) — WhatsApp tiene adopción marginal en esos mercados.
- *
- * El <dialog>+<ContactForm> de abajo NO pertenece a este botón: es la única
- * instancia de ese formulario en la página, y otros elementos del sitio
- * (ContactCard, en la página de Contacto) la abren vía
- * [data-abrir-formulario-contacto]. Se mantiene aquí, oculta, para no romper
- * ese flujo de Cotización/Garantía.
  */
 import { Image, getImage } from "astro:assets";
 import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
-import ContactForm from "./ui/ContactForm.astro";
 import whatsappLogo from "../assets/whatsapp/1.png";
 import whatsappNotif from "../assets/whatsapp/2.png";
 
@@ -69,25 +62,9 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   </div>
 )}
 
-<dialog class="contact-hub-dialog" data-hub-dialog>
-  <button type="button" class="contact-hub-dialog-close" data-sound="select" aria-label={t(locale, "contactForm.cerrarModal")}>
-    ×
-  </button>
-  <h2>{t(locale, "contactForm.tituloModal")}</h2>
-  <ContactForm locale={locale} marcaDefault={marcaDefault} modeloDefault={modeloDefault} idPrefix="cf-hub" />
-</dialog>
-
 <script>
   import { trackEvent } from "../lib/analytics.js";
   import { playFeedback } from "../lib/sound-manager.js";
-
-  const dialog = document.querySelector<HTMLDialogElement>("[data-hub-dialog]");
-  const closeDialogBtn = document.querySelector<HTMLButtonElement>("[data-hub-dialog] .contact-hub-dialog-close");
-
-  closeDialogBtn?.addEventListener("click", () => dialog?.close());
-  dialog?.addEventListener("click", (event) => {
-    if (event.target === dialog) dialog.close();
-  });
 
   document.querySelectorAll<HTMLElement>(".contact-hub [data-analytics-event]").forEach((el) => {
     el.addEventListener("click", () => {
@@ -211,47 +188,6 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     .contact-hub-bubble {
       animation: none;
     }
-  }
-
-  .contact-hub-dialog {
-    position: fixed;
-    margin: auto;
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--space-md);
-    max-width: min(92vw, 560px);
-    max-height: 88vh;
-    overflow-y: auto;
-    background: var(--color-bg-card);
-    box-shadow: var(--shadow-floating);
-  }
-
-  .contact-hub-dialog::backdrop {
-    background: rgba(15, 23, 42, 0.6);
-  }
-
-  .contact-hub-dialog h2 {
-    margin: 0 0 0.9rem;
-    padding-right: 2rem;
-  }
-
-  .contact-hub-dialog-close {
-    position: absolute;
-    top: 0.6rem;
-    right: 0.6rem;
-    width: 2.25rem;
-    height: 2.25rem;
-    border: none;
-    border-radius: var(--radius-full);
-    background: var(--color-bg-muted);
-    color: var(--color-text);
-    font-size: 1.4rem;
-    line-height: 1;
-    cursor: pointer;
-  }
-
-  .contact-hub-dialog-close:hover {
-    background: var(--color-border);
   }
 
   @media (max-width: 480px) {
