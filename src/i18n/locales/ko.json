@@ -313,7 +313,9 @@
     "cerrarRuletaLabel": "룰렛 닫기",
     "selectorModeloListaPlaceholder": "모델을 선택하세요",
     "otroModeloOption": "기타: ____",
-    "testimonioTrustpilotAlt": "Trustpilot의 실제 고객 후기"
+    "testimonioTrustpilotAlt": "Trustpilot의 실제 고객 후기",
+    "resenasTitulo": "920명 이상의 고객이 이미 프린터를 되찾았습니다",
+    "resenasSubtitulo": "이미 저희 어시스트 리셋 서비스를 신뢰한 분들의 이야기"
   },
   "faq": {
     "title": "자주 묻는 질문 | ResetEnLinea.com",

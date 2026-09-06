@@ -351,7 +351,9 @@
     "cerrarRuletaLabel": "Cerrar ruleta",
     "selectorModeloListaPlaceholder": "Selecciona tu modelo",
     "otroModeloOption": "Otro: ____",
-    "testimonioTrustpilotAlt": "Reseña real de cliente en Trustpilot"
+    "testimonioTrustpilotAlt": "Reseña real de cliente en Trustpilot",
+    "resenasTitulo": "Más de 920 clientes ya recuperaron sus impresoras",
+    "resenasSubtitulo": "Lo que dicen quienes ya confiaron en nuestro servicio de reset asistido"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",

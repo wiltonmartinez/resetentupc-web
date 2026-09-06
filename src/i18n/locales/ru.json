@@ -313,7 +313,9 @@
     "cerrarRuletaLabel": "Закрыть рулетку",
     "selectorModeloListaPlaceholder": "Выберите свою модель",
     "otroModeloOption": "Другое: ____",
-    "testimonioTrustpilotAlt": "Реальный отзыв клиента на Trustpilot"
+    "testimonioTrustpilotAlt": "Реальный отзыв клиента на Trustpilot",
+    "resenasTitulo": "Более 920 клиентов уже вернули свои принтеры в строй",
+    "resenasSubtitulo": "Что говорят те, кто уже доверился нашей услуге ассистированного сброса"
   },
   "faq": {
     "title": "Частые вопросы | ResetEnLinea.com",

@@ -313,7 +313,9 @@
     "cerrarRuletaLabel": "Glücksrad schließen",
     "selectorModeloListaPlaceholder": "Wähle dein Modell",
     "otroModeloOption": "Andere: ____",
-    "testimonioTrustpilotAlt": "Echte Kundenbewertung auf Trustpilot"
+    "testimonioTrustpilotAlt": "Echte Kundenbewertung auf Trustpilot",
+    "resenasTitulo": "Über 920 Kunden haben ihren Drucker bereits zurückbekommen",
+    "resenasSubtitulo": "Das sagen diejenigen, die unserem assistierten Reset-Service bereits vertraut haben"
   },
   "faq": {
     "title": "Häufige Fragen | ResetEnLinea.com",

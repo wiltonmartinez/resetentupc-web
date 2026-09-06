@@ -129,17 +129,23 @@ try {
   console.error("Error fetching cliente-satisfecho para Cómo Funciona:", error);
 }
 
-// Resena aleatoria de Trustpilot (mismo catalogo publico que usa
-// TestimoniosTruspilotPage) para mostrar despues del chat embebido del
-// Paso 6 — otra prueba social real, sin fabricar nada si Nucleo no responde.
-let testimonioAleatorio: { imagen: string; destino: string } | null = null;
+// Seccion de Prueba Social (Bloque 2.5, antes del CTA final): 3 resenas
+// reales al azar del mismo catalogo publico que usa TestimoniosTruspilotPage
+// (Nucleo /api/public/testimonios/) — nunca texto ni nombres inventados, solo
+// las capturas reales ya validadas. Si Nucleo no responde o hay menos de 3
+// con imagen, se muestran las que haya (sin fabricar nada para completar).
+let testimoniosDestacados: { imagen: string; destino: string }[] = [];
 try {
   const testimonios = await listarTestimonios();
   const conImagen = testimonios.filter((testimonio) => testimonio.url_imgur?.trim());
-  if (conImagen.length > 0) {
-    const elegido = conImagen[Math.floor(Math.random() * conImagen.length)];
-    testimonioAleatorio = { imagen: elegido.url_imgur, destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur };
+  for (let i = conImagen.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [conImagen[i], conImagen[j]] = [conImagen[j], conImagen[i]];
   }
+  testimoniosDestacados = conImagen.slice(0, 3).map((t) => ({
+    imagen: t.url_imgur,
+    destino: t.url_trustpilot_review?.trim() || t.url_imgur,
+  }));
 } catch (error) {
   console.error("Error fetching testimonios-trustpilot para Cómo Funciona:", error);
 }
@@ -839,19 +845,25 @@ const erroresTab = [
             </div>
           );
         })}
-        {testimonioAleatorio && (
-          <a
-            class="testimonio-trustpilot"
-            href={testimonioAleatorio.destino}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-          >
-            <img src={testimonioAleatorio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
-          </a>
-        )}
       </div>
     </div>
   </section>
+
+  {testimoniosDestacados.length > 0 && (
+    <section class="prueba-social-resenas">
+      <div class="prueba-social-header">
+        <h2>{t(locale, "comoFuncionaProceso.resenasTitulo")}</h2>
+        <p>{t(locale, "comoFuncionaProceso.resenasSubtitulo")}</p>
+      </div>
+      <div class="prueba-social-grid">
+        {testimoniosDestacados.map((testimonio) => (
+          <a class="resena-card" href={testimonio.destino} target="_blank" rel="noopener noreferrer nofollow">
+            <img src={testimonio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 
   <!-- BLOQUE 3: CTA + FAQ -->
   <section
@@ -1910,19 +1922,63 @@ const erroresTab = [
     color: var(--color-text-subtle);
   }
 
-  .testimonio-trustpilot {
-    display: block;
-    margin-top: 1rem;
-    max-width: 420px;
-    line-height: 0;
+  /* Prueba Social: resenas reales de Trustpilot, antes del CTA final */
+  .prueba-social-resenas {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 
-  .testimonio-trustpilot img {
+  .prueba-social-header {
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto 2rem;
+  }
+
+  .prueba-social-header h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .prueba-social-header p {
+    margin: 0;
+    color: var(--color-text-muted, #4b5563);
+    font-size: 1rem;
+  }
+
+  .prueba-social-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .prueba-social-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .resena-card {
+    display: block;
+    line-height: 0;
+    background: #ffffff;
+    border: 1px solid #f3f4f6;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    transition: box-shadow 300ms, transform 300ms;
+  }
+
+  .resena-card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.25rem);
+  }
+
+  .resena-card img {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
   }
 
   /* BLOQUE 3 */
