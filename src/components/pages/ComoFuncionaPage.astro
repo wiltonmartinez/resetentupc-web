@@ -730,6 +730,23 @@ const erroresTab = [
     const almohadillasLabel = modeloWrap?.dataset.almohadillasLabel ?? "";
     let marcaActivaId = "";
 
+    // Vincula la marca+error elegidos aca arriba con la pestana equivalente
+    // del bloque "Identificacion del error" (Paso 1, mas abajo): al elegir
+    // una combinacion con evidencia real, se activa esa pestana para que la
+    // foto del error correcto aparezca sin que el usuario tenga que buscarla.
+    const tabsPorCombinacion: { marcaId: string; errorValor: string; tabId: string }[] = [
+      { marcaId: "epson", errorValor: almohadillasLabel, tabId: "epson-almohadillas" },
+      { marcaId: "canon", errorValor: "5B00", tabId: "canon-5b00" },
+      { marcaId: "epson-sc", errorValor: "0014BD", tabId: "epson-sc-0014bd" },
+      { marcaId: "epson-sc", errorValor: "00000008 - 00080000", tabId: "epson-sc-00000008" },
+      { marcaId: "epson-sc", errorValor: "00000004 - 00040000", tabId: "epson-sc-00000004" },
+    ];
+    const activarTabError = (marcaId: string, errorValor: string) => {
+      const match = tabsPorCombinacion.find((t) => t.marcaId === marcaId && t.errorValor === errorValor);
+      if (!match) return;
+      document.querySelector<HTMLButtonElement>(`[data-tab-target="${match.tabId}"]`)?.click();
+    };
+
     const actualizarModelo = (valor: string) => {
       document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
         el.textContent = valor;
@@ -766,6 +783,7 @@ const erroresTab = [
         document.querySelectorAll<HTMLElement>("[data-cascada-error]").forEach((el) => {
           el.textContent = valor;
         });
+        activarTabError(marcaActivaId, valor);
 
         // Epson + Almohadillas, Canon (cualquier error) y Epson-SC (cualquier
         // error) muestran una lista de modelos frecuentes en vez del campo de
