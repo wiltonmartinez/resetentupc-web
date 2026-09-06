@@ -197,9 +197,9 @@
   "comoFuncionaProceso": {
     "tituloResumen": "Voici comment fonctionne le processus, étape par étape",
     "resumenPaso1": "Identification de l'erreur : {error}",
-    "paso1Pregunta": "Votre imprimante Epson affiche-t-elle un message du type « Un tampon encreur a atteint la fin de sa durée de vie » ?",
+    "paso1Pregunta": "Votre imprimante Epson {modelo} affiche-t-elle un message du type « Un tampon encreur a atteint la fin de sa durée de vie » ?",
     "paso1ImagenPlaceholder": "Espace réservé à la capture d'écran de l'Epson Status Monitor",
-    "paso1PreguntaCanon": "Votre imprimante Canon affiche-t-elle le code d'erreur 5B00 (Absorbeur d'encre plein) ?",
+    "paso1PreguntaCanon": "Votre imprimante Canon {modelo} affiche-t-elle le code d'erreur 5B00 (Absorbeur d'encre plein) ?",
     "paso1PreguntaEpsonSc": "Votre imprimante Epson-SC affiche-t-elle le code d'erreur 0014BD (blocage) ?",
     "paso1PreguntaEpsonSc2": "Votre imprimante Epson-SC affiche-t-elle le code d'erreur 00000008 - 00080000 ?",
     "paso1PreguntaEpsonSc3": "Votre imprimante Epson-SC affiche-t-elle le code d'erreur 00000004 - 00040000 ?",

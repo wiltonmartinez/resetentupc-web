@@ -8,7 +8,8 @@
  * que usa ProcedimientoImpresora.astro en las páginas de modelo reales),
  * más un namespace propio "comoFuncionaProceso" solo para lo que no existía.
  */
-import { Image, type ImageMetadata } from "astro:assets";
+import { Image, getImage, type ImageMetadata } from "astro:assets";
+import { getErrorImage } from "../../lib/error-images.js";
 import { t, buildStaticPagePath } from "../../i18n/utils";
 import FaqAccordion from "../ui/FaqAccordion.astro";
 import Tabs from "../ui/Tabs.astro";
@@ -186,6 +187,31 @@ const modelosCanon = [
 ];
 const modelosEpsonSc = ["F570", "F571", "T3170", "T3170x"];
 const OTRO_MODELO_VALOR = "otro";
+
+// Fotos reales por modelo exacto (no solo por marca) para Epson-Almohadillas
+// y Canon-5B00: src/assets/errores/ ya tiene una captura por cada modelo del
+// desplegable (ej. G3110.png, G6010.png), asi que en vez de mostrar siempre
+// la misma foto generica, se sirve la del modelo que el usuario realmente
+// eligio. Si un modelo no tiene foto propia (raro, catalogo incompleto), esa
+// entrada simplemente no aparece en el mapa y el cliente mantiene la foto
+// generica por defecto sin fabricar nada.
+type FotoModelo = { src: string; srcModal: string };
+const construirFotosPorModelo = async (modelos: string[]): Promise<Record<string, FotoModelo>> => {
+  const entradas = await Promise.all(
+    modelos.map(async (modelo) => {
+      const img = getErrorImage(modelo);
+      if (!img) return null;
+      const [thumb, modal] = await Promise.all([
+        getImage({ src: img, format: "webp", width: img.width }),
+        getImage({ src: img, format: "webp", width: 960 }),
+      ]);
+      return [modelo, { src: thumb.src, srcModal: modal.src }] as const;
+    })
+  );
+  return Object.fromEntries(entradas.filter((e): e is [string, FotoModelo] => e !== null));
+};
+const fotosEpsonAlmohadillas = await construirFotosPorModelo(modelosEpsonAlmohadillas);
+const fotosCanon = await construirFotosPorModelo(modelosCanon);
 
 const modeloEjemplo = t(locale, "comoFuncionaProceso.resumenModeloEjemplo");
 const cascadaDefaults: Record<CascadaToken, string> = {
@@ -585,18 +611,30 @@ const erroresTab = [
       <div class="detalle-contenido">
         <h3>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</h3>
         <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
-          {erroresTab.map((error, index) => (
-            <div data-tab-panel={error.id} hidden={index !== 0}>
+          {erroresTab.map((error, index) => {
+            const fotosPorModelo =
+              error.id === "epson-almohadillas" ? fotosEpsonAlmohadillas : error.id === "canon-5b00" ? fotosCanon : null;
+            return (
+            <div
+              data-tab-panel={error.id}
+              hidden={index !== 0}
+              data-fotos-modelo={fotosPorModelo ? JSON.stringify(fotosPorModelo) : undefined}
+            >
               {/*
-                Esta pregunta NO menciona un modelo especifico a proposito: la
-                foto de evidencia de cada pestana es fija (siempre el mismo
-                modelo real, ej. L3110 para Epson, G3110 para Canon, F570 para
-                Epson-SC), y mencionar el modelo elegido en el selector de
-                arriba (o incluso el modelo fijo de la foto) puede contradecir
-                lo que literalmente se ve en pantalla si el usuario eligio otro
-                modelo de la misma marca.
+                El {modelo} de esta pregunta SOLO existe en las preguntas de
+                Epson-Almohadillas y Canon-5B00 (las unicas con una foto real
+                por cada modelo del desplegable en src/assets/errores/). Se
+                renderiza vacio por defecto y el cliente lo completa —junto con
+                la foto correspondiente— recien cuando el modelo elegido tiene
+                una foto real que lo respalde (ver [data-modelo-evidencia] en
+                el script mas abajo). Las demas preguntas (Epson-SC) no tienen
+                el token y quedan igual.
               */}
-              <p>{error.pregunta}</p>
+              <p>
+                {renderTemplateParts(error.pregunta, { ...cascadaDefaults, modelo: "" }).map((part) =>
+                  part.token === "modelo" ? <span data-modelo-evidencia>{part.text}</span> : part.text
+                )}
+              </p>
               <EvidenceCard
                 errorId={error.errorId}
                 modeloSlug={error.modeloSlug}
@@ -608,7 +646,8 @@ const erroresTab = [
                 locale={locale}
               />
             </div>
-          ))}
+            );
+          })}
         </Tabs>
       </div>
     </div>
@@ -846,6 +885,55 @@ const erroresTab = [
       });
     };
 
+    // Foto de evidencia por modelo exacto (solo Epson-Almohadillas y
+    // Canon-5B00 tienen una foto real por cada modelo del desplegable, via
+    // [data-fotos-modelo] servido desde el frontmatter). Si el modelo
+    // elegido tiene foto propia, se reemplaza la miniatura + la del zoom y
+    // se completa [data-modelo-evidencia] con ese modelo; si no la tiene, se
+    // vuelve a la foto original del panel (guardada en data-original-*) y el
+    // span de modelo queda vacio, para no afirmar un modelo que la foto no
+    // respalda.
+    const panelesConFotoPorModelo: Record<string, HTMLElement | null> = {
+      epson: document.querySelector('[data-tab-panel="epson-almohadillas"]'),
+      canon: document.querySelector('[data-tab-panel="canon-5b00"]'),
+    };
+    const fotosPorMarcaJs: Record<string, Record<string, { src: string; srcModal: string }>> = {};
+    Object.entries(panelesConFotoPorModelo).forEach(([marca, panel]) => {
+      try {
+        fotosPorMarcaJs[marca] = JSON.parse(panel?.dataset.fotosModelo ?? "{}");
+      } catch {
+        fotosPorMarcaJs[marca] = {};
+      }
+      const img = panel?.querySelector<HTMLImageElement>(".evidence-imagen img");
+      const modalBtn = panel?.querySelector<HTMLButtonElement>(".evidence-ampliar");
+      if (img && !img.dataset.original) img.dataset.original = img.src;
+      if (modalBtn && !modalBtn.dataset.originalModalSrc) modalBtn.dataset.originalModalSrc = modalBtn.dataset.modalSrc ?? "";
+    });
+
+    const actualizarFotoEvidenciaPorModelo = (marcaId: string, modelo: string) => {
+      const panel = panelesConFotoPorModelo[marcaId];
+      if (!panel) return;
+      const foto = fotosPorMarcaJs[marcaId]?.[modelo];
+      const img = panel.querySelector<HTMLImageElement>(".evidence-imagen img");
+      const modalBtn = panel.querySelector<HTMLButtonElement>(".evidence-ampliar");
+      const modeloSpan = panel.querySelector<HTMLElement>("[data-modelo-evidencia]");
+      if (foto) {
+        if (img) {
+          img.src = foto.src;
+          img.removeAttribute("srcset");
+        }
+        if (modalBtn) modalBtn.dataset.modalSrc = foto.srcModal;
+        if (modeloSpan) modeloSpan.textContent = modelo;
+      } else {
+        if (img && img.dataset.original) {
+          img.src = img.dataset.original;
+          img.removeAttribute("srcset");
+        }
+        if (modalBtn) modalBtn.dataset.modalSrc = modalBtn.dataset.originalModalSrc ?? "";
+        if (modeloSpan) modeloSpan.textContent = "";
+      }
+    };
+
     const actualizarModelo = (valor: string) => {
       document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
         el.textContent = valor;
@@ -927,6 +1015,7 @@ const erroresTab = [
           }
         }
         actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
+        actualizarFotoEvidenciaPorModelo(marcaActivaId, esOtro ? "" : lista.value);
       });
     });
   });

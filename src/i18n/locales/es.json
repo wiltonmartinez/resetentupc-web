@@ -281,9 +281,9 @@
   "comoFuncionaProceso": {
     "tituloResumen": "Así funciona el proceso, paso a paso",
     "resumenPaso1": "Identificación del error: {error}",
-    "paso1Pregunta": "¿Tu impresora Epson muestra un mensaje como \"Una almohadilla de tinta llegó al final de su vida útil\"?",
+    "paso1Pregunta": "¿Tu impresora Epson {modelo} muestra un mensaje como \"Una almohadilla de tinta llegó al final de su vida útil\"?",
     "paso1ImagenPlaceholder": "Espacio para la captura del Epson Status Monitor",
-    "paso1PreguntaCanon": "¿Tu Canon muestra el código de error 5B00 (Absorbedor de tinta lleno)?",
+    "paso1PreguntaCanon": "¿Tu Canon {modelo} muestra el código de error 5B00 (Absorbedor de tinta lleno)?",
     "paso1PreguntaEpsonSc": "¿Tu Epson-SC muestra el código de error 0014BD (bloqueo)?",
     "paso1PreguntaEpsonSc2": "¿Tu Epson-SC muestra el código de error 00000008 - 00080000?",
     "paso1PreguntaEpsonSc3": "¿Tu Epson-SC muestra el código de error 00000004 - 00040000?",

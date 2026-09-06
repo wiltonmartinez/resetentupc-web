@@ -243,9 +243,9 @@
   "comoFuncionaProceso": {
     "tituloResumen": "Вот как проходит процесс, шаг за шагом",
     "resumenPaso1": "Определение ошибки: {error}",
-    "paso1Pregunta": "Ваш принтер Epson показывает сообщение вроде «Абсорбер чернил достиг конца своего срока службы»?",
+    "paso1Pregunta": "Ваш принтер Epson {modelo} показывает сообщение вроде «Абсорбер чернил достиг конца своего срока службы»?",
     "paso1ImagenPlaceholder": "Место для скриншота Epson Status Monitor",
-    "paso1PreguntaCanon": "Ваш принтер Canon показывает код ошибки 5B00 (Абсорбер чернил заполнен)?",
+    "paso1PreguntaCanon": "Ваш принтер Canon {modelo} показывает код ошибки 5B00 (Абсорбер чернил заполнен)?",
     "paso1PreguntaEpsonSc": "Ваш принтер Epson-SC показывает код ошибки 0014BD (блокировка)?",
     "paso1PreguntaEpsonSc2": "Ваш принтер Epson-SC показывает код ошибки 00000008 - 00080000?",
     "paso1PreguntaEpsonSc3": "Ваш принтер Epson-SC показывает код ошибки 00000004 - 00040000?",
