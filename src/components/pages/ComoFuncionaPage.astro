@@ -104,15 +104,27 @@ try {
   console.error("Error fetching reset-realizados para Cómo Funciona:", error);
 }
 
-let clienteAleatorio: { url: string; titulo: string } | null = null;
+// Conversacion embebida del Paso 6: una por marca (Epson/Canon) para que
+// coincida con la marca elegida en el selector de diagnostico, mas una
+// "default" (cualquier caso, sin filtrar) para Epson-SC o mientras no se
+// eligio marca todavia. Mismo catalogo publico que usa Prueba Social.
+type ClienteEmbed = { url: string; titulo: string } | null;
+const clientesPorVariante: Record<string, ClienteEmbed> = { epson: null, canon: null, default: null };
 try {
   const clientes = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/cliente-satisfecho/`);
   const conCaptura = clientes.filter((c: any) => c.html_url);
-  if (conCaptura.length > 0) {
-    const elegido = conCaptura[Math.floor(Math.random() * conCaptura.length)];
+
+  const elegirDe = (candidatos: any[]): ClienteEmbed => {
+    if (candidatos.length === 0) return null;
+    const elegido = candidatos[Math.floor(Math.random() * candidatos.length)];
     const url = elegido.html_url.startsWith("/") ? `${NUCLEO_API_BASE_URL}${elegido.html_url}` : elegido.html_url;
-    clienteAleatorio = { url, titulo: `${elegido.marca} ${elegido.modelo}` };
-  }
+    return { url, titulo: `${elegido.marca} ${elegido.modelo}` };
+  };
+  const marcaEs = (c: any, marca: string) => (c.marca ?? "").trim().toLowerCase() === marca;
+
+  clientesPorVariante.epson = elegirDe(conCaptura.filter((c: any) => marcaEs(c, "epson")));
+  clientesPorVariante.canon = elegirDe(conCaptura.filter((c: any) => marcaEs(c, "canon")));
+  clientesPorVariante.default = elegirDe(conCaptura);
 } catch (error) {
   console.error("Error fetching cliente-satisfecho para Cómo Funciona:", error);
 }
@@ -799,27 +811,34 @@ const erroresTab = [
       </div>
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso6Titulo")}</h3>
-        {clienteAleatorio ? (
-          <ClienteSatisfechoEmbed url={clienteAleatorio.url} titulo={clienteAleatorio.titulo} />
-        ) : (
-          <>
-            <div class="chat-simulado">
-              <div class="chat-simulado-header">
-                <span class="chat-simulado-avatar">R</span>
-                <span class="chat-simulado-nombre">ResetEnLinea</span>
-                <svg class="chat-simulado-icono" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
-                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
-                </svg>
-              </div>
-              <div class="chat-simulado-body">
-                <span class="chat-burbuja chat-burbuja-in" />
-                <span class="chat-burbuja chat-burbuja-out" />
-                <span class="chat-burbuja chat-burbuja-in" />
-              </div>
+        {["epson", "canon", "default"].map((variante) => {
+          const cliente = clientesPorVariante[variante];
+          return (
+            <div data-chat-marca={variante} hidden={variante !== "epson"}>
+              {cliente ? (
+                <ClienteSatisfechoEmbed url={cliente.url} titulo={cliente.titulo} />
+              ) : (
+                <>
+                  <div class="chat-simulado">
+                    <div class="chat-simulado-header">
+                      <span class="chat-simulado-avatar">R</span>
+                      <span class="chat-simulado-nombre">ResetEnLinea</span>
+                      <svg class="chat-simulado-icono" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
+                      </svg>
+                    </div>
+                    <div class="chat-simulado-body">
+                      <span class="chat-burbuja chat-burbuja-in" />
+                      <span class="chat-burbuja chat-burbuja-out" />
+                      <span class="chat-burbuja chat-burbuja-in" />
+                    </div>
+                  </div>
+                  <span class="chat-simulado-caption">{t(locale, "comoFuncionaProceso.paso6ChatPlaceholder")}</span>
+                </>
+              )}
             </div>
-            <span class="chat-simulado-caption">{t(locale, "comoFuncionaProceso.paso6ChatPlaceholder")}</span>
-          </>
-        )}
+          );
+        })}
         {testimonioAleatorio && (
           <a
             class="testimonio-trustpilot"
@@ -1039,6 +1058,13 @@ const erroresTab = [
         });
         document.querySelectorAll<HTMLElement>("[data-marca-icono]").forEach((img) => {
           img.classList.toggle("icono-activa", img.dataset.marcaIcono === marcaValor);
+        });
+        // Conversacion embebida del Paso 6: Epson y Canon muestran su propia
+        // conversacion real; cualquier otra marca (Epson-SC) usa la variante
+        // "default" (caso sin filtrar por marca).
+        const varianteChat = marcaValor === "epson" || marcaValor === "canon" ? marcaValor : "default";
+        document.querySelectorAll<HTMLElement>("[data-chat-marca]").forEach((el) => {
+          el.hidden = el.dataset.chatMarca !== varianteChat;
         });
         actualizarWhatsAppCta();
       });
