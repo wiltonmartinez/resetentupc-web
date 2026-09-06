@@ -608,7 +608,7 @@ const erroresTab = [
           <li>{t(locale, "procedimiento.paso2ReqWindows")}</li>
           <li>{t(locale, "procedimiento.paso2ReqInternet")}</li>
           <li>{t(locale, "procedimiento.paso2ReqAsistido")}</li>
-          <li>{t(locale, "comoFuncionaProceso.paso2ReqLimpieza")}</li>
+          <li hidden data-requisito-limpieza>{t(locale, "comoFuncionaProceso.paso2ReqLimpieza")}</li>
         </ul>
       </div>
     </div>
@@ -800,6 +800,11 @@ const erroresTab = [
       document.querySelectorAll<HTMLElement>("[data-requisito-usb]").forEach((li) => {
         li.hidden = li.dataset.requisitoUsb !== variante;
       });
+
+      // El requisito de limpieza (sensor de tinta, plasticos, almohadilla
+      // nueva) solo aplica al error 0014BD.
+      const limpiezaLi = document.querySelector<HTMLElement>("[data-requisito-limpieza]");
+      if (limpiezaLi) limpiezaLi.hidden = variante !== "epson-sc-0014bd";
     };
 
     const actualizarModelo = (valor: string) => {
