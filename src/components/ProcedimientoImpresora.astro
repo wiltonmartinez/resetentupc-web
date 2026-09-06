@@ -43,9 +43,8 @@
  * muestra el placeholder visible en vez de romper la sección.
  */
 import { Image } from "astro:assets";
-import whatsappLogo from "../assets/whatsapp/3.png";
-import { t, buildLocalizedPath, buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
-import { WHATSAPP_NUMBER, SITE_URL, TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
+import { t, buildLocalizedPath } from "../i18n/utils";
+import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
 import ErrorSelector from "./ErrorSelector.astro";
 import EvidenceCard from "./ui/EvidenceCard.astro";
 import VideoModal from "./ui/VideoModal.astro";
@@ -58,7 +57,6 @@ import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import InfoCard from "./ui/InfoCard.astro";
-import WhatsAppCTA from "./WhatsAppCTA.astro";
 import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
 import { getProcesoImage } from "../lib/proceso-images.js";
@@ -157,18 +155,13 @@ const paso2ModalidadTexto = errorPrincipal?.modo
   ? t(locale, "procedimiento.paso2Modalidad").replaceAll("{modo}", errorPrincipal.modo)
   : "";
 
-// CTA de WhatsApp del embudo AIDA, uno por seccion del proceso (ver
-// modelo.ctaIndiceProcesos..ctaPaso6 en los locales) — cada uno con su
-// propio source_id para trazabilidad, mencionando siempre {marca}/{modelo}.
+// Nota aclaratoria del Paso 5 (el video es evidencia del trabajo remoto del
+// tecnico, no un instructivo para el usuario) — unico texto de este bloque
+// que sigue en pie tras quitar los CTA intermedios del embudo (ver
+// limpieza de botones: solo quedan 3 ubicaciones estrategicas en toda la
+// pagina, ver ModeloPage.astro).
 const conMarcaModelo = (key: string) => t(locale, key).replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
-const ctaIndiceProcesosLabel = conMarcaModelo("modelo.ctaIndiceProcesos");
-const ctaPaso1Label = conMarcaModelo("modelo.ctaPaso1");
-const ctaPaso2Label = conMarcaModelo("modelo.ctaPaso2");
-const ctaPaso3Label = conMarcaModelo("modelo.ctaPaso3");
-const ctaPaso4Label = conMarcaModelo("modelo.ctaPaso4");
-const ctaPaso5Label = conMarcaModelo("modelo.ctaPaso5");
 const ctaPaso5Nota = conMarcaModelo("modelo.ctaPaso5Nota");
-const ctaPaso6Label = conMarcaModelo("modelo.ctaPaso6");
 
 // Paso 5: video real de "reset realizado" ya publicado para
 // este modelo. Si no hay uno exacto, cae a cualquiera de la misma marca
@@ -286,19 +279,6 @@ const candidatosParaCliente = jsonSeguroParaScript({
   local: candidatosLocal.length > 1 ? candidatosLocal : [],
 });
 
-// Módulo Contacto WhatsApp (cierre del Paso 6): CTA final con su propio
-// source_id para trazabilidad — el número vive únicamente en
-// WHATSAPP_NUMBER (config/site.ts), nunca se escribe a mano aquí.
-const mensajeFinalWhatsApp = buildWhatsAppMessage({
-  locale,
-  marca,
-  modelo,
-  error: errorPrincipal?.descripcion,
-  urlOrigen: `${SITE_URL}${localizedPath}`,
-});
-const hrefFinalWhatsApp = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeFinalWhatsApp);
-const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
-
 // Módulo "Reset Asistido 100% Remoto por conexión USB" (antes vivía en
 // ModeloPage.astro, más abajo en la página) — ahora se muestra justo
 // después del Paso 3, entre el resultado de la revisión y la Cotización.
@@ -337,18 +317,6 @@ const subpasosConexion = [
     <ProcesoReutilizableEpsonSc locale={locale} modelo={modelo} sourceIdBase={sourceIdBase} codigoErrorInicial={codigoCortoInicial} />
   )}
 
-  <div class="procedimiento-cta-seccion">
-    <WhatsAppCTA
-      marca={marca}
-      modelo={modelo}
-      sourceId={`${sourceIdBase}-indice`}
-      urlPath={localizedPath}
-      locale={locale}
-      label={ctaIndiceProcesosLabel}
-      elevar
-    />
-  </div>
-
   <!-- Paso 1 ("Identificación del error"): sube justo después del grid,
        antes del selector — comparte el mismo <select> reactivo. -->
   <ol class="procedimiento-detalle">
@@ -361,18 +329,6 @@ const subpasosConexion = [
       <p data-procedimiento-pregunta-error>
         {paso1PreguntaPrefijo}<span data-procedimiento-error-largo>{errorLargoPrincipal}</span>{paso1PreguntaSufijo}
       </p>
-      <div class="procedimiento-cta-seccion">
-        <WhatsAppCTA
-          marca={marca}
-          modelo={modelo}
-          error={errorPrincipal?.descripcion}
-          sourceId={`${sourceIdBase}-paso1`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={ctaPaso1Label}
-          elevar
-        />
-      </div>
     </li>
   </ol>
 
@@ -444,18 +400,6 @@ const subpasosConexion = [
           {t(locale, "procedimiento.paso2ReqSensor")}
         </li>
       </ul>
-      <div class="procedimiento-cta-seccion">
-        <WhatsAppCTA
-          marca={marca}
-          modelo={modelo}
-          error={errorPrincipal?.descripcion}
-          sourceId={`${sourceIdBase}-paso2`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={ctaPaso2Label}
-          elevar
-        />
-      </div>
     </li>
 
     <li>
@@ -465,18 +409,6 @@ const subpasosConexion = [
         </a>
       </h3>
       <p class="procedimiento-respuesta-destacada">{t(locale, "procedimiento.paso3Resultado")}</p>
-      <div class="procedimiento-cta-seccion">
-        <WhatsAppCTA
-          marca={marca}
-          modelo={modelo}
-          error={errorPrincipal?.descripcion}
-          sourceId={`${sourceIdBase}-paso3`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={ctaPaso3Label}
-          elevar
-        />
-      </div>
     </li>
   </ol>
 
@@ -545,18 +477,6 @@ const subpasosConexion = [
       <InfoCard>
         <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
       </InfoCard>
-      <div class="procedimiento-cta-seccion">
-        <WhatsAppCTA
-          marca={marca}
-          modelo={modelo}
-          error={errorPrincipal?.descripcion}
-          sourceId={`${sourceIdBase}-paso4`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={ctaPaso4Label}
-          elevar
-        />
-      </div>
     </li>
 
     <li>
@@ -593,18 +513,6 @@ const subpasosConexion = [
           <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
         </div>
       )}
-      <div class="procedimiento-cta-seccion">
-        <WhatsAppCTA
-          marca={marca}
-          modelo={modelo}
-          error={errorPrincipal?.descripcion}
-          sourceId={`${sourceIdBase}-paso5`}
-          urlPath={localizedPath}
-          locale={locale}
-          label={ctaPaso5Label}
-          elevar
-        />
-      </div>
     </li>
 
     <li>
@@ -649,10 +557,6 @@ const subpasosConexion = [
             <a href={hrefClienteSatisfecho}>{t(locale, "procedimiento.paso6VerMasClientes")} →</a>
             <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
           </div>
-          <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow" data-sound="confirm">
-            <Image src={whatsappLogo} alt="" width={72} height={72} class="whatsapp-cta-icono" />
-            {ctaPaso6Label}
-          </a>
       </div>
     </li>
   </ol>
@@ -938,62 +842,6 @@ const subpasosConexion = [
   .procedimiento-prueba-social-enlaces a {
     color: var(--color-primary-dark);
     text-decoration: underline;
-  }
-
-  .whatsapp-cta {
-    display: inline-block;
-    width: fit-content;
-    background: #25d366;
-    color: #062f1a;
-    font: inherit;
-    font-weight: 600;
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 999px;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .whatsapp-cta:hover {
-    background: #1fb958;
-  }
-
-  /* CTA del embudo AIDA (uno por seccion del proceso): fondo verde, texto
-     blanco y elevacion en hover — misma variante que WhatsAppCTA.astro
-     (elevar), duplicada aca porque este boton final es markup propio, no
-     el componente compartido. */
-  .procedimiento-cta-seccion {
-    text-align: center;
-  }
-
-  .procedimiento-whatsapp-final {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #20d043;
-    color: #ffffff;
-    font-weight: 700;
-    transition:
-      transform 0.15s ease,
-      background-color 0.15s ease,
-      box-shadow 0.15s ease;
-  }
-
-  .procedimiento-whatsapp-final:hover {
-    background: #1bb93a;
-    color: #ffffff;
-    transform: translateY(-0.125rem);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  }
-
-  .whatsapp-cta-icono {
-    flex-shrink: 0;
-    align-self: stretch;
-    width: auto;
-    aspect-ratio: 1 / 1;
-    margin: -0.75rem 0;
-    object-fit: contain;
-    transform: scale(0.8);
   }
 
   .procedimiento-video-aclaracion {

@@ -358,22 +358,10 @@ const breadcrumbJsonLd = {
       urlPath={localizedPath}
       locale={locale}
       label={t(locale, "comoFuncionaProceso.whatsappBannerCta")}
-      destacado
+      elevar
     />
     <p class="modelo-accion-banner-subtitulo">{t(locale, "comoFuncionaProceso.whatsappBannerSubtitulo")}</p>
   </section>
-
-  <div class="modelo-cta-final">
-    <WhatsAppCTA
-      marca={nombreMarca}
-      modelo={nombreModelo}
-      sourceId={`${sourceIdBase}-final-destacado`}
-      urlPath={localizedPath}
-      locale={locale}
-      label={t(locale, "home.heroCta")}
-      destacado
-    />
-  </div>
 </article>
 
 
@@ -430,10 +418,6 @@ const breadcrumbJsonLd = {
   .modelo-page {
     display: grid;
     gap: var(--space-md);
-  }
-
-  .modelo-cta-final {
-    text-align: center;
   }
 
   .modelo-hero {
