@@ -489,6 +489,8 @@ const erroresTab = [
     </dialog>
   </section>
 
+  <div class="seccion-divisor" aria-hidden="true" />
+
   <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada -->
   <section class="selector-diagnostico" data-selector-diagnostico>
     <h2 class="selector-titulo">{t(locale, "comoFuncionaProceso.selectorTitulo")}</h2>
@@ -540,6 +542,8 @@ const erroresTab = [
       </select>
     </div>
   </section>
+
+  <div class="seccion-divisor" aria-hidden="true" />
 
   <!-- BLOQUE 1: Grid de resumen, dinámico por marca -->
   <section class="resumen-grid" aria-label={t(locale, "comoFuncionaProceso.tituloResumen")}>
@@ -833,7 +837,7 @@ const erroresTab = [
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso5Titulo")}</h3>
         {Object.entries(videosPorVariante).map(([variante, video]) => (
-          <div data-video-marca={variante} hidden={variante !== "epson"}>
+          <div class="video-contenedor" data-video-marca={variante} hidden={variante !== "epson"}>
             {video ? (
               <YouTubeFacade
                 youtubeId={video.youtubeId}
@@ -888,6 +892,8 @@ const erroresTab = [
       </div>
     </div>
   </section>
+
+  <div class="seccion-divisor" aria-hidden="true" />
 
   <!-- CTA estrategico (CRO), antes de las resenas -->
   <section
@@ -949,6 +955,8 @@ const erroresTab = [
       destacado
     />
   </section>
+
+  <div class="seccion-divisor" aria-hidden="true" />
 
   <section class="faq-final" id="preguntas-frecuentes">
     <h2>{t(locale, "faq.heading")}</h2>
@@ -1255,6 +1263,15 @@ const erroresTab = [
   .como-funciona {
     display: grid;
     gap: 2.5rem;
+  }
+
+  /* Separador sutil entre bloques (Beneficios / Selector / Pasos / CTA /
+     FAQ) — franja de 1px con gradiente que se desvanece en los bordes, en
+     vez de una linea solida que corte de forma abrupta. */
+  .seccion-divisor {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(to right, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
   }
 
   /* Título y contexto breve */
@@ -1889,6 +1906,20 @@ const erroresTab = [
     color: #ffffff;
   }
 
+  /* Contenedor del video del Paso 5: limita el ancho para que no acapare
+     toda la columna de lectura, con esquinas redondeadas y sombra propia
+     (override acotado a esta pagina — YouTubeFacade.astro sigue con su
+     ancho 100% por defecto para las demas paginas que lo usan). */
+  .video-contenedor {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
+  .video-contenedor :global(.youtube-card-trigger) {
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
   .video-placeholder {
     display: flex;
     flex-direction: column;
@@ -1897,7 +1928,8 @@ const erroresTab = [
     gap: 0.5rem;
     padding: 2rem 1rem;
     border: 2px dashed var(--color-border);
-    border-radius: 14px;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     color: var(--color-text-subtle);
     text-align: center;
   }
