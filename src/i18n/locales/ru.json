@@ -312,7 +312,8 @@
     "jugarRuletaCta": "Играть сейчас",
     "cerrarRuletaLabel": "Закрыть рулетку",
     "selectorModeloListaPlaceholder": "Выберите свою модель",
-    "otroModeloOption": "Другое: ____"
+    "otroModeloOption": "Другое: ____",
+    "testimonioTrustpilotAlt": "Реальный отзыв клиента на Trustpilot"
   },
   "faq": {
     "title": "Частые вопросы | ResetEnLinea.com",

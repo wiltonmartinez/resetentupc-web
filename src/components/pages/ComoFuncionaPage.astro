@@ -18,8 +18,17 @@ import YouTubeFacade from "../ui/YouTubeFacade.astro";
 import ClienteSatisfechoEmbed from "../ui/ClienteSatisfechoEmbed.astro";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import { fetchAllPages } from "../../lib/fetch-paginated";
+import { listarTestimonios } from "../../lib/nucleo-api";
 import { extractYoutubeId } from "../../lib/youtube";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, RULETA_URL, type Locale } from "../../config/site";
+import {
+  TECHNICIAN_ID,
+  USB_REDIRECTOR_DOWNLOAD_URL,
+  NUCLEO_API_BASE_URL,
+  RULETA_URL,
+  SITE_URL,
+  WHATSAPP_NUMBER,
+  type Locale,
+} from "../../config/site";
 import iconoReset from "../../assets/beneficios/icono-reset.png";
 import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
 import iconoInstalaciones from "../../assets/beneficios/icono-instalaciones.png";
@@ -106,6 +115,21 @@ try {
   }
 } catch (error) {
   console.error("Error fetching cliente-satisfecho para Cómo Funciona:", error);
+}
+
+// Resena aleatoria de Trustpilot (mismo catalogo publico que usa
+// TestimoniosTruspilotPage) para mostrar despues del chat embebido del
+// Paso 6 — otra prueba social real, sin fabricar nada si Nucleo no responde.
+let testimonioAleatorio: { imagen: string; destino: string } | null = null;
+try {
+  const testimonios = await listarTestimonios();
+  const conImagen = testimonios.filter((testimonio) => testimonio.url_imgur?.trim());
+  if (conImagen.length > 0) {
+    const elegido = conImagen[Math.floor(Math.random() * conImagen.length)];
+    testimonioAleatorio = { imagen: elegido.url_imgur, destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur };
+  }
+} catch (error) {
+  console.error("Error fetching testimonios-trustpilot para Cómo Funciona:", error);
 }
 
 // Imagenes del grid de resumen (Bloque 1), una serie de 6 por marca. La marca
@@ -261,6 +285,7 @@ const faqSchema = {
   })),
 };
 const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
+const whatsappUrlOrigen = `${SITE_URL}${whatsappUrlPath}`;
 
 const beneficios = [
   { icono: iconoReset, titulo: t(locale, "comoFuncionaProceso.beneficio1Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio1Texto") },
@@ -795,17 +820,38 @@ const erroresTab = [
             <span class="chat-simulado-caption">{t(locale, "comoFuncionaProceso.paso6ChatPlaceholder")}</span>
           </>
         )}
+        {testimonioAleatorio && (
+          <a
+            class="testimonio-trustpilot"
+            href={testimonioAleatorio.destino}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+          >
+            <img src={testimonioAleatorio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
+          </a>
+        )}
       </div>
     </div>
   </section>
 
   <!-- BLOQUE 3: CTA + FAQ -->
-  <section class="cta-final">
+  <section
+    class="cta-final"
+    data-whatsapp-dinamico
+    data-whatsapp-number={WHATSAPP_NUMBER}
+    data-url-origen={whatsappUrlOrigen}
+    data-msg-with-error={t(locale, "whatsapp.greetingWithError")}
+    data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
+    data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
+  >
     <WhatsAppCTA
       sourceId="como-funciona-final"
       label={t(locale, "contactHub.whatsapp")}
       locale={locale}
       urlPath={whatsappUrlPath}
+      marca={cascadaDefaults.marca}
+      modelo={cascadaDefaults.modelo}
+      error={cascadaDefaults.error}
       destacado
     />
   </section>
@@ -838,6 +884,35 @@ const erroresTab = [
     const OTRO_MODELO_VALOR = "otro";
     const almohadillasLabel = modeloWrap?.dataset.almohadillasLabel ?? "";
     let marcaActivaId = "";
+    let marcaActivaLabel = "";
+    let modeloActivo = "";
+    let errorActivo = "";
+
+    // CTA de WhatsApp del final de la pagina: reconstruye el mensaje
+    // pre-rellenado con la marca+modelo+error elegidos arriba, con la misma
+    // logica de plantillas que buildWhatsAppMessage (src/i18n/utils.ts) —
+    // solo que corrida en el cliente, porque estos valores cambian sin
+    // recargar la pagina. Sin marca+modelo confirmados cae al saludo
+    // generico de siempre, igual que en el resto del sitio.
+    const actualizarWhatsAppCta = () => {
+      const wrap = document.querySelector<HTMLElement>("[data-whatsapp-dinamico]");
+      const link = wrap?.querySelector<HTMLAnchorElement>("a[data-source-id]");
+      if (!wrap || !link) return;
+      const numero = wrap.dataset.whatsappNumber ?? "";
+      const urlOrigen = wrap.dataset.urlOrigen ?? "";
+      const plantilla =
+        marcaActivaLabel && modeloActivo
+          ? errorActivo
+            ? (wrap.dataset.msgWithError ?? "")
+            : (wrap.dataset.msgWithoutError ?? "")
+          : (wrap.dataset.msgGeneric ?? "");
+      const mensaje = plantilla
+        .replaceAll("{marca}", marcaActivaLabel)
+        .replaceAll("{modelo}", modeloActivo)
+        .replaceAll("{error}", errorActivo)
+        .replaceAll("{url}", urlOrigen);
+      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    };
 
     // Vincula la marca+error elegidos aca arriba con la pestana equivalente
     // del bloque "Identificacion del error" (Paso 1, mas abajo): al elegir
@@ -935,9 +1010,11 @@ const erroresTab = [
     };
 
     const actualizarModelo = (valor: string) => {
+      modeloActivo = valor;
       document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
         el.textContent = valor;
       });
+      actualizarWhatsAppCta();
     };
 
     marcaBtns.forEach((btn) => {
@@ -951,12 +1028,14 @@ const erroresTab = [
 
         const marcaValor = btn.dataset.value ?? "";
         marcaActivaId = marcaValor;
+        marcaActivaLabel = btn.textContent?.trim() ?? "";
         document.querySelectorAll<HTMLElement>("[data-cascada-marca]").forEach((el) => {
-          el.textContent = btn.textContent?.trim() ?? "";
+          el.textContent = marcaActivaLabel;
         });
         document.querySelectorAll<HTMLElement>("[data-marca-icono]").forEach((img) => {
           img.classList.toggle("icono-activa", img.dataset.marcaIcono === marcaValor);
         });
+        actualizarWhatsAppCta();
       });
     });
 
@@ -967,10 +1046,12 @@ const erroresTab = [
         if (modeloWrap) modeloWrap.style.display = "grid";
 
         const valor = btn.dataset.value ?? "";
+        errorActivo = valor;
         document.querySelectorAll<HTMLElement>("[data-cascada-error]").forEach((el) => {
           el.textContent = valor;
         });
         activarTabError(marcaActivaId, valor);
+        actualizarWhatsAppCta();
         const variante = calcularVarianteMarcaError(marcaActivaId, valor);
         actualizarRequisitoUsb(variante);
         actualizarVideoReset(variante);
@@ -1796,6 +1877,21 @@ const erroresTab = [
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: var(--color-text-subtle);
+  }
+
+  .testimonio-trustpilot {
+    display: block;
+    margin-top: 1rem;
+    max-width: 420px;
+    line-height: 0;
+  }
+
+  .testimonio-trustpilot img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
   }
 
   /* BLOQUE 3 */
