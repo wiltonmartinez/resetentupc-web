@@ -140,7 +140,17 @@ const otroErrorLabel = t(locale, "comoFuncionaProceso.otroErrorLabel");
 const marcasSelector = [
   { id: "epson", label: "Epson", errores: [errorDefaultLabel, "E-11", otroErrorLabel] },
   { id: "canon", label: "Canon", errores: ["5B00", "1700", "P07", "E-08", otroErrorLabel] },
-  { id: "epson-sc", label: "Epson-SC", errores: ["0014BD", "00000008 - 00080000", "00000004 - 00040000"] },
+  {
+    id: "epson-sc",
+    label: "Epson-SC",
+    errores: [
+      "0014BD",
+      "00000008 - 00080000",
+      "00000004 - 00040000",
+      "00000001 - 00010000",
+      "0000000c - 000c0000",
+    ],
+  },
 ];
 
 // Listas de modelos frecuentes para acelerar la seleccion (en vez de escribir
@@ -265,6 +275,15 @@ const erroresTab = [
     nombreMarca: "Epson-SC",
     nombreModelo: "F570",
     pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc4"),
+  },
+  {
+    id: "epson-sc-0000000c",
+    label: "Epson-SC 0000000c - 000c0000",
+    errorId: "epson-sc-0000000c",
+    modeloSlug: "epson-sc-0014bd",
+    nombreMarca: "Epson-SC",
+    nombreModelo: "F570",
+    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc5"),
   },
 ];
 ---
@@ -537,7 +556,11 @@ const erroresTab = [
         <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
           {erroresTab.map((error, index) => (
             <div data-tab-panel={error.id} hidden={index !== 0}>
-              <p>{error.pregunta}</p>
+              <p>
+                {renderTemplateParts(error.pregunta, cascadaDefaults).map((part) =>
+                  part.token ? <span {...{ [`data-cascada-${part.token}`]: true }}>{part.text}</span> : part.text
+                )}
+              </p>
               <EvidenceCard
                 errorId={error.errorId}
                 modeloSlug={error.modeloSlug}
@@ -740,6 +763,8 @@ const erroresTab = [
       { marcaId: "epson-sc", errorValor: "0014BD", tabId: "epson-sc-0014bd" },
       { marcaId: "epson-sc", errorValor: "00000008 - 00080000", tabId: "epson-sc-00000008" },
       { marcaId: "epson-sc", errorValor: "00000004 - 00040000", tabId: "epson-sc-00000004" },
+      { marcaId: "epson-sc", errorValor: "00000001 - 00010000", tabId: "epson-sc-00000001" },
+      { marcaId: "epson-sc", errorValor: "0000000c - 000c0000", tabId: "epson-sc-0000000c" },
     ];
     const activarTabError = (marcaId: string, errorValor: string) => {
       const match = tabsPorCombinacion.find((t) => t.marcaId === marcaId && t.errorValor === errorValor);
