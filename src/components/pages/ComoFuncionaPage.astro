@@ -177,6 +177,18 @@ const cascadaDefaults: Record<CascadaToken, string> = {
 const resumenPaso1TextoParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPasoTexto1"), cascadaDefaults);
 const resumenPaso5TextoParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPasoTexto5"), cascadaDefaults);
 
+// Bullet "Impresora conectada..." del Paso 2: 4 variantes segun marca+error
+// (Epson, Canon, Epson-SC con 0014BD, Epson-SC con cualquier otro error), ya
+// que cada una describe un estado de la impresora distinto. Las 4 se
+// renderizan ocultas salvo la de Epson (estado por defecto de la pagina) y
+// [data-requisito-usb] alterna cual se ve segun la marca+error elegidos.
+const requisitosUsbVariantes = [
+  { id: "epson", key: "paso2ReqUsbEpson" },
+  { id: "canon", key: "paso2ReqUsbCanon" },
+  { id: "epson-sc-otro", key: "paso2ReqUsbEpsonScOtro" },
+  { id: "epson-sc-0014bd", key: "paso2ReqUsbEpsonSc0014bd" },
+];
+
 const subpasosConexion = [
   {
     numero: "3.1",
@@ -585,11 +597,18 @@ const erroresTab = [
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso2Titulo")}</h3>
         <ul class="detalle-requisitos">
-          <li>{t(locale, "comoFuncionaProceso.paso2ReqUsb")}</li>
+          {requisitosUsbVariantes.map((v, i) => (
+            <li hidden={i !== 0} data-requisito-usb={v.id}>
+              {renderTemplateParts(t(locale, `comoFuncionaProceso.${v.key}`), cascadaDefaults).map((part) =>
+                part.token ? <span {...{ [`data-cascada-${part.token}`]: true }}>{part.text}</span> : part.text
+              )}
+            </li>
+          ))}
           <li>{paso2ErrorPrefix}<span data-cascada-error>{errorDefaultLabel}</span>{paso2ErrorSuffix}</li>
           <li>{t(locale, "procedimiento.paso2ReqWindows")}</li>
           <li>{t(locale, "procedimiento.paso2ReqInternet")}</li>
           <li>{t(locale, "procedimiento.paso2ReqAsistido")}</li>
+          <li>{t(locale, "comoFuncionaProceso.paso2ReqLimpieza")}</li>
         </ul>
       </div>
     </div>
@@ -772,6 +791,17 @@ const erroresTab = [
       document.querySelector<HTMLButtonElement>(`[data-tab-target="${match.tabId}"]`)?.click();
     };
 
+    // Bullet "Impresora ... conectada" del Paso 2: elige la variante segun
+    // marca+error (Epson-SC depende del error especifico, las demas marcas no).
+    const actualizarRequisitoUsb = (marcaId: string, errorValor: string) => {
+      let variante = "epson";
+      if (marcaId === "canon") variante = "canon";
+      else if (marcaId === "epson-sc") variante = errorValor === "0014BD" ? "epson-sc-0014bd" : "epson-sc-otro";
+      document.querySelectorAll<HTMLElement>("[data-requisito-usb]").forEach((li) => {
+        li.hidden = li.dataset.requisitoUsb !== variante;
+      });
+    };
+
     const actualizarModelo = (valor: string) => {
       document.querySelectorAll<HTMLElement>("[data-cascada-modelo]").forEach((el) => {
         el.textContent = valor;
@@ -809,6 +839,7 @@ const erroresTab = [
           el.textContent = valor;
         });
         activarTabError(marcaActivaId, valor);
+        actualizarRequisitoUsb(marcaActivaId, valor);
 
         // Epson + Almohadillas, Canon (cualquier error) y Epson-SC (cualquier
         // error) muestran una lista de modelos frecuentes en vez del campo de
