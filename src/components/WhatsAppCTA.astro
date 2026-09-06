@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import { buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
-import whatsappLogo from "../assets/whatsapp/1.png";
+import whatsappLogo from "../assets/whatsapp/3.png";
 
 interface Props {
   marca?: string;
@@ -74,8 +74,10 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
 
   .whatsapp-cta-icono {
     flex-shrink: 0;
-    width: 2.25rem;
-    height: 2.25rem;
+    align-self: stretch;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    margin: -0.75rem 0;
     object-fit: contain;
   }
 
