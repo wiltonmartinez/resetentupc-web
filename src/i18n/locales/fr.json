@@ -269,7 +269,11 @@
     "otroModeloOption": "Autre : ____",
     "testimonioTrustpilotAlt": "Avis client réel sur Trustpilot",
     "resenasTitulo": "Plus de 920 clients ont déjà récupéré leur imprimante",
-    "resenasSubtitulo": "Ce que disent ceux qui ont déjà fait confiance à notre service de réinitialisation assistée"
+    "resenasSubtitulo": "Ce que disent ceux qui ont déjà fait confiance à notre service de réinitialisation assistée",
+    "whatsappFlotanteLabel": "Démarrer un diagnostic gratuit sur WhatsApp",
+    "whatsappBannerCta": "Parler à un vrai technicien maintenant",
+    "whatsappBannerSubtitulo": "Nous évaluons votre cas gratuitement et confirmons la disponibilité instantanément. Sans engagement.",
+    "ctaFinalLabel": "Vérifier si mon imprimante a une solution"
   },
   "faq": {
     "title": "Questions fréquentes | ResetEnLinea.com",

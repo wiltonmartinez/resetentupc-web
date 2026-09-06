@@ -315,7 +315,11 @@
     "otroModeloOption": "기타: ____",
     "testimonioTrustpilotAlt": "Trustpilot의 실제 고객 후기",
     "resenasTitulo": "920명 이상의 고객이 이미 프린터를 되찾았습니다",
-    "resenasSubtitulo": "이미 저희 어시스트 리셋 서비스를 신뢰한 분들의 이야기"
+    "resenasSubtitulo": "이미 저희 어시스트 리셋 서비스를 신뢰한 분들의 이야기",
+    "whatsappFlotanteLabel": "WhatsApp으로 무료 진단 시작하기",
+    "whatsappBannerCta": "지금 실제 기술자와 상담하기",
+    "whatsappBannerSubtitulo": "무료로 사례를 평가하고 즉시 이용 가능 여부를 확인해 드립니다. 약정 없음.",
+    "ctaFinalLabel": "제 프린터에 해결책이 있는지 확인하기"
   },
   "faq": {
     "title": "자주 묻는 질문 | ResetEnLinea.com",

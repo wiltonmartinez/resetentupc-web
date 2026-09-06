@@ -269,7 +269,11 @@
     "otroModeloOption": "Other: ____",
     "testimonioTrustpilotAlt": "Real customer review on Trustpilot",
     "resenasTitulo": "Over 920 customers already got their printers back",
-    "resenasSubtitulo": "What people who already trusted our assisted reset service have to say"
+    "resenasSubtitulo": "What people who already trusted our assisted reset service have to say",
+    "whatsappFlotanteLabel": "Start Free Diagnosis via WhatsApp",
+    "whatsappBannerCta": "Talk to a Real Technician Now",
+    "whatsappBannerSubtitulo": "We evaluate your case at no cost and confirm availability instantly. No commitment.",
+    "ctaFinalLabel": "Check if my printer has a fix"
   },
   "faq": {
     "title": "Frequently asked questions | ResetEnLinea.com",

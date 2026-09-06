@@ -10,7 +10,7 @@
  */
 import { Image, getImage, type ImageMetadata } from "astro:assets";
 import { getErrorImage } from "../../lib/error-images.js";
-import { t, buildStaticPagePath } from "../../i18n/utils";
+import { t, buildStaticPagePath, buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
 import FaqAccordion from "../ui/FaqAccordion.astro";
 import Tabs from "../ui/Tabs.astro";
 import EvidenceCard from "../ui/EvidenceCard.astro";
@@ -304,6 +304,20 @@ const faqSchema = {
 };
 const whatsappUrlPath = buildStaticPagePath(locale, "comoFunciona");
 const whatsappUrlOrigen = `${SITE_URL}${whatsappUrlPath}`;
+// Estado inicial (server-render) para los 2 botones de WhatsApp que se arman
+// a mano en vez de con <WhatsAppCTA> (necesitan icono/markup propio). Usa los
+// mismos valores por defecto que el resto de la pagina (Epson/Almohadillas,
+// sin modelo); [data-whatsapp-dinamico] los actualiza en vivo despues.
+const whatsappHrefInicial = buildWhatsAppLink(
+  WHATSAPP_NUMBER,
+  buildWhatsAppMessage({
+    locale,
+    marca: cascadaDefaults.marca,
+    modelo: cascadaDefaults.modelo,
+    error: cascadaDefaults.error,
+    urlOrigen: whatsappUrlOrigen,
+  })
+);
 
 const beneficios = [
   { icono: iconoReset, titulo: t(locale, "comoFuncionaProceso.beneficio1Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio1Texto") },
@@ -391,6 +405,32 @@ const erroresTab = [
 <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
 <article class="como-funciona">
+  <!-- Boton flotante permanente de WhatsApp -->
+  <div
+    class="whatsapp-flotante"
+    data-whatsapp-dinamico
+    data-whatsapp-number={WHATSAPP_NUMBER}
+    data-url-origen={whatsappUrlOrigen}
+    data-msg-with-error={t(locale, "whatsapp.greetingWithError")}
+    data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
+    data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
+  >
+    <a
+      class="whatsapp-flotante-link"
+      href={whatsappHrefInicial}
+      data-source-id="como-funciona-flotante"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      data-sound="confirm"
+      aria-label={t(locale, "comoFuncionaProceso.whatsappFlotanteLabel")}
+    >
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
+      </svg>
+      <span>{t(locale, "comoFuncionaProceso.whatsappFlotanteLabel")}</span>
+    </a>
+  </div>
+
   <h1>{t(locale, "comoFunciona.heading")}</h1>
 
   <!-- Título y contexto breve -->
@@ -849,6 +889,29 @@ const erroresTab = [
     </div>
   </section>
 
+  <!-- CTA estrategico (CRO), antes de las resenas -->
+  <section
+    class="whatsapp-banner-cro"
+    data-whatsapp-dinamico
+    data-whatsapp-number={WHATSAPP_NUMBER}
+    data-url-origen={whatsappUrlOrigen}
+    data-msg-with-error={t(locale, "whatsapp.greetingWithError")}
+    data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
+    data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
+  >
+    <a
+      class="whatsapp-banner-btn"
+      href={whatsappHrefInicial}
+      data-source-id="como-funciona-banner-cro"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      data-sound="confirm"
+    >
+      {t(locale, "comoFuncionaProceso.whatsappBannerCta")}
+    </a>
+    <p class="whatsapp-banner-subtitulo">{t(locale, "comoFuncionaProceso.whatsappBannerSubtitulo")}</p>
+  </section>
+
   {testimoniosDestacados.length > 0 && (
     <section class="prueba-social-resenas">
       <div class="prueba-social-header">
@@ -877,7 +940,7 @@ const erroresTab = [
   >
     <WhatsAppCTA
       sourceId="como-funciona-final"
-      label={t(locale, "contactHub.whatsapp")}
+      label={t(locale, "comoFuncionaProceso.ctaFinalLabel")}
       locale={locale}
       urlPath={whatsappUrlPath}
       marca={cascadaDefaults.marca}
@@ -926,28 +989,29 @@ const erroresTab = [
     // recargar la pagina. Sin marca+modelo confirmados cae al saludo
     // generico de siempre, igual que en el resto del sitio.
     const actualizarWhatsAppCta = () => {
-      const wrap = document.querySelector<HTMLElement>("[data-whatsapp-dinamico]");
-      const link = wrap?.querySelector<HTMLAnchorElement>("a[data-source-id]");
-      if (!wrap || !link) return;
-      const numero = wrap.dataset.whatsappNumber ?? "";
-      const urlOrigen = wrap.dataset.urlOrigen ?? "";
-      // Alcanza con tener la marca para dejar de usar el saludo generico —
-      // no se espera a que tambien haya modelo, para que elegir marca+error
-      // ya se refleje en el mensaje aunque el usuario todavia no haya
-      // escrito o seleccionado su modelo exacto.
-      const plantilla = marcaActivaLabel
-        ? errorActivo
-          ? (wrap.dataset.msgWithError ?? "")
-          : (wrap.dataset.msgWithoutError ?? "")
-        : (wrap.dataset.msgGeneric ?? "");
-      const mensaje = plantilla
-        .replaceAll("{marca}", marcaActivaLabel)
-        .replaceAll("{modelo}", modeloActivo)
-        .replaceAll("{error}", errorActivo)
-        .replaceAll("{url}", urlOrigen)
-        .replace(/[ \t]{2,}/g, " ")
-        .replace(/[ \t]+([,.;:])/g, "$1");
-      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+      document.querySelectorAll<HTMLElement>("[data-whatsapp-dinamico]").forEach((wrap) => {
+        const link = wrap.querySelector<HTMLAnchorElement>("a[data-source-id]");
+        if (!link) return;
+        const numero = wrap.dataset.whatsappNumber ?? "";
+        const urlOrigen = wrap.dataset.urlOrigen ?? "";
+        // Alcanza con tener la marca para dejar de usar el saludo generico —
+        // no se espera a que tambien haya modelo, para que elegir marca+error
+        // ya se refleje en el mensaje aunque el usuario todavia no haya
+        // escrito o seleccionado su modelo exacto.
+        const plantilla = marcaActivaLabel
+          ? errorActivo
+            ? (wrap.dataset.msgWithError ?? "")
+            : (wrap.dataset.msgWithoutError ?? "")
+          : (wrap.dataset.msgGeneric ?? "");
+        const mensaje = plantilla
+          .replaceAll("{marca}", marcaActivaLabel)
+          .replaceAll("{modelo}", modeloActivo)
+          .replaceAll("{error}", errorActivo)
+          .replaceAll("{url}", urlOrigen)
+          .replace(/[ \t]{2,}/g, " ")
+          .replace(/[ \t]+([,.;:])/g, "$1");
+        link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+      });
     };
 
     // Vincula la marca+error elegidos aca arriba con la pestana equivalente
@@ -1987,9 +2051,136 @@ const erroresTab = [
     justify-content: center;
   }
 
+  /* Verde WhatsApp + texto blanco + elevacion hacia arriba en hover (en vez
+     del translateY hacia abajo y el texto verde oscuro por defecto del
+     componente compartido) — override acotado a esta pagina, no toca
+     WhatsAppCTA.astro para no afectar a otras paginas que lo usan. */
   .cta-final :global(.whatsapp-cta) {
     font-size: 1.15rem;
     padding: 1.1rem 2.5rem;
+    background: #25d366;
+    color: #ffffff;
+  }
+
+  .cta-final :global(.whatsapp-cta:hover) {
+    background: #20bd5a;
+  }
+
+  .cta-final :global(.whatsapp-cta-destacado:hover) {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+  }
+
+  /* Boton flotante permanente */
+  .whatsapp-flotante {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 50;
+  }
+
+  .whatsapp-flotante-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius-full);
+    background: #25d366;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+    animation: whatsapp-flotante-pulso 2.4s ease-in-out infinite;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .whatsapp-flotante-link svg {
+    flex-shrink: 0;
+  }
+
+  .whatsapp-flotante-link:hover {
+    background: #20bd5a;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.25), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+    animation-play-state: paused;
+  }
+
+  @keyframes whatsapp-flotante-pulso {
+    0%,
+    100% {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2), 0 0 0 0 rgba(37, 211, 102, 0.45);
+    }
+    50% {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2), 0 0 0 0.6rem rgba(37, 211, 102, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .whatsapp-flotante-link {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .whatsapp-flotante-link span {
+      display: none;
+    }
+    .whatsapp-flotante-link {
+      padding: 0.85rem;
+    }
+  }
+
+  /* Banner CRO antes de las resenas */
+  .whatsapp-banner-cro {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    display: grid;
+    gap: 0.9rem;
+    justify-items: center;
+  }
+
+  .whatsapp-banner-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-full);
+    background: #25d366;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    animation: whatsapp-flotante-pulso 2.4s ease-in-out infinite;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .whatsapp-banner-btn:hover {
+    background: #20bd5a;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.25), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+    animation-play-state: paused;
+  }
+
+  .whatsapp-banner-subtitulo {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.92rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .whatsapp-banner-btn {
+      animation: none;
+    }
   }
 
   .faq-final h2 {

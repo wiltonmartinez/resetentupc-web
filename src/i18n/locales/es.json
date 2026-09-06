@@ -353,7 +353,11 @@
     "otroModeloOption": "Otro: ____",
     "testimonioTrustpilotAlt": "Reseña real de cliente en Trustpilot",
     "resenasTitulo": "Más de 920 clientes ya recuperaron sus impresoras",
-    "resenasSubtitulo": "Lo que dicen quienes ya confiaron en nuestro servicio de reset asistido"
+    "resenasSubtitulo": "Lo que dicen quienes ya confiaron en nuestro servicio de reset asistido",
+    "whatsappFlotanteLabel": "Iniciar Diagnóstico Gratuito por WhatsApp",
+    "whatsappBannerCta": "Hablar con un Técnico Real Ahora",
+    "whatsappBannerSubtitulo": "Evaluamos tu caso sin costo y te confirmamos disponibilidad al instante. Sin compromisos.",
+    "ctaFinalLabel": "Consultar si mi impresora tiene solución"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",
