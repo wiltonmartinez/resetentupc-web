@@ -650,7 +650,7 @@ const subpasosConexion = [
             <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
           </div>
           <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow" data-sound="confirm">
-            <Image src={whatsappLogo} alt="" width={20} height={20} class="whatsapp-cta-icono" />
+            <Image src={whatsappLogo} alt="" width={72} height={72} class="whatsapp-cta-icono" />
             {ctaPaso6Label}
           </a>
       </div>
@@ -988,6 +988,9 @@ const subpasosConexion = [
 
   .whatsapp-cta-icono {
     flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    object-fit: contain;
   }
 
   .procedimiento-video-aclaracion {

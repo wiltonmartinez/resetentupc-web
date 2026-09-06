@@ -34,7 +34,7 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
   target="_blank"
   rel="noopener noreferrer nofollow"
 >
-  {elevar && <Image src={whatsappLogo} alt="" width={20} height={20} class="whatsapp-cta-icono" />}
+  {elevar && <Image src={whatsappLogo} alt="" width={72} height={72} class="whatsapp-cta-icono" />}
   {label}
 </a>
 
@@ -74,6 +74,9 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
 
   .whatsapp-cta-icono {
     flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    object-fit: contain;
   }
 
   .whatsapp-cta-destacado {
