@@ -57,6 +57,7 @@ import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import InfoCard from "./ui/InfoCard.astro";
+import WhatsAppCTA from "./WhatsAppCTA.astro";
 import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
 import { getProcesoImage } from "../lib/proceso-images.js";
@@ -156,12 +157,13 @@ const paso2ModalidadTexto = errorPrincipal?.modo
   : "";
 
 // Nota aclaratoria del Paso 5 (el video es evidencia del trabajo remoto del
-// tecnico, no un instructivo para el usuario) — unico texto de este bloque
-// que sigue en pie tras quitar los CTA intermedios del embudo (ver
-// limpieza de botones: solo quedan 3 ubicaciones estrategicas en toda la
-// pagina, ver ModeloPage.astro).
+// tecnico, no un instructivo para el usuario). ctaPaso3Label es el unico CTA
+// intermedio que queda: justo despues de las subtarjetas de conexion (3.1 a
+// 3.4), donde la ultima ("Contactar por WhatsApp") menciona la accion pero
+// no tenia un boton real.
 const conMarcaModelo = (key: string) => t(locale, key).replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
 const ctaPaso5Nota = conMarcaModelo("modelo.ctaPaso5Nota");
+const ctaPaso3Label = conMarcaModelo("modelo.ctaPaso3");
 
 // Paso 5: video real de "reset realizado" ya publicado para
 // este modelo. Si no hay uno exacto, cae a cualquiera de la misma marca
@@ -463,6 +465,18 @@ const subpasosConexion = [
           )}
         </div>
       ))}
+    </div>
+    <div class="procedimiento-cta-seccion">
+      <WhatsAppCTA
+        marca={marca}
+        modelo={modelo}
+        error={errorPrincipal?.descripcion}
+        sourceId={`${sourceIdBase}-contactar`}
+        urlPath={localizedPath}
+        locale={locale}
+        label={ctaPaso3Label}
+        elevar
+      />
     </div>
     <VideoModal archivo="proceso-demo.mp4" label={t(locale, "proceso.videoProcesoLabel")} />
   </InfoCard>
@@ -842,6 +856,10 @@ const subpasosConexion = [
   .procedimiento-prueba-social-enlaces a {
     color: var(--color-primary-dark);
     text-decoration: underline;
+  }
+
+  .procedimiento-cta-seccion {
+    text-align: center;
   }
 
   .procedimiento-video-aclaracion {
