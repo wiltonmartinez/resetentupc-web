@@ -43,6 +43,7 @@
  * muestra el placeholder visible en vez de romper la sección.
  */
 import { Image } from "astro:assets";
+import whatsappLogo from "../assets/whatsapp/1.png";
 import { t, buildLocalizedPath, buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
 import ErrorSelector from "./ErrorSelector.astro";
@@ -152,8 +153,6 @@ const paso1TituloTemplate = t(locale, "procedimiento.paso1Titulo").replaceAll("{
 const [paso1TituloPrefijo, paso1TituloSufijo] = paso1TituloTemplate.split("{codigo}");
 const paso1PreguntaTemplate = t(locale, "procedimiento.paso1Pregunta").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
 const [paso1PreguntaPrefijo, paso1PreguntaSufijo] = paso1PreguntaTemplate.split("{errorLargo}");
-const paso2ReqErrorTemplate = t(locale, "procedimiento.paso2ReqError").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo);
-const [paso2ReqErrorPrefijo, paso2ReqErrorSufijo] = paso2ReqErrorTemplate.split("{errorLargo}");
 const paso2ModalidadTexto = errorPrincipal?.modo
   ? t(locale, "procedimiento.paso2Modalidad").replaceAll("{modo}", errorPrincipal.modo)
   : "";
@@ -434,14 +433,13 @@ const subpasosConexion = [
         </a>
       </h3>
       <ul>
-        <li>{t(locale, "procedimiento.paso2ReqUsb").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo)}</li>
-        <li>{paso2ReqErrorPrefijo}<span data-procedimiento-error-largo>{errorLargoPrincipal}</span>{paso2ReqErrorSufijo}</li>
-        <li>{t(locale, "procedimiento.paso2ReqWindows")}</li>
-        <li>{t(locale, "procedimiento.paso2ReqInternet")}</li>
         <li>
-          {t(locale, "procedimiento.paso2ReqAsistido")}
+          {t(locale, "procedimiento.paso2Punto1")}
           {paso2ModalidadTexto && <> {paso2ModalidadTexto}</>}
         </li>
+        <li>{t(locale, "procedimiento.paso2Punto2")}</li>
+        <li>{t(locale, "procedimiento.paso2Punto3")}</li>
+        <li>{t(locale, "procedimiento.paso2Punto4")}</li>
         <li data-procedimiento-requisito-sensor hidden={!esSensorInicial}>
           {t(locale, "procedimiento.paso2ReqSensor")}
         </li>
@@ -652,6 +650,7 @@ const subpasosConexion = [
             <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
           </div>
           <a class="whatsapp-cta procedimiento-whatsapp-final" href={hrefFinalWhatsApp} data-source-id={sourceIdFinalWhatsApp} target="_blank" rel="noopener noreferrer nofollow" data-sound="confirm">
+            <Image src={whatsappLogo} alt="" width={20} height={20} class="whatsapp-cta-icono" />
             {ctaPaso6Label}
           </a>
       </div>
@@ -968,6 +967,10 @@ const subpasosConexion = [
   }
 
   .procedimiento-whatsapp-final {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #20d043;
     color: #ffffff;
     font-weight: 700;
     transition:
@@ -977,9 +980,14 @@ const subpasosConexion = [
   }
 
   .procedimiento-whatsapp-final:hover {
+    background: #1bb93a;
     color: #ffffff;
-    transform: translateY(-0.2rem);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.125rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .whatsapp-cta-icono {
+    flex-shrink: 0;
   }
 
   .procedimiento-video-aclaracion {

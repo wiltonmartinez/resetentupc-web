@@ -1,6 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import { buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import whatsappLogo from "../assets/whatsapp/1.png";
 
 interface Props {
   marca?: string;
@@ -32,6 +34,7 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
   target="_blank"
   rel="noopener noreferrer nofollow"
 >
+  {elevar && <Image src={whatsappLogo} alt="" width={20} height={20} class="whatsapp-cta-icono" />}
   {label}
 </a>
 
@@ -50,6 +53,10 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
   }
 
   .whatsapp-cta-elevar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #20d043;
     color: #ffffff;
     font-weight: 700;
     transition:
@@ -59,9 +66,14 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
   }
 
   .whatsapp-cta-elevar:hover {
+    background: #1bb93a;
     color: #ffffff;
-    transform: translateY(-0.2rem);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.15), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.125rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .whatsapp-cta-icono {
+    flex-shrink: 0;
   }
 
   .whatsapp-cta-destacado {
