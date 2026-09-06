@@ -38,7 +38,18 @@ const {
   wide = false,
 } = Astro.props;
 
-const canonicalUrl = pageKey ? buildStaticPageCanonical(locale, pageKey) : buildCanonicalUrl(locale, path);
+// El canonical siempre se arma desde `path`/`pageKey` (rutas fijas del propio
+// código), nunca desde Astro.url — así que un query param como
+// "?wmc-currency=MXN" en la URL que pide el visitante NUNCA llega a esta
+// construcción. El new URL()+limpieza de search/hash de abajo es una
+// salvaguarda extra: garantiza que el canonical quede sin parámetros ni
+// fragmento pase lo que pase, incluso si algún cambio futuro reintrodujera
+// Astro.url en la cadena.
+const canonicalUrlCruda = pageKey ? buildStaticPageCanonical(locale, pageKey) : buildCanonicalUrl(locale, path);
+const canonicalUrlLimpia = new URL(canonicalUrlCruda);
+canonicalUrlLimpia.search = "";
+canonicalUrlLimpia.hash = "";
+const canonicalUrl = canonicalUrlLimpia.toString();
 const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(pageKey) : buildHreflangLinks(path);
 ---
 
