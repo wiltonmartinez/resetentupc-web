@@ -57,20 +57,39 @@ interface Props {
 
 const { locale } = Astro.props;
 
-// Evidencia real embebida en los pasos 5 y 6 -- un caso al azar (elegido en
-// build time, se renueva en cada deploy) desde los mismos catalogos
-// publicos de Prueba Social. Si Nucleo no responde o no hay candidatos
-// validos, se cae al placeholder existente sin romper la pagina.
-let videoEvidenciaAleatorio: { youtubeId: string; titulo: string } | null = null;
+// Evidencia real embebida en los pasos 5 y 6 -- un caso al azar por cada
+// variante marca+error (elegido en build time, se renueva en cada deploy)
+// desde los mismos catalogos publicos de Prueba Social, para que el video
+// del Paso 5 coincida con la marca/error activos en el selector de
+// diagnostico de arriba. Si Nucleo no responde o una variante no tiene
+// ningun caso propio con video, esa variante cae al placeholder existente
+// sin romper la pagina.
+type VideoEvidencia = { youtubeId: string; titulo: string } | null;
+const videosPorVariante: Record<string, VideoEvidencia> = {
+  epson: null,
+  canon: null,
+  "epson-sc-0014bd": null,
+  "epson-sc-otro": null,
+};
 try {
   const evidencias = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`);
   const conVideo = evidencias
     .map((e: any) => ({ ...e, youtubeId: extractYoutubeId(e.youtube_id) || extractYoutubeId(e.enlace_youtube) }))
     .filter((e: any) => e.youtubeId);
-  if (conVideo.length > 0) {
-    const elegido = conVideo[Math.floor(Math.random() * conVideo.length)];
-    videoEvidenciaAleatorio = { youtubeId: elegido.youtubeId, titulo: `${elegido.marca} ${elegido.modelo}` };
-  }
+
+  const elegirDe = (candidatos: any[]): VideoEvidencia => {
+    if (candidatos.length === 0) return null;
+    const elegido = candidatos[Math.floor(Math.random() * candidatos.length)];
+    return { youtubeId: elegido.youtubeId, titulo: `${elegido.marca} ${elegido.modelo}` };
+  };
+
+  const marcaEs = (e: any, marca: string) => (e.marca ?? "").trim().toLowerCase() === marca;
+  const errorEs0014bd = (e: any) => (e.error ?? "").trim().toUpperCase() === "0014BD";
+
+  videosPorVariante.epson = elegirDe(conVideo.filter((e: any) => marcaEs(e, "epson")));
+  videosPorVariante.canon = elegirDe(conVideo.filter((e: any) => marcaEs(e, "canon")));
+  videosPorVariante["epson-sc-0014bd"] = elegirDe(conVideo.filter((e: any) => marcaEs(e, "epson-sc") && errorEs0014bd(e)));
+  videosPorVariante["epson-sc-otro"] = elegirDe(conVideo.filter((e: any) => marcaEs(e, "epson-sc") && !errorEs0014bd(e)));
 } catch (error) {
   console.error("Error fetching reset-realizados para Cómo Funciona:", error);
 }
@@ -686,18 +705,22 @@ const erroresTab = [
       </div>
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso5Titulo")}</h3>
-        {videoEvidenciaAleatorio ? (
-          <YouTubeFacade
-            youtubeId={videoEvidenciaAleatorio.youtubeId}
-            titulo={videoEvidenciaAleatorio.titulo}
-            reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
-          />
-        ) : (
-          <div class="video-placeholder">
-            <video controls preload="none" aria-label={t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")} />
-            <span class="video-placeholder-caption">{t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")}</span>
+        {Object.entries(videosPorVariante).map(([variante, video]) => (
+          <div data-video-marca={variante} hidden={variante !== "epson"}>
+            {video ? (
+              <YouTubeFacade
+                youtubeId={video.youtubeId}
+                titulo={video.titulo}
+                reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+              />
+            ) : (
+              <div class="video-placeholder">
+                <video controls preload="none" aria-label={t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")} />
+                <span class="video-placeholder-caption">{t(locale, "comoFuncionaProceso.paso5VideoPlaceholder")}</span>
+              </div>
+            )}
           </div>
-        )}
+        ))}
       </div>
     </div>
 
@@ -791,12 +814,17 @@ const erroresTab = [
       document.querySelector<HTMLButtonElement>(`[data-tab-target="${match.tabId}"]`)?.click();
     };
 
-    // Bullet "Impresora ... conectada" del Paso 2: elige la variante segun
-    // marca+error (Epson-SC depende del error especifico, las demas marcas no).
-    const actualizarRequisitoUsb = (marcaId: string, errorValor: string) => {
-      let variante = "epson";
-      if (marcaId === "canon") variante = "canon";
-      else if (marcaId === "epson-sc") variante = errorValor === "0014BD" ? "epson-sc-0014bd" : "epson-sc-otro";
+    // Variante segun marca+error: "epson"/"canon" para esas marcas (el error
+    // no importa), y para Epson-SC depende de si el error es 0014BD o
+    // cualquier otro. La reutilizan el bullet USB del Paso 2, el requisito de
+    // limpieza y el video de evidencia del Paso 5.
+    const calcularVarianteMarcaError = (marcaId: string, errorValor: string): string => {
+      if (marcaId === "canon") return "canon";
+      if (marcaId === "epson-sc") return errorValor === "0014BD" ? "epson-sc-0014bd" : "epson-sc-otro";
+      return "epson";
+    };
+
+    const actualizarRequisitoUsb = (variante: string) => {
       document.querySelectorAll<HTMLElement>("[data-requisito-usb]").forEach((li) => {
         li.hidden = li.dataset.requisitoUsb !== variante;
       });
@@ -805,6 +833,12 @@ const erroresTab = [
       // nueva) solo aplica al error 0014BD.
       const limpiezaLi = document.querySelector<HTMLElement>("[data-requisito-limpieza]");
       if (limpiezaLi) limpiezaLi.hidden = variante !== "epson-sc-0014bd";
+    };
+
+    const actualizarVideoReset = (variante: string) => {
+      document.querySelectorAll<HTMLElement>("[data-video-marca]").forEach((el) => {
+        el.hidden = el.dataset.videoMarca !== variante;
+      });
     };
 
     const actualizarModelo = (valor: string) => {
@@ -844,7 +878,9 @@ const erroresTab = [
           el.textContent = valor;
         });
         activarTabError(marcaActivaId, valor);
-        actualizarRequisitoUsb(marcaActivaId, valor);
+        const variante = calcularVarianteMarcaError(marcaActivaId, valor);
+        actualizarRequisitoUsb(variante);
+        actualizarVideoReset(variante);
 
         // Epson + Almohadillas, Canon (cualquier error) y Epson-SC (cualquier
         // error) muestran una lista de modelos frecuentes en vez del campo de
