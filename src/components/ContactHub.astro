@@ -38,7 +38,7 @@ const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
 // "notificada" se precalcula aca para que el script solo tenga que
 // intercambiar el atributo src, sin pedirle a Astro que optimice nada en
 // tiempo de ejecucion.
-const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: whatsappNotif.width });
+const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 });
 ---
 
 {mostrarWhatsapp && (
@@ -61,8 +61,8 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: what
         data-whatsapp-fab-img
         data-notif-src={whatsappNotifOptimizada.src}
         alt=""
-        width="30"
-        height="30"
+        width="112"
+        height="112"
         loading="eager"
       />
     </a>
@@ -139,21 +139,21 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: what
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;
-    background: var(--color-whatsapp);
-    color: var(--color-whatsapp-ink);
+    overflow: hidden;
     box-shadow: var(--shadow-floating);
     animation: contact-hub-pulso 2.4s ease-in-out infinite;
+    transition: transform 0.15s ease;
   }
 
   .contact-hub-fab:hover {
-    background: var(--color-whatsapp-dark);
+    transform: scale(1.06);
   }
 
   .contact-hub-fab img {
-    width: 2.35rem;
-    height: 2.35rem;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    object-fit: contain;
+    object-fit: cover;
   }
 
   @keyframes contact-hub-pulso {
