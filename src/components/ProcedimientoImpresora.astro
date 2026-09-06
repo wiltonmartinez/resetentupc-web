@@ -42,6 +42,7 @@
  * un youtube_id: si no hay ningún candidato para una marca/modelo, se
  * muestra el placeholder visible en vez de romper la sección.
  */
+import { Image } from "astro:assets";
 import { t, buildLocalizedPath, buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
 import ErrorSelector from "./ErrorSelector.astro";
@@ -56,7 +57,6 @@ import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import TrustpilotWidget from "./TrustpilotWidget.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import InfoCard from "./ui/InfoCard.astro";
-import ProcessSteps from "./ui/ProcessSteps.astro";
 import WhatsAppCTA from "./WhatsAppCTA.astro";
 import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
@@ -220,6 +220,18 @@ const candidatosTrustpilot: CandidatoTrustpilot[] = trustpilotList.map((tt) => (
   modelo: tt.modelo,
 }));
 
+// Prueba Social (Paso 6, justo después del chat embebido): 3 reseñas reales
+// al azar, mismo catálogo y criterio que ComoFuncionaPage.astro — nunca
+// texto ni nombres inventados, solo capturas reales ya validadas de
+// Trustpilot. Reusa candidatosTrustpilot (ya trae todo el catálogo del
+// build) en vez de pedirle a Núcleo la misma lista dos veces.
+const testimoniosDestacadosPool = candidatosTrustpilot.filter((c) => c.imagen?.trim());
+for (let i = testimoniosDestacadosPool.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [testimoniosDestacadosPool[i], testimoniosDestacadosPool[j]] = [testimoniosDestacadosPool[j], testimoniosDestacadosPool[i]];
+}
+const testimoniosDestacados = testimoniosDestacadosPool.slice(0, 3);
+
 // Preferido: endpoint dedicado (propuesto) donde Núcleo ya aplica su
 // propia regla de "modelo hermano". Si todavía no existe, se cae a
 // filtrar por marca el listado real ya existente — sin lógica de modelo
@@ -282,40 +294,25 @@ const sourceIdFinalWhatsApp = `${sourceIdBase}-paso6-whatsapp`;
 // después del Paso 3, entre el resultado de la revisión y la Cotización.
 const imgProceso1 = getProcesoImage("paso1-descargar");
 const imgProceso2a = getProcesoImage("paso2-formulario");
-const imgProceso2b = getProcesoImage("paso2-formulario-2");
 const imgProceso3 = getProcesoImage("paso3-reconectarcableusb");
 const imgProceso4 = getProcesoImage("paso4-contactarnos");
 
-const pasosProceso = [
+// Grid de subtarjetas 3.1-3.4 ("Cómo funciona la conexión con el técnico"):
+// mismo diseño y copy que ComoFuncionaPage.astro (subpasos-grid), portado
+// acá para que ambas páginas se vean identicas en este bloque — antes esta
+// sección usaba ProcessSteps.astro (lista vertical numerada), inconsistente
+// con la version en grid ya validada en Como Funciona.
+const subpasosConexion = [
   {
+    numero: "3.1",
+    imagen: imgProceso1,
     titulo: t(locale, "proceso.paso1Titulo"),
-    descripcion: t(locale, "proceso.paso1Texto"),
-    icono: "monitor" as const,
-    enlace: { href: USB_REDIRECTOR_DOWNLOAD_URL, label: t(locale, "proceso.paso1Enlace") },
-    imagenes: imgProceso1 ? [{ src: imgProceso1, alt: t(locale, "proceso.paso1ImagenAlt") }] : undefined,
+    texto: t(locale, "proceso.paso1Texto"),
+    enlace: t(locale, "comoFuncionaProceso.paso31BotonDescarga"),
   },
-  {
-    titulo: t(locale, "proceso.paso2Titulo"),
-    descripcion: t(locale, "proceso.paso2Texto"),
-    icono: "conectar" as const,
-    destacado: `Technician ID: ${TECHNICIAN_ID}`,
-    imagenes: [
-      imgProceso2a && { src: imgProceso2a, alt: t(locale, "proceso.paso2ImagenAlt") },
-      imgProceso2b && { src: imgProceso2b, alt: t(locale, "proceso.paso2ImagenAlt2") },
-    ].filter((imagenPaso): imagenPaso is { src: ImageMetadata; alt: string } => Boolean(imagenPaso)),
-  },
-  {
-    titulo: t(locale, "proceso.paso3Titulo"),
-    descripcion: t(locale, "proceso.paso3Texto"),
-    icono: "usb" as const,
-    imagenes: imgProceso3 ? [{ src: imgProceso3, alt: t(locale, "proceso.paso3ImagenAlt") }] : undefined,
-  },
-  {
-    titulo: t(locale, "proceso.paso4Titulo"),
-    descripcion: t(locale, "proceso.paso4Texto"),
-    icono: "whatsapp" as const,
-    imagenes: imgProceso4 ? [{ src: imgProceso4, alt: t(locale, "proceso.paso4ImagenAlt") }] : undefined,
-  },
+  { numero: "3.2", imagen: imgProceso2a, titulo: t(locale, "proceso.paso2Titulo"), texto: t(locale, "proceso.paso2Texto") },
+  { numero: "3.3", imagen: imgProceso3, titulo: t(locale, "proceso.paso3Titulo"), texto: t(locale, "proceso.paso3Texto") },
+  { numero: "3.4", imagen: imgProceso4, titulo: t(locale, "proceso.paso4Titulo"), texto: t(locale, "proceso.paso4Texto") },
 ];
 ---
 
@@ -430,15 +427,56 @@ const pasosProceso = [
        después del Paso 3 (resultado de la revisión), antes del Paso 4
        (Consulta de Garantía). -->
   <InfoCard tone="muted">
-    <ProcessSteps
-      titulo={t(locale, "proceso.titulo")}
-      introTexto={t(locale, "proceso.introTexto")}
-      pasos={pasosProceso}
-      marcarRevisadoLabel={t(locale, "proceso.marcarRevisado")}
-      prefijoNumero="3."
-      locale={locale}
-    >
-      {!variosCompatibles && (
+    <h4 class="subtitulo-modulo">{t(locale, "comoFuncionaProceso.tituloModuloSeguro")}</h4>
+    <div class="subpasos-grid">
+      {subpasosConexion.map((sub) => (
+        <div class="subpaso-card">
+          {sub.imagen && (
+            <div class="subpaso-icono-wrap">
+              <Image src={sub.imagen} alt="" width={480} height={320} loading="lazy" />
+            </div>
+          )}
+          <span class="subpaso-numero">{sub.numero}</span>
+          <h5>{sub.titulo}</h5>
+          <p>{sub.texto}</p>
+          {sub.numero === "3.2" && (
+            <p class="subpaso-technician-id">
+              Technician ID:{" "}
+              <button
+                type="button"
+                class="subpaso-copy-btn"
+                data-copy-value={TECHNICIAN_ID}
+                aria-label={t(locale, "comoFuncionaProceso.copiarIdLabel")}
+              >
+                <strong>{TECHNICIAN_ID}</strong>
+                <svg class="subpaso-copy-icono" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path
+                    d="M7.5 7.5V5a1.2 1.2 0 0 1 1.2-1.2h6.1A1.2 1.2 0 0 1 16 5v6.1a1.2 1.2 0 0 1-1.2 1.2H12.4M7.5 7.5H5.2A1.2 1.2 0 0 0 4 8.7v6.1A1.2 1.2 0 0 0 5.2 16h6.1a1.2 1.2 0 0 0 1.2-1.2v-2.3M7.5 7.5h4.9a1.2 1.2 0 0 1 1.2 1.2v4.9"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span class="subpaso-copy-feedback" data-copy-feedback>
+                  {t(locale, "comoFuncionaProceso.copiadoLabel")}
+                </span>
+              </button>
+            </p>
+          )}
+          {sub.enlace && (
+            <>
+              <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
+                {sub.enlace}
+              </a>
+              <p class="subpaso-enlace-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+    {!variosCompatibles && (
+      <div class="subpasos-cta">
         <WhatsAppCTA
           marca={marca}
           modelo={modelo}
@@ -448,8 +486,8 @@ const pasosProceso = [
           locale={locale}
           label={t(locale, "proceso.ctaContinuar")}
         />
-      )}
-    </ProcessSteps>
+      </div>
+    )}
     <VideoModal archivo="proceso-demo.mp4" label={t(locale, "proceso.videoProcesoLabel")} />
   </InfoCard>
 
@@ -521,6 +559,21 @@ const pasosProceso = [
                 </a>
               )}
             </div>
+          )}
+          {testimoniosDestacados.length > 0 && (
+            <section class="prueba-social-resenas">
+              <div class="prueba-social-header">
+                <h2>{t(locale, "comoFuncionaProceso.resenasTitulo")}</h2>
+                <p>{t(locale, "comoFuncionaProceso.resenasSubtitulo")}</p>
+              </div>
+              <div class="prueba-social-grid">
+                {testimoniosDestacados.map((testimonio) => (
+                  <a class="resena-card" href={testimonio.destino} target="_blank" rel="noopener noreferrer nofollow">
+                    <img src={testimonio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
+                  </a>
+                ))}
+              </div>
+            </section>
           )}
           {testimonioTrustpilot?.imagen && (
             <div
@@ -679,6 +732,28 @@ const pasosProceso = [
         enlaceSeo.textContent = `${anchor} →`;
       }
     }
+  });
+
+  // Boton "copiar" del ID de tecnico (subtarjeta 3.2): copia al portapapeles
+  // y muestra un tooltip de confirmacion breve.
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-value]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const valor = btn.dataset.copyValue ?? "";
+      try {
+        await navigator.clipboard.writeText(valor);
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = valor;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      btn.classList.add("copiado");
+      window.setTimeout(() => btn.classList.remove("copiado"), 1500);
+    });
   });
 </script>
 
@@ -862,5 +937,233 @@ const pasosProceso = [
 
   .whatsapp-cta:hover {
     background: #1fb958;
+  }
+
+  .subtitulo-modulo {
+    margin: 0 0 0.75rem;
+  }
+
+  .subpasos-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .subpasos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .subpasos-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .subpaso-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.4rem;
+    padding: 1.5rem 1.1rem;
+    border-radius: 14px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .subpaso-icono-wrap {
+    width: 100%;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .subpaso-icono-wrap :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+  .subpaso-numero {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-full);
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 800;
+    font-size: 0.8rem;
+  }
+
+  .subpaso-card h5 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .subpaso-card p {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .subpaso-technician-id {
+    font-family: monospace;
+  }
+
+  .subpaso-copy-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-family: monospace;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .subpaso-copy-btn:hover {
+    background: var(--color-bg-muted);
+    border-color: #1d4ed8;
+  }
+
+  .subpaso-copy-icono {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex-shrink: 0;
+    color: #1d4ed8;
+  }
+
+  .subpaso-copy-feedback {
+    position: absolute;
+    bottom: calc(100% + 0.4rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    background: #16a34a;
+    color: white;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .subpaso-copy-btn.copiado .subpaso-copy-feedback {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .subpaso-enlace {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.3rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    background: #dc2626;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .subpaso-enlace:hover {
+    background: #b91c1c;
+    color: #ffffff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .subpaso-enlace-microtexto {
+    margin: 0.4rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-text-subtle, #6b7280);
+    text-align: center;
+  }
+
+  .subpasos-cta {
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  /* Prueba Social: 3 resenas reales de Trustpilot, justo despues del chat
+     embebido dentro del Paso 6. */
+  .prueba-social-resenas {
+    width: 100%;
+    max-width: 80rem;
+    margin: 0.5rem auto 0;
+  }
+
+  .prueba-social-header {
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto 1.5rem;
+  }
+
+  .prueba-social-header h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  .prueba-social-header p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+
+  .prueba-social-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .prueba-social-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .resena-card {
+    display: block;
+    line-height: 0;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    transition: box-shadow 300ms, transform 300ms;
+  }
+
+  .resena-card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.25rem);
+  }
+
+  .resena-card img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 </style>
