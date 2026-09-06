@@ -1,6 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import { t, buildLocalizedPath, buildCanonicalUrl } from "../../i18n/utils";
-import { resolverErroresConNucleo } from "../../lib/nucleo-api";
+import { resolverErroresConNucleo, listarResetRealizados, tituloConRespaldo } from "../../lib/nucleo-api";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import Breadcrumb from "../Breadcrumb.astro";
 import InfoCard from "../ui/InfoCard.astro";
@@ -11,7 +12,17 @@ import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
 import ProcedimientoImpresora from "../ProcedimientoImpresora.astro";
 import ErrorImage from "../ui/ErrorImage.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
-import { SITE_URL, type Locale } from "../../config/site";
+import YouTubeFacade from "../ui/YouTubeFacade.astro";
+import { SITE_URL, RULETA_URL, type Locale } from "../../config/site";
+import iconoReset from "../../assets/beneficios/icono-reset.png";
+import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
+import iconoInstalaciones from "../../assets/beneficios/icono-instalaciones.png";
+import iconoSeguridad from "../../assets/beneficios/icono-seguridad.png";
+import iconoRespaldo from "../../assets/beneficios/icono-respaldo.png";
+import iconoReembolso from "../../assets/beneficios/icono-reembols.png";
+import iconoCertificado from "../../assets/beneficios/icono-certificado.png";
+import iconoSoporte from "../../assets/beneficios/icono-soporte.png";
+import iconoSorteos from "../../assets/beneficios/icono-sorteos.png";
 
 interface ModeloData {
   marcaSlug: string;
@@ -55,6 +66,57 @@ const reconocimiento = t(locale, "modelo.reconocimiento")
 const errorSectionText = t(locale, "modelo.errorSectionText")
   .replaceAll("{marca}", nombreMarca)
   .replaceAll("{modelo}", nombreModelo);
+
+// Atención (AIDA): explica qué es el error apenas se reconoce el equipo.
+// Si hay un único error compatible ya sabemos su descripción real y la
+// mencionamos; con varios errores compatibles (el usuario todavía no eligió
+// cuál) queda la version generica — nunca se inventa un {errorLargo}.
+const atencionExplicacion = (
+  unCompatible
+    ? t(locale, "modelo.atencionExplicacionConError").replaceAll("{errorLargo}", unCompatible.descripcion)
+    : t(locale, "modelo.atencionExplicacionGenerica")
+)
+  .replaceAll("{marca}", nombreMarca)
+  .replaceAll("{modelo}", nombreModelo);
+
+// Interés (AIDA): grid de 9 beneficios ya validado en Como Funciona, mismo
+// copy generico (no depende de marca/modelo) — solo el titulo de la seccion
+// menciona el equipo especifico.
+const interesTitulo = t(locale, "modelo.interesTitulo").replaceAll("{marca}", nombreMarca).replaceAll("{modelo}", nombreModelo);
+const beneficios = [
+  { icono: iconoReset, titulo: t(locale, "comoFuncionaProceso.beneficio1Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio1Texto") },
+  { icono: iconoTraslados, titulo: t(locale, "comoFuncionaProceso.beneficio2Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio2Texto") },
+  { icono: iconoInstalaciones, titulo: t(locale, "comoFuncionaProceso.beneficio3Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio3Texto") },
+  { icono: iconoSeguridad, titulo: t(locale, "comoFuncionaProceso.beneficio4Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio4Texto") },
+  { icono: iconoRespaldo, titulo: t(locale, "comoFuncionaProceso.beneficio5Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio5Texto") },
+  { icono: iconoReembolso, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
+  { icono: iconoCertificado, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
+  { icono: iconoSoporte, titulo: t(locale, "comoFuncionaProceso.beneficio8Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio8Texto") },
+  { id: "sorteos", icono: iconoSorteos, titulo: t(locale, "comoFuncionaProceso.beneficio9Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio9Texto") },
+];
+
+// Interés (AIDA): video resumido "Reset Asistido en 1 minuto" — mismo patron
+// que el Paso 5 de ProcedimientoImpresora (candidato real de Núcleo,
+// filtrado por marca/modelo con respaldo por marca). Acá alcanza con UN
+// candidato: no hace falta azarear en cliente, ese detalle mas completo ya
+// vive mas abajo en el paso a paso. Nunca se inventa un youtube_id: sin
+// candidato, se muestra el mensaje de "muy pronto".
+const listadoResetInteres = await listarResetRealizados(1, 50);
+const candidatosInteresPorModelo = listadoResetInteres.data.filter(
+  (r) => r.marca.toLowerCase() === marcaSlug && r.modelo.toLowerCase() === modeloSlug
+);
+const candidatosInteresPorMarca = listadoResetInteres.data.filter((r) => r.marca.toLowerCase() === marcaSlug);
+const candidatoVideoInteres = (candidatosInteresPorModelo.length > 0 ? candidatosInteresPorModelo : candidatosInteresPorMarca)[0];
+const videoInteres = candidatoVideoInteres
+  ? { youtubeId: candidatoVideoInteres.youtube_id, titulo: tituloConRespaldo(candidatoVideoInteres) }
+  : null;
+const videoInteresTexto = t(locale, "modelo.videoResumenTexto").replaceAll("{marca}", nombreMarca).replaceAll("{modelo}", nombreModelo);
+const videoInteresPlaceholder = t(locale, "modelo.videoResumenPlaceholder")
+  .replaceAll("{marca}", nombreMarca)
+  .replaceAll("{modelo}", nombreModelo);
+
+// Acción (AIDA): frase de cierre antes de los CTA finales de WhatsApp.
+const accionIntro = t(locale, "modelo.accionIntro").replaceAll("{marca}", nombreMarca).replaceAll("{modelo}", nombreModelo);
 
 const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
 const faqConfianza = faqItems.slice(0, 3);
@@ -118,10 +180,68 @@ const breadcrumbJsonLd = {
       </h1>
       <p class="modelo-hero-subtitulo">{t(locale, "proceso.titulo")}</p>
       <p class="modelo-hero-pregunta">{reconocimiento}</p>
+      <p class="modelo-hero-explicacion">{atencionExplicacion}</p>
     </div>
   </header>
 
-  <!-- 2. Confirmación del problema -->
+  <!-- 2. Interés: por qué elegir el servicio (beneficios) + video resumido -->
+  <section class="modelo-interes">
+    <div class="beneficios-header">
+      <h2 class="beneficios-titulo">{interesTitulo}</h2>
+      <p class="beneficios-subtitulo">{t(locale, "comoFuncionaProceso.beneficiosSubtitulo")}</p>
+    </div>
+    <div class="beneficios-cards">
+      {beneficios.map((beneficio) =>
+        beneficio.id === "sorteos" ? (
+          <button type="button" class="beneficio-card beneficio-card-clickable" data-ruleta-trigger aria-haspopup="dialog">
+            <div class="beneficio-icono-wrap">
+              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+            </div>
+            <h3>{beneficio.titulo}</h3>
+            <p>{beneficio.texto}</p>
+            <span class="beneficio-cta">{t(locale, "comoFuncionaProceso.jugarRuletaCta")}</span>
+          </button>
+        ) : (
+          <div class="beneficio-card">
+            <div class="beneficio-icono-wrap">
+              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+            </div>
+            <h3>{beneficio.titulo}</h3>
+            <p>{beneficio.texto}</p>
+          </div>
+        )
+      )}
+    </div>
+
+    <dialog class="ruleta-dialog" data-ruleta-dialog aria-label={t(locale, "ruletaPage.heading")}>
+      <button type="button" class="ruleta-dialog-close" data-ruleta-close aria-label={t(locale, "comoFuncionaProceso.cerrarRuletaLabel")}>
+        ×
+      </button>
+      <div class="ruleta-dialog-embed">
+        <iframe data-ruleta-iframe data-src={RULETA_URL} title={t(locale, "ruletaPage.heading")} loading="lazy" />
+      </div>
+    </dialog>
+
+    <div class="modelo-video-resumen">
+      <h3 class="modelo-video-resumen-titulo">{t(locale, "modelo.videoResumenTitulo")}</h3>
+      {videoInteres ? (
+        <>
+          <p class="modelo-video-resumen-texto">{videoInteresTexto}</p>
+          <div class="video-contenedor">
+            <YouTubeFacade
+              youtubeId={videoInteres.youtubeId}
+              titulo={videoInteres.titulo}
+              reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+            />
+          </div>
+        </>
+      ) : (
+        <p class="modelo-video-resumen-texto">{videoInteresPlaceholder}</p>
+      )}
+    </div>
+  </section>
+
+  <!-- 3. Confirmación del problema -->
   {sinErrores ? (
     <InfoCard>
       <div class="seccion-header">
@@ -213,6 +333,22 @@ const breadcrumbJsonLd = {
     <TrustpilotWidget />
   </InfoCard>
 
+  <!-- 5. Acción: ya vio el proceso, los beneficios y la prueba social -->
+  <p class="modelo-accion-intro">{accionIntro}</p>
+
+  <section class="modelo-accion-banner">
+    <WhatsAppCTA
+      marca={nombreMarca}
+      modelo={nombreModelo}
+      sourceId={`${sourceIdBase}-banner-cro`}
+      urlPath={localizedPath}
+      locale={locale}
+      label={t(locale, "comoFuncionaProceso.whatsappBannerCta")}
+      destacado
+    />
+    <p class="modelo-accion-banner-subtitulo">{t(locale, "comoFuncionaProceso.whatsappBannerSubtitulo")}</p>
+  </section>
+
   <div class="modelo-cta-final">
     <WhatsAppCTA
       marca={nombreMarca}
@@ -254,6 +390,25 @@ const breadcrumbJsonLd = {
       actualizarBoton(b, esFavoritoAhora);
     });
     playFeedback(esFavoritoAhora ? "favoritoAgregar" : "favoritoQuitar");
+  });
+
+  // Popup de la ruleta (tarjeta "Sorteos y Premios Diarios"): el iframe solo
+  // carga su src la primera vez que se abre el dialog.
+  document.querySelectorAll("[data-ruleta-trigger]").forEach((trigger) => {
+    const dialog = trigger.closest("section")?.querySelector("[data-ruleta-dialog]");
+    const iframe = dialog?.querySelector("[data-ruleta-iframe]");
+    const closeBtn = dialog?.querySelector("[data-ruleta-close]");
+    if (!dialog || !iframe || !closeBtn) return;
+
+    trigger.addEventListener("click", () => {
+      if (!iframe.src && iframe.dataset.src) iframe.src = iframe.dataset.src;
+      dialog.showModal();
+    });
+
+    closeBtn.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
   });
 </script>
 
@@ -402,5 +557,219 @@ const breadcrumbJsonLd = {
   .opcion-secundaria :global(.whatsapp-cta:hover) {
     background: none;
     color: var(--color-text);
+  }
+
+  .modelo-hero-explicacion {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  /* Interés: grid de beneficios + video resumido */
+  .modelo-interes {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .beneficios-header {
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
+  .beneficios-titulo {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+  }
+
+  .beneficios-subtitulo {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .beneficios-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .beneficios-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .beneficios-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .beneficio-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transition: box-shadow 300ms, transform 300ms;
+  }
+
+  .beneficio-card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.25rem);
+  }
+
+  .beneficio-card-clickable {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .beneficio-cta {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.85rem;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    background: #1d4ed8;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  .beneficio-icono-wrap {
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .beneficio-icono-wrap :global(img) {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .beneficio-card h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .beneficio-card p {
+    margin: 0;
+    font-weight: 400;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  .ruleta-dialog {
+    position: relative;
+    border: none;
+    border-radius: 1rem;
+    padding: 2.75rem 1rem 1rem;
+    max-width: min(94vw, 560px);
+    max-height: 96vh;
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .ruleta-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .ruleta-dialog-close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    color: var(--color-text);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .ruleta-dialog-embed {
+    width: 100%;
+    height: min(88vh, 760px);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+
+  .ruleta-dialog-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .modelo-video-resumen {
+    display: grid;
+    gap: 0.75rem;
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
+  .modelo-video-resumen-titulo {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .modelo-video-resumen-texto {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .video-contenedor {
+    max-width: 42rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .video-contenedor :global(.youtube-card-trigger) {
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  /* Acción: banner CRO + CTA final */
+  .modelo-accion-intro {
+    margin: 0;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+
+  .modelo-accion-banner {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .modelo-accion-banner-subtitulo {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
   }
 </style>
