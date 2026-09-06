@@ -10,9 +10,12 @@
  * [data-abrir-formulario-contacto]. Se mantiene aquí, oculta, para no romper
  * ese flujo de Cotización/Garantía.
  */
+import { Image, getImage } from "astro:assets";
 import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
 import ContactForm from "./ui/ContactForm.astro";
+import whatsappLogo from "../assets/whatsapp/1.png";
+import whatsappNotif from "../assets/whatsapp/2.png";
 
 interface Props {
   locale: Locale;
@@ -28,10 +31,21 @@ const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
 const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
 const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
+
+// Notificacion simulada: a los pocos segundos de cargar la pagina, el icono
+// cambia de 1.png (logo limpio) a 2.png (logo con insignia roja "1" ya
+// incluida en la imagen) y se muestra una burbuja de mensaje. La imagen
+// "notificada" se precalcula aca para que el script solo tenga que
+// intercambiar el atributo src, sin pedirle a Astro que optimice nada en
+// tiempo de ejecucion.
+const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: whatsappNotif.width });
 ---
 
 {mostrarWhatsapp && (
   <div class="contact-hub">
+    <p class="contact-hub-bubble" data-whatsapp-bubble hidden>
+      {t(locale, "contactHub.bubbleMensaje")}
+    </p>
     <a
       class="contact-hub-fab"
       href={whatsappHref}
@@ -39,12 +53,18 @@ const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
       rel="noopener noreferrer nofollow"
       data-sound="confirm"
       data-analytics-event="contact_hub_whatsapp"
+      data-whatsapp-fab
       aria-label={t(locale, "contactHub.whatsapp")}
     >
-      <span class="contact-hub-badge" aria-hidden="true">1</span>
-      <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true">
-        <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z" />
-      </svg>
+      <Image
+        src={whatsappLogo}
+        data-whatsapp-fab-img
+        data-notif-src={whatsappNotifOptimizada.src}
+        alt=""
+        width="30"
+        height="30"
+        loading="eager"
+      />
     </a>
   </div>
 )}
@@ -59,6 +79,7 @@ const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
 
 <script>
   import { trackEvent } from "../lib/analytics.js";
+  import { playFeedback } from "../lib/sound-manager.js";
 
   const dialog = document.querySelector<HTMLDialogElement>("[data-hub-dialog]");
   const closeDialogBtn = document.querySelector<HTMLButtonElement>("[data-hub-dialog] .contact-hub-dialog-close");
@@ -73,6 +94,33 @@ const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
       trackEvent(el.dataset.analyticsEvent || "");
     });
   });
+
+  // Notificacion simulada: a los 4s del load, cambia el icono a la version
+  // con insignia, suena un aviso sutil (silencioso salvo que el usuario haya
+  // activado el sonido en el sitio, asi que nunca choca con las politicas de
+  // autoplay del navegador) y aparece una burbuja de mensaje que se retira
+  // sola a los pocos segundos.
+  const NOTIF_DELAY_MS = 4000;
+  const BUBBLE_AUTOHIDE_MS = 7000;
+
+  const fab = document.querySelector<HTMLAnchorElement>("[data-whatsapp-fab]");
+  const fabImg = fab?.querySelector<HTMLImageElement>("[data-whatsapp-fab-img]");
+  const bubble = document.querySelector<HTMLElement>("[data-whatsapp-bubble]");
+
+  if (fab && fabImg) {
+    window.setTimeout(() => {
+      const notifSrc = fabImg.dataset.notifSrc;
+      if (notifSrc) fabImg.src = notifSrc;
+      playFeedback("whatsapp");
+
+      if (bubble) {
+        bubble.hidden = false;
+        window.setTimeout(() => {
+          bubble.hidden = true;
+        }, BUBBLE_AUTOHIDE_MS);
+      }
+    }, NOTIF_DELAY_MS);
+  }
 </script>
 
 <style>
@@ -101,22 +149,11 @@ const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
     background: var(--color-whatsapp-dark);
   }
 
-  .contact-hub-badge {
-    position: absolute;
-    top: -0.15rem;
-    right: -0.15rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.25rem;
-    height: 1.25rem;
+  .contact-hub-fab img {
+    width: 2.35rem;
+    height: 2.35rem;
     border-radius: 50%;
-    border: 2px solid var(--color-bg);
-    background: #e0293e;
-    color: white;
-    font-size: 0.68rem;
-    font-weight: 800;
-    line-height: 1;
+    object-fit: contain;
   }
 
   @keyframes contact-hub-pulso {
@@ -129,8 +166,49 @@ const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
     }
   }
 
+  /* Burbuja de mensaje no leido, simulando una notificacion de chat real.
+     Se muestra/oculta con el atributo [hidden] via JS — no fijar "display"
+     aca para no pisar el "display:none" que aplica ese atributo. */
+  .contact-hub-bubble {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.65rem);
+    margin: 0;
+    max-width: 13rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.3;
+    box-shadow: var(--shadow-floating);
+    animation: contact-hub-bubble-in 0.3s ease-out;
+  }
+
+  .contact-hub-bubble::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 1.15rem;
+    border: 0.4rem solid transparent;
+    border-top-color: var(--color-bg-card);
+  }
+
+  @keyframes contact-hub-bubble-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.4rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .contact-hub-fab {
+    .contact-hub-fab,
+    .contact-hub-bubble {
       animation: none;
     }
   }

@@ -19,6 +19,7 @@ interface Props {
   marcaDefault?: string;
   modeloDefault?: string;
   ocultarBotonContacto?: boolean;
+  ocultarNotificacionCompra?: boolean;
   wide?: boolean;
 }
 
@@ -33,6 +34,7 @@ const {
   marcaDefault,
   modeloDefault,
   ocultarBotonContacto = false,
+  ocultarNotificacionCompra = false,
   wide = false,
 } = Astro.props;
 
@@ -107,7 +109,7 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     {!ocultarBotonContacto && (
       <ContactHub locale={locale} path={path} marcaDefault={marcaDefault} modeloDefault={modeloDefault} />
     )}
-    {!ocultarBotonContacto && <PurchaseNotification locale={locale} />}
+    {!ocultarNotificacionCompra && <PurchaseNotification locale={locale} />}
     <ImageModal
       ampliarLabel={t(locale, "imageModal.ampliarLabel")}
       cerrarLabel={t(locale, "imageModal.cerrarLabel")}

@@ -38,6 +38,10 @@ const VOICES = {
     { freq: 1100, delay: 0.18, dur: 0.09 },
     { freq: 1320, delay: 0.27, dur: 0.16 },
   ],
+  whatsapp: [
+    { freq: 880, delay: 0, dur: 0.09 },
+    { freq: 1175, delay: 0.09, dur: 0.14 },
+  ],
 };
 
 function readStoredPreference() {

@@ -727,7 +727,8 @@
     "cotizacion": "Quote or purchase",
     "garantia": "Warranty",
     "ruleta": "Play the Wheel",
-    "whatsapp": "Message us on WhatsApp"
+    "whatsapp": "Message us on WhatsApp",
+    "bubbleMensaje": "Need help with your printer?"
   },
   "consultaGarantiaPage": {
     "title": "Warranty Check | ResetEnLinea.com",
