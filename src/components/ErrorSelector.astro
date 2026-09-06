@@ -1,7 +1,7 @@
 ---
 import { getImage } from "astro:assets";
-import { buildWhatsAppMessage, buildWhatsAppLink, t, type ErrorResuelto } from "../i18n/utils";
-import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import { t, type ErrorResuelto } from "../i18n/utils";
+import type { Locale } from "../config/site";
 import { getErrorImage, getErrorImageByFilename, getErrorImageFamiliaFallback } from "../lib/error-images.js";
 import { getSolucionImage } from "../lib/solucion-images.js";
 import { getModeloImage } from "../lib/model-images.js";
@@ -9,17 +9,13 @@ import EvidenceImagePlaceholder from "./ui/EvidenceImagePlaceholder.astro";
 
 interface Props {
   errores: ErrorResuelto[];
-  marca: string;
-  modelo: string;
   modeloSlug?: string;
   locale: Locale;
-  urlPath: string;
   sourceIdBase: string;
   codigoErrorInicial?: string;
 }
 
-const { errores, marca, modelo, modeloSlug, locale, urlPath, sourceIdBase, codigoErrorInicial } = Astro.props;
-const urlOrigen = `${SITE_URL}${urlPath}`;
+const { errores, modeloSlug, locale, sourceIdBase, codigoErrorInicial } = Astro.props;
 
 function categoriaLabel(tipo: ErrorResuelto["tipo"]): string {
   if (tipo === "bloqueo") return "Bloqueo";
@@ -30,7 +26,6 @@ function categoriaLabel(tipo: ErrorResuelto["tipo"]): string {
 
 const opciones = await Promise.all(
   errores.map(async (err) => {
-    const message = buildWhatsAppMessage({ locale, marca, modelo, error: err.descripcion, urlOrigen });
     // Prioridad: foto_url de Núcleo (nombre de archivo explícito, ej.
     // "almohadillas.jpg") > mapeo por error_id > mapeo por slug de modelo
     // > foto genérica de la familia del modelo (ej. "et-generico.png").
@@ -50,8 +45,6 @@ const opciones = await Promise.all(
       descripcion: err.descripcion,
       codigo: err.codigo ?? "",
       categoria: categoriaLabel(err.tipo),
-      href: buildWhatsAppLink(WHATSAPP_NUMBER, message),
-      sourceId: `${sourceIdBase}-error-${err.error_id}`,
       errorImgUrl,
       solucionImgUrl,
     };
@@ -85,8 +78,6 @@ const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
           <option
             value={op.errorId}
             selected={op.errorId === primera.errorId}
-            data-href={op.href}
-            data-source-id={op.sourceId}
             data-descripcion={op.descripcion}
             data-codigo={op.codigo}
             data-error-imagen={op.errorImgUrl}
@@ -192,10 +183,6 @@ const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
       <p class="evidence-caption">{t(locale, "modelo.evidenciaErrorCaption")}</p>
     </div>
   </div>
-
-  <a class="whatsapp-cta" href={primera.href} data-source-id={primera.sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer nofollow">
-    {t(locale, "common.whatsappButton")}
-  </a>
 </div>
 
 <script>
@@ -203,7 +190,6 @@ const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
 
   document.querySelectorAll(".error-selector").forEach((container) => {
     const select = container.querySelector("select");
-    const cta = container.querySelector("a.whatsapp-cta");
     const desc = container.querySelector(".error-selector-descripcion");
     const flipTrigger = container.querySelector(".evidence-flip-trigger");
     const staticCard = container.querySelector(".evidence-static");
@@ -217,7 +203,7 @@ const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
     const ampliarErrorStatic = container.querySelector(".evidence-ampliar-error-static");
     const ampliarSolucion = container.querySelector(".evidence-ampliar-solucion");
     const modeloImgUrl = flipTrigger?.dataset.modeloImagen || "";
-    if (!select || !cta) return;
+    if (!select) return;
 
     const toggleFlip = () => {
       const flipped = flipTrigger.getAttribute("aria-pressed") === "true";
@@ -233,15 +219,11 @@ const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
 
     select.addEventListener("change", () => {
       const option = select.options[select.selectedIndex];
-      const href = option.getAttribute("data-href");
-      const sourceId = option.getAttribute("data-source-id");
       const descripcion = option.getAttribute("data-descripcion");
       const errorUrl = option.getAttribute("data-error-imagen");
       const solucionUrl = option.getAttribute("data-solucion-imagen");
       const hayTrasera = Boolean(solucionUrl || modeloImgUrl);
 
-      if (href) cta.setAttribute("href", href);
-      if (sourceId) cta.setAttribute("data-source-id", sourceId);
       if (desc && descripcion) desc.textContent = descripcion;
 
       if (flipTrigger) {
@@ -437,22 +419,5 @@ const fotoNoDisponibleLabel = t(locale, "modelo.evidenciaFotoNoDisponible");
     .evidence-flip-inner {
       transition: none;
     }
-  }
-  .whatsapp-cta {
-    display: inline-block;
-    width: fit-content;
-    justify-self: center;
-    background: #25d366;
-    color: #062f1a;
-    font: inherit;
-    font-weight: 600;
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 999px;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  .whatsapp-cta:hover {
-    background: #1fb958;
   }
 </style>
