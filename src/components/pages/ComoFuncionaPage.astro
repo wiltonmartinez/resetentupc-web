@@ -900,17 +900,22 @@ const erroresTab = [
       if (!wrap || !link) return;
       const numero = wrap.dataset.whatsappNumber ?? "";
       const urlOrigen = wrap.dataset.urlOrigen ?? "";
-      const plantilla =
-        marcaActivaLabel && modeloActivo
-          ? errorActivo
-            ? (wrap.dataset.msgWithError ?? "")
-            : (wrap.dataset.msgWithoutError ?? "")
-          : (wrap.dataset.msgGeneric ?? "");
+      // Alcanza con tener la marca para dejar de usar el saludo generico —
+      // no se espera a que tambien haya modelo, para que elegir marca+error
+      // ya se refleje en el mensaje aunque el usuario todavia no haya
+      // escrito o seleccionado su modelo exacto.
+      const plantilla = marcaActivaLabel
+        ? errorActivo
+          ? (wrap.dataset.msgWithError ?? "")
+          : (wrap.dataset.msgWithoutError ?? "")
+        : (wrap.dataset.msgGeneric ?? "");
       const mensaje = plantilla
         .replaceAll("{marca}", marcaActivaLabel)
         .replaceAll("{modelo}", modeloActivo)
         .replaceAll("{error}", errorActivo)
-        .replaceAll("{url}", urlOrigen);
+        .replaceAll("{url}", urlOrigen)
+        .replace(/[ \t]{2,}/g, " ")
+        .replace(/[ \t]+([,.;:])/g, "$1");
       link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
     };
 
