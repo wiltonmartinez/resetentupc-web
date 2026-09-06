@@ -273,7 +273,9 @@
     "whatsappFlotanteLabel": "Démarrer un diagnostic gratuit sur WhatsApp",
     "whatsappBannerCta": "Parler à un vrai technicien maintenant",
     "whatsappBannerSubtitulo": "Nous évaluons votre cas gratuitement et confirmons la disponibilité instantanément. Sans engagement.",
-    "ctaFinalLabel": "Vérifier si mon imprimante a une solution"
+    "ctaFinalLabel": "Vérifier si mon imprimante a une solution",
+    "paso31BotonDescarga": "Télécharger le module de connexion sécurisé",
+    "paso31MicroTexto": "✓ 100 % sans virus — ✓ Léger, sans installation lourde"
   },
   "faq": {
     "title": "Questions fréquentes | ResetEnLinea.com",

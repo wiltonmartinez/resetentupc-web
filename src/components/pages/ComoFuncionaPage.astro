@@ -282,7 +282,7 @@ const subpasosConexion = [
     imagen: pasoModuloWebp,
     titulo: t(locale, "proceso.paso1Titulo"),
     texto: t(locale, "proceso.paso1Texto"),
-    enlace: t(locale, "proceso.paso1Enlace"),
+    enlace: t(locale, "comoFuncionaProceso.paso31BotonDescarga"),
   },
   { numero: "3.2", imagen: pasoConectarWebp, titulo: t(locale, "proceso.paso2Titulo"), texto: t(locale, "proceso.paso2Texto") },
   { numero: "3.3", imagen: pasoCompartirWebp, titulo: t(locale, "proceso.paso3Titulo"), texto: t(locale, "proceso.paso3Texto") },
@@ -427,7 +427,8 @@ const erroresTab = [
       <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
         <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
       </svg>
-      <span>{t(locale, "comoFuncionaProceso.whatsappFlotanteLabel")}</span>
+      <span class="whatsapp-flotante-label">{t(locale, "comoFuncionaProceso.whatsappFlotanteLabel")}</span>
+      <span class="whatsapp-flotante-badge" aria-hidden="true">1</span>
     </a>
   </div>
 
@@ -808,9 +809,12 @@ const erroresTab = [
                 </p>
               )}
               {sub.enlace && (
-                <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
-                  {sub.enlace}
-                </a>
+                <>
+                  <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
+                    {sub.enlace}
+                  </a>
+                  <p class="subpaso-enlace-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
+                </>
               )}
             </div>
           ))}
@@ -1898,12 +1902,24 @@ const erroresTab = [
     font-weight: 700;
     font-size: 0.9rem;
     text-decoration: none;
-    transition: background-color 0.15s ease;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .subpaso-enlace:hover {
     background: #b91c1c;
     color: #ffffff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .subpaso-enlace-microtexto {
+    margin: 0.4rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-text-subtle, #6b7280);
+    text-align: center;
   }
 
   /* Contenedor del video del Paso 5: limita el ancho para que no acapare
@@ -2112,6 +2128,7 @@ const erroresTab = [
   }
 
   .whatsapp-flotante-link {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -2134,6 +2151,37 @@ const erroresTab = [
     flex-shrink: 0;
   }
 
+  /* Insignia roja "1 no leido": patron clasico de widget de chat para subir
+     la probabilidad de clic. Puramente decorativa (aria-hidden) — el
+     aria-label del link ya describe la accion real. */
+  .whatsapp-flotante-badge {
+    position: absolute;
+    top: -0.35rem;
+    right: -0.35rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    border: 2px solid #ffffff;
+    animation: whatsapp-badge-pop 1.8s ease-in-out infinite;
+  }
+
+  @keyframes whatsapp-badge-pop {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.18);
+    }
+  }
+
   .whatsapp-flotante-link:hover {
     background: #20bd5a;
     transform: translateY(-4px);
@@ -2152,13 +2200,14 @@ const erroresTab = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .whatsapp-flotante-link {
+    .whatsapp-flotante-link,
+    .whatsapp-flotante-badge {
       animation: none;
     }
   }
 
   @media (max-width: 560px) {
-    .whatsapp-flotante-link span {
+    .whatsapp-flotante-label {
       display: none;
     }
     .whatsapp-flotante-link {
