@@ -247,7 +247,7 @@
     "selectorModeloPlaceholder": "Ex. L3150",
     "resumenPasoTitulo1": "Identifier le Problème",
     "resumenPasoTexto1": "Modèle : {marca} {modelo} | Erreur : {error}. Après le contact, nous demandons cette information pour vérifier immédiatement la disponibilité de la réinitialisation compatible et nous assurer que l'erreur peut être résolue avant de continuer.",
-    "resumenModeloEjemplo": "L3150",
+    "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Prérequis et Connexion USB",
     "resumenPasoBullet2a": "Disposer du temps nécessaire pour suivre les étapes du technicien (condition essentielle).",
     "resumenPasoBullet2b": "Disposer d'un câble USB connecté directement à votre PC.",

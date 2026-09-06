@@ -247,7 +247,7 @@
     "selectorModeloPlaceholder": "Es. L3150",
     "resumenPasoTitulo1": "Identificare il Problema",
     "resumenPasoTexto1": "Modello: {marca} {modelo} | Errore: {error}. Dopo il contatto, chiediamo questa informazione per verificare immediatamente la disponibilità del reset compatibile e assicurarci che l'errore possa essere risolto prima di continuare.",
-    "resumenModeloEjemplo": "L3150",
+    "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Requisiti Preliminari e Connessione USB",
     "resumenPasoBullet2a": "Avere la disponibilità e il tempo necessario per seguire i passaggi del tecnico (requisito fondamentale).",
     "resumenPasoBullet2b": "Avere un cavo USB collegato direttamente al PC.",

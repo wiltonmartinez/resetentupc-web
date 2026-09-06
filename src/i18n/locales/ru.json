@@ -293,7 +293,7 @@
     "selectorModeloPlaceholder": "Напр. L3150",
     "resumenPasoTitulo1": "Определить проблему",
     "resumenPasoTexto1": "Модель: {marca} {modelo} | Ошибка: {error}. После обращения мы запрашиваем эту информацию, чтобы сразу проверить доступность совместимого сброса и убедиться, что ошибку можно устранить, прежде чем продолжать.",
-    "resumenModeloEjemplo": "L3150",
+    "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Требования и подключение по USB",
     "resumenPasoBullet2a": "Иметь возможность и время следовать инструкциям техника (обязательное условие).",
     "resumenPasoBullet2b": "Иметь USB-кабель, подключённый напрямую к ПК.",

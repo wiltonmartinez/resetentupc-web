@@ -293,7 +293,7 @@
     "selectorModeloPlaceholder": "Z. B. L3150",
     "resumenPasoTitulo1": "Problem Identifizieren",
     "resumenPasoTexto1": "Modell: {marca} {modelo} | Fehler: {error}. Nach der Kontaktaufnahme fragen wir diese Angaben ab, um sofort zu prüfen, ob ein passender Reset verfügbar ist, und sicherzustellen, dass der Fehler behoben werden kann, bevor wir fortfahren.",
-    "resumenModeloEjemplo": "L3150",
+    "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Voraussetzungen und USB-Verbindung",
     "resumenPasoBullet2a": "Verfügbarkeit und Zeit haben, um den Anweisungen des Technikers zu folgen (unbedingte Voraussetzung).",
     "resumenPasoBullet2b": "Ein USB-Kabel direkt mit dem PC verbunden haben.",
