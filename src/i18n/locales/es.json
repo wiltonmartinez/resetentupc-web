@@ -341,7 +341,8 @@
     "copiadoLabel": "¡Copiado!",
     "jugarRuletaCta": "Jugar ahora",
     "cerrarRuletaLabel": "Cerrar ruleta",
-    "selectorModeloListaPlaceholder": "Selecciona tu modelo"
+    "selectorModeloListaPlaceholder": "Selecciona tu modelo",
+    "otroModeloOption": "Otro: ____"
   },
   "faq": {
     "title": "Preguntas frecuentes | ResetEnLinea.com",

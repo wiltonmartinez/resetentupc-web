@@ -303,7 +303,8 @@
     "copiadoLabel": "Скопировано!",
     "jugarRuletaCta": "Играть сейчас",
     "cerrarRuletaLabel": "Закрыть рулетку",
-    "selectorModeloListaPlaceholder": "Выберите свою модель"
+    "selectorModeloListaPlaceholder": "Выберите свою модель",
+    "otroModeloOption": "Другое: ____"
   },
   "faq": {
     "title": "Частые вопросы | ResetEnLinea.com",

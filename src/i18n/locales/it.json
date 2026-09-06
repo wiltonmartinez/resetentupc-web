@@ -257,7 +257,8 @@
     "copiadoLabel": "Copiato!",
     "jugarRuletaCta": "Gioca ora",
     "cerrarRuletaLabel": "Chiudi la ruota",
-    "selectorModeloListaPlaceholder": "Seleziona il tuo modello"
+    "selectorModeloListaPlaceholder": "Seleziona il tuo modello",
+    "otroModeloOption": "Altro: ____"
   },
   "faq": {
     "title": "Domande frequenti | ResetEnLinea.com",

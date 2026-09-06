@@ -303,7 +303,8 @@
     "copiadoLabel": "Kopiert!",
     "jugarRuletaCta": "Jetzt spielen",
     "cerrarRuletaLabel": "Glücksrad schließen",
-    "selectorModeloListaPlaceholder": "Wähle dein Modell"
+    "selectorModeloListaPlaceholder": "Wähle dein Modell",
+    "otroModeloOption": "Andere: ____"
   },
   "faq": {
     "title": "Häufige Fragen | ResetEnLinea.com",

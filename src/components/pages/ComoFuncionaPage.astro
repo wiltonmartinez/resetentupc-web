@@ -155,6 +155,8 @@ const modelosEpsonAlmohadillas = [
 const modelosCanon = [
   "G1100", "G1110", "G2110", "G2100", "G3100", "G3110", "G4100", "G4110", "G5010", "G6010", "G7010",
 ];
+const modelosEpsonSc = ["F570", "F571", "T3170", "T3170x"];
+const OTRO_MODELO_VALOR = "otro";
 
 const modeloEjemplo = t(locale, "comoFuncionaProceso.resumenModeloEjemplo");
 const cascadaDefaults: Record<CascadaToken, string> = {
@@ -334,12 +336,21 @@ const erroresTab = [
         {modelosEpsonAlmohadillas.map((modelo) => (
           <option value={modelo}>{modelo}</option>
         ))}
+        <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
       </select>
       <select class="selector-modelo-lista" data-selector-modelo-lista="canon" hidden>
         <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
         {modelosCanon.map((modelo) => (
           <option value={modelo}>{modelo}</option>
         ))}
+        <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
+      </select>
+      <select class="selector-modelo-lista" data-selector-modelo-lista="epson-sc" hidden>
+        <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
+        {modelosEpsonSc.map((modelo) => (
+          <option value={modelo}>{modelo}</option>
+        ))}
+        <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
       </select>
     </div>
   </section>
@@ -686,6 +697,9 @@ const erroresTab = [
     const modeloInput = raiz.querySelector<HTMLInputElement>("[data-selector-modelo]");
     const listaEpson = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="epson"]');
     const listaCanon = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="canon"]');
+    const listaEpsonSc = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="epson-sc"]');
+    const todasLasListas = [listaEpson, listaCanon, listaEpsonSc];
+    const OTRO_MODELO_VALOR = "otro";
     const almohadillasLabel = modeloWrap?.dataset.almohadillasLabel ?? "";
     let marcaActivaId = "";
 
@@ -726,12 +740,15 @@ const erroresTab = [
           el.textContent = valor;
         });
 
-        // Epson + Almohadillas y Canon (cualquier error) muestran una lista
-        // de modelos frecuentes en vez del campo de texto libre, para elegir
-        // con un clic en lugar de escribir.
+        // Epson + Almohadillas, Canon (cualquier error) y Epson-SC (cualquier
+        // error) muestran una lista de modelos frecuentes en vez del campo de
+        // texto libre, para elegir con un clic en lugar de escribir. La
+        // opcion "Otro" de cada lista vuelve a mostrar el campo de texto.
         const mostrarListaEpson = marcaActivaId === "epson" && valor === almohadillasLabel;
         const mostrarListaCanon = marcaActivaId === "canon";
-        if (modeloInput) modeloInput.hidden = mostrarListaEpson || mostrarListaCanon;
+        const mostrarListaEpsonSc = marcaActivaId === "epson-sc";
+        const mostrarAlgunaLista = mostrarListaEpson || mostrarListaCanon || mostrarListaEpsonSc;
+        if (modeloInput) modeloInput.hidden = mostrarAlgunaLista;
         if (listaEpson) {
           listaEpson.hidden = !mostrarListaEpson;
           if (!mostrarListaEpson) listaEpson.value = "";
@@ -740,7 +757,11 @@ const erroresTab = [
           listaCanon.hidden = !mostrarListaCanon;
           if (!mostrarListaCanon) listaCanon.value = "";
         }
-        if (mostrarListaEpson || mostrarListaCanon) actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
+        if (listaEpsonSc) {
+          listaEpsonSc.hidden = !mostrarListaEpsonSc;
+          if (!mostrarListaEpsonSc) listaEpsonSc.value = "";
+        }
+        if (mostrarAlgunaLista) actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
       });
     });
 
@@ -748,9 +769,17 @@ const erroresTab = [
       actualizarModelo(modeloInput.value.trim() || modeloInput.dataset.modeloEjemplo || "");
     });
 
-    [listaEpson, listaCanon].forEach((lista) => {
+    todasLasListas.forEach((lista) => {
       lista?.addEventListener("change", () => {
-        actualizarModelo(lista.value || modeloInput?.dataset.modeloEjemplo || "");
+        const esOtro = lista.value === OTRO_MODELO_VALOR;
+        if (modeloInput) {
+          modeloInput.hidden = !esOtro;
+          if (esOtro) {
+            modeloInput.value = "";
+            modeloInput.focus();
+          }
+        }
+        actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
       });
     });
   });
