@@ -1,5 +1,5 @@
 ---
-import { t, buildLocalizedPath, findErroresConfirmadosForModelo } from "../../i18n/utils";
+import { t, buildLocalizedPath, findErroresConfirmadosForModelo, buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import ModeloImage from "../ui/ModeloImage.astro";
@@ -7,13 +7,22 @@ import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
 import modelosCompletos from "../../data/modelos-muestra.json";
 import { obtenerPopularidad } from "../../lib/popularidad.js";
 import { getModeloImage } from "../../lib/model-images.js";
-import type { Locale } from "../../config/site";
+import { SITE_URL, WHATSAPP_NUMBER, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
+
+// Boton flotante permanente de WhatsApp (mismo diseno/copy que en Como
+// Funciona: icono + insignia roja "1"). Saludo generico, igual que el CTA
+// del hero de esta misma pagina (sin marca/modelo/error que reflejar aca).
+const homeUrlPath = buildLocalizedPath(locale, "/");
+const whatsappFlotanteHref = buildWhatsAppLink(
+  WHATSAPP_NUMBER,
+  buildWhatsAppMessage({ locale, urlOrigen: `${SITE_URL}${homeUrlPath}` })
+);
 
 const GRUPOS_ERROR = [
   { id: "epson-almohadillas", marca: "epson", labelKey: "home.grupoAlmohadillas", errorIds: ["epson-almohadillas"] },
@@ -104,6 +113,25 @@ const seriesDisponibles = Array.from(
   <h1>{t(locale, "proceso.titulo")}</h1>
   <p class="hero-tagline"><em>{t(locale, "home.heroTagline")}</em></p>
   <TrustpilotWidget />
+
+  <div class="whatsapp-flotante">
+    <a
+      class="whatsapp-flotante-link"
+      href={whatsappFlotanteHref}
+      data-source-id="home-flotante"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      data-sound="confirm"
+      aria-label={t(locale, "comoFuncionaProceso.whatsappFlotanteLabel")}
+    >
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
+      </svg>
+      <span class="whatsapp-flotante-label">{t(locale, "comoFuncionaProceso.whatsappFlotanteLabel")}</span>
+      <span class="whatsapp-flotante-badge" aria-hidden="true">1</span>
+    </a>
+  </div>
+
   <WhatsAppCTA
     sourceId="home-hero"
     label={t(locale, "home.heroCta")}
@@ -521,6 +549,102 @@ const seriesDisponibles = Array.from(
 </script>
 
 <style>
+  /* Boton flotante permanente de WhatsApp — mismo diseno que en Como
+     Funciona (icono + insignia roja "1" para subir la probabilidad de
+     clic), duplicado aca porque Astro no comparte estilos scoped entre
+     componentes de pagina distintos. */
+  .whatsapp-flotante {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 50;
+  }
+
+  .whatsapp-flotante-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius-full);
+    background: #25d366;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+    animation: whatsapp-flotante-pulso 2.4s ease-in-out infinite;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .whatsapp-flotante-link svg {
+    flex-shrink: 0;
+  }
+
+  .whatsapp-flotante-link:hover {
+    background: #20bd5a;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.25), 0 8px 10px -6px rgb(0 0 0 / 0.15);
+    animation-play-state: paused;
+  }
+
+  .whatsapp-flotante-badge {
+    position: absolute;
+    top: -0.35rem;
+    right: -0.35rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    border: 2px solid #ffffff;
+    animation: whatsapp-badge-pop 1.8s ease-in-out infinite;
+  }
+
+  @keyframes whatsapp-flotante-pulso {
+    0%,
+    100% {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2), 0 0 0 0 rgba(37, 211, 102, 0.45);
+    }
+    50% {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2), 0 0 0 0.6rem rgba(37, 211, 102, 0);
+    }
+  }
+
+  @keyframes whatsapp-badge-pop {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.18);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .whatsapp-flotante-link,
+    .whatsapp-flotante-badge {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .whatsapp-flotante-label {
+      display: none;
+    }
+    .whatsapp-flotante-link {
+      padding: 0.85rem;
+    }
+  }
+
   .hero {
     text-align: center;
     padding: var(--space-lg) 0 var(--space-md);
