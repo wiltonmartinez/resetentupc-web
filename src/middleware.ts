@@ -85,10 +85,22 @@ const STATIC_MAP: Record<string, string> = {
   trustpilot2: "/",
   "mundial-2026": "/",
   post: "/",
-  tag: "/",
-  category: "/",
   referencias: "/",
 };
+
+// Rutas de WordPress/WooCommerce sin ningun equivalente real en el sitio
+// nuevo (taxonomias de blog, area de cuenta de WooCommerce) — antes "tag" y
+// "category" redirigian 301 a home, lo que Google puede leer como un patron
+// de "soft 404" (cientos de URLs muertas consolidando señal en el home en
+// vez de desaparecer). Se responde 410 Gone directo, sin pasar por Astro:
+// la señal mas clara posible de "esto ya no existe y no va a volver".
+const PRIMER_SEGMENTO_MUERTO = new Set(["tag", "category", "area-de-servicio"]);
+
+function esRutaMuerta(pathname: string): boolean {
+  const p = pathname.replace(/^\/+|\/+$/g, "");
+  const primerSegmento = p.split("/", 1)[0];
+  return PRIMER_SEGMENTO_MUERTO.has(primerSegmento);
+}
 
 function resolverRedireccion(pathname: string): string | null {
   const p = pathname.replace(/^\/+|\/+$/g, "");
@@ -242,6 +254,15 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const { pathname } = context.url;
 
   if (pathname.startsWith("/_") || pathname.startsWith("/wp-content")) return next();
+
+  if (esRutaMuerta(pathname)) {
+    const headers = new Headers({ "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex" });
+    aplicarCabecerasSeguridad(headers);
+    return new Response(
+      "<!doctype html><title>410 Gone</title><p>Esta página ya no existe y no fue reemplazada.</p>",
+      { status: 410, headers }
+    );
+  }
 
   const destino = resolverRedireccion(pathname);
   if (destino && destino !== pathname) {
