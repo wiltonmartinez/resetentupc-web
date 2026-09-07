@@ -1,6 +1,10 @@
 ---
+import { Image } from "astro:assets";
 import { LOCALE_LABELS, LOCALE_FLAGS, HREFLANG_BY_LOCALE, type Locale, type StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
+import banderaEs from "../assets/idioma/ES.png";
+import banderaEn from "../assets/idioma/EN.png";
+import banderaPt from "../assets/idioma/PT.png";
 
 interface Props {
   locale: Locale;
@@ -18,6 +22,17 @@ const label = t(locale, "common.selectLanguage");
 // enlace viejo o un resultado de búsqueda), el botón sigue mostrando su
 // idioma actual — solo el menú desplegable se limita a estos tres.
 const LOCALES_VISIBLES: Locale[] = ["es", "en", "pt"];
+
+// Imagen de bandera real para los tres idiomas activos (src/assets/idioma) —
+// más nítida y consistente entre plataformas que el emoji, que en Windows a
+// veces cae al código de dos letras en vez de la bandera. Los otros 5
+// idiomas (solo posibles en el botón disparador si el visitante ya está en
+// esa página) siguen usando el emoji de LOCALE_FLAGS como respaldo.
+const BANDERA_IMG: Partial<Record<Locale, ImageMetadata>> = {
+  es: banderaEs,
+  en: banderaEn,
+  pt: banderaPt,
+};
 
 // Prueba Social y Ruleta ya tienen ruta propia por idioma (ver
 // [locale]/prueba-social.astro y [locale]/ruleta.astro) — solo queda "/404"
@@ -46,7 +61,11 @@ function hrefParaLocale(l: Locale): string {
         stroke-width="1.5"
       />
     </svg>
-    <span class="language-selector-bandera" aria-hidden="true">{LOCALE_FLAGS[locale]}</span>
+    {BANDERA_IMG[locale] ? (
+      <Image src={BANDERA_IMG[locale]!} alt="" width={18} height={18} class="language-selector-bandera-img" />
+    ) : (
+      <span class="language-selector-bandera" aria-hidden="true">{LOCALE_FLAGS[locale]}</span>
+    )}
     <span class="language-selector-actual">{HREFLANG_BY_LOCALE[locale].split("-")[0].toUpperCase()}</span>
     <svg class="language-selector-chevron" viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
       <path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
@@ -61,7 +80,7 @@ function hrefParaLocale(l: Locale): string {
           data-locale={l}
           class="language-selector-link"
         >
-          <span class="language-selector-bandera" aria-hidden="true">{LOCALE_FLAGS[l]}</span>
+          <Image src={BANDERA_IMG[l]!} alt="" width={18} height={18} class="language-selector-bandera-img" />
           {LOCALE_LABELS[l]}
         </a>
       </li>
@@ -111,6 +130,14 @@ function hrefParaLocale(l: Locale): string {
   .language-selector-bandera {
     font-size: 0.95rem;
     line-height: 1;
+  }
+
+  .language-selector-bandera-img {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   .language-selector-chevron {
