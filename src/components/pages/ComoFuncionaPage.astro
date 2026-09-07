@@ -1173,12 +1173,14 @@ const erroresTab = [
       }
     };
 
-    // Recuerda la última marca/error/modelo elegidos (localStorage, mismo
-    // mecanismo que ya usa LanguageSelector.astro) para que una visita
-    // nueva a esta página arranque donde quedó la anterior en vez de
-    // volver a "sin selección" — se conserva tal cual hasta que el
-    // visitante elija algo distinto, sin fecha de vencimiento.
-    const SELECCION_LS_KEY = "resetenlinea_como_funciona_seleccion_v1";
+    // Recuerda la última marca/error/modelo elegidos — clave GLOBAL
+    // compartida con /precios/, las páginas de modelo
+    // (/reset/{marca}/{modelo}/) y los listados filtrables de
+    // /prueba-social/ (misma clave en todos: ver el comentario gemelo en
+    // PreciosPage.astro). Elegir algo en cualquiera de esas páginas se
+    // refleja en las demás — se conserva tal cual hasta que el visitante
+    // elija algo distinto, sin fecha de vencimiento.
+    const SELECCION_LS_KEY = "resetenlinea_seleccion_global_v1";
     const guardarSeleccion = () => {
       try {
         localStorage.setItem(SELECCION_LS_KEY, JSON.stringify({ marca: marcaActivaId, error: errorActivo, modelo: modeloActivo }));

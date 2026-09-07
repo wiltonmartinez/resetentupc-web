@@ -403,6 +403,30 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       { key: "elite" as const, icono: "👑", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
     ];
 
+    // Última selección GLOBAL del sitio (compartida con /como-funciona/, las
+    // páginas de modelo /reset/{marca}/{modelo}/ y los listados filtrables
+    // de /prueba-social/) — misma clave en todos, para que elegir marca/
+    // modelo/error en cualquiera de esas páginas se refleje en las demás.
+    // Se guarda {marca: slug, modelo: nombre visible, error: nombre visible}
+    // — nombres (no slugs) para modelo/error porque cada página tiene su
+    // propio catálogo/formato interno; cada consumidor hace su propio
+    // match por texto contra sus opciones reales.
+    const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
+    function leerSeleccionGlobal(): { marca?: string; modelo?: string; error?: string } | null {
+      try {
+        return JSON.parse(localStorage.getItem(SELECCION_GLOBAL_KEY) || "null");
+      } catch {
+        return null;
+      }
+    }
+    function guardarSeleccionGlobal() {
+      try {
+        localStorage.setItem(SELECCION_GLOBAL_KEY, JSON.stringify({ marca: estado.marca, modelo: modeloNombre(), error: errorNombre() }));
+      } catch {
+        /* localStorage no disponible: no rompe la página. */
+      }
+    }
+
     const estado = {
       marca: root.dataset.prefillMarca || "",
       familia: "",
@@ -449,9 +473,38 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       return Boolean(estado.marca && estado.modelo && (estado.errorId || estado.errorOtro.trim()));
     }
 
-    // Precarga (ej. ?marca=&modelo=&error= desde una página de modelo): valida
-    // contra el catálogo real; si algo no calza, ese paso simplemente arranca
-    // vacío en vez de dejar la cascada en un estado a medias inconsistente.
+    // Precarga: ?marca=&modelo=&error= en la URL (ej. enlace desde una página
+    // de modelo) tiene prioridad; si no vino nada por URL, se usa la última
+    // selección GLOBAL guardada (ver SELECCION_GLOBAL_KEY arriba) como
+    // respaldo, para no arrancar en blanco si el visitante ya eligió algo en
+    // otra página del sitio.
+    if (!estado.marca) {
+      const cache = leerSeleccionGlobal();
+      if (cache?.marca && catalogoPorSlug[cache.marca]) {
+        estado.marca = cache.marca;
+        if (cache.modelo) {
+          const marcaCache = catalogoPorSlug[cache.marca];
+          const todosLosModelos = marcaCache.familias ? marcaCache.familias.flatMap((f) => f.modelos) : marcaCache.modelos || [];
+          const modeloMatch = todosLosModelos.find((m) => m.nombre.toLowerCase() === cache.modelo!.toLowerCase());
+          if (modeloMatch) {
+            estado.modelo = modeloMatch.slug;
+            if (cache.error) {
+              const opciones = erroresMapa[estado.marca]?.[estado.modelo] || [];
+              const match = opciones.find(
+                (e) => e.nombre.toLowerCase().includes(cache.error!.toLowerCase()) || cache.error!.toLowerCase().includes(e.nombre.toLowerCase())
+              );
+              if (match) estado.errorId = match.id;
+              else estado.errorOtro = cache.error;
+            }
+          }
+        }
+      }
+    }
+
+    // (ej. ?marca=&modelo=&error= desde una página de modelo, o la caché
+    // global de arriba): valida contra el catálogo real; si algo no calza,
+    // ese paso simplemente arranca vacío en vez de dejar la cascada en un
+    // estado a medias inconsistente.
     (function resolverPrecarga() {
       const marca = marcaActual();
       if (!marca) {
@@ -721,6 +774,8 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       pendienteEl.hidden = completa;
       contenidoEl.hidden = !completa;
       if (!completa) return;
+
+      guardarSeleccionGlobal();
 
       const marca = marcaActual()!;
 

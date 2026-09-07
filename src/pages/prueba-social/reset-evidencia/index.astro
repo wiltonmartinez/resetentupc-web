@@ -235,13 +235,87 @@ const errorMarcas = marcasPorValor((e) => e.error);
     }
   };
 
+  // Última selección GLOBAL del sitio (compartida con /precios/,
+  // /como-funciona/ y las páginas de modelo /reset/{marca}/{modelo}/ — ver
+  // el comentario gemelo en PreciosPage.astro). Al cargar, si hay algo
+  // guardado, preselecciona estos filtros (match por texto, insensible a
+  // mayúsculas y separadores, porque el catálogo de esta página viene de
+  // evidencias reales de Núcleo, con su propio formato). Al cambiar un
+  // filtro acá, se guarda de vuelta para que otra página lo recoja después.
+  const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
+  const normalizar = (s: string) => s.toLowerCase().replace(/[\s-]/g, "");
+
+  // Las demás páginas (PreciosPage.astro, ComoFuncionaPage.astro, las
+  // páginas de modelo) guardan `marca` como el slug real del catálogo
+  // ("epson"/"canon"/"epson-sc"), pero el valor del filtro acá viene tal
+  // cual de los datos reales de Núcleo (ej. "Epson", "Epson-SC" con
+  // mayúsculas/espacios variables) — se normaliza a ese mismo slug antes
+  // de guardar, para que las otras páginas puedan encontrar la marca en su
+  // propio catálogo.
+  function normalizarMarcaSlug(raw: string): string {
+    const s = raw.toLowerCase().replace(/\s+/g, "-");
+    if (s.includes("epson") && s.includes("sc")) return "epson-sc";
+    if (s.startsWith("epson")) return "epson";
+    if (s.startsWith("canon")) return "canon";
+    return s;
+  }
+
+  function leerSeleccionGlobal(): { marca?: string; modelo?: string; error?: string } | null {
+    try {
+      return JSON.parse(localStorage.getItem(SELECCION_GLOBAL_KEY) || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  function guardarSeleccionGlobal() {
+    const marca = marcaSelect?.value && marcaSelect.value !== "all" ? normalizarMarcaSlug(marcaSelect.value) : "";
+    const modelo = modeloSelect?.value && modeloSelect.value !== "all" ? modeloSelect.value : "";
+    const error = errorSelect?.value && errorSelect.value !== "all" ? errorSelect.value : "";
+    if (!marca && !modelo && !error) return; // no pisar la caché global con "sin filtros"
+    try {
+      localStorage.setItem(SELECCION_GLOBAL_KEY, JSON.stringify({ marca, modelo, error }));
+    } catch {
+      /* localStorage no disponible: no rompe la página. */
+    }
+  }
+
+  function restaurarSeleccionGlobal() {
+    const cache = leerSeleccionGlobal();
+    if (!cache?.marca) return;
+    if (marcaSelect) {
+      const opcion = Array.from(marcaSelect.options).find((o) => o.value !== "all" && normalizar(o.value) === normalizar(cache.marca!));
+      if (opcion) {
+        marcaSelect.value = opcion.value;
+        updateDependentOptions(opcion.value);
+      }
+    }
+    if (cache.modelo && modeloSelect) {
+      const opcion = Array.from(modeloSelect.options).find(
+        (o) => o.value !== "all" && !o.hidden && normalizar(o.value).includes(normalizar(cache.modelo!))
+      );
+      if (opcion) modeloSelect.value = opcion.value;
+    }
+    if (cache.error && errorSelect) {
+      const opcion = Array.from(errorSelect.options).find(
+        (o) => o.value !== "all" && !o.hidden && (normalizar(o.value).includes(normalizar(cache.error!)) || normalizar(cache.error!).includes(normalizar(o.value)))
+      );
+      if (opcion) errorSelect.value = opcion.value;
+    }
+    aplicarFiltros();
+  }
+
   marcaSelect?.addEventListener("change", () => {
     updateDependentOptions(marcaSelect.value);
     aplicarFiltros();
+    guardarSeleccionGlobal();
   });
 
   [modeloSelect, errorSelect, paisSelect, modalidadSelect].forEach((select) => {
-    select?.addEventListener("change", aplicarFiltros);
+    select?.addEventListener("change", () => {
+      aplicarFiltros();
+      guardarSeleccionGlobal();
+    });
   });
 
   // Doble disparador: el filtrado ya ocurre automáticamente en cada
@@ -252,6 +326,7 @@ const errorMarcas = marcasPorValor((e) => e.error);
   filtrarButton?.addEventListener("click", (event) => {
     event.preventDefault();
     aplicarFiltros();
+    guardarSeleccionGlobal();
   });
 
   resetButton?.addEventListener("click", (event) => {
@@ -262,6 +337,8 @@ const errorMarcas = marcasPorValor((e) => e.error);
     updateDependentOptions("all");
     aplicarFiltros();
   });
+
+  restaurarSeleccionGlobal();
 </script>
 
 <style>

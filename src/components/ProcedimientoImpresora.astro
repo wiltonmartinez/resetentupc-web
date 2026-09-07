@@ -309,7 +309,15 @@ const subpasosConexion = [
 ];
 ---
 
-<div class="procedimiento" data-procedimiento data-source-id-base={sourceIdBase} data-marca={marcaSlug} data-fuente-errores={fuenteErrores}>
+<div
+  class="procedimiento"
+  data-procedimiento
+  data-source-id-base={sourceIdBase}
+  data-marca={marcaSlug}
+  data-modelo={modelo}
+  data-error-principal={errorLargoPrincipal}
+  data-fuente-errores={fuenteErrores}
+>
   <!-- SECCIÓN 3: Índice visual 3x2 (variante real según marca) — va primero,
        justo después del título de la página. -->
   {esEpson && (
@@ -602,10 +610,28 @@ const subpasosConexion = [
     return cadena.trim();
   }
 
+  // Última selección GLOBAL del sitio — misma clave que /precios/,
+  // /como-funciona/ y los listados filtrables de /prueba-social/ (ver el
+  // comentario gemelo en PreciosPage.astro). Marca y modelo vienen fijos de
+  // la URL de esta página (nunca de un selector), así que se guardan tal
+  // cual apenas carga; el error si se puede actualizar en vivo si esta
+  // página tiene el <select> de ErrorSelector.astro.
+  const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
+  function guardarSeleccionGlobal(marcaSlug: string, modelo: string, error: string) {
+    try {
+      localStorage.setItem(SELECCION_GLOBAL_KEY, JSON.stringify({ marca: marcaSlug, modelo, error }));
+    } catch {
+      /* localStorage no disponible: no rompe la página. */
+    }
+  }
+
   document.querySelectorAll<HTMLElement>("[data-procedimiento]").forEach((raiz) => {
     const base = raiz.dataset.sourceIdBase;
     const marcaSlug = raiz.dataset.marca;
+    const modeloNombre = raiz.dataset.modelo || "";
     const select = base ? (document.getElementById(`error-select-${base}`) as HTMLSelectElement | null) : null;
+
+    if (marcaSlug) guardarSeleccionGlobal(marcaSlug, modeloNombre, raiz.dataset.errorPrincipal || "");
 
     if (select) {
       const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");
@@ -624,6 +650,7 @@ const subpasosConexion = [
         if (descripcion) errorLargoEls.forEach((el) => (el.textContent = descripcion));
         if (sensorWrapper) sensorWrapper.hidden = !esSensor;
         if (requisitoSensor) requisitoSensor.hidden = !esSensor;
+        if (marcaSlug) guardarSeleccionGlobal(marcaSlug, modeloNombre, descripcion || raiz.dataset.errorPrincipal || "");
       });
     }
 
