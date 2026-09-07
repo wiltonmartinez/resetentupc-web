@@ -7,7 +7,7 @@ import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
 import modelosCompletos from "../../data/modelos-muestra.json";
 import { obtenerPopularidad } from "../../lib/popularidad.js";
 import { getModeloImage } from "../../lib/model-images.js";
-import type { Locale } from "../../config/site";
+import { USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -105,12 +105,17 @@ const seriesDisponibles = Array.from(
   <p class="hero-tagline"><em>{t(locale, "home.heroTagline")}</em></p>
   <TrustpilotWidget />
 
+  <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="hero-descarga-boton" data-sound="select">
+    ⬇️ {t(locale, "comoFuncionaProceso.paso31BotonDescarga")}
+  </a>
+  <p class="hero-descarga-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
+
   <WhatsAppCTA
     sourceId="home-hero"
     label={t(locale, "home.heroCta")}
     locale={locale}
     urlPath={buildLocalizedPath(locale, "/")}
-    destacado
+    elevar
   />
 </section>
 
@@ -553,6 +558,41 @@ const seriesDisponibles = Array.from(
     .hero-tagline {
       white-space: normal;
     }
+  }
+
+  /* Mismo botón rojo (y misma copia) que ya usa el Paso 3.1 de "Cómo
+     funciona" para descargar el módulo — clases propias porque ese estilo
+     vive con scope en ComoFuncionaPage.astro y no llega hasta acá. */
+  .hero-descarga-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.3rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    background: #dc2626;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .hero-descarga-boton:hover {
+    background: #b91c1c;
+    color: #ffffff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .hero-descarga-microtexto {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--color-text-subtle);
+    text-align: center;
   }
 
   .modelos h2 {

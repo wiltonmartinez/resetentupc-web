@@ -91,7 +91,7 @@
     "title": "Assistierter und professioneller Drucker-Reset | ResetEnLinea.com",
     "description": "Reset von Tintenauffangkissen und Tintenzählern für Epson- und Canon-Drucker mit professioneller Fernunterstützung. Klare Diagnose vor jedem Vorgang.",
     "heroTagline": "Professioneller, sicherer und schneller Reset, mit wiederverwendbarer Garantie von jedem PC aus.",
-    "heroCta": "Reset Jetzt Anfordern",
+    "heroCta": "Entsperre deinen Drucker Jetzt!",
     "modelosTitle": "Modelle mit verfügbarer Unterstützung",
     "buscadorPlaceholder": "Suche deine Marke oder dein Modell (z. B. Epson L1250)",
     "buscadorSinResultados": "Wir haben dieses Modell nicht gefunden. Schreib uns über WhatsApp, und wir bestätigen dir, ob wir dir helfen können.",
@@ -715,7 +715,8 @@
     "garantia": "Garantie",
     "ruleta": "Am Glücksrad spielen",
     "whatsapp": "Über WhatsApp schreiben",
-    "bubbleMensaje": "Brauchst du Hilfe mit deinem Drucker?"
+    "bubbleMensaje": "Brauchst du Hilfe mit deinem Drucker?",
+    "bubbleMensajeModelo": "Brauchst du einen Assistierten Reset für deine {marca} {modelo}?"
   },
   "consultaGarantiaPage": {
     "title": "Garantie-Abfrage | ResetEnLinea.com",

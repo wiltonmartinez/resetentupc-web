@@ -465,9 +465,28 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       });
     }
 
+    // Error preseleccionado por defecto según la marca elegida en el Paso 1,
+    // para no obligar a un clic extra cuando ya se sabe cuál es el más
+    // común: Epson -> Almohadillas, Canon -> 5B00, Epson-SC -> 0014BD. Solo
+    // aplica si ese error existe de verdad en la lista confirmada del
+    // modelo elegido (nunca se fuerza uno que no está); y solo cuando el
+    // visitante todavía no eligió nada a mano para este modelo.
+    const ERROR_DEFECTO_POR_MARCA: Record<string, string> = {
+      epson: "almohadillas",
+      canon: "5b00",
+      "epson-sc": "0014bd",
+    };
+
     function poblarErrores() {
+      const disponibles = erroresDisponibles();
+      if (!estado.errorId && !estado.errorOtro) {
+        const patron = ERROR_DEFECTO_POR_MARCA[estado.marca];
+        const candidato = patron && disponibles.find((e) => e.nombre.toLowerCase().includes(patron));
+        if (candidato) estado.errorId = candidato.id;
+      }
+
       errorOpcionesEl!.innerHTML = "";
-      erroresDisponibles().forEach((err) => {
+      disponibles.forEach((err) => {
         const label = document.createElement("label");
         label.className = "precios-radio";
         const input = document.createElement("input");

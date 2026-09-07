@@ -44,7 +44,7 @@
     "description": "Servizio di reset tamponi e contatore inchiostro per stampanti Epson e Canon, con assistenza remota professionale. Diagnosi chiara prima di ogni intervento.",
     "heroTitle": "Reset professionale della tua stampante, senza rischi",
     "heroSubtitle": "Diagnosi chiara, assistenza remota e supporto reale per la tua marca e modello.",
-    "heroCta": "Richiedi il Reset Ora",
+    "heroCta": "Sblocca la tua Stampante Ora!",
     "modelosTitle": "Modelli con assistenza disponibile",
     "buscadorPlaceholder": "Cerca la tua marca o modello (es. Epson L1250)",
     "buscadorSinResultados": "Non abbiamo trovato questo modello. Scrivici su WhatsApp e verifichiamo se possiamo aiutarti.",
@@ -751,7 +751,8 @@
     "garantia": "Garanzia",
     "ruleta": "Gioca alla Ruota",
     "whatsapp": "Scrivici su WhatsApp",
-    "bubbleMensaje": "Hai bisogno di aiuto con la tua stampante?"
+    "bubbleMensaje": "Hai bisogno di aiuto con la tua stampante?",
+    "bubbleMensajeModelo": "Hai bisogno del Reset Assistito per la tua {marca} {modelo}?"
   },
   "consultaGarantiaPage": {
     "title": "Verifica Garanzia | ResetEnLinea.com",

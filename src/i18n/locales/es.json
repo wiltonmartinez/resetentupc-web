@@ -91,7 +91,7 @@
     "title": "Reset de impresoras asistido y profesional | ResetEnLinea.com",
     "description": "Reset de almohadillas y contadores de tinta para impresoras Epson y Canon, con asistencia remota profesional. Diagnóstico claro antes de cualquier procedimiento.",
     "heroTagline": "Reset profesional, seguro y rápido, con garantía reutilizable desde cualquier PC.",
-    "heroCta": "Solicitar Reset Ahora",
+    "heroCta": "¡Desbloquea tu Impresora Ahora!",
     "modelosTitle": "Modelos con asistencia disponible",
     "buscadorPlaceholder": "Busca tu marca o modelo (ej. Epson L1250)",
     "buscadorSinResultados": "No encontramos ese modelo. Escríbenos por WhatsApp y te confirmamos si podemos ayudarte.",
@@ -779,7 +779,8 @@
     "garantia": "Garantía",
     "ruleta": "Jugar a la Ruleta",
     "whatsapp": "Escribir por WhatsApp",
-    "bubbleMensaje": "¿Necesitas ayuda con tu impresora?"
+    "bubbleMensaje": "¿Necesitas ayuda con tu impresora?",
+    "bubbleMensajeModelo": "¿Necesitas Reset Asistido {marca} {modelo}?"
   },
   "preciosPage": {
     "title": "Precios del Reset Asistido | ResetEnLinea.com",

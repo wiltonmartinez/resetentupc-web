@@ -44,7 +44,7 @@
     "description": "Reset de almofadas e contador de tinta para impressoras Epson e Canon, com assistência remota profissional. Diagnóstico claro antes de qualquer procedimento.",
     "heroTitle": "Reset profissional da sua impressora, sem riscos",
     "heroSubtitle": "Diagnóstico claro, assistência remota e suporte real para sua marca e modelo.",
-    "heroCta": "Solicitar Reset Agora",
+    "heroCta": "Desbloqueie sua Impressora Agora!",
     "modelosTitle": "Modelos com assistência disponível",
     "buscadorPlaceholder": "Busque sua marca ou modelo (ex. Epson L1250)",
     "buscadorSinResultados": "Não encontramos esse modelo. Fale conosco pelo WhatsApp e confirmamos se podemos ajudar.",
@@ -751,7 +751,8 @@
     "garantia": "Garantia",
     "ruleta": "Jogar a Roleta",
     "whatsapp": "Falar no WhatsApp",
-    "bubbleMensaje": "Precisa de ajuda com sua impressora?"
+    "bubbleMensaje": "Precisa de ajuda com sua impressora?",
+    "bubbleMensajeModelo": "Precisa de Reset Assistido para sua {marca} {modelo}?"
   },
   "consultaGarantiaPage": {
     "title": "Consulta de Garantia | ResetEnLinea.com",

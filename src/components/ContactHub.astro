@@ -25,6 +25,15 @@ const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
 const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
 
+// En una página de modelo (marcaDefault+modeloDefault ya conocidos, ej.
+// /reset/epson/l3210/) la burbuja de notificación es específica al modelo
+// en vez del mensaje genérico — mismo patrón que buildWhatsAppMessage ya
+// usa para el propio mensaje de WhatsApp.
+const bubbleMensaje =
+  marcaDefault && modeloDefault
+    ? t(locale, "contactHub.bubbleMensajeModelo").replaceAll("{marca}", marcaDefault).replaceAll("{modelo}", modeloDefault)
+    : t(locale, "contactHub.bubbleMensaje");
+
 // Notificacion simulada: a los pocos segundos de cargar la pagina, el icono
 // cambia de 1.png (logo limpio) a 2.png (logo con insignia roja "1" ya
 // incluida en la imagen) y se muestra una burbuja de mensaje. La imagen
@@ -37,7 +46,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 {mostrarWhatsapp && (
   <div class="contact-hub">
     <p class="contact-hub-bubble" data-whatsapp-bubble hidden>
-      {t(locale, "contactHub.bubbleMensaje")}
+      {bubbleMensaje}
     </p>
     <a
       class="contact-hub-fab"
@@ -146,12 +155,18 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   /* Burbuja de mensaje no leido, simulando una notificacion de chat real.
      Se muestra/oculta con el atributo [hidden] via JS — no fijar "display"
      aca para no pisar el "display:none" que aplica ese atributo. */
+  /* Una sola línea a propósito (nunca se envuelve): con marca+modelo el
+     mensaje es más largo que el genérico, así que en vez de un max-width
+     fijo (que lo partiría en 2-3 líneas) el ancho se ajusta al contenido,
+     con un tope de seguridad para no salirse de pantallas angostas. */
   .contact-hub-bubble {
     position: absolute;
     right: 0;
     bottom: calc(100% + 0.65rem);
     margin: 0;
-    max-width: 13rem;
+    width: max-content;
+    max-width: calc(100vw - 2 * var(--space-sm) - 1rem);
+    white-space: nowrap;
     padding: 0.65rem 0.9rem;
     border-radius: var(--radius-md);
     background: var(--color-bg-card);
