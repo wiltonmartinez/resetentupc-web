@@ -90,6 +90,10 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
   data-mas-popular={t(locale, "preciosPage.masPopular")}
   data-familia-placeholder={t(locale, "preciosPage.familiaPlaceholder")}
   data-modelo-placeholder={t(locale, "preciosPage.modeloPlaceholder")}
+  data-disclaimer-epson={t(locale, "preciosPage.errorDisclaimerEpson")}
+  data-disclaimer-canon={t(locale, "preciosPage.errorDisclaimerCanon")}
+  data-disclaimer-epson-sc-codigo0014bd={t(locale, "preciosPage.errorDisclaimerEpsonSc0014bd")}
+  data-disclaimer-epson-sc-otro={t(locale, "preciosPage.errorDisclaimerEpsonScOtro")}
   data-bloque-local-titulo-template={t(locale, "preciosPage.bloqueLocalTitulo")}
   data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
   data-descuento-badge-template={t(locale, "preciosPage.descuentoBadge")}
@@ -163,7 +167,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 
     <div data-paso-error hidden>
       <h3>{t(locale, "preciosPage.pasoErrorLabel")}</h3>
-      <p class="precios-disclaimer">⚠️ {t(locale, "preciosPage.errorDisclaimer")}</p>
+      <p class="precios-disclaimer" data-error-disclaimer>⚠️ {t(locale, "preciosPage.errorDisclaimerEpson")}</p>
       <div class="precios-error-opciones" data-error-opciones></div>
       <label class="precios-campo">
         <span>{t(locale, "preciosPage.errorOtroLabel")}</span>
@@ -272,6 +276,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     const pasoModeloEl = root.querySelector<HTMLElement>("[data-paso-modelo]");
     const modeloSelect = root.querySelector<HTMLSelectElement>("[data-modelo-select]");
     const pasoErrorEl = root.querySelector<HTMLElement>("[data-paso-error]");
+    const disclaimerEl = root.querySelector<HTMLElement>("[data-error-disclaimer]");
     const errorOpcionesEl = root.querySelector<HTMLElement>("[data-error-opciones]");
     const errorOtroInput = root.querySelector<HTMLInputElement>("[data-error-otro]");
     const pendienteEl = root.querySelector<HTMLElement>("[data-pricing-pendiente]");
@@ -297,6 +302,10 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     const metodosTituloTemplate = root.dataset.metodosTituloTemplate || "";
     const familiaPlaceholder = root.dataset.familiaPlaceholder || "";
     const modeloPlaceholder = root.dataset.modeloPlaceholder || "";
+    const disclaimerEpson = root.dataset.disclaimerEpson || "";
+    const disclaimerCanon = root.dataset.disclaimerCanon || "";
+    const disclaimerEpsonSc0014bd = root.dataset.disclaimerEpsonScCodigo0014bd || "";
+    const disclaimerEpsonScOtro = root.dataset.disclaimerEpsonScOtro || "";
     const defaultEur = root.dataset.defaultEur === "true";
     const bloqueLocalTituloTemplate = root.dataset.bloqueLocalTituloTemplate || "";
     const bloqueInternacionalTituloTexto = root.dataset.bloqueInternacionalTitulo || "";
@@ -477,13 +486,32 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       "epson-sc": "0014bd",
     };
 
+    // Aviso del Paso 3: varía según la marca y, para Epson-SC, según si el
+    // error elegido es el 0014bd (que se resuelve con limpieza + reset) o
+    // cualquier otro (reseteable sin limpieza previa).
+    function actualizarDisclaimer() {
+      if (!disclaimerEl) return;
+      let texto = "";
+      if (estado.marca === "epson") texto = disclaimerEpson;
+      else if (estado.marca === "canon") texto = disclaimerCanon;
+      else if (estado.marca === "epson-sc") {
+        texto = estado.errorId === "epson-sc-0014bd" ? disclaimerEpsonSc0014bd : disclaimerEpsonScOtro;
+      }
+      disclaimerEl.textContent = texto ? `⚠️ ${texto}` : "";
+    }
+
     function poblarErrores() {
       const disponibles = erroresDisponibles();
       if (!estado.errorId && !estado.errorOtro) {
         const patron = ERROR_DEFECTO_POR_MARCA[estado.marca];
         const candidato = patron && disponibles.find((e) => e.nombre.toLowerCase().includes(patron));
-        if (candidato) estado.errorId = candidato.id;
+        // Si el patrón de la marca no aparece (ej. MG3510/MG3610, que solo
+        // ofrecen 5B02 en vez del 5B00 general) pero hay una única opción,
+        // esa es la única razonable por defecto de todos modos.
+        const porDefecto = candidato || (disponibles.length === 1 ? disponibles[0] : null);
+        if (porDefecto) estado.errorId = porDefecto.id;
       }
+      actualizarDisclaimer();
 
       errorOpcionesEl!.innerHTML = "";
       disponibles.forEach((err) => {
@@ -746,6 +774,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
         estado.errorId = "";
         errorOpcionesEl!.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((r) => (r.checked = false));
       }
+      actualizarDisclaimer();
       renderPrecios();
     });
 

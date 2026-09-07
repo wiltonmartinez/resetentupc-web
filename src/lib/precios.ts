@@ -1,5 +1,6 @@
 import pagosData from "../data/pagos.json";
 import modelosData from "../data/modelos-muestra.json";
+import erroresData from "../data/errores.json";
 import { resolveErroresParaModelo } from "../i18n/utils";
 import type { Locale } from "../config/site";
 
@@ -368,20 +369,76 @@ const SINONIMOS_ERROR_CASCADA: Record<string, string> = {
   "epson-almohadillas": "Almohadillas / E-11 / Tampón",
 };
 
+interface ErrorConceptoJson {
+  error_id: string;
+  marcaSlug: string;
+  error_name: Partial<Record<Locale, string>>;
+  estado_servicio: string;
+}
+
+const ERRORES_CONCEPTOS = (erroresData as { errores: ErrorConceptoJson[] }).errores;
+
+/** Busca un concepto de error por su id directo (no por modelo) — para las
+ *  marcas cuyo Paso 3 no depende del modelo exacto (ver mapaErroresPublico). */
+function errorConceptoComoCascada(errorId: string, locale: Locale): ErrorCascada | null {
+  const concepto = ERRORES_CONCEPTOS.find((e) => e.error_id === errorId);
+  if (!concepto) return null;
+  const nombre = concepto.error_name[locale] ?? concepto.error_name.es ?? errorId;
+  return {
+    id: concepto.error_id,
+    nombre: SINONIMOS_ERROR_CASCADA[concepto.error_id] ?? nombre,
+    estado: concepto.estado_servicio,
+  };
+}
+
+/** Excepción confirmada directamente por el dueño del sitio (2026-09-07):
+ *  MG3510/MG3610 no usan el 5B00/1700 general de la línea Canon G/MB/GM/TS,
+ *  sino 5B02 — ver el concepto "canon-5b02" en errores.json. */
+const MODELOS_CANON_5B02 = new Set(["mg3510", "mg3610"]);
+
 /**
  * Mapa compacto {marcaSlug: {modeloSlug: errores[]}} para el Paso 3 del
- * selector en cascada, embebido tal cual en el cliente. Reutiliza
- * resolveErroresParaModelo (misma fuente que ya usan las páginas de modelo)
- * y descarta descripcion/codigo/tipo/fuente para mantener el payload liviano
- * (~50 KB para las 252 impresoras del catálogo) — el string largo de
- * procedencia en errores.json (`fuente`) es documentación interna, no debe
- * viajar al navegador.
+ * selector en cascada, embebido tal cual en el cliente.
+ *
+ * Epson y Canon NO usan la cobertura real por modelo de errores.json: esa
+ * cobertura está incompleta (~55 de 185 modelos Epson y ~26 de 44 Canon no
+ * quedaron enlazados a ningún concepto todavía) y, confirmado directamente
+ * por el dueño del sitio, no hace falta — Epson solo tiene un concepto de
+ * error real en todo el catálogo (Almohadillas) y Canon prácticamente solo
+ * dos (5B00/1700, con la excepción puntual de MG3510/MG3610 -> 5B02). Por
+ * eso para estas 2 marcas el Paso 3 siempre ofrece el mismo set fijo, sin
+ * importar el modelo exacto elegido, en vez de depender del enlace
+ * modelo-por-modelo. Epson-SC sí tiene cobertura amplia y variada por
+ * familia de código, así que ese sigue usando resolveErroresParaModelo
+ * (misma fuente que las páginas de modelo) tal como antes.
  */
 export function mapaErroresPublico(locale: Locale): Record<string, Record<string, ErrorCascada[]>> {
   const mapa: Record<string, Record<string, ErrorCascada[]>> = {};
+
+  const errorEpson = errorConceptoComoCascada("epson-almohadillas", locale);
+  const errorCanon5b00 = errorConceptoComoCascada("canon-5b00", locale);
+  const errorCanon1700 = errorConceptoComoCascada("canon-1700", locale);
+  const errorCanon5b02 = errorConceptoComoCascada("canon-5b02", locale);
+  const setCanonGeneral = [errorCanon5b00, errorCanon1700].filter((e): e is ErrorCascada => e !== null);
+
   for (const m of MODELOS) {
-    const resueltos = resolveErroresParaModelo(m.marcaSlug, m.modeloSlug, locale);
     if (!mapa[m.marcaSlug]) mapa[m.marcaSlug] = {};
+
+    if (m.marcaSlug === "epson") {
+      mapa[m.marcaSlug][m.modeloSlug] = errorEpson ? [errorEpson] : [];
+      continue;
+    }
+
+    if (m.marcaSlug === "canon") {
+      mapa[m.marcaSlug][m.modeloSlug] = MODELOS_CANON_5B02.has(m.modeloSlug)
+        ? errorCanon5b02
+          ? [errorCanon5b02]
+          : []
+        : setCanonGeneral;
+      continue;
+    }
+
+    const resueltos = resolveErroresParaModelo(m.marcaSlug, m.modeloSlug, locale);
     mapa[m.marcaSlug][m.modeloSlug] = resueltos.map((e) => ({
       id: e.error_id,
       nombre: SINONIMOS_ERROR_CASCADA[e.error_id] ?? e.nombre,

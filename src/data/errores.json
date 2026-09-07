@@ -877,6 +877,30 @@
       "tipo": "notificacion"
     },
     {
+      "error_id": "canon-5b02",
+      "marcaSlug": "canon",
+      "error_name": {
+        "es": "5b02"
+      },
+      "error_description": {
+        "es": "Código 5b02 de Absorbedor de tinta está lleno"
+      },
+      "symptoms": [],
+      "estado_servicio": "compatible",
+      "modelos_confirmados": [
+        {
+          "marcaSlug": "canon",
+          "modeloSlug": "mg3510",
+          "fuente": "Confirmado directamente por el usuario (información oficial de diagnóstico, 2026-09-07): a diferencia del resto de la lista general Canon G/MB/GM/TS (que usa 5b00/1700), el MG3510 usa 5b02."
+        },
+        {
+          "marcaSlug": "canon",
+          "modeloSlug": "mg3610",
+          "fuente": "Confirmado directamente por el usuario (información oficial de diagnóstico, 2026-09-07): a diferencia del resto de la lista general Canon G/MB/GM/TS (que usa 5b00/1700), el MG3610 usa 5b02."
+        }
+      ]
+    },
+    {
       "error_id": "epson-sc-0014bd",
       "marcaSlug": "epson-sc",
       "error_name": {
@@ -3458,6 +3482,22 @@
           "marcaSlug": "canon",
           "modeloSlug": "mb5410",
           "fuente": "Confirmado directamente por el usuario (información oficial de diagnóstico, 2026-08-14): aplica a todos los modelos de la lista general Canon G/MB/GM/TS."
+        }
+      ]
+    },
+    {
+      "error_id": "canon-5b02",
+      "codigo": "5b02",
+      "modelos_confirmados": [
+        {
+          "marcaSlug": "canon",
+          "modeloSlug": "mg3510",
+          "fuente": "Confirmado directamente por el usuario (información oficial de diagnóstico, 2026-09-07): a diferencia del resto de la lista general Canon G/MB/GM/TS (que usa 5b00/1700), el MG3510 usa 5b02."
+        },
+        {
+          "marcaSlug": "canon",
+          "modeloSlug": "mg3610",
+          "fuente": "Confirmado directamente por el usuario (información oficial de diagnóstico, 2026-09-07): a diferencia del resto de la lista general Canon G/MB/GM/TS (que usa 5b00/1700), el MG3610 usa 5b02."
         }
       ]
     },
