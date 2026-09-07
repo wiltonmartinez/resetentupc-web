@@ -2,6 +2,7 @@ import pagosData from "../data/pagos.json";
 import modelosData from "../data/modelos-muestra.json";
 import erroresData from "../data/errores.json";
 import { resolveErroresParaModelo } from "../i18n/utils";
+import { resolverUrlsLogosMediosPago } from "./medios-pago-logos";
 import type { Locale } from "../config/site";
 
 /**
@@ -65,6 +66,10 @@ export function banderaEmoji(slug: string): string {
 
 export interface MetodoPagoPublico {
   nombre: string;
+  /** URLs de logo optimizadas (0, 1 o 2 — ver medios-pago-logos.ts). Vacío
+   *  cuando no hay logo real disponible para ese medio: el front debe caer
+   *  al nombre en texto, nunca inventar un logo. */
+  logos: string[];
 }
 
 export interface PreciosPorPlan {
@@ -204,6 +209,9 @@ export async function obtenerTasaUsdEur(): Promise<number> {
  *    (las dos visibles a la vez, la de USD con descuento — ver PreciosPage).
  */
 export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
+  const urlsLogos = await resolverUrlsLogosMediosPago();
+  const conLogo = (nombre: string): MetodoPagoPublico => ({ nombre, logos: urlsLogos[nombre] ?? [] });
+
   const internacionales = (pagosData.paises.find((p) => p.slug === SLUG_OTRO)?.metodosPago ?? []).filter((m) =>
     NOMBRES_INTERNACIONALES.some((n) => m.nombre.toLowerCase().includes(n))
   );
@@ -213,11 +221,11 @@ export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
   const precioUsdInternacional = normalizarPrecios(otro.precios);
 
   return pagosData.paises.map((pais) => {
-    const propios = pais.metodosPago.map((m) => ({ nombre: m.nombre }));
+    const propios = pais.metodosPago.map((m) => conLogo(m.nombre));
     const exclusiones = EXCLUIR_INTERNACIONAL_POR_PAIS[pais.slug] ?? [];
-    const internacionalesParaEstePais = internacionales.filter(
-      (i) => !exclusiones.some((ex) => i.nombre.toLowerCase().includes(ex))
-    );
+    const internacionalesParaEstePais = internacionales
+      .filter((i) => !exclusiones.some((ex) => i.nombre.toLowerCase().includes(ex)))
+      .map((i) => conLogo(i.nombre));
     const metodosPago =
       pais.slug === SLUG_FALLBACK
         ? propios

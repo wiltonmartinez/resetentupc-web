@@ -133,7 +133,7 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     slug: string;
     nombre: string;
     bandera: string;
-    metodosPago: { nombre: string }[];
+    metodosPago: { nombre: string; logos: string[] }[];
     monedas: OpcionMoneda[];
     presentacionMoneda: "unica" | "toggle" | "apilado";
   }
@@ -410,7 +410,19 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       pais.metodosPago.forEach((metodo) => {
         const li = document.createElement("li");
         li.className = "precios-metodo-chip";
-        li.textContent = metodo.nombre;
+        if (metodo.logos && metodo.logos.length > 0) {
+          li.classList.add("precios-metodo-chip-logo");
+          metodo.logos.forEach((src) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = metodo.nombre;
+            img.loading = "lazy";
+            img.className = "precios-metodo-logo";
+            li.appendChild(img);
+          });
+        } else {
+          li.textContent = metodo.nombre;
+        }
         metodosEl!.appendChild(li);
       });
     }
@@ -729,6 +741,24 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     font-size: 0.88rem;
     font-weight: 600;
     color: var(--color-text-muted);
+  }
+
+  /* Ver el mismo comentario en PreciosPage.astro: logos reales cuando hay
+     uno disponible (medios-pago-logos.ts), texto plano como respaldo. */
+  .precios-metodo-chip-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .precios-metodo-logo {
+    height: 2rem;
+    width: auto;
+    max-width: 4.5rem;
+    object-fit: contain;
+    padding: 0.15rem;
+    display: block;
   }
 
   @media (max-width: 700px) {

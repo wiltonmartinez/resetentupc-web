@@ -256,7 +256,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     slug: string;
     nombre: string;
     bandera: string;
-    metodosPago: { nombre: string }[];
+    metodosPago: { nombre: string; logos: string[] }[];
     monedas: OpcionMoneda[];
     presentacionMoneda: "unica" | "toggle" | "apilado";
   }
@@ -727,7 +727,19 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       pais.metodosPago.forEach((metodo) => {
         const li = document.createElement("li");
         li.className = "precios-metodo-chip";
-        li.textContent = metodo.nombre;
+        if (metodo.logos && metodo.logos.length > 0) {
+          li.classList.add("precios-metodo-chip-logo");
+          metodo.logos.forEach((src) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = metodo.nombre;
+            img.loading = "lazy";
+            img.className = "precios-metodo-logo";
+            li.appendChild(img);
+          });
+        } else {
+          li.textContent = metodo.nombre;
+        }
         metodosEl!.appendChild(li);
       });
     }
@@ -1181,6 +1193,30 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     font-size: 0.88rem;
     font-weight: 600;
     color: var(--color-text-muted);
+  }
+
+  /* Logos reales (src/assets/mediosPago/) en vez de texto plano, cuando hay
+     uno disponible para ese medio — ver medios-pago-logos.ts. Tarjeta
+     limpia y de tamaño uniforme (equivalente en CSS plano a lo que serían
+     las utilidades de Tailwind h-8 w-auto object-contain p-1: este
+     proyecto no tiene Tailwind instalado, así que se logra el mismo
+     resultado visual con las mismas variables/convenciones que ya usa el
+     resto del sitio). Nombres compuestos ("Nequi / Bre-B") muestran los 2
+     logos lado a lado dentro de la misma tarjeta. */
+  .precios-metodo-chip-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .precios-metodo-logo {
+    height: 2rem;
+    width: auto;
+    max-width: 4.5rem;
+    object-fit: contain;
+    padding: 0.15rem;
+    display: block;
   }
 
   .precios-cta-general-box {
