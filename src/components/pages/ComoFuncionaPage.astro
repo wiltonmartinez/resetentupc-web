@@ -1173,6 +1173,60 @@ const erroresTab = [
       }
     };
 
+    // Recuerda la última marca/error/modelo elegidos (localStorage, mismo
+    // mecanismo que ya usa LanguageSelector.astro) para que una visita
+    // nueva a esta página arranque donde quedó la anterior en vez de
+    // volver a "sin selección" — se conserva tal cual hasta que el
+    // visitante elija algo distinto, sin fecha de vencimiento.
+    const SELECCION_LS_KEY = "resetenlinea_como_funciona_seleccion_v1";
+    const guardarSeleccion = () => {
+      try {
+        localStorage.setItem(SELECCION_LS_KEY, JSON.stringify({ marca: marcaActivaId, error: errorActivo, modelo: modeloActivo }));
+      } catch {
+        /* localStorage no disponible: la selección simplemente no persiste entre visitas. */
+      }
+    };
+
+    const restaurarSeleccion = () => {
+      let datos: { marca?: string; error?: string; modelo?: string } | null = null;
+      try {
+        datos = JSON.parse(localStorage.getItem(SELECCION_LS_KEY) || "null");
+      } catch {
+        datos = null;
+      }
+      if (!datos?.marca) return;
+
+      const marcaBtn = Array.from(marcaBtns).find((b) => b.dataset.value === datos!.marca);
+      if (!marcaBtn) return;
+      marcaBtn.click();
+
+      if (datos.error) {
+        const panel = raiz.querySelector<HTMLElement>(`[data-selector-errores-panel="${datos.marca}"]`);
+        const errorBtn = panel ? Array.from(panel.querySelectorAll<HTMLButtonElement>("[data-selector-error]")).find((b) => b.dataset.value === datos!.error) : undefined;
+        errorBtn?.click();
+      }
+
+      if (datos.modelo) {
+        // Reintenta primero contra la lista que haya quedado visible según
+        // la marca+error restaurados; si el modelo guardado no está ahí
+        // (se escribió a mano), cae al campo de texto libre — mismo criterio
+        // que ya sigue el usuario al elegir a mano.
+        const listaVisible = todasLasListas.find((l) => l && !l.hidden);
+        const opcion = listaVisible ? Array.from(listaVisible.options).find((o) => o.value.toLowerCase() === datos!.modelo!.toLowerCase()) : undefined;
+        if (listaVisible && opcion) {
+          listaVisible.value = opcion.value;
+          listaVisible.dispatchEvent(new Event("change", { bubbles: true }));
+        } else if (modeloInput) {
+          if (modeloInput.hidden && listaVisible) {
+            listaVisible.value = OTRO_MODELO_VALOR;
+            listaVisible.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          modeloInput.value = datos.modelo;
+          modeloInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      }
+    };
+
     marcaBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         marcaBtns.forEach((b) => b.classList.toggle("selector-btn-activo", b === btn));
@@ -1199,6 +1253,10 @@ const erroresTab = [
           el.hidden = el.dataset.chatMarca !== varianteChat;
         });
         actualizarWhatsAppCta();
+        // No se guarda acá: errorActivo/modeloActivo todavía podrían ser los
+        // de la marca anterior (no se limpian al cambiar de marca) — guardar
+        // ahora persistiría una combinación a medio hacer. Se guarda recién
+        // al completar error o modelo, que ya reflejan la marca vigente.
       });
     });
 
@@ -1242,12 +1300,14 @@ const erroresTab = [
         }
         if (mostrarAlgunaLista) actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
         sincronizarWidgetPrecios();
+        guardarSeleccion();
       });
     });
 
     modeloInput?.addEventListener("input", () => {
       actualizarModelo(modeloInput.value.trim() || modeloInput.dataset.modeloEjemplo || "");
       sincronizarWidgetPrecios();
+      guardarSeleccion();
     });
 
     todasLasListas.forEach((lista) => {
@@ -1263,8 +1323,11 @@ const erroresTab = [
         actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
         actualizarFotoEvidenciaPorModelo(marcaActivaId, esOtro ? "" : lista.value);
         sincronizarWidgetPrecios();
+        guardarSeleccion();
       });
     });
+
+    restaurarSeleccion();
   });
 
   // Boton "copiar" del ID de tecnico (Paso 3.2): copia al portapapeles y
