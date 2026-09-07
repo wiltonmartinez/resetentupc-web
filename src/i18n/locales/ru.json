@@ -398,7 +398,8 @@
   "whatsapp": {
     "greetingWithError": "Здравствуйте, мне нужна помощь со сбросом моего {marca} {modelo}.\n\nОшибка: {error}\n\nЯ пишу с:\n{url}",
     "greetingWithoutError": "Здравствуйте, мне нужна помощь со сбросом моего {marca} {modelo}.\n\nЯ пишу с:\n{url}",
-    "greetingGeneric": "Здравствуйте, мне нужна помощь со сбросом моего принтера.\n\nЯ пишу с:\n{url}"
+    "greetingGeneric": "Здравствуйте, мне нужна помощь со сбросом моего принтера.\n\nЯ пишу с:\n{url}",
+    "greetingConPlan": "Здравствуйте, хочу заказать услугу ассистированного сброса.\n\n{nota}\n\nПришёл(-ла) с:\n{url}"
   },
   "contactForm": {
     "botonFlotante": "Свяжитесь с нами",
@@ -732,5 +733,42 @@
     "estadoVacio": "—",
     "sinResultados": "Заказ с таким email или WhatsApp не найден.",
     "errorGenerico": "Произошла ошибка. Попробуйте снова через несколько минут."
+  },
+  "preciosPage": {
+    "title": "Цены на ассистированный сброс | ResetEnLinea.com",
+    "description": "Цены на нашу услугу ассистированного сброса принтера с учётом вашей страны, а также доступные способы оплаты.",
+    "heading": "Цены на ассистированный сброс",
+    "intro": "Выберите свою страну, чтобы увидеть точную цену в вашей валюте и доступные способы оплаты. Данные счетов здесь не публикуются — после подтверждения плана мы пришлём точные реквизиты в WhatsApp.",
+    "paisLabel": "Ваша страна",
+    "monedaLabel": "Валюта",
+    "masPopular": "Самый популярный",
+    "pasoMarcaLabel": "Шаг 1 · Выберите марку",
+    "pasoFamiliaLabel": "Серия",
+    "pasoModeloLabel": "Точная модель",
+    "pasoErrorLabel": "Шаг 3 · Какую ошибку показывает принтер?",
+    "errorDisclaimer": "Эта услуга устраняет блокировки прошивки или счётчика чернил/подушек. Она не покрывает физические неисправности, такие как замятие бумаги, загрязнённые печатающие головки или повреждённые детали.",
+    "errorOtroLabel": "Другое / нет в списке",
+    "errorOtroPlaceholder": "Кратко опишите ошибку или сообщение на экране",
+    "familiaPlaceholder": "Выберите серию",
+    "modeloPlaceholder": "Выберите точную модель",
+    "pendienteTitulo": "Завершите предыдущие шаги",
+    "pendienteTexto": "Выберите марку, модель и ошибку, чтобы увидеть точную цену вашего плана.",
+    "cambiarSeleccion": "Изменить выбор",
+    "planEsencialNombre": "Базовый",
+    "planEsencialDuracion": "3 месяца",
+    "planProfesionalNombre": "Профессиональный",
+    "planProfesionalDuracion": "6 месяцев",
+    "planEliteNombre": "Элитный",
+    "planEliteDuracion": "12 месяцев",
+    "precioNoDisponible": "Уточнить",
+    "ctaPlan": "Выбрать план",
+    "notaWhatsapp": "Сброс {marca} {modelo}\nОшибка: {error}\nПлан {plan} ({duracion}) · {pais} · {precio}",
+    "metodosPagoTitulo": "Способы оплаты, доступные в {pais}",
+    "metodosPagoNota": "Мы показываем только принимаемые банки и организации. Точные реквизиты счёта пришлём в WhatsApp после подтверждения плана.",
+    "bloqueLocalTitulo": "Цена в вашей местной валюте · Представитель в {pais}",
+    "bloqueInternacionalTitulo": "Цена в долларах · Международный способ оплаты",
+    "descuentoBadge": "-{pct}%",
+    "descuentoCountdown": "⏳ Предложение ограничено по времени: {tiempo}",
+    "ctaGeneral": "Обсудить цены с техником"
   }
 }

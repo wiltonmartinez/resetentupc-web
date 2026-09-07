@@ -454,7 +454,8 @@
   "whatsapp": {
     "greetingWithError": "Hola, mi impresora {marca} {modelo} está bloqueada y no puedo imprimir. Necesito el reset urgente, ¿me confirman disponibilidad ahora?\n\nError: {error}\n\nVengo desde:\n{url}",
     "greetingWithoutError": "Hola, necesito resetear mi {marca} {modelo}, está bloqueada y no puedo seguir trabajando. ¿Me confirman disponibilidad ahora?\n\nVengo desde:\n{url}",
-    "greetingGeneric": "Hola, mi impresora quedó bloqueada y necesito un reset urgente.\nMarca y modelo: \nError o mensaje que muestra: \n\nVengo desde:\n{url}"
+    "greetingGeneric": "Hola, mi impresora quedó bloqueada y necesito un reset urgente.\nMarca y modelo: \nError o mensaje que muestra: \n\nVengo desde:\n{url}",
+    "greetingConPlan": "Hola, quiero contratar el servicio de reset asistido.\n\n{nota}\n\nVengo desde:\n{url}"
   },
   "contactForm": {
     "botonFlotante": "Contáctanos",
@@ -778,5 +779,42 @@
     "ruleta": "Jugar a la Ruleta",
     "whatsapp": "Escribir por WhatsApp",
     "bubbleMensaje": "¿Necesitas ayuda con tu impresora?"
+  },
+  "preciosPage": {
+    "title": "Precios del Reset Asistido | ResetEnLinea.com",
+    "description": "Precios geolocalizados de nuestro servicio de reset asistido, con los medios de pago disponibles en tu país.",
+    "heading": "Precios del Reset Asistido",
+    "intro": "Elige tu país para ver el precio exacto en tu moneda local y los medios de pago disponibles. Ningún dato de cuenta se publica aquí — al confirmar tu plan, te compartimos los datos exactos por WhatsApp.",
+    "paisLabel": "Tu país",
+    "monedaLabel": "Moneda",
+    "masPopular": "Más Popular",
+    "pasoMarcaLabel": "Paso 1 · Elige tu marca",
+    "pasoFamiliaLabel": "Familia / Serie",
+    "pasoModeloLabel": "Modelo exacto",
+    "pasoErrorLabel": "Paso 3 · ¿Qué error muestra tu impresora?",
+    "errorDisclaimer": "Este servicio resuelve bloqueos de firmware o del contador de tinta/almohadillas. No cubre fallas físicas como papel atascado, cabezales sucios o piezas dañadas.",
+    "errorOtroLabel": "Otro / no lo veo en la lista",
+    "errorOtroPlaceholder": "Describe brevemente el error o mensaje que muestra",
+    "familiaPlaceholder": "Selecciona una familia",
+    "modeloPlaceholder": "Selecciona tu modelo exacto",
+    "pendienteTitulo": "Completa los pasos anteriores",
+    "pendienteTexto": "Elige tu marca, modelo y error para ver el precio exacto de tu plan.",
+    "cambiarSeleccion": "Cambiar selección",
+    "planEsencialNombre": "Esencial",
+    "planEsencialDuracion": "3 meses",
+    "planProfesionalNombre": "Profesional",
+    "planProfesionalDuracion": "6 meses",
+    "planEliteNombre": "Elite",
+    "planEliteDuracion": "12 meses",
+    "precioNoDisponible": "Consultar",
+    "ctaPlan": "Elegir Plan",
+    "notaWhatsapp": "Reset {marca} {modelo}\nError: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
+    "metodosPagoTitulo": "Medios de pago disponibles en {pais}",
+    "metodosPagoNota": "Solo mostramos los bancos e instituciones aceptadas. Los datos exactos de la cuenta te los compartimos por WhatsApp al confirmar tu plan.",
+    "bloqueLocalTitulo": "Precio en tu moneda local · Agente en {pais}",
+    "bloqueInternacionalTitulo": "Precio en Dólares · Medio Internacional",
+    "descuentoBadge": "-{pct}%",
+    "descuentoCountdown": "⏳ Oferta por tiempo limitado: {tiempo}",
+    "ctaGeneral": "Hablar con un técnico sobre precios"
   }
 }

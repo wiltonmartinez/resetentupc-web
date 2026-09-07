@@ -398,7 +398,8 @@
   "whatsapp": {
     "greetingWithError": "Hallo, ich brauche Hilfe beim Reset meines {marca} {modelo}.\n\nFehler: {error}\n\nIch komme von:\n{url}",
     "greetingWithoutError": "Hallo, ich brauche Hilfe beim Reset meines {marca} {modelo}.\n\nIch komme von:\n{url}",
-    "greetingGeneric": "Hallo, ich brauche Hilfe beim Reset meines Druckers.\n\nIch komme von:\n{url}"
+    "greetingGeneric": "Hallo, ich brauche Hilfe beim Reset meines Druckers.\n\nIch komme von:\n{url}",
+    "greetingConPlan": "Hallo, ich möchte den assistierten Reset-Service buchen.\n\n{nota}\n\nIch komme von:\n{url}"
   },
   "contactForm": {
     "botonFlotante": "Kontaktiere uns",
@@ -732,5 +733,42 @@
     "estadoVacio": "—",
     "sinResultados": "Keine Bestellung mit dieser E-Mail oder WhatsApp-Nummer gefunden.",
     "errorGenerico": "Es ist ein Fehler aufgetreten. Bitte versuche es in ein paar Minuten erneut."
+  },
+  "preciosPage": {
+    "title": "Preise für den Assistierten Reset | ResetEnLinea.com",
+    "description": "Geolokalisierte Preise für unseren assistierten Drucker-Reset-Service, mit den in deinem Land verfügbaren Zahlungsmethoden.",
+    "heading": "Preise für den Assistierten Reset",
+    "intro": "Wähle dein Land, um den genauen Preis in deiner Landeswährung und die verfügbaren Zahlungsmethoden zu sehen. Hier werden keine Kontodaten veröffentlicht — sobald du deinen Plan bestätigst, teilen wir dir die genauen Zahlungsdaten per WhatsApp mit.",
+    "paisLabel": "Dein Land",
+    "monedaLabel": "Währung",
+    "masPopular": "Am Beliebtesten",
+    "pasoMarcaLabel": "Schritt 1 · Wähle deine Marke",
+    "pasoFamiliaLabel": "Familie / Serie",
+    "pasoModeloLabel": "Genaues Modell",
+    "pasoErrorLabel": "Schritt 3 · Welchen Fehler zeigt dein Drucker?",
+    "errorDisclaimer": "Dieser Service behebt Firmware- oder Tintenkissen-/Zähler-Blockaden. Er deckt keine physischen Defekte wie Papierstau, verschmutzte Druckköpfe oder beschädigte Teile ab.",
+    "errorOtroLabel": "Andere / nicht in der Liste",
+    "errorOtroPlaceholder": "Beschreibe kurz den Fehler oder die angezeigte Meldung",
+    "familiaPlaceholder": "Wähle eine Familie",
+    "modeloPlaceholder": "Wähle dein genaues Modell",
+    "pendienteTitulo": "Schließe die vorherigen Schritte ab",
+    "pendienteTexto": "Wähle Marke, Modell und Fehler, um den genauen Preis deines Plans zu sehen.",
+    "cambiarSeleccion": "Auswahl ändern",
+    "planEsencialNombre": "Essenziell",
+    "planEsencialDuracion": "3 Monate",
+    "planProfesionalNombre": "Professionell",
+    "planProfesionalDuracion": "6 Monate",
+    "planEliteNombre": "Elite",
+    "planEliteDuracion": "12 Monate",
+    "precioNoDisponible": "Auf Anfrage",
+    "ctaPlan": "Plan wählen",
+    "notaWhatsapp": "{marca} {modelo} Reset\nFehler: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
+    "metodosPagoTitulo": "Verfügbare Zahlungsmethoden in {pais}",
+    "metodosPagoNota": "Wir zeigen nur die akzeptierten Banken und Institutionen. Die genauen Kontodaten teilen wir dir nach Bestätigung deines Plans per WhatsApp mit.",
+    "bloqueLocalTitulo": "Preis in deiner Landeswährung · Vertreter in {pais}",
+    "bloqueInternacionalTitulo": "Preis in US-Dollar · Internationale Zahlung",
+    "descuentoBadge": "-{pct}%",
+    "descuentoCountdown": "⏳ Zeitlich begrenztes Angebot: {tiempo}",
+    "ctaGeneral": "Mit einem Techniker über Preise sprechen"
   }
 }

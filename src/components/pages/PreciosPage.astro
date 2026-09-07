@@ -1,0 +1,1159 @@
+---
+import { Image } from "astro:assets";
+import { t, buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
+import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
+import { paisesPrecioPublico, catalogoCascada, mapaErroresPublico, type PaisPrecioPublico } from "../../lib/precios";
+import whatsappLogo from "../../assets/whatsapp/3.png";
+
+interface Props {
+  locale: Locale;
+  paisInicialSlug: string;
+  urlPath: string;
+  /** Precarga opcional (ej. enlace desde una página de modelo con
+   *  ?marca=&modelo=&error=). El script valida marca/modelo contra el
+   *  catálogo en el cliente; si no calzan, el selector en cascada
+   *  simplemente arranca vacío en el Paso 1. */
+  marca?: string;
+  modelo?: string;
+  error?: string;
+  /** true si cf-ipcountry cae en Europa — solo cambia cuál de las 2 monedas
+   *  (USD/EUR) viene seleccionada por defecto en países sin infraestructura
+   *  bancaria local (ver esVisitanteEuropeo en lib/precios). El visitante
+   *  siempre puede alternar a mano. */
+  defaultEur?: boolean;
+}
+
+const { locale, paisInicialSlug, urlPath, marca = "", modelo = "", error = "", defaultEur = false } = Astro.props;
+
+const paises = await paisesPrecioPublico();
+const paisInicial: PaisPrecioPublico = paises.find((p) => p.slug === paisInicialSlug) ?? paises[0];
+const urlOrigen = `${SITE_URL}${urlPath}`;
+const catalogo = catalogoCascada();
+const erroresMapa = mapaErroresPublico(locale);
+
+// Orden de negocio: Profesional (izquierda) · Esencial (centro, destacado) · Elite (derecha).
+const PLANES = [
+  {
+    key: "profesional" as const,
+    icono: "💼",
+    nombre: t(locale, "preciosPage.planProfesionalNombre"),
+    duracion: t(locale, "preciosPage.planProfesionalDuracion"),
+    destacado: false,
+  },
+  {
+    key: "esencial" as const,
+    icono: "🟢",
+    nombre: t(locale, "preciosPage.planEsencialNombre"),
+    duracion: t(locale, "preciosPage.planEsencialDuracion"),
+    destacado: true,
+  },
+  {
+    key: "elite" as const,
+    icono: "👑",
+    nombre: t(locale, "preciosPage.planEliteNombre"),
+    duracion: t(locale, "preciosPage.planEliteDuracion"),
+    destacado: false,
+  },
+];
+
+const notaTemplate: string = t(locale, "preciosPage.notaWhatsapp");
+const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
+
+// El CTA general (abajo del todo) es independiente de la cascada — solo
+// menciona el país, para quien prefiere escribir directo sin completar los
+// 3 pasos.
+const mensajeGeneral = buildWhatsAppMessage({
+  locale,
+  nota: t(locale, "preciosPage.metodosPagoTitulo").replaceAll("{pais}", paisInicial.nombre),
+  urlOrigen,
+});
+const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
+---
+
+<article
+  class="precios-page"
+  data-precios-page
+  data-paises={JSON.stringify(paises)}
+  data-catalogo={JSON.stringify(catalogo)}
+  data-errores={JSON.stringify(erroresMapa)}
+  data-prefill-marca={marca}
+  data-prefill-modelo={modelo}
+  data-prefill-error={error}
+  data-default-eur={defaultEur ? "true" : "false"}
+  data-whatsapp-numero={WHATSAPP_NUMBER}
+  data-url-origen={urlOrigen}
+  data-nota-template={notaTemplate}
+  data-mensaje-template={mensajeTemplate}
+  data-precio-no-disponible={t(locale, "preciosPage.precioNoDisponible")}
+  data-cta-plan={t(locale, "preciosPage.ctaPlan")}
+  data-metodos-titulo-template={t(locale, "preciosPage.metodosPagoTitulo")}
+  data-mas-popular={t(locale, "preciosPage.masPopular")}
+  data-familia-placeholder={t(locale, "preciosPage.familiaPlaceholder")}
+  data-modelo-placeholder={t(locale, "preciosPage.modeloPlaceholder")}
+  data-bloque-local-titulo-template={t(locale, "preciosPage.bloqueLocalTitulo")}
+  data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
+  data-descuento-badge-template={t(locale, "preciosPage.descuentoBadge")}
+  data-descuento-countdown-template={t(locale, "preciosPage.descuentoCountdown")}
+  data-plan-profesional-nombre={PLANES[0].nombre}
+  data-plan-profesional-duracion={PLANES[0].duracion}
+  data-plan-esencial-nombre={PLANES[1].nombre}
+  data-plan-esencial-duracion={PLANES[1].duracion}
+  data-plan-elite-nombre={PLANES[2].nombre}
+  data-plan-elite-duracion={PLANES[2].duracion}
+>
+  <h1>{t(locale, "preciosPage.heading")}</h1>
+
+  <div class="precios-box precios-intro-box">
+    <p>{t(locale, "preciosPage.intro")}</p>
+  </div>
+
+  <div class="precios-box precios-panel">
+    <label class="precios-campo">
+      <span>{t(locale, "preciosPage.paisLabel")}</span>
+      <select data-pais-select data-sound="select">
+        {paises.map((pais) => (
+          <option value={pais.slug} selected={pais.slug === paisInicial.slug}>
+            {pais.bandera} {pais.nombre}
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <div class="precios-campo precios-campo-moneda">
+      <span>{t(locale, "preciosPage.monedaLabel")}</span>
+      <div class="precios-moneda-opciones" data-moneda-opciones>
+        {paisInicial.presentacionMoneda === "toggle" ? (
+          paisInicial.monedas.map((m) => (
+            <button
+              type="button"
+              class:list={["precios-marca-boton", "precios-moneda-boton", { "precios-marca-boton-activo": m.codigo === (defaultEur && paisInicial.monedas.some((x) => x.codigo === "EUR") ? "EUR" : paisInicial.monedas[0].codigo) }]}
+              data-moneda-boton
+              data-moneda-codigo={m.codigo}
+              data-sound="select"
+            >
+              {m.codigo}
+            </button>
+          ))
+        ) : (
+          paisInicial.monedas.map((m) => <p class="precios-moneda-valor">{m.codigo}</p>)
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="precios-box precios-cascada">
+    <h2>{t(locale, "preciosPage.pasoMarcaLabel")}</h2>
+    <div class="precios-marca-botones" data-marca-botones>
+      {catalogo.map((m) => (
+        <button type="button" class="precios-marca-boton" data-marca-boton data-marca-slug={m.slug} data-sound="select">
+          {m.nombre}
+        </button>
+      ))}
+    </div>
+
+    <label class="precios-campo" data-paso-familia hidden>
+      <span>{t(locale, "preciosPage.pasoFamiliaLabel")}</span>
+      <select data-familia-select data-sound="select"></select>
+    </label>
+
+    <label class="precios-campo" data-paso-modelo hidden>
+      <span>{t(locale, "preciosPage.pasoModeloLabel")}</span>
+      <select data-modelo-select data-sound="select"></select>
+    </label>
+
+    <div data-paso-error hidden>
+      <h3>{t(locale, "preciosPage.pasoErrorLabel")}</h3>
+      <p class="precios-disclaimer">⚠️ {t(locale, "preciosPage.errorDisclaimer")}</p>
+      <div class="precios-error-opciones" data-error-opciones></div>
+      <label class="precios-campo">
+        <span>{t(locale, "preciosPage.errorOtroLabel")}</span>
+        <input type="text" data-error-otro placeholder={t(locale, "preciosPage.errorOtroPlaceholder")} />
+      </label>
+    </div>
+  </div>
+
+  <div class="precios-box precios-pendiente" data-pricing-pendiente>
+    <h2>{t(locale, "preciosPage.pendienteTitulo")}</h2>
+    <p>{t(locale, "preciosPage.pendienteTexto")}</p>
+  </div>
+
+  <div data-pricing-contenido hidden>
+    <button type="button" class="precios-cambiar-seleccion" data-cambiar-seleccion data-sound="select">
+      ← {t(locale, "preciosPage.cambiarSeleccion")}
+    </button>
+
+    <div data-bloque-local>
+      <h2 class="precios-bloque-titulo" data-bloque-local-titulo hidden></h2>
+      <div class="precios-planes" data-planes-local></div>
+    </div>
+
+    <div data-bloque-internacional hidden>
+      <h2 class="precios-bloque-titulo" data-bloque-internacional-titulo></h2>
+      <div class="precios-planes" data-planes-internacional></div>
+    </div>
+
+    <div class="precios-box precios-metodos">
+      <h2 data-metodos-titulo></h2>
+      <ul class="precios-metodos-lista" data-metodos-pago></ul>
+      <p class="precios-metodos-nota">🔒 {t(locale, "preciosPage.metodosPagoNota")}</p>
+    </div>
+  </div>
+
+  <div class="precios-box precios-cta-general-box">
+    <a
+      class="whatsapp-cta whatsapp-cta-elevar precios-cta-general"
+      href={hrefGeneral}
+      data-source-id="precios_cta_general"
+      data-sound="confirm"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      data-cta-general
+    >
+      <Image src={whatsappLogo} alt="" width={72} height={72} class="whatsapp-cta-icono" />
+      {t(locale, "preciosPage.ctaGeneral")}
+    </a>
+  </div>
+</article>
+
+<script>
+  interface ModeloCascada {
+    slug: string;
+    nombre: string;
+  }
+  interface FamiliaCascada {
+    slug: string;
+    nombre: string;
+    modelos: ModeloCascada[];
+  }
+  interface MarcaCascada {
+    slug: string;
+    nombre: string;
+    grupo: "impresora" | "plotter";
+    familias: FamiliaCascada[] | null;
+    modelos: ModeloCascada[] | null;
+  }
+  interface ErrorCascada {
+    id: string;
+    nombre: string;
+    estado: string;
+  }
+  interface PreciosPorPlan {
+    esencial: number | null;
+    profesional: number | null;
+    elite: number | null;
+  }
+  interface OpcionMoneda {
+    codigo: string;
+    ambito: "local" | "internacional";
+    descontable?: boolean;
+    precios: { impresora: PreciosPorPlan | null; plotter: PreciosPorPlan | null };
+  }
+  interface PaisPrecioPublico {
+    slug: string;
+    nombre: string;
+    bandera: string;
+    metodosPago: { nombre: string }[];
+    monedas: OpcionMoneda[];
+    presentacionMoneda: "unica" | "toggle" | "apilado";
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-precios-page]").forEach((root) => {
+    const paises: PaisPrecioPublico[] = JSON.parse(root.dataset.paises || "[]");
+    const paisesPorSlug = Object.fromEntries(paises.map((p) => [p.slug, p]));
+    const catalogo: MarcaCascada[] = JSON.parse(root.dataset.catalogo || "[]");
+    const catalogoPorSlug = Object.fromEntries(catalogo.map((m) => [m.slug, m]));
+    const erroresMapa: Record<string, Record<string, ErrorCascada[]>> = JSON.parse(root.dataset.errores || "{}");
+
+    const select = root.querySelector<HTMLSelectElement>("[data-pais-select]");
+    const monedaOpcionesEl = root.querySelector<HTMLElement>("[data-moneda-opciones]");
+    const marcaBotones = root.querySelectorAll<HTMLButtonElement>("[data-marca-boton]");
+    const pasoFamiliaEl = root.querySelector<HTMLElement>("[data-paso-familia]");
+    const familiaSelect = root.querySelector<HTMLSelectElement>("[data-familia-select]");
+    const pasoModeloEl = root.querySelector<HTMLElement>("[data-paso-modelo]");
+    const modeloSelect = root.querySelector<HTMLSelectElement>("[data-modelo-select]");
+    const pasoErrorEl = root.querySelector<HTMLElement>("[data-paso-error]");
+    const errorOpcionesEl = root.querySelector<HTMLElement>("[data-error-opciones]");
+    const errorOtroInput = root.querySelector<HTMLInputElement>("[data-error-otro]");
+    const pendienteEl = root.querySelector<HTMLElement>("[data-pricing-pendiente]");
+    const contenidoEl = root.querySelector<HTMLElement>("[data-pricing-contenido]");
+    const cambiarBtn = root.querySelector<HTMLButtonElement>("[data-cambiar-seleccion]");
+    const bloqueLocalTituloEl = root.querySelector<HTMLElement>("[data-bloque-local-titulo]");
+    const tarjetasLocalEl = root.querySelector<HTMLElement>("[data-planes-local]");
+    const bloqueInternacionalEl = root.querySelector<HTMLElement>("[data-bloque-internacional]");
+    const bloqueInternacionalTituloEl = root.querySelector<HTMLElement>("[data-bloque-internacional-titulo]");
+    const tarjetasInternacionalEl = root.querySelector<HTMLElement>("[data-planes-internacional]");
+    const metodosEl = root.querySelector<HTMLElement>("[data-metodos-pago]");
+    const metodosTituloEl = root.querySelector<HTMLElement>("[data-metodos-titulo]");
+    const ctaGeneralEl = root.querySelector<HTMLAnchorElement>("[data-cta-general]");
+    if (!select || !familiaSelect || !modeloSelect || !errorOpcionesEl || !errorOtroInput || !pendienteEl || !contenidoEl || !tarjetasLocalEl || !metodosEl || !metodosTituloEl) return;
+
+    const numero = root.dataset.whatsappNumero || "";
+    const urlOrigen = root.dataset.urlOrigen || "";
+    const notaTemplate = root.dataset.notaTemplate || "";
+    const mensajeTemplate = root.dataset.mensajeTemplate || "";
+    const precioNoDisponible = root.dataset.precioNoDisponible || "";
+    const ctaPlanLabel = root.dataset.ctaPlan || "";
+    const masPopularLabel = root.dataset.masPopular || "";
+    const metodosTituloTemplate = root.dataset.metodosTituloTemplate || "";
+    const familiaPlaceholder = root.dataset.familiaPlaceholder || "";
+    const modeloPlaceholder = root.dataset.modeloPlaceholder || "";
+    const defaultEur = root.dataset.defaultEur === "true";
+    const bloqueLocalTituloTemplate = root.dataset.bloqueLocalTituloTemplate || "";
+    const bloqueInternacionalTituloTexto = root.dataset.bloqueInternacionalTitulo || "";
+    const descuentoBadgeTemplate = root.dataset.descuentoBadgeTemplate || "";
+    const descuentoCountdownTemplate = root.dataset.descuentoCountdownTemplate || "";
+    let primerRenderMoneda = true;
+
+    // ---------- Descuento del bloque internacional (países "apilado") ----------
+    // Se genera UNA sola vez por visitante (persistido en localStorage, nunca
+    // se recalcula en cada carga) — recargar la página no reinicia el
+    // cronómetro ni sortea un % nuevo, así el "por tiempo limitado" es real,
+    // no una urgencia fabricada. localStorage en vez de cookies: mismo
+    // mecanismo que ya usa LanguageSelector.astro para recordar preferencias
+    // del visitante, sin viajar al servidor.
+    const DESCUENTO_LS_KEY = "resetenlinea_precios_descuento_intl_v1";
+    function cargarEstadoDescuento(): { pct: number; expiraEn: number; visitas: number } {
+      let datos: { pct: number; expiraEn: number; visitas: number } | null = null;
+      try {
+        datos = JSON.parse(localStorage.getItem(DESCUENTO_LS_KEY) || "null");
+      } catch {
+        datos = null;
+      }
+      if (!datos || typeof datos.expiraEn !== "number" || typeof datos.pct !== "number") {
+        const opciones = [5, 10, 15, 25];
+        datos = { pct: opciones[Math.floor(Math.random() * opciones.length)], expiraEn: Date.now() + 2 * 60 * 60 * 1000, visitas: 1 };
+      } else {
+        datos.visitas = (datos.visitas || 1) + 1;
+      }
+      try {
+        localStorage.setItem(DESCUENTO_LS_KEY, JSON.stringify(datos));
+      } catch {
+        /* localStorage no disponible (navegación privada, etc.): el descuento
+           simplemente no persiste entre cargas — no debe romper la página. */
+      }
+      return datos;
+    }
+    const estadoDescuento = cargarEstadoDescuento();
+
+    function descuentoActivo(): boolean {
+      return Date.now() < estadoDescuento.expiraEn;
+    }
+
+    function formatoCuentaRegresiva(ms: number): string {
+      const totalSeg = Math.max(0, Math.floor(ms / 1000));
+      const h = Math.floor(totalSeg / 3600);
+      const m = Math.floor((totalSeg % 3600) / 60);
+      const s = totalSeg % 60;
+      const pad = (n: number) => String(n).padStart(2, "0");
+      return `${h}:${pad(m)}:${pad(s)}`;
+    }
+
+    let intervaloDescuentoId: number | null = null;
+    function iniciarTickDescuento() {
+      if (intervaloDescuentoId != null) return;
+      intervaloDescuentoId = window.setInterval(() => {
+        const restante = estadoDescuento.expiraEn - Date.now();
+        if (restante <= 0) {
+          window.clearInterval(intervaloDescuentoId!);
+          intervaloDescuentoId = null;
+          renderPrecios(); // se vuelve a renderizar sin descuento ni cronómetro
+          return;
+        }
+        root.querySelectorAll<HTMLElement>("[data-countdown]").forEach((el) => {
+          el.textContent = descuentoCountdownTemplate.replaceAll("{tiempo}", formatoCuentaRegresiva(restante));
+        });
+      }, 1000);
+    }
+
+    const PLANES = [
+      { key: "profesional" as const, icono: "💼", nombre: root.dataset.planProfesionalNombre || "", duracion: root.dataset.planProfesionalDuracion || "", destacado: false },
+      { key: "esencial" as const, icono: "🟢", nombre: root.dataset.planEsencialNombre || "", duracion: root.dataset.planEsencialDuracion || "", destacado: true },
+      { key: "elite" as const, icono: "👑", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
+    ];
+
+    const estado = {
+      marca: root.dataset.prefillMarca || "",
+      familia: "",
+      modelo: root.dataset.prefillModelo || "",
+      errorId: "",
+      errorOtro: root.dataset.prefillError || "",
+      monedaCodigo: "",
+    };
+
+    function marcaActual(): MarcaCascada | null {
+      return catalogoPorSlug[estado.marca] || null;
+    }
+
+    function modelosDisponibles(): ModeloCascada[] {
+      const marca = marcaActual();
+      if (!marca) return [];
+      if (marca.familias) {
+        const fam = marca.familias.find((f) => f.slug === estado.familia);
+        return fam ? fam.modelos : [];
+      }
+      return marca.modelos || [];
+    }
+
+    function erroresDisponibles(): ErrorCascada[] {
+      const marca = marcaActual();
+      if (!marca || !estado.modelo) return [];
+      return erroresMapa[marca.slug]?.[estado.modelo] || [];
+    }
+
+    function marcaNombre(): string {
+      return marcaActual()?.nombre || "";
+    }
+
+    function modeloNombre(): string {
+      return modelosDisponibles().find((m) => m.slug === estado.modelo)?.nombre || estado.modelo;
+    }
+
+    function errorNombre(): string {
+      if (estado.errorOtro.trim()) return estado.errorOtro.trim();
+      return erroresDisponibles().find((e) => e.id === estado.errorId)?.nombre || "";
+    }
+
+    function seleccionCompleta(): boolean {
+      return Boolean(estado.marca && estado.modelo && (estado.errorId || estado.errorOtro.trim()));
+    }
+
+    // Precarga (ej. ?marca=&modelo=&error= desde una página de modelo): valida
+    // contra el catálogo real; si algo no calza, ese paso simplemente arranca
+    // vacío en vez de dejar la cascada en un estado a medias inconsistente.
+    (function resolverPrecarga() {
+      const marca = marcaActual();
+      if (!marca) {
+        estado.marca = "";
+        return;
+      }
+      if (marca.familias) {
+        const fam = marca.familias.find((f) => f.modelos.some((m) => m.slug === estado.modelo));
+        estado.familia = fam?.slug || "";
+      }
+      if (!modelosDisponibles().some((m) => m.slug === estado.modelo)) estado.modelo = "";
+      if (errorOtroInput) errorOtroInput.value = estado.errorOtro;
+    })();
+
+    function poblarFamilias() {
+      const marca = marcaActual();
+      familiaSelect!.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = familiaPlaceholder;
+      familiaSelect!.appendChild(placeholder);
+      (marca?.familias || []).forEach((fam) => {
+        const opt = document.createElement("option");
+        opt.value = fam.slug;
+        opt.textContent = fam.nombre;
+        opt.selected = fam.slug === estado.familia;
+        familiaSelect!.appendChild(opt);
+      });
+    }
+
+    function poblarModelos() {
+      modeloSelect!.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = modeloPlaceholder;
+      modeloSelect!.appendChild(placeholder);
+      modelosDisponibles().forEach((mo) => {
+        const opt = document.createElement("option");
+        opt.value = mo.slug;
+        opt.textContent = mo.nombre;
+        opt.selected = mo.slug === estado.modelo;
+        modeloSelect!.appendChild(opt);
+      });
+    }
+
+    function poblarErrores() {
+      errorOpcionesEl!.innerHTML = "";
+      erroresDisponibles().forEach((err) => {
+        const label = document.createElement("label");
+        label.className = "precios-radio";
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "preciosError";
+        input.value = err.id;
+        input.dataset.sound = "select";
+        input.checked = err.id === estado.errorId;
+        input.addEventListener("change", () => {
+          estado.errorId = input.value;
+          estado.errorOtro = "";
+          errorOtroInput!.value = "";
+          actualizar();
+        });
+        label.appendChild(input);
+        const span = document.createElement("span");
+        span.textContent = err.nombre;
+        label.appendChild(span);
+        errorOpcionesEl!.appendChild(label);
+      });
+    }
+
+    function actualizarPasos() {
+      marcaBotones.forEach((btn) => btn.classList.toggle("precios-marca-boton-activo", btn.dataset.marcaSlug === estado.marca));
+
+      const marca = marcaActual();
+      const tieneFamilias = Boolean(marca?.familias);
+      if (pasoFamiliaEl) pasoFamiliaEl.hidden = !(marca && tieneFamilias);
+      if (marca && tieneFamilias) poblarFamilias();
+
+      const familiaResuelta = !marca ? false : tieneFamilias ? Boolean(estado.familia) : true;
+      if (pasoModeloEl) pasoModeloEl.hidden = !(marca && familiaResuelta);
+      if (marca && familiaResuelta) poblarModelos();
+
+      if (pasoErrorEl) pasoErrorEl.hidden = !(marca && estado.modelo);
+      if (marca && estado.modelo) poblarErrores();
+    }
+
+    function formatoPrecio(monto: number | null | undefined, moneda: string): string {
+      if (monto == null) return precioNoDisponible;
+      try {
+        return new Intl.NumberFormat(undefined, { style: "currency", currency: moneda, maximumFractionDigits: 0 }).format(monto);
+      } catch {
+        return `${monto} ${moneda}`;
+      }
+    }
+
+    function whatsappHref(nota: string): string {
+      const mensaje = mensajeTemplate.replaceAll("{nota}", nota).replaceAll("{url}", urlOrigen);
+      return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    }
+
+    function poblarMonedaOpciones(pais: PaisPrecioPublico) {
+      if (!monedaOpcionesEl) return;
+      if (!pais.monedas.some((m) => m.codigo === estado.monedaCodigo)) {
+        const preferirEur = primerRenderMoneda && defaultEur && pais.monedas.some((m) => m.codigo === "EUR");
+        estado.monedaCodigo = preferirEur ? "EUR" : pais.monedas[0]?.codigo || "";
+      }
+      primerRenderMoneda = false;
+
+      monedaOpcionesEl.innerHTML = "";
+      if (pais.monedas.length <= 1) {
+        const badge = document.createElement("p");
+        badge.className = "precios-moneda-valor";
+        badge.textContent = pais.monedas[0]?.codigo || "";
+        monedaOpcionesEl.appendChild(badge);
+        return;
+      }
+      pais.monedas.forEach((m) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "precios-marca-boton precios-moneda-boton";
+        btn.classList.toggle("precios-marca-boton-activo", m.codigo === estado.monedaCodigo);
+        btn.dataset.sound = "select";
+        btn.textContent = m.codigo;
+        btn.addEventListener("click", () => {
+          if (estado.monedaCodigo === m.codigo) return;
+          estado.monedaCodigo = m.codigo;
+          renderPrecios();
+        });
+        monedaOpcionesEl!.appendChild(btn);
+      });
+    }
+
+    function construirTarjetas(contenedorEl: HTMLElement, opcion: OpcionMoneda, pais: PaisPrecioPublico, marca: MarcaCascada) {
+      const aplicarDescuento = Boolean(opcion.descontable) && descuentoActivo();
+      const precios = opcion.precios[marca.grupo];
+
+      contenedorEl.innerHTML = "";
+      PLANES.forEach((plan) => {
+        const montoBase = precios ? precios[plan.key] : null;
+        const descuentaEstaTarjeta = aplicarDescuento && montoBase != null;
+        const montoFinal = descuentaEstaTarjeta ? Math.round(montoBase! * (1 - estadoDescuento.pct / 100)) : montoBase;
+        const precioTexto = formatoPrecio(montoFinal, opcion.codigo);
+        const nota = notaTemplate
+          .replaceAll("{marca}", marcaNombre())
+          .replaceAll("{modelo}", modeloNombre())
+          .replaceAll("{error}", errorNombre())
+          .replaceAll("{plan}", plan.nombre)
+          .replaceAll("{duracion}", plan.duracion)
+          .replaceAll("{pais}", pais.nombre)
+          .replaceAll("{precio}", precioTexto);
+
+        const article = document.createElement("article");
+        article.className = plan.destacado ? "precios-plan precios-plan-destacado" : "precios-plan";
+
+        if (plan.destacado) {
+          const badge = document.createElement("span");
+          badge.className = "precios-plan-badge";
+          badge.textContent = masPopularLabel;
+          article.appendChild(badge);
+        }
+
+        const icono = document.createElement("p");
+        icono.className = "precios-plan-icono";
+        icono.setAttribute("aria-hidden", "true");
+        icono.textContent = plan.icono;
+
+        const nombre = document.createElement("h3");
+        nombre.textContent = plan.nombre;
+
+        const duracion = document.createElement("p");
+        duracion.className = "precios-plan-duracion";
+        duracion.textContent = plan.duracion;
+
+        article.append(icono, nombre, duracion);
+
+        if (descuentaEstaTarjeta) {
+          const original = document.createElement("p");
+          original.className = "precios-plan-precio-original";
+          original.textContent = formatoPrecio(montoBase, opcion.codigo);
+          article.appendChild(original);
+        }
+
+        const precio = document.createElement("p");
+        precio.className = "precios-plan-precio";
+        precio.append(document.createTextNode(precioTexto));
+        if (descuentaEstaTarjeta) {
+          const badgeDescuento = document.createElement("span");
+          badgeDescuento.className = "precios-plan-badge-descuento";
+          badgeDescuento.textContent = descuentoBadgeTemplate.replaceAll("{pct}", String(estadoDescuento.pct));
+          precio.appendChild(badgeDescuento);
+        }
+        article.appendChild(precio);
+
+        if (descuentaEstaTarjeta) {
+          const countdown = document.createElement("p");
+          countdown.className = "precios-plan-countdown";
+          countdown.dataset.countdown = "true";
+          countdown.textContent = descuentoCountdownTemplate.replaceAll(
+            "{tiempo}",
+            formatoCuentaRegresiva(estadoDescuento.expiraEn - Date.now())
+          );
+          article.appendChild(countdown);
+          iniciarTickDescuento();
+        }
+
+        const boton = document.createElement("a");
+        boton.className = "whatsapp-cta whatsapp-cta-elevar precios-plan-cta";
+        boton.href = whatsappHref(nota);
+        boton.target = "_blank";
+        boton.rel = "noopener noreferrer nofollow";
+        boton.dataset.sourceId = `precios_plan_${plan.key}`;
+        boton.dataset.sound = "confirm";
+        boton.textContent = ctaPlanLabel;
+        article.appendChild(boton);
+
+        contenedorEl.appendChild(article);
+      });
+    }
+
+    function renderPrecios() {
+      const pais = paisesPorSlug[select!.value] || paises[0];
+      poblarMonedaOpciones(pais);
+
+      if (ctaGeneralEl) {
+        ctaGeneralEl.href = whatsappHref(metodosTituloTemplate.replaceAll("{pais}", pais.nombre));
+      }
+
+      const completa = seleccionCompleta();
+      pendienteEl.hidden = completa;
+      contenidoEl.hidden = !completa;
+      if (!completa) return;
+
+      const marca = marcaActual()!;
+
+      if (pais.presentacionMoneda === "apilado") {
+        const local = pais.monedas.find((m) => m.ambito === "local") || pais.monedas[0];
+        const internacional = pais.monedas.find((m) => m.ambito === "internacional") || pais.monedas[1] || pais.monedas[0];
+
+        if (bloqueLocalTituloEl) {
+          bloqueLocalTituloEl.hidden = false;
+          bloqueLocalTituloEl.textContent = bloqueLocalTituloTemplate.replaceAll("{pais}", pais.nombre);
+        }
+        construirTarjetas(tarjetasLocalEl!, local, pais, marca);
+
+        if (bloqueInternacionalEl) bloqueInternacionalEl.hidden = false;
+        if (bloqueInternacionalTituloEl) bloqueInternacionalTituloEl.textContent = bloqueInternacionalTituloTexto;
+        if (tarjetasInternacionalEl) construirTarjetas(tarjetasInternacionalEl, internacional, pais, marca);
+      } else {
+        const monedaActual = pais.monedas.find((m) => m.codigo === estado.monedaCodigo) || pais.monedas[0];
+        if (bloqueLocalTituloEl) bloqueLocalTituloEl.hidden = true;
+        construirTarjetas(tarjetasLocalEl!, monedaActual, pais, marca);
+        if (bloqueInternacionalEl) bloqueInternacionalEl.hidden = true;
+        if (tarjetasInternacionalEl) tarjetasInternacionalEl.innerHTML = "";
+      }
+
+      metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
+      metodosEl!.innerHTML = "";
+      pais.metodosPago.forEach((metodo) => {
+        const li = document.createElement("li");
+        li.className = "precios-metodo-chip";
+        li.textContent = metodo.nombre;
+        metodosEl!.appendChild(li);
+      });
+    }
+
+    function actualizar() {
+      actualizarPasos();
+      renderPrecios();
+    }
+
+    marcaBotones.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const slug = btn.dataset.marcaSlug || "";
+        if (estado.marca === slug) return;
+        estado.marca = slug;
+        estado.familia = "";
+        estado.modelo = "";
+        estado.errorId = "";
+        estado.errorOtro = "";
+        errorOtroInput!.value = "";
+        actualizar();
+      });
+    });
+
+    familiaSelect.addEventListener("change", () => {
+      estado.familia = familiaSelect!.value;
+      estado.modelo = "";
+      estado.errorId = "";
+      estado.errorOtro = "";
+      errorOtroInput!.value = "";
+      actualizar();
+    });
+
+    modeloSelect.addEventListener("change", () => {
+      estado.modelo = modeloSelect!.value;
+      estado.errorId = "";
+      estado.errorOtro = "";
+      errorOtroInput!.value = "";
+      actualizar();
+    });
+
+    errorOtroInput.addEventListener("input", () => {
+      estado.errorOtro = errorOtroInput!.value;
+      if (estado.errorOtro.trim()) {
+        estado.errorId = "";
+        errorOpcionesEl!.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((r) => (r.checked = false));
+      }
+      renderPrecios();
+    });
+
+    select.addEventListener("change", () => {
+      // Un código de moneda que por casualidad coincide entre dos países
+      // (ej. "COP" es tanto la moneda de Colombia como la alternativa de
+      // Venezuela) no debe sobrevivir el cambio de país — cada país resuelve
+      // su propio default en poblarMonedaOpciones().
+      estado.monedaCodigo = "";
+      renderPrecios();
+    });
+
+    cambiarBtn?.addEventListener("click", () => {
+      estado.marca = "";
+      estado.familia = "";
+      estado.modelo = "";
+      estado.errorId = "";
+      estado.errorOtro = "";
+      errorOtroInput!.value = "";
+      actualizar();
+    });
+
+    actualizar();
+  });
+</script>
+
+<style is:global>
+  /*
+   * is:global a propósito: el script de esta página reconstruye los pasos de
+   * la cascada y las tarjetas de precio con document.createElement al
+   * cambiar de marca/familia/modelo/error/país. Esos nodos se crean en
+   * tiempo de ejecución, así que nunca reciben el atributo de scope que
+   * Astro añade solo a lo que existe en el template al compilar — con
+   * estilos con scope, ese re-render quedaría sin CSS. Los nombres de clase
+   * (precios-*, whatsapp-cta*) son específicos de esta página, así que el
+   * riesgo de colisión global es mínimo.
+   */
+  .precios-page {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  /* .precios-campo{display:grid} empata en especificidad con la regla nativa
+     [hidden]{display:none} del navegador — como esta hoja de estilos carga
+     después, gana la última y el paso "oculto" se seguía viendo. Sin esto,
+     Familia/Modelo aparecían visibles antes de elegir marca. */
+  [hidden] {
+    display: none !important;
+  }
+
+  /* Duplicado a propósito de WhatsAppCTA.astro: ese componente no se usa aquí
+     directamente (los botones necesitan un href armado dinámicamente por
+     país/plan/marca/modelo/error), pero deben verse idénticos — mismo verde
+     #20d043, mismo hover con elevación, mismo logo recortado en el borde
+     izquierdo. */
+  .whatsapp-cta {
+    display: inline-block;
+    background: #25d366;
+    color: #062f1a;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .whatsapp-cta:hover {
+    background: #1fb958;
+  }
+
+  .whatsapp-cta-elevar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #20d043;
+    color: #ffffff;
+    font-weight: 700;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .whatsapp-cta-elevar:hover {
+    background: #1bb93a;
+    color: #ffffff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .whatsapp-cta-icono {
+    flex-shrink: 0;
+    align-self: stretch;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    margin: -0.75rem 0;
+    object-fit: contain;
+    transform: scale(0.8);
+  }
+
+  .precios-box {
+    background: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .precios-intro-box p {
+    margin: 0;
+  }
+
+  .precios-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: flex-end;
+  }
+
+  .precios-campo {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .precios-campo select,
+  .precios-campo input[type="text"] {
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 0.95rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    min-width: 220px;
+  }
+
+  .precios-campo-moneda {
+    align-items: flex-start;
+  }
+
+  .precios-moneda-opciones {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .precios-moneda-valor {
+    margin: 0;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+  }
+
+  .precios-moneda-boton {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .precios-cascada {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .precios-cascada h2 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .precios-cascada h3 {
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  .precios-marca-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .precios-marca-boton {
+    padding: 0.7rem 1.25rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .precios-marca-boton:hover {
+    border-color: var(--color-primary);
+  }
+
+  .precios-marca-boton-activo {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #ffffff;
+  }
+
+  .precios-disclaimer {
+    margin: 0;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
+    color: var(--color-warning-text);
+    font-size: 0.85rem;
+  }
+
+  .precios-error-opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .precios-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    font-size: 0.9rem;
+  }
+
+  .precios-pendiente {
+    text-align: center;
+  }
+
+  .precios-pendiente h2 {
+    margin: 0 0 0.35rem;
+  }
+
+  .precios-pendiente p {
+    margin: 0;
+  }
+
+  .precios-cambiar-seleccion {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-primary);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    margin-bottom: var(--space-sm);
+  }
+
+  .precios-cambiar-seleccion:hover {
+    text-decoration: underline;
+  }
+
+  .precios-bloque-titulo {
+    margin: 0 0 var(--space-sm);
+    font-size: 1rem;
+  }
+
+  .precios-planes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+    align-items: end;
+    margin-bottom: var(--space-md);
+  }
+
+  .precios-plan {
+    position: relative;
+    display: grid;
+    gap: 0.4rem;
+    justify-items: center;
+    text-align: center;
+    padding: var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .precios-plan-destacado {
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-floating);
+    transform: scale(1.04);
+    padding-top: calc(var(--space-sm) + 0.75rem);
+  }
+
+  .precios-plan-badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.9rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  .precios-plan-icono {
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  .precios-plan h3 {
+    margin: 0;
+  }
+
+  .precios-plan-duracion {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .precios-plan-precio {
+    margin: 0.25rem 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-text);
+  }
+
+  .precios-plan-destacado .precios-plan-precio {
+    font-size: 1.65rem;
+    color: var(--color-primary-dark);
+  }
+
+  .precios-plan-precio-original {
+    margin: 0.25rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+    text-decoration: line-through;
+  }
+
+  .precios-plan-badge-descuento {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    vertical-align: middle;
+  }
+
+  .precios-plan-countdown {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #dc2626;
+  }
+
+  .precios-plan-cta {
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .precios-metodos {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .precios-metodos h2 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .precios-metodos-nota {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-subtle);
+  }
+
+  .precios-metodos-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .precios-metodo-chip {
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  .precios-cta-general-box {
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (max-width: 700px) {
+    .precios-planes {
+      grid-template-columns: 1fr;
+    }
+
+    .precios-plan-destacado {
+      transform: none;
+      order: -1;
+    }
+
+    .precios-cta-general {
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+    }
+  }
+</style>

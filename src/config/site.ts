@@ -149,6 +149,16 @@ export const PAGE_SLUGS = {
     ru: "proverka-garantii",
     ko: "bojeung-hwagin",
   },
+  precios: {
+    es: "precios",
+    en: "pricing",
+    pt: "precos",
+    fr: "tarifs",
+    it: "prezzi",
+    de: "preise",
+    ru: "tseny",
+    ko: "gagyeog",
+  },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type StaticPageKey = keyof typeof PAGE_SLUGS;

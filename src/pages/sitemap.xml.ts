@@ -14,6 +14,7 @@ const STATIC_PAGE_KEYS: StaticPageKey[] = [
   "contacto",
   "terminosCondiciones",
   "consultaGarantia",
+  "precios",
 ];
 const MODEL_PATHS = modelos.map((modelo) => `/reset/${modelo.marcaSlug}/${modelo.modeloSlug}/`);
 // Los listados de Prueba Social (a diferencia de ruleta/404) sí son indexables:

@@ -105,20 +105,27 @@ export interface WhatsAppMessageParams {
   marca?: string;
   modelo?: string;
   error?: string;
+  /** Línea libre para casos sin marca/modelo (ej. "Plan Elite (12 meses) ·
+   *  Colombia · 72.000 COP" en la página de Precios). Solo se usa cuando no
+   *  hay marca+modelo, para no pisar los saludos ya existentes. */
+  nota?: string;
   urlOrigen: string;
 }
 
-export function buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen }: WhatsAppMessageParams): string {
+export function buildWhatsAppMessage({ locale, marca, modelo, error, nota, urlOrigen }: WhatsAppMessageParams): string {
   const template: string =
     marca && modelo
       ? error
         ? t(locale, "whatsapp.greetingWithError")
         : t(locale, "whatsapp.greetingWithoutError")
-      : t(locale, "whatsapp.greetingGeneric");
+      : nota
+        ? t(locale, "whatsapp.greetingConPlan")
+        : t(locale, "whatsapp.greetingGeneric");
   return template
     .replaceAll("{marca}", marca ?? "")
     .replaceAll("{modelo}", modelo ?? "")
     .replaceAll("{error}", error ?? "")
+    .replaceAll("{nota}", nota ?? "")
     .replaceAll("{url}", urlOrigen);
 }
 
