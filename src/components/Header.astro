@@ -29,6 +29,7 @@ const diagnosticoGratisPath = "/prueba-social/diagnostico-gratis/";
 const testimoniosPath = "/prueba-social/testimonios-trustpilot/";
 const resetEvidenciaPath = "/prueba-social/reset-evidencia/";
 const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
+const preciosPath = staticPagePathSinPrefijo("precios");
 const consultaGarantiaPath = staticPagePathSinPrefijo("consultaGarantia");
 const contactoPath = staticPagePathSinPrefijo("contacto");
 
@@ -161,6 +162,21 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             </li>
           </ul>
         </div>
+        <a
+          href={buildStaticPagePath(locale, "precios")}
+          class:list={{ "is-active": path === preciosPath }}
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+            <path
+              d="M4 12 12 4h8v8l-8 8-8-8Z"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+            <circle cx="14.5" cy="9.5" r="1.4" fill="currentColor" />
+          </svg>
+          <span>{t(locale, "nav.precios")}</span>
+        </a>
         {
           // Oculto a pedido: enlace "Preguntas Frecuentes" del menu. Se deja
           // comentado (no eliminado) para poder reactivarlo facilmente.
