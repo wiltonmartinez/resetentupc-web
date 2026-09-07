@@ -409,9 +409,13 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       metodosEl!.innerHTML = "";
       // Ver el mismo comentario en PreciosPage.astro: cada logo va en su
       // propia tarjeta independiente, y un logo compartido ("Bre-B" entre
-      // "Nequi / Bre-B" y "Daviplata / Bre-B") no se repite en el mismo país.
+      // "Nequi / Bre-B" y "Daviplata / Bre-B", o el logo de Banco Agrícola
+      // entre sus 2 variantes de cuenta) no se repite en el mismo país. Si
+      // el método SÍ tiene logo pero ya se mostró, no se agrega nada — el
+      // texto plano es solo el respaldo para métodos sin logo disponible.
       const logosYaMostrados = new Set<string>();
       pais.metodosPago.forEach((metodo) => {
+        const tieneLogos = (metodo.logos || []).length > 0;
         const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
         if (logosNuevos.length > 0) {
           logosNuevos.forEach((src) => {
@@ -426,7 +430,7 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
             li.appendChild(img);
             metodosEl!.appendChild(li);
           });
-        } else {
+        } else if (!tieneLogos) {
           const li = document.createElement("li");
           li.className = "precios-metodo-chip";
           li.textContent = metodo.nombre;

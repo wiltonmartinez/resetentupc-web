@@ -726,10 +726,15 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       metodosEl!.innerHTML = "";
       // Cada logo va en su propia tarjeta independiente (nunca 2 logos
       // adentro de la misma tarjeta) — y un mismo logo compartido entre 2
-      // medios de pago distintos (ej. "Bre-B" en "Nequi / Bre-B" y
-      // "Daviplata / Bre-B") solo se muestra una vez por país.
+      // medios de pago distintos (ej. "Bre-B" en "Nequi / Bre-B", o
+      // "Banco Agrícola" en sus variantes "Cta. corriente"/"Cta. ahorro")
+      // solo se muestra una vez por país. Si el método SÍ tiene logo pero
+      // ya se mostró (duplicado), no se agrega nada — mostrar su nombre
+      // como texto sería redundante con el logo ya visible. El texto solo
+      // es el fallback para métodos que nunca tuvieron logo disponible.
       const logosYaMostrados = new Set<string>();
       pais.metodosPago.forEach((metodo) => {
+        const tieneLogos = (metodo.logos || []).length > 0;
         const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
         if (logosNuevos.length > 0) {
           logosNuevos.forEach((src) => {
@@ -744,7 +749,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
             li.appendChild(img);
             metodosEl!.appendChild(li);
           });
-        } else {
+        } else if (!tieneLogos) {
           const li = document.createElement("li");
           li.className = "precios-metodo-chip";
           li.textContent = metodo.nombre;
