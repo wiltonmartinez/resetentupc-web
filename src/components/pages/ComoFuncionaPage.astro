@@ -1104,6 +1104,75 @@ const erroresTab = [
       actualizarWhatsAppCta();
     };
 
+    // Conecta este selector con el widget de precios embebido del Paso 4
+    // (PreciosCascadaWidget.astro): elegir marca/error/modelo aquí arriba
+    // también completa esa calculadora, sin obligar a repetir la selección
+    // dos veces en la misma página. Se maneja por eventos DOM (click en el
+    // botón de marca, cambio en los <select>, input en el texto de error) —
+    // el mismo tipo de interacción que dispararía el usuario a mano — porque
+    // el estado interno del widget vive en su propio <script>, sin acceso
+    // directo desde aquí.
+    const widgetPrecios = document.querySelector<HTMLElement>("[data-precios-cascada-widget]");
+    const sincronizarWidgetPrecios = () => {
+      if (!widgetPrecios || !marcaActivaId) return;
+
+      const marcaBtn = widgetPrecios.querySelector<HTMLButtonElement>(`[data-marca-boton][data-marca-slug="${marcaActivaId}"]`);
+      if (marcaBtn && !marcaBtn.classList.contains("precios-marca-boton-activo")) marcaBtn.click();
+
+      if (modeloActivo) {
+        // Familia (solo Epson): mismo criterio que el catálogo real —
+        // prefijo alfabético del nombre del modelo (ej. "L3210" -> "l").
+        const familiaSelect = widgetPrecios.querySelector<HTMLSelectElement>("[data-familia-select]");
+        if (familiaSelect && !familiaSelect.closest("[hidden]")) {
+          const familiaSlug = (modeloActivo.match(/^[A-Za-z]+/)?.[0] ?? "").toLowerCase();
+          const tieneFamilia = Array.from(familiaSelect.options).some((o) => o.value === familiaSlug);
+          if (tieneFamilia && familiaSelect.value !== familiaSlug) {
+            familiaSelect.value = familiaSlug;
+            familiaSelect.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+
+        const modeloSelect = widgetPrecios.querySelector<HTMLSelectElement>("[data-modelo-select]");
+        if (modeloSelect) {
+          const opcion = Array.from(modeloSelect.options).find(
+            (o) => o.textContent?.trim().toLowerCase() === modeloActivo.trim().toLowerCase()
+          );
+          // Si el modelo escrito/elegido arriba no existe en el catálogo real
+          // de precios (el de arriba admite texto libre), no se fuerza nada:
+          // el widget se queda en su propio placeholder de modelo y el
+          // visitante lo completa ahí — el precio no depende del modelo
+          // exacto, solo de la marca, así que esto no bloquea la cotización.
+          if (opcion && modeloSelect.value !== opcion.value) {
+            modeloSelect.value = opcion.value;
+            modeloSelect.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+      }
+
+      if (errorActivo) {
+        // Si el error elegido arriba tiene una opción equivalente en el
+        // catálogo de precios (mismo texto, coincidencia por substring en
+        // cualquier sentido — cubre "E-11" vs "Almohadillas / E-11 / Tampón"),
+        // se selecciona esa. Si no existe ahí (ej. Canon P07/E-08, que no
+        // tienen tarifa propia distinta a 5B00/1700), cae al campo "Otro / no
+        // lo veo en la lista" del widget con el mismo texto.
+        const radios = widgetPrecios.querySelectorAll<HTMLInputElement>('[data-error-opciones] input[type="radio"]');
+        const radioMatch = Array.from(radios).find((r) => {
+          const texto = r.closest("label")?.querySelector("span")?.textContent?.trim().toLowerCase() ?? "";
+          return texto.includes(errorActivo.toLowerCase()) || errorActivo.toLowerCase().includes(texto);
+        });
+        if (radioMatch) {
+          if (!radioMatch.checked) radioMatch.click();
+        } else {
+          const errorOtro = widgetPrecios.querySelector<HTMLInputElement>("[data-error-otro]");
+          if (errorOtro && errorOtro.value !== errorActivo) {
+            errorOtro.value = errorActivo;
+            errorOtro.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }
+      }
+    };
+
     marcaBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         marcaBtns.forEach((b) => b.classList.toggle("selector-btn-activo", b === btn));
@@ -1172,11 +1241,13 @@ const erroresTab = [
           if (!mostrarListaEpsonSc) listaEpsonSc.value = "";
         }
         if (mostrarAlgunaLista) actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
+        sincronizarWidgetPrecios();
       });
     });
 
     modeloInput?.addEventListener("input", () => {
       actualizarModelo(modeloInput.value.trim() || modeloInput.dataset.modeloEjemplo || "");
+      sincronizarWidgetPrecios();
     });
 
     todasLasListas.forEach((lista) => {
@@ -1191,6 +1262,7 @@ const erroresTab = [
         }
         actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
         actualizarFotoEvidenciaPorModelo(marcaActivaId, esOtro ? "" : lista.value);
+        sincronizarWidgetPrecios();
       });
     });
   });
