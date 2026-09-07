@@ -7,15 +7,28 @@
  *
  * Se muestra como máximo 2 veces por sesión de navegador (sessionStorage),
  * en momentos espaciados, para que se sienta ocasional y no invasivo.
+ *
+ * El CTA NO es parte de una compra directa (es prueba social, no checkout):
+ * por eso navega a la página de plantilla del modelo (/reset/{marca}/{modelo}/)
+ * en vez de abrir WhatsApp, siempre que ese modelo exista de verdad en el
+ * catálogo local — Núcleo devuelve marca/modelo como texto libre, no un
+ * slug validado, así que el modelo elegido al azar podría no tener página
+ * propia todavía. Cuando no hay página, cae a WhatsApp como respaldo (mejor
+ * eso que un enlace roto). El listado de rutas válidas viaja embebido y
+ * liviano (~3.7 KB para las 252 páginas) porque este componente se monta
+ * en TODAS las páginas vía BaseLayout.
  */
-import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER, type Locale } from "../config/site";
+import { NUCLEO_API_BASE_URL, WHATSAPP_NUMBER, LOCALE_PATH_PREFIX, type Locale } from "../config/site";
 import { t } from "../i18n/utils";
+import modelosData from "../data/modelos-muestra.json";
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
+
+const rutasValidas = modelosData.map((m) => `${m.marcaSlug}/${m.modeloSlug}`);
 ---
 
 <div
@@ -24,10 +37,13 @@ const { locale } = Astro.props;
   hidden
   data-api-base={NUCLEO_API_BASE_URL}
   data-whatsapp-number={WHATSAPP_NUMBER}
+  data-locale-prefix={LOCALE_PATH_PREFIX[locale]}
+  data-rutas-validas={JSON.stringify(rutasValidas)}
   data-texto-alguien={t(locale, "purchaseNotification.alguienDe")}
   data-label-error={t(locale, "purchaseNotification.codigoError")}
   data-servicio={t(locale, "purchaseNotification.servicio")}
   data-cta-label={t(locale, "purchaseNotification.ctaLabel")}
+  data-cta-label-modelo={t(locale, "purchaseNotification.ctaLabelModelo")}
   data-whatsapp-saludo={t(locale, "purchaseNotification.whatsappSaludo")}
   data-cerrar-label={t(locale, "purchaseNotification.cerrarLabel")}
 ></div>
@@ -96,12 +112,32 @@ const { locale } = Astro.props;
   if (contenedor) {
     const apiBase = contenedor.dataset.apiBase || "";
     const numero = contenedor.dataset.whatsappNumber || "";
+    const prefijoLocale = contenedor.dataset.localePrefix || "";
     const textoAlguien = contenedor.dataset.textoAlguien || "";
     const labelError = contenedor.dataset.labelError || "";
     const servicio = contenedor.dataset.servicio || "";
     const ctaLabel = contenedor.dataset.ctaLabel || "";
+    const ctaLabelModelo = contenedor.dataset.ctaLabelModelo || "";
     const saludo = contenedor.dataset.whatsappSaludo || "";
     const cerrarLabel = contenedor.dataset.cerrarLabel || "";
+
+    let rutasValidas;
+    try {
+      rutasValidas = new Set(JSON.parse(contenedor.dataset.rutasValidas || "[]"));
+    } catch {
+      rutasValidas = new Set();
+    }
+
+    // El CTA no es una compra directa: navega a la página real del modelo
+    // en vez de abrir WhatsApp, si esa página existe. Núcleo entrega
+    // marca/modelo como texto libre (no un slug validado), así que hay que
+    // confirmar contra el catálogo local antes de armar el enlace.
+    function rutaModeloSiExiste(item) {
+      const marcaSlug = item.marca.toLowerCase().trim().replace(/\s+/g, "-");
+      const modeloSlug = item.modelo.toLowerCase().trim();
+      if (!rutasValidas.has(`${marcaSlug}/${modeloSlug}`)) return null;
+      return `${prefijoLocale}/reset/${marcaSlug}/${modeloSlug}/`;
+    }
 
     function vecesMostradas() {
       try {
@@ -161,10 +197,23 @@ const { locale } = Astro.props;
       registrarAparicion();
 
       const linea = lineaProducto(item);
-      const mensajeWhatsapp = `${saludo} ${linea}`;
-      const whatsappHref = `https://wa.me/${numero}?text=${encodeURIComponent(mensajeWhatsapp)}`;
       const bandera = banderaPara(item.pais);
       const intro = textoAlguien.replace("{pais}", `${bandera ? bandera + " " : ""}<strong>${item.pais}</strong>`);
+
+      const rutaModelo = rutaModeloSiExiste(item);
+      let href, claseCta, atributosEnlace, label;
+      if (rutaModelo) {
+        href = rutaModelo;
+        claseCta = "purchase-notification-cta purchase-notification-cta-modelo";
+        atributosEnlace = "";
+        label = ctaLabelModelo;
+      } else {
+        const mensajeWhatsapp = `${saludo} ${linea}`;
+        href = `https://wa.me/${numero}?text=${encodeURIComponent(mensajeWhatsapp)}`;
+        claseCta = "purchase-notification-cta purchase-notification-cta-whatsapp";
+        atributosEnlace = 'target="_blank" rel="noopener noreferrer nofollow"';
+        label = ctaLabel;
+      }
 
       contenedor.innerHTML = `
         <button type="button" class="purchase-notification-cerrar" aria-label="${cerrarLabel}" data-sound="select">×</button>
@@ -175,9 +224,9 @@ const { locale } = Astro.props;
         <div class="purchase-notification-cuerpo">
           <p class="purchase-notification-intro">${intro}</p>
           <p class="purchase-notification-producto">${linea}</p>
-          <a class="purchase-notification-cta" href="${whatsappHref}" target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
+          <a class="${claseCta}" href="${href}" ${atributosEnlace} data-sound="select">
             <span class="purchase-notification-cta-icono" aria-hidden="true"></span>
-            <span>${ctaLabel}</span>
+            <span>${label}</span>
           </a>
         </div>
         <div class="purchase-notification-progreso"><span class="purchase-notification-progreso-barra"></span></div>
@@ -331,12 +380,9 @@ const { locale } = Astro.props;
     margin-top: 0.15rem;
     padding: 0.7rem 0.75rem;
     border-radius: var(--radius-sm);
-    background: var(--color-whatsapp);
-    color: var(--color-whatsapp-ink);
     font-weight: 700;
     font-size: 0.88rem;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
     transition:
       background 0.15s ease,
       transform 0.15s ease,
@@ -344,18 +390,50 @@ const { locale } = Astro.props;
   }
 
   .purchase-notification-cta:hover {
-    background: var(--color-whatsapp-dark);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.45);
   }
 
   .purchase-notification-cta-icono {
     width: 1.1rem;
     height: 1.1rem;
     flex: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23062f1a'%3E%3Cpath d='M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z'/%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
+  }
+
+  /* CTA no es una compra directa: navega dentro del sitio a la página del
+     modelo — azul (color de navegación/información interna), no verde, para
+     no simular un llamado a chat que no es. */
+  .purchase-notification-cta-modelo {
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  }
+
+  .purchase-notification-cta-modelo:hover {
+    background: #1d4ed8;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+  }
+
+  .purchase-notification-cta-modelo .purchase-notification-cta-icono {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+  }
+
+  /* Respaldo cuando el modelo al azar todavía no tiene página propia — se
+     mantiene el estilo/ícono de WhatsApp original solo para este caso. */
+  .purchase-notification-cta-whatsapp {
+    background: var(--color-whatsapp);
+    color: var(--color-whatsapp-ink);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+  }
+
+  .purchase-notification-cta-whatsapp:hover {
+    background: var(--color-whatsapp-dark);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.45);
+  }
+
+  .purchase-notification-cta-whatsapp .purchase-notification-cta-icono {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23062f1a'%3E%3Cpath d='M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.2.2-.3.2-.5.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.7.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.5-.3Z'/%3E%3C/svg%3E");
   }
 
   .purchase-notification-cerrar {

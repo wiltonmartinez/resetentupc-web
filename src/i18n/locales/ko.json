@@ -713,6 +713,7 @@
     "codigoError": "오류 코드",
     "servicio": "USB 연결을 통한 100% 원격 지원 리셋",
     "ctaLabel": "USB 연결을 통한 100% 원격 지원 리셋이 필요합니다",
+    "ctaLabelModelo": "이 모델의 지원 리셋 보기",
     "whatsappSaludo": "안녕하세요, 웹사이트 알림을 보고 연락드립니다. 필요한 서비스는",
     "cerrarLabel": "알림 닫기"
   },

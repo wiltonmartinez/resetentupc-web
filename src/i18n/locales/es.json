@@ -769,6 +769,7 @@
     "codigoError": "Código Error",
     "servicio": "Reset Asistido 100% Remoto por conexión USB",
     "ctaLabel": "Necesito Reset Asistido 100% Remoto",
+    "ctaLabelModelo": "Ver Reset Asistido de este modelo",
     "whatsappSaludo": "Hola, vi la notificación de la web y necesito",
     "cerrarLabel": "Cerrar notificación"
   },
