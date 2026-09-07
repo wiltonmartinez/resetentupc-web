@@ -1,5 +1,5 @@
 ---
-import { SUPPORTED_LOCALES, LOCALE_LABELS, HREFLANG_BY_LOCALE, type Locale, type StaticPageKey } from "../config/site";
+import { LOCALE_LABELS, LOCALE_FLAGS, HREFLANG_BY_LOCALE, type Locale, type StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 
 interface Props {
@@ -11,6 +11,14 @@ interface Props {
 const { locale, path, pageKey } = Astro.props;
 const label = t(locale, "common.selectLanguage");
 
+// El selector ofrece activamente solo estos tres idiomas — fr/it/de/ru/ko
+// siguen existiendo, funcionando y rastreables (no devuelven 404, se
+// mantienen en el sitemap), simplemente ya no se promocionan en la
+// navegación. Si el visitante ya está en uno de esos idiomas (llegó por un
+// enlace viejo o un resultado de búsqueda), el botón sigue mostrando su
+// idioma actual — solo el menú desplegable se limita a estos tres.
+const LOCALES_VISIBLES: Locale[] = ["es", "en", "pt"];
+
 // Prueba Social y Ruleta ya tienen ruta propia por idioma (ver
 // [locale]/prueba-social.astro y [locale]/ruleta.astro) — solo queda "/404"
 // como caso especial: esa página nunca tuvo contenido real que traducir,
@@ -19,7 +27,7 @@ const label = t(locale, "common.selectLanguage");
 const SECCIONES_SOLO_ESPANOL = ["/404"];
 const esSeccionSoloEspanol = SECCIONES_SOLO_ESPANOL.some((prefijo) => path.startsWith(prefijo));
 
-function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
+function hrefParaLocale(l: Locale): string {
   if (pageKey) return buildStaticPagePath(l, pageKey);
   // El idioma actual se queda en la página donde ya está — el fallback a
   // portada es solo para los OTROS idiomas, que no tienen esta sección.
@@ -38,13 +46,14 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
         stroke-width="1.5"
       />
     </svg>
+    <span class="language-selector-bandera" aria-hidden="true">{LOCALE_FLAGS[locale]}</span>
     <span class="language-selector-actual">{HREFLANG_BY_LOCALE[locale].split("-")[0].toUpperCase()}</span>
     <svg class="language-selector-chevron" viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
       <path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
   </button>
   <ul class="language-selector-menu">
-    {SUPPORTED_LOCALES.map((l) => (
+    {LOCALES_VISIBLES.map((l) => (
       <li>
         <a
           href={hrefParaLocale(l)}
@@ -52,6 +61,7 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
           data-locale={l}
           class="language-selector-link"
         >
+          <span class="language-selector-bandera" aria-hidden="true">{LOCALE_FLAGS[l]}</span>
           {LOCALE_LABELS[l]}
         </a>
       </li>
@@ -98,6 +108,11 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
     letter-spacing: 0.02em;
   }
 
+  .language-selector-bandera {
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
   .language-selector-chevron {
     color: rgba(255, 255, 255, 0.6);
     transition: transform 0.15s ease;
@@ -131,7 +146,9 @@ function hrefParaLocale(l: (typeof SUPPORTED_LOCALES)[number]): string {
   }
 
   .language-selector-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     padding: 0.5rem 0.6rem;
     border-radius: var(--radius-sm);
     text-decoration: none;

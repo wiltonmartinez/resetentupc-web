@@ -82,6 +82,22 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   ko: "한국어",
 };
 
+// Banderas para el selector de idioma en la UI. es/en/pt son los tres
+// idiomas que se ofrecen activamente en el selector (ver LanguageSelector.astro,
+// LOCALES_VISIBLES) — el resto queda acá por si se necesita mostrar la bandera
+// del idioma actual aunque no esté en esa lista corta (ej. alguien llega
+// directo a una página en fr/it/de/ru/ko por un enlace viejo).
+export const LOCALE_FLAGS: Record<Locale, string> = {
+  es: "🇪🇸",
+  en: "🇺🇸",
+  pt: "🇧🇷",
+  fr: "🇫🇷",
+  it: "🇮🇹",
+  de: "🇩🇪",
+  ru: "🇷🇺",
+  ko: "🇰🇷",
+};
+
 export const PAGE_SLUGS = {
   comoFunciona: {
     es: "como-funciona",
