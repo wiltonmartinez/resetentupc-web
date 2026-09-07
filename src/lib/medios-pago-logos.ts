@@ -87,7 +87,10 @@ export async function resolverUrlsLogosMediosPago(): Promise<Record<string, stri
       resultado[nombre] = [];
       continue;
     }
-    const imagenes = await Promise.all(logos.map((logo) => getImage({ src: logo, width: 96 })));
+    // width: 240 (no 96) para que se vea nítido al tamaño más grande que
+    // ahora usa el CSS (.precios-metodo-logo, 5rem/80px de alto) incluso
+    // en pantallas de alta densidad.
+    const imagenes = await Promise.all(logos.map((logo) => getImage({ src: logo, width: 240 })));
     resultado[nombre] = imagenes.map((img) => img.src);
   }
   cacheUrls = resultado;

@@ -724,12 +724,20 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 
       metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
       metodosEl!.innerHTML = "";
+      // Un mismo logo (ej. "Bre-B") puede aparecer en más de un nombre de
+      // método ("Nequi / Bre-B" y "Daviplata / Bre-B" son 2 medios de pago
+      // reales distintos, pero comparten ese logo) — sin este control se
+      // veía repetido. Una vez mostrado, no se vuelve a mostrar en la
+      // siguiente tarjeta de ese mismo país.
+      const logosYaMostrados = new Set<string>();
       pais.metodosPago.forEach((metodo) => {
         const li = document.createElement("li");
         li.className = "precios-metodo-chip";
-        if (metodo.logos && metodo.logos.length > 0) {
+        const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
+        if (logosNuevos.length > 0) {
           li.classList.add("precios-metodo-chip-logo");
-          metodo.logos.forEach((src) => {
+          logosNuevos.forEach((src) => {
+            logosYaMostrados.add(src);
             const img = document.createElement("img");
             img.src = src;
             img.alt = metodo.nombre;
@@ -1206,16 +1214,19 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
   .precios-metodo-chip-logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.35rem 0.7rem;
+    gap: 0.6rem;
+    padding: 0.5rem 0.9rem;
   }
 
+  /* Más grande a propósito (pedido explícito: +100% a +300% sobre el
+     tamaño anterior de 2rem) — a esta escala se lee la marca del banco
+     sin entrecerrar los ojos. */
   .precios-metodo-logo {
-    height: 2rem;
+    height: 5rem;
     width: auto;
-    max-width: 4.5rem;
+    max-width: 9rem;
     object-fit: contain;
-    padding: 0.15rem;
+    padding: 0.1rem;
     display: block;
   }
 
