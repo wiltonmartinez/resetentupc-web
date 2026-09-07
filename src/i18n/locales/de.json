@@ -773,6 +773,7 @@
     "modeloWidgetTitulo": "Wähle deinen Plan",
     "metodosPagoTitulo": "Verfügbare Zahlungsmethoden in {pais}",
     "metodosPagoNota": "Wir zeigen nur die akzeptierten Banken und Institutionen. Die genauen Kontodaten teilen wir dir nach Bestätigung deines Plans per WhatsApp mit.",
+    "metodosInternacionalesSubtitulo": "Internationale Zahlungsmethoden",
     "bloqueLocalTitulo": "Preis in deiner Landeswährung · Vertreter in {pais}",
     "bloqueInternacionalTitulo": "Preis in US-Dollar · Internationale Zahlung",
     "descuentoBadge": "-{pct}%",

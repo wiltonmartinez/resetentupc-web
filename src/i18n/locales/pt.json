@@ -809,6 +809,7 @@
     "modeloWidgetTitulo": "Escolha seu plano",
     "metodosPagoTitulo": "Meios de pagamento disponíveis em {pais}",
     "metodosPagoNota": "Mostramos apenas os bancos e instituições aceitos. Os dados exatos da conta são enviados pelo WhatsApp ao confirmar seu plano.",
+    "metodosInternacionalesSubtitulo": "Meios internacionais",
     "bloqueLocalTitulo": "Preço na sua moeda local · Agente em {pais}",
     "bloqueInternacionalTitulo": "Preço em Dólares · Meio Internacional",
     "descuentoBadge": "-{pct}%",

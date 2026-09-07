@@ -773,6 +773,7 @@
     "modeloWidgetTitulo": "Выберите план",
     "metodosPagoTitulo": "Способы оплаты, доступные в {pais}",
     "metodosPagoNota": "Мы показываем только принимаемые банки и организации. Точные реквизиты счёта пришлём в WhatsApp после подтверждения плана.",
+    "metodosInternacionalesSubtitulo": "Международные способы оплаты",
     "bloqueLocalTitulo": "Цена в вашей местной валюте · Представитель в {pais}",
     "bloqueInternacionalTitulo": "Цена в долларах · Международный способ оплаты",
     "descuentoBadge": "-{pct}%",

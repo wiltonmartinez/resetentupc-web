@@ -809,6 +809,7 @@
     "modeloWidgetTitulo": "Choose your plan",
     "metodosPagoTitulo": "Payment methods available in {pais}",
     "metodosPagoNota": "We only show the accepted banks and institutions. We share the exact account details over WhatsApp once you confirm your plan.",
+    "metodosInternacionalesSubtitulo": "International methods",
     "bloqueLocalTitulo": "Price in your local currency · Local agent in {pais}",
     "bloqueInternacionalTitulo": "Price in US Dollars · International Payment",
     "descuentoBadge": "-{pct}%",

@@ -1,98 +1,61 @@
-import { getImage } from "astro:assets";
-import bac from "../assets/mediosPago/bac.png";
-import banamex from "../assets/mediosPago/banamex.png";
-import bancoAgricola from "../assets/mediosPago/bancoAgricola.png";
-import bancoEstado from "../assets/mediosPago/bancoEstado.png";
-import bancoGeneral from "../assets/mediosPago/bancoGeneral.png";
-import bancoOccidente from "../assets/mediosPago/bancoOccidente.png";
-import bancoPichincha from "../assets/mediosPago/bancoPichincha.png";
-import bancolombia from "../assets/mediosPago/bancolombia.png";
-import banistmo from "../assets/mediosPago/banistmo.png";
-import banpais from "../assets/mediosPago/banpais.png";
-import banpro from "../assets/mediosPago/banpro.png";
-import banrrural from "../assets/mediosPago/banrrural.png";
-import bcp from "../assets/mediosPago/bcp.png";
-import binance from "../assets/mediosPago/binance.png";
-import breB from "../assets/mediosPago/bre-b.png";
-import daviplata from "../assets/mediosPago/daviplata.png";
-import mercadoPago from "../assets/mediosPago/mercadoPago.png";
-import nequi from "../assets/mediosPago/nequi.png";
-import paypal from "../assets/mediosPago/paypal.png";
-import pix from "../assets/mediosPago/pix.png";
-import plin from "../assets/mediosPago/plim.png";
-import santander from "../assets/mediosPago/santander.png";
-import tarjetaDebitoCredito from "../assets/mediosPago/tarjetaDebitoCredito.png";
-import tuFinanciera from "../assets/mediosPago/tuFinanciera.png";
-import westernUnion from "../assets/mediosPago/westernUnion.png";
-import yape from "../assets/mediosPago/yape.png";
-
 /**
  * Mapa EXACTO (no por palabra clave) del texto de `metodo.nombre` en
- * pagos.json -> logo(s) reales en src/assets/mediosPago/. Es un mapa
- * cerrado a propósito: el set de nombres en pagos.json es conocido y fijo
- * (29 valores únicos), así que emparejar por el string exacto es más
- * seguro que un match difuso por substring (nada de falsos positivos).
+ * pagos.json -> logo(s) reales en public/mediosPago/. Es un mapa cerrado a
+ * propósito: el set de nombres en pagos.json es conocido y fijo, así que
+ * emparejar por el string exacto es más seguro que un match difuso por
+ * substring (nada de falsos positivos).
  *
- * Nombres compuestos ("Nequi / Bre-B") listan los 2 logos reales. Nombres
- * sin logo disponible (ej. "Caja de Ahorros", "BBVA (Bancomer)", "Spin by
- * OXXO" — no hay archivo para esos en la carpeta) mapean a array vacío:
- * el llamador debe caer al texto plano en vez de mostrar un chip vacío o
- * inventar un logo que no existe.
+ * Nombres compuestos ("Nequi / Bre-B") listan los 2 logos reales.
+ *
+ * Rutas ESTÁTICAS (public/), no `astro:assets`/`getImage()` a propósito:
+ * Cloudflare Workers no soporta Sharp en runtime ("Cloudflare does not
+ * support sharp at runtime"), y /precios/ es una página SSR (necesita leer
+ * cf-ipcountry en cada request) — no puede beneficiarse del
+ * imageService:"compile" que solo optimiza páginas prerenderizadas en
+ * build. Llamar a getImage() en el runtime de un Worker producía logos
+ * rotos de forma intermitente (los primeros del mapa "parecían" funcionar,
+ * los últimos fallaban — ver commit que introdujo este archivo vs. el que
+ * lo reemplazó). Estos PNG ya vienen del proveedor con tamaño razonable
+ * (~250x250), así que servirlos tal cual — sin passthrough de Sharp — no
+ * pierde nada visible a los ~5rem que se muestran en pantalla.
  */
-const MAPA_LOGOS: Record<string, ImageMetadata[]> = {
-  "Bancolombia (Ahorros)": [bancolombia],
-  "Nequi / Bre-B": [nequi, breB],
-  "Daviplata / Bre-B": [daviplata, breB],
-  BancoEstado: [bancoEstado],
-  PIX: [pix],
-  "Banco Pichincha": [bancoPichincha],
-  "Banco Agrícola (Cta. corriente)": [bancoAgricola],
-  "Banco Agrícola (Cta. ahorro)": [bancoAgricola],
-  "Banco General": [bancoGeneral],
-  "Caja de Ahorros": [],
-  Banistmo: [banistmo],
-  "YAPPY / NEQUI": [nequi],
-  BANRURAL: [banrrural],
-  "Banco Occidente": [bancoOccidente],
-  "Banco Banpaís": [banpais],
-  "Banco BAC": [bac],
-  Santander: [santander],
-  "BBVA (Bancomer)": [],
-  Banamex: [banamex],
-  "Spin by OXXO": [],
-  "Mercado Pago": [mercadoPago],
-  BANPRO: [banpro],
-  "Yape / Plin": [yape, plin],
-  "Banco BCP": [bcp],
-  "Tu Financiera": [tuFinanciera],
-  PayPal: [paypal],
-  "Binance Pay": [binance],
-  "Western Union": [westernUnion],
-  "Whop (Tarjeta débito/crédito)": [tarjetaDebitoCredito],
+const MAPA_LOGOS: Record<string, string[]> = {
+  "Bancolombia (Ahorros)": ["/mediosPago/bancolombia.png"],
+  "Nequi / Bre-B": ["/mediosPago/nequi.png", "/mediosPago/bre-b.png"],
+  "Daviplata / Bre-B": ["/mediosPago/daviplata.png", "/mediosPago/bre-b.png"],
+  BancoEstado: ["/mediosPago/bancoEstado.png"],
+  PIX: ["/mediosPago/pix.png"],
+  "Banco Pichincha": ["/mediosPago/bancoPichincha.png"],
+  "Banco Agrícola (Cta. corriente)": ["/mediosPago/bancoAgricola.png"],
+  "Banco Agrícola (Cta. ahorro)": ["/mediosPago/bancoAgricola.png"],
+  "Banco General": ["/mediosPago/bancoGeneral.png"],
+  "Caja de Ahorros": ["/mediosPago/cajadearhorros.png"],
+  Banistmo: ["/mediosPago/banistmo.png"],
+  "YAPPY / NEQUI": ["/mediosPago/nequi.png"],
+  BANRURAL: ["/mediosPago/banrrural.png"],
+  "Banco Occidente": ["/mediosPago/bancoOccidente.png"],
+  "Banco Banpaís": ["/mediosPago/banpais.png"],
+  "Banco BAC": ["/mediosPago/bac.png"],
+  Santander: ["/mediosPago/santander.png"],
+  "BBVA (Bancomer)": ["/mediosPago/bancomer.png"],
+  Banamex: ["/mediosPago/banamex.png"],
+  "Spin by OXXO": ["/mediosPago/oxxo.png"],
+  "Mercado Pago": ["/mediosPago/mercadoPago.png"],
+  BANPRO: ["/mediosPago/banpro.png"],
+  "Yape / Plin": ["/mediosPago/yape.png", "/mediosPago/plim.png"],
+  "Banco BCP": ["/mediosPago/bcp.png"],
+  "Tu Financiera": ["/mediosPago/tuFinanciera.png"],
+  PayPal: ["/mediosPago/paypal.png"],
+  "Binance Pay": ["/mediosPago/binance.png"],
+  "Western Union": ["/mediosPago/westernUnion.png"],
+  "Whop (Tarjeta débito/crédito)": ["/mediosPago/tarjetaDebitoCredito.png"],
 };
 
-let cacheUrls: Record<string, string[]> | null = null;
-
 /**
- * Resuelve el mapa de arriba a URLs finales optimizadas (vía getImage, el
- * mismo mecanismo que ya usa ContactHub.astro para la imagen de
- * notificación) — se cachea en memoria del proceso porque el resultado es
- * el mismo en cada request/build, evitando repetir el trabajo de Sharp.
+ * Resuelve el mapa de arriba. Firma async por compatibilidad con el único
+ * llamador (paisesPrecioPublico en lib/precios.ts) — no hace ningún trabajo
+ * asíncrono real, solo devuelve las rutas estáticas ya conocidas en build.
  */
 export async function resolverUrlsLogosMediosPago(): Promise<Record<string, string[]>> {
-  if (cacheUrls) return cacheUrls;
-  const resultado: Record<string, string[]> = {};
-  for (const [nombre, logos] of Object.entries(MAPA_LOGOS)) {
-    if (logos.length === 0) {
-      resultado[nombre] = [];
-      continue;
-    }
-    // width: 240 (no 96) para que se vea nítido al tamaño más grande que
-    // ahora usa el CSS (.precios-metodo-logo, 5rem/80px de alto) incluso
-    // en pantallas de alta densidad.
-    const imagenes = await Promise.all(logos.map((logo) => getImage({ src: logo, width: 240 })));
-    resultado[nombre] = imagenes.map((img) => img.src);
-  }
-  cacheUrls = resultado;
-  return resultado;
+  return MAPA_LOGOS;
 }

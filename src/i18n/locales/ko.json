@@ -782,6 +782,7 @@
     "modeloWidgetTitulo": "플랜 선택",
     "metodosPagoTitulo": "{pais}에서 이용 가능한 결제 수단",
     "metodosPagoNota": "허용된 은행과 기관만 표시됩니다. 정확한 계좌 정보는 플랜 확정 후 WhatsApp으로 안내해 드립니다.",
+    "metodosInternacionalesSubtitulo": "국제 결제 수단",
     "bloqueLocalTitulo": "현지 통화 가격 · {pais} 현지 담당자",
     "bloqueInternacionalTitulo": "달러 가격 · 국제 결제 수단",
     "descuentoBadge": "-{pct}%",

@@ -42,6 +42,17 @@ const SLUG_OTRO = "otro";
  *  pide específicamente PayPal, Binance y Western Union. */
 const NOMBRES_INTERNACIONALES = ["paypal", "binance", "western union"];
 
+/** Nombres (substring, insensible a mayúsculas) que se consideran medios de
+ *  pago "internacionales" para AGRUPAR visualmente en el front (ver render
+ *  en PreciosPage.astro / PreciosModeloWidget.astro) — distinto de
+ *  NOMBRES_INTERNACIONALES de arriba, que solo controla qué se fusiona
+ *  automáticamente al set de cada país. Whop ya viene incluido directo en
+ *  el array propio de cada país en pagos.json (por pedido explícito de
+ *  ofrecerlo en todos los países, incluida Colombia, que no recibe la
+ *  fusión automática de arriba), pero sigue siendo un medio internacional
+ *  para efectos de agrupación. */
+const NOMBRES_INTERNACIONALES_AGRUPACION = ["paypal", "binance", "western union", "whop"];
+
 /** Excepciones puntuales pedidas por el negocio: un medio internacional que
  *  NO debe ofrecerse en un país concreto aunque el resto de países sí lo
  *  vean (ej. Western Union no se ofrece en México). Coincidencia por
@@ -70,6 +81,9 @@ export interface MetodoPagoPublico {
    *  cuando no hay logo real disponible para ese medio: el front debe caer
    *  al nombre en texto, nunca inventar un logo. */
   logos: string[];
+  /** true para PayPal/Binance Pay/Western Union/Whop — el front los agrupa
+   *  aparte de los medios bancarios locales del país. */
+  internacional: boolean;
 }
 
 export interface PreciosPorPlan {
@@ -210,7 +224,11 @@ export async function obtenerTasaUsdEur(): Promise<number> {
  */
 export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
   const urlsLogos = await resolverUrlsLogosMediosPago();
-  const conLogo = (nombre: string): MetodoPagoPublico => ({ nombre, logos: urlsLogos[nombre] ?? [] });
+  const conLogo = (nombre: string): MetodoPagoPublico => ({
+    nombre,
+    logos: urlsLogos[nombre] ?? [],
+    internacional: NOMBRES_INTERNACIONALES_AGRUPACION.some((n) => nombre.toLowerCase().includes(n)),
+  });
 
   const internacionales = (pagosData.paises.find((p) => p.slug === SLUG_OTRO)?.metodosPago ?? []).filter((m) =>
     NOMBRES_INTERNACIONALES.some((n) => m.nombre.toLowerCase().includes(n))

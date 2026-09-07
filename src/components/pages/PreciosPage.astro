@@ -87,6 +87,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
   data-precio-no-disponible={t(locale, "preciosPage.precioNoDisponible")}
   data-cta-plan={t(locale, "preciosPage.ctaPlan")}
   data-metodos-titulo-template={t(locale, "preciosPage.metodosPagoTitulo")}
+  data-metodos-internacionales-subtitulo={t(locale, "preciosPage.metodosInternacionalesSubtitulo")}
   data-mas-popular={t(locale, "preciosPage.masPopular")}
   data-familia-placeholder={t(locale, "preciosPage.familiaPlaceholder")}
   data-modelo-placeholder={t(locale, "preciosPage.modeloPlaceholder")}
@@ -198,7 +199,11 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 
     <div class="precios-box precios-metodos">
       <h2 data-metodos-titulo></h2>
-      <ul class="precios-metodos-lista" data-metodos-pago></ul>
+      <ul class="precios-metodos-lista" data-metodos-pago-locales></ul>
+      <div data-metodos-internacionales-bloque hidden>
+        <h3 class="precios-metodos-subtitulo" data-metodos-internacionales-titulo></h3>
+        <ul class="precios-metodos-lista" data-metodos-pago-internacionales></ul>
+      </div>
       <p class="precios-metodos-nota">🔒 {t(locale, "preciosPage.metodosPagoNota")}</p>
     </div>
   </div>
@@ -256,7 +261,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     slug: string;
     nombre: string;
     bandera: string;
-    metodosPago: { nombre: string; logos: string[] }[];
+    metodosPago: { nombre: string; logos: string[]; internacional: boolean }[];
     monedas: OpcionMoneda[];
     presentacionMoneda: "unica" | "toggle" | "apilado";
   }
@@ -287,10 +292,13 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     const bloqueInternacionalEl = root.querySelector<HTMLElement>("[data-bloque-internacional]");
     const bloqueInternacionalTituloEl = root.querySelector<HTMLElement>("[data-bloque-internacional-titulo]");
     const tarjetasInternacionalEl = root.querySelector<HTMLElement>("[data-planes-internacional]");
-    const metodosEl = root.querySelector<HTMLElement>("[data-metodos-pago]");
+    const metodosLocalesEl = root.querySelector<HTMLElement>("[data-metodos-pago-locales]");
+    const metodosInternacionalesBloqueEl = root.querySelector<HTMLElement>("[data-metodos-internacionales-bloque]");
+    const metodosInternacionalesEl = root.querySelector<HTMLElement>("[data-metodos-pago-internacionales]");
+    const metodosInternacionalesTituloEl = root.querySelector<HTMLElement>("[data-metodos-internacionales-titulo]");
     const metodosTituloEl = root.querySelector<HTMLElement>("[data-metodos-titulo]");
     const ctaGeneralEl = root.querySelector<HTMLAnchorElement>("[data-cta-general]");
-    if (!select || !familiaSelect || !modeloSelect || !errorOpcionesEl || !errorOtroInput || !pendienteEl || !contenidoEl || !tarjetasLocalEl || !metodosEl || !metodosTituloEl) return;
+    if (!select || !familiaSelect || !modeloSelect || !errorOpcionesEl || !errorOtroInput || !pendienteEl || !contenidoEl || !tarjetasLocalEl || !metodosLocalesEl || !metodosTituloEl) return;
 
     const numero = root.dataset.whatsappNumero || "";
     const urlOrigen = root.dataset.urlOrigen || "";
@@ -300,6 +308,8 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     const ctaPlanLabel = root.dataset.ctaPlan || "";
     const masPopularLabel = root.dataset.masPopular || "";
     const metodosTituloTemplate = root.dataset.metodosTituloTemplate || "";
+    const metodosInternacionalesSubtitulo = root.dataset.metodosInternacionalesSubtitulo || "";
+    if (metodosInternacionalesTituloEl) metodosInternacionalesTituloEl.textContent = metodosInternacionalesSubtitulo;
     const familiaPlaceholder = root.dataset.familiaPlaceholder || "";
     const modeloPlaceholder = root.dataset.modeloPlaceholder || "";
     const disclaimerEpson = root.dataset.disclaimerEpson || "";
@@ -314,31 +324,44 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     let primerRenderMoneda = true;
 
     // ---------- Descuento del bloque internacional (países "apilado") ----------
-    // Se genera UNA sola vez por visitante (persistido en localStorage, nunca
-    // se recalcula en cada carga) — recargar la página no reinicia el
+    // Se genera UNA sola vez por visitante (persistido en cookie, nunca se
+    // recalcula en cada carga) — recargar la página no reinicia el
     // cronómetro ni sortea un % nuevo, así el "por tiempo limitado" es real,
-    // no una urgencia fabricada. localStorage en vez de cookies: mismo
-    // mecanismo que ya usa LanguageSelector.astro para recordar preferencias
-    // del visitante, sin viajar al servidor.
-    const DESCUENTO_LS_KEY = "resetenlinea_precios_descuento_intl_v1";
+    // no una urgencia fabricada. Cookie (no localStorage) para que la
+    // ventana de 2h sobreviva igual entre pestañas/navegación normal; su
+    // max-age coincide con la duración del propio descuento, así que
+    // cuando el descuento expira la cookie también desaparece sola.
+    const DESCUENTO_COOKIE = "resetenlinea_precios_descuento_intl_v1";
+    const DESCUENTO_DURACION_MS = 2 * 60 * 60 * 1000; // 2 horas
+
+    function leerCookie(nombre: string): string | null {
+      const match = document.cookie.match(new RegExp(`(?:^|; )${nombre}=([^;]*)`));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+    function escribirCookie(nombre: string, valor: string, maxAgeMs: number) {
+      const maxAgeSeg = Math.max(0, Math.floor(maxAgeMs / 1000));
+      document.cookie = `${nombre}=${encodeURIComponent(valor)}; max-age=${maxAgeSeg}; path=/; samesite=lax`;
+    }
+
     function cargarEstadoDescuento(): { pct: number; expiraEn: number; visitas: number } {
       let datos: { pct: number; expiraEn: number; visitas: number } | null = null;
       try {
-        datos = JSON.parse(localStorage.getItem(DESCUENTO_LS_KEY) || "null");
+        datos = JSON.parse(leerCookie(DESCUENTO_COOKIE) || "null");
       } catch {
         datos = null;
       }
       if (!datos || typeof datos.expiraEn !== "number" || typeof datos.pct !== "number") {
         const opciones = [5, 10, 15, 25];
-        datos = { pct: opciones[Math.floor(Math.random() * opciones.length)], expiraEn: Date.now() + 2 * 60 * 60 * 1000, visitas: 1 };
+        datos = { pct: opciones[Math.floor(Math.random() * opciones.length)], expiraEn: Date.now() + DESCUENTO_DURACION_MS, visitas: 1 };
       } else {
         datos.visitas = (datos.visitas || 1) + 1;
       }
       try {
-        localStorage.setItem(DESCUENTO_LS_KEY, JSON.stringify(datos));
+        escribirCookie(DESCUENTO_COOKIE, JSON.stringify(datos), datos.expiraEn - Date.now());
       } catch {
-        /* localStorage no disponible (navegación privada, etc.): el descuento
-           simplemente no persiste entre cargas — no debe romper la página. */
+        /* cookies no disponibles (navegación privada estricta, etc.): el
+           descuento simplemente no persiste entre cargas — no debe romper
+           la página. */
       }
       return datos;
     }
@@ -723,7 +746,8 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       }
 
       metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
-      metodosEl!.innerHTML = "";
+      metodosLocalesEl!.innerHTML = "";
+      if (metodosInternacionalesEl) metodosInternacionalesEl.innerHTML = "";
       // Cada logo va en su propia tarjeta independiente (nunca 2 logos
       // adentro de la misma tarjeta) — y un mismo logo compartido entre 2
       // medios de pago distintos (ej. "Bre-B" en "Nequi / Bre-B", o
@@ -732,8 +756,14 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       // ya se mostró (duplicado), no se agrega nada — mostrar su nombre
       // como texto sería redundante con el logo ya visible. El texto solo
       // es el fallback para métodos que nunca tuvieron logo disponible.
+      // Los medios internacionales (PayPal/Binance/Western Union/Whop) van
+      // en su propia lista, separada de los medios bancarios locales.
       const logosYaMostrados = new Set<string>();
+      let huboInternacionales = false;
       pais.metodosPago.forEach((metodo) => {
+        const contenedor = metodo.internacional ? metodosInternacionalesEl : metodosLocalesEl;
+        if (!contenedor) return;
+        if (metodo.internacional) huboInternacionales = true;
         const tieneLogos = (metodo.logos || []).length > 0;
         const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
         if (logosNuevos.length > 0) {
@@ -747,15 +777,16 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
             img.loading = "lazy";
             img.className = "precios-metodo-logo";
             li.appendChild(img);
-            metodosEl!.appendChild(li);
+            contenedor.appendChild(li);
           });
         } else if (!tieneLogos) {
           const li = document.createElement("li");
           li.className = "precios-metodo-chip";
           li.textContent = metodo.nombre;
-          metodosEl!.appendChild(li);
+          contenedor.appendChild(li);
         }
       });
+      if (metodosInternacionalesBloqueEl) metodosInternacionalesBloqueEl.hidden = !huboInternacionales;
     }
 
     function actualizar() {
@@ -1209,31 +1240,45 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     color: var(--color-text-muted);
   }
 
-  /* Logos reales (src/assets/mediosPago/) en vez de texto plano, cuando hay
-     uno disponible para ese medio — ver medios-pago-logos.ts. Tarjeta
-     limpia y de tamaño uniforme (equivalente en CSS plano a lo que serían
-     las utilidades de Tailwind h-8 w-auto object-contain p-1: este
-     proyecto no tiene Tailwind instalado, así que se logra el mismo
-     resultado visual con las mismas variables/convenciones que ya usa el
-     resto del sitio). Nombres compuestos ("Nequi / Bre-B") muestran los 2
-     logos lado a lado dentro de la misma tarjeta. */
+  /* Logos reales (public/mediosPago/) en vez de texto plano, cuando hay uno
+     disponible para ese medio — ver medios-pago-logos.ts. Cada tarjeta es un
+     cuadro de tamaño FIJO idéntico (mismo ancho y alto para todos los
+     logos, sin importar su relación de aspecto original) para que la fila
+     se vea uniforme — el logo se ajusta adentro con object-fit: contain en
+     vez de estirarse. Equivalente en CSS plano a lo que serían las
+     utilidades de Tailwind h-8 w-auto object-contain p-1: este proyecto no
+     tiene Tailwind instalado, así que se logra el mismo resultado visual
+     con las mismas variables/convenciones que ya usa el resto del sitio. */
   .precios-metodo-chip-logo {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0.9rem;
+    justify-content: center;
+    width: 6.5rem;
+    height: 6.5rem;
+    padding: 0.6rem;
   }
 
   /* Más grande a propósito (pedido explícito: +100% a +300% sobre el
-     tamaño anterior de 2rem) — a esta escala se lee la marca del banco
-     sin entrecerrar los ojos. */
+     tamaño anterior de 2rem) — a esta escala se lee la marca del banco sin
+     entrecerrar los ojos. max-width/max-height (no height fija) porque el
+     contenedor .precios-metodo-chip-logo ya es el cuadro de tamaño
+     uniforme: el logo solo debe caber adentro sin deformarse. */
   .precios-metodo-logo {
-    height: 5rem;
+    max-width: 100%;
+    max-height: 100%;
     width: auto;
-    max-width: 9rem;
+    height: auto;
     object-fit: contain;
-    padding: 0.1rem;
     display: block;
+  }
+
+  .precios-metodos-subtitulo {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-text-subtle);
   }
 
   .precios-cta-general-box {

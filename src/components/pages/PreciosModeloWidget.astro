@@ -66,6 +66,7 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
   data-precio-no-disponible={t(locale, "preciosPage.precioNoDisponible")}
   data-cta-plan={t(locale, "preciosPage.ctaPlan")}
   data-metodos-titulo-template={t(locale, "preciosPage.metodosPagoTitulo")}
+  data-metodos-internacionales-subtitulo={t(locale, "preciosPage.metodosInternacionalesSubtitulo")}
   data-mas-popular={t(locale, "preciosPage.masPopular")}
   data-bloque-local-titulo-template={t(locale, "preciosPage.bloqueLocalTitulo")}
   data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
@@ -112,7 +113,11 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
 
   <div class="precios-box precios-metodos">
     <h5 data-metodos-titulo></h5>
-    <ul class="precios-metodos-lista" data-metodos-pago></ul>
+    <ul class="precios-metodos-lista" data-metodos-pago-locales></ul>
+    <div data-metodos-internacionales-bloque hidden>
+      <h6 class="precios-metodos-subtitulo" data-metodos-internacionales-titulo></h6>
+      <ul class="precios-metodos-lista" data-metodos-pago-internacionales></ul>
+    </div>
     <p class="precios-metodos-nota">🔒 {t(locale, "preciosPage.metodosPagoNota")}</p>
   </div>
 </div>
@@ -133,7 +138,7 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     slug: string;
     nombre: string;
     bandera: string;
-    metodosPago: { nombre: string; logos: string[] }[];
+    metodosPago: { nombre: string; logos: string[]; internacional: boolean }[];
     monedas: OpcionMoneda[];
     presentacionMoneda: "unica" | "toggle" | "apilado";
   }
@@ -165,9 +170,12 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     const bloqueInternacionalEl = root.querySelector<HTMLElement>("[data-bloque-internacional]");
     const bloqueInternacionalTituloEl = root.querySelector<HTMLElement>("[data-bloque-internacional-titulo]");
     const tarjetasInternacionalEl = root.querySelector<HTMLElement>("[data-planes-internacional]");
-    const metodosEl = root.querySelector<HTMLElement>("[data-metodos-pago]");
+    const metodosLocalesEl = root.querySelector<HTMLElement>("[data-metodos-pago-locales]");
+    const metodosInternacionalesBloqueEl = root.querySelector<HTMLElement>("[data-metodos-internacionales-bloque]");
+    const metodosInternacionalesEl = root.querySelector<HTMLElement>("[data-metodos-pago-internacionales]");
+    const metodosInternacionalesTituloEl = root.querySelector<HTMLElement>("[data-metodos-internacionales-titulo]");
     const metodosTituloEl = root.querySelector<HTMLElement>("[data-metodos-titulo]");
-    if (!select || !tarjetasLocalEl || !metodosEl || !metodosTituloEl) return;
+    if (!select || !tarjetasLocalEl || !metodosLocalesEl || !metodosTituloEl) return;
 
     const numero = root.dataset.whatsappNumero || "";
     const urlOrigen = root.dataset.urlOrigen || "";
@@ -178,6 +186,8 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     const ctaPlanLabel = root.dataset.ctaPlan || "";
     const masPopularLabel = root.dataset.masPopular || "";
     const metodosTituloTemplate = root.dataset.metodosTituloTemplate || "";
+    const metodosInternacionalesSubtitulo = root.dataset.metodosInternacionalesSubtitulo || "";
+    if (metodosInternacionalesTituloEl) metodosInternacionalesTituloEl.textContent = metodosInternacionalesSubtitulo;
     const bloqueLocalTituloTemplate = root.dataset.bloqueLocalTituloTemplate || "";
     const bloqueInternacionalTituloTexto = root.dataset.bloqueInternacionalTitulo || "";
     const descuentoBadgeTemplate = root.dataset.descuentoBadgeTemplate || "";
@@ -189,26 +199,39 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       { key: "elite" as const, icono: "👑", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
     ];
 
-    // Mismo mecanismo (y misma clave) que /precios/: un descuento persistente
-    // por visitante en todo el sitio, no uno nuevo por página.
-    const DESCUENTO_LS_KEY = "resetenlinea_precios_descuento_intl_v1";
+    // Mismo mecanismo (y misma cookie) que /precios/: un descuento
+    // persistente por visitante en todo el sitio, no uno nuevo por página.
+    // Cookie (no localStorage) con max-age igual a lo que le queda al
+    // descuento, así expira sola junto con él.
+    const DESCUENTO_COOKIE = "resetenlinea_precios_descuento_intl_v1";
+    const DESCUENTO_DURACION_MS = 2 * 60 * 60 * 1000; // 2 horas
+
+    function leerCookie(nombre: string): string | null {
+      const match = document.cookie.match(new RegExp(`(?:^|; )${nombre}=([^;]*)`));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+    function escribirCookie(nombre: string, valor: string, maxAgeMs: number) {
+      const maxAgeSeg = Math.max(0, Math.floor(maxAgeMs / 1000));
+      document.cookie = `${nombre}=${encodeURIComponent(valor)}; max-age=${maxAgeSeg}; path=/; samesite=lax`;
+    }
+
     function cargarEstadoDescuento(): { pct: number; expiraEn: number; visitas: number } {
       let datos: { pct: number; expiraEn: number; visitas: number } | null = null;
       try {
-        datos = JSON.parse(localStorage.getItem(DESCUENTO_LS_KEY) || "null");
+        datos = JSON.parse(leerCookie(DESCUENTO_COOKIE) || "null");
       } catch {
         datos = null;
       }
       if (!datos || typeof datos.expiraEn !== "number" || typeof datos.pct !== "number") {
         const opciones = [5, 10, 15, 25];
-        datos = { pct: opciones[Math.floor(Math.random() * opciones.length)], expiraEn: Date.now() + 2 * 60 * 60 * 1000, visitas: 1 };
+        datos = { pct: opciones[Math.floor(Math.random() * opciones.length)], expiraEn: Date.now() + DESCUENTO_DURACION_MS, visitas: 1 };
       } else {
         datos.visitas = (datos.visitas || 1) + 1;
       }
       try {
-        localStorage.setItem(DESCUENTO_LS_KEY, JSON.stringify(datos));
+        escribirCookie(DESCUENTO_COOKIE, JSON.stringify(datos), datos.expiraEn - Date.now());
       } catch {
-        /* localStorage no disponible: el descuento no persiste, no debe romper el widget. */
+        /* cookies no disponibles: el descuento no persiste, no debe romper el widget. */
       }
       return datos;
     }
@@ -406,15 +429,21 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       }
 
       metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
-      metodosEl!.innerHTML = "";
+      metodosLocalesEl!.innerHTML = "";
+      if (metodosInternacionalesEl) metodosInternacionalesEl.innerHTML = "";
       // Ver el mismo comentario en PreciosPage.astro: cada logo va en su
       // propia tarjeta independiente, y un logo compartido ("Bre-B" entre
       // "Nequi / Bre-B" y "Daviplata / Bre-B", o el logo de Banco Agrícola
       // entre sus 2 variantes de cuenta) no se repite en el mismo país. Si
       // el método SÍ tiene logo pero ya se mostró, no se agrega nada — el
       // texto plano es solo el respaldo para métodos sin logo disponible.
+      // Los medios internacionales van en su propia lista, aparte.
       const logosYaMostrados = new Set<string>();
+      let huboInternacionales = false;
       pais.metodosPago.forEach((metodo) => {
+        const contenedor = metodo.internacional ? metodosInternacionalesEl : metodosLocalesEl;
+        if (!contenedor) return;
+        if (metodo.internacional) huboInternacionales = true;
         const tieneLogos = (metodo.logos || []).length > 0;
         const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
         if (logosNuevos.length > 0) {
@@ -428,15 +457,16 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
             img.loading = "lazy";
             img.className = "precios-metodo-logo";
             li.appendChild(img);
-            metodosEl!.appendChild(li);
+            contenedor.appendChild(li);
           });
         } else if (!tieneLogos) {
           const li = document.createElement("li");
           li.className = "precios-metodo-chip";
           li.textContent = metodo.nombre;
-          metodosEl!.appendChild(li);
+          contenedor.appendChild(li);
         }
       });
+      if (metodosInternacionalesBloqueEl) metodosInternacionalesBloqueEl.hidden = !huboInternacionales;
     }
 
     select.addEventListener("change", () => {
@@ -756,23 +786,37 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
   }
 
   /* Ver el mismo comentario en PreciosPage.astro: logos reales cuando hay
-     uno disponible (medios-pago-logos.ts), texto plano como respaldo. */
+     uno disponible (medios-pago-logos.ts), texto plano como respaldo. Cada
+     tarjeta es un cuadro fijo idéntico — mismo tamaño para todos los
+     logos, sin importar su relación de aspecto original. */
   .precios-metodo-chip-logo {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0.9rem;
+    justify-content: center;
+    width: 6.5rem;
+    height: 6.5rem;
+    padding: 0.6rem;
   }
 
   /* Más grande a propósito (pedido explícito: +100% a +300% sobre el
-     tamaño anterior de 2rem). */
+     tamaño anterior de 2rem). max-width/max-height (no height fija):
+     el logo solo debe caber dentro del cuadro uniforme sin deformarse. */
   .precios-metodo-logo {
-    height: 5rem;
+    max-width: 100%;
+    max-height: 100%;
     width: auto;
-    max-width: 9rem;
+    height: auto;
     object-fit: contain;
-    padding: 0.1rem;
     display: block;
+  }
+
+  .precios-metodos-subtitulo {
+    margin: 0.2rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-text-subtle);
   }
 
   @media (max-width: 700px) {
