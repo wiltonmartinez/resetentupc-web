@@ -30,6 +30,7 @@ const testimoniosPath = "/prueba-social/testimonios-trustpilot/";
 const resetEvidenciaPath = "/prueba-social/reset-evidencia/";
 const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
 const consultaGarantiaPath = staticPagePathSinPrefijo("consultaGarantia");
+const contactoPath = staticPagePathSinPrefijo("contacto");
 
 const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimoniosPath, resetEvidenciaPath, clienteSatisfechoPath].includes(
   path
@@ -48,13 +49,6 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
         ResetEnLinea.com
         <span class="site-logo-eslogan">{t(locale, "nav.eslogan")}</span>
       </span>
-    </a>
-    <a href={buildStaticPagePath(locale, "contacto")} class="site-nav-cta" aria-label={t(locale, "nav.contacto")}>
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-        <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" stroke="currentColor" stroke-width="1.6" />
-        <path d="m4.2 7 7.8 5.8L19.8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-      <span>{t(locale, "nav.contacto")}</span>
     </a>
     <button
       type="button"
@@ -201,6 +195,16 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             <path d="m9 12 2 2 4-4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
           <span>{t(locale, "nav.consultaGarantia")}</span>
+        </a>
+        <a
+          href={buildStaticPagePath(locale, "contacto")}
+          class:list={{ "is-active": path === contactoPath }}
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+            <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" stroke="currentColor" stroke-width="1.6" />
+            <path d="m4.2 7 7.8 5.8L19.8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>{t(locale, "nav.contacto")}</span>
         </a>
       </nav>
       <div class="site-header-controls">
@@ -411,43 +415,10 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
     content: none;
   }
 
-  /* Contacto es el destino final del recorrido (punto de conversión hacia
-     WhatsApp): vive fuera del <nav> como un botón CTA siempre visible, no
-     como un ítem más de la lista — así queda accesible incluso con el menú
-     móvil cerrado. "order" lo reposiciona visualmente entre el menú y el
-     selector de idioma en escritorio (ver reglas de order más abajo). */
-  .site-nav-cta {
-    display: inline-flex;
-    align-items: center;
-    align-self: center;
-    order: 2;
-    gap: 0.4rem;
-    padding: 0.5rem 1.1rem;
-    border-radius: var(--radius-full);
-    background: #f97316;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 0.86rem;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color 0.15s ease;
-  }
-  .site-nav-cta:hover {
-    background: #ea580c;
-  }
-  .site-nav-cta svg {
-    flex: none;
-  }
-
-  /* Posiciones en escritorio: menú, luego el CTA, luego el idioma. */
-  .site-nav {
-    order: 1;
-  }
   .site-header-controls {
     display: flex;
     align-items: center;
     align-self: center;
-    order: 3;
     gap: 0.75rem;
     margin-left: auto;
   }
@@ -469,14 +440,6 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
   @media (max-width: 900px) {
     .site-header-inner {
       flex-wrap: nowrap;
-    }
-    /* En móvil el CTA sale del flujo del menú desplegable: queda pegado al
-       ícono de hamburguesa, siempre visible aunque el menú esté cerrado. */
-    .site-nav-cta {
-      order: 0;
-      margin-left: auto;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.82rem;
     }
     .site-nav-toggle {
       display: inline-flex;
@@ -561,18 +524,4 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
     }
   }
 
-  /* En pantallas muy angostas, logo + CTA + hamburguesa ya no caben con
-     texto: el CTA se reduce a solo el ícono (mismo tratamiento que el
-     botón de hamburguesa) para no desbordar ni forzar scroll horizontal. */
-  @media (max-width: 420px) {
-    .site-nav-cta {
-      width: 2.25rem;
-      height: 2.25rem;
-      padding: 0;
-      justify-content: center;
-    }
-    .site-nav-cta span {
-      display: none;
-    }
-  }
 </style>
