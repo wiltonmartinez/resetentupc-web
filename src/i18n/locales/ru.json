@@ -764,6 +764,8 @@
     "precioNoDisponible": "Уточнить",
     "ctaPlan": "Выбрать план",
     "notaWhatsapp": "Сброс {marca} {modelo}\nОшибка: {error}\nПлан {plan} ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "Сброс {marca} {modelo}\nПлан {plan} ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "Выберите план",
     "metodosPagoTitulo": "Способы оплаты, доступные в {pais}",
     "metodosPagoNota": "Мы показываем только принимаемые банки и организации. Точные реквизиты счёта пришлём в WhatsApp после подтверждения плана.",
     "bloqueLocalTitulo": "Цена в вашей местной валюте · Представитель в {pais}",

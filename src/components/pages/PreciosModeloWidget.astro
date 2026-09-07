@@ -1,0 +1,744 @@
+---
+/**
+ * Versión embebida de /precios/ para las páginas de modelo
+ * (/reset/{marca}/{modelo}/), en el Paso 4 ("Cotización y Pago"), antes de
+ * Consulta de Garantía. A diferencia de PreciosPage.astro, marca/modelo ya
+ * se conocen por el contexto de la página — no hay selector en cascada,
+ * solo país/moneda y las 3 tarjetas de plan.
+ *
+ * Geolocalización: estas páginas son estáticas (getStaticPaths, SSG), no
+ * SSR — no hay forma de leer cf-ipcountry al servir el HTML. Por eso el
+ * país inicial se renderiza en Colombia (respaldo) y un script del cliente
+ * corrige contra /api/pais.json.ts (endpoint SSR liviano ya existente, sin
+ * permiso del navegador) apenas carga, igual que hace ModeloPage con otros
+ * datos en vivo.
+ */
+import { Image } from "astro:assets";
+import { buildWhatsAppMessage, t } from "../../i18n/utils";
+import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
+import { paisesPrecioPublico, grupoParaMarca, type PaisPrecioPublico } from "../../lib/precios";
+import whatsappLogo from "../../assets/whatsapp/3.png";
+
+interface Props {
+  locale: Locale;
+  marcaSlug: string;
+  modeloSlug: string;
+  marcaNombre: string;
+  modeloNombre: string;
+  /** Descripción del error principal ya resuelto por ProcedimientoImpresora
+   *  (errorPrincipal?.descripcion) — opcional: si no hay ninguno, el mensaje
+   *  de WhatsApp simplemente no menciona un error. */
+  errorNombre?: string;
+  urlPath: string;
+}
+
+const { locale, marcaSlug, modeloSlug, marcaNombre, modeloNombre, errorNombre = "", urlPath } = Astro.props;
+
+const paises = await paisesPrecioPublico();
+const paisInicial: PaisPrecioPublico = paises.find((p) => p.slug === "colombia") ?? paises[0];
+const grupo = grupoParaMarca(marcaSlug);
+const urlOrigen = `${SITE_URL}${urlPath}`;
+
+const PLANES = [
+  { key: "profesional" as const, icono: "💼", nombre: t(locale, "preciosPage.planProfesionalNombre"), duracion: t(locale, "preciosPage.planProfesionalDuracion"), destacado: false },
+  { key: "esencial" as const, icono: "🟢", nombre: t(locale, "preciosPage.planEsencialNombre"), duracion: t(locale, "preciosPage.planEsencialDuracion"), destacado: true },
+  { key: "elite" as const, icono: "👑", nombre: t(locale, "preciosPage.planEliteNombre"), duracion: t(locale, "preciosPage.planEliteDuracion"), destacado: false },
+];
+
+const notaConError: string = t(locale, "preciosPage.notaWhatsapp");
+const notaSinError: string = t(locale, "preciosPage.notaWhatsappSinError");
+const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
+---
+
+<div
+  class="precios-modelo-widget"
+  data-precios-modelo-widget
+  data-paises={JSON.stringify(paises)}
+  data-grupo={grupo}
+  data-marca-nombre={marcaNombre}
+  data-modelo-nombre={modeloNombre}
+  data-error-nombre={errorNombre}
+  data-whatsapp-numero={WHATSAPP_NUMBER}
+  data-url-origen={urlOrigen}
+  data-nota-con-error={notaConError}
+  data-nota-sin-error={notaSinError}
+  data-mensaje-template={mensajeTemplate}
+  data-precio-no-disponible={t(locale, "preciosPage.precioNoDisponible")}
+  data-cta-plan={t(locale, "preciosPage.ctaPlan")}
+  data-metodos-titulo-template={t(locale, "preciosPage.metodosPagoTitulo")}
+  data-mas-popular={t(locale, "preciosPage.masPopular")}
+  data-bloque-local-titulo-template={t(locale, "preciosPage.bloqueLocalTitulo")}
+  data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
+  data-descuento-badge-template={t(locale, "preciosPage.descuentoBadge")}
+  data-descuento-countdown-template={t(locale, "preciosPage.descuentoCountdown")}
+  data-plan-profesional-nombre={PLANES[0].nombre}
+  data-plan-profesional-duracion={PLANES[0].duracion}
+  data-plan-esencial-nombre={PLANES[1].nombre}
+  data-plan-esencial-duracion={PLANES[1].duracion}
+  data-plan-elite-nombre={PLANES[2].nombre}
+  data-plan-elite-duracion={PLANES[2].duracion}
+>
+  <h4 class="precios-modelo-widget-titulo">{t(locale, "preciosPage.modeloWidgetTitulo")}</h4>
+
+  <div class="precios-box precios-panel">
+    <label class="precios-campo">
+      <span>{t(locale, "preciosPage.paisLabel")}</span>
+      <select data-pais-select data-sound="select">
+        {paises.map((pais) => (
+          <option value={pais.slug} selected={pais.slug === paisInicial.slug}>
+            {pais.bandera} {pais.nombre}
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <div class="precios-campo precios-campo-moneda">
+      <span>{t(locale, "preciosPage.monedaLabel")}</span>
+      <div class="precios-moneda-opciones" data-moneda-opciones>
+        {paisInicial.monedas.map((m) => <p class="precios-moneda-valor">{m.codigo}</p>)}
+      </div>
+    </div>
+  </div>
+
+  <div data-bloque-local>
+    <h5 class="precios-bloque-titulo" data-bloque-local-titulo hidden></h5>
+    <div class="precios-planes" data-planes-local></div>
+  </div>
+
+  <div data-bloque-internacional hidden>
+    <h5 class="precios-bloque-titulo" data-bloque-internacional-titulo></h5>
+    <div class="precios-planes" data-planes-internacional></div>
+  </div>
+
+  <div class="precios-box precios-metodos">
+    <h5 data-metodos-titulo></h5>
+    <ul class="precios-metodos-lista" data-metodos-pago></ul>
+    <p class="precios-metodos-nota">🔒 {t(locale, "preciosPage.metodosPagoNota")}</p>
+  </div>
+</div>
+
+<script>
+  interface PreciosPorPlan {
+    esencial: number | null;
+    profesional: number | null;
+    elite: number | null;
+  }
+  interface OpcionMoneda {
+    codigo: string;
+    ambito: "local" | "internacional";
+    descontable?: boolean;
+    precios: { impresora: PreciosPorPlan | null; plotter: PreciosPorPlan | null };
+  }
+  interface PaisPrecioPublico {
+    slug: string;
+    nombre: string;
+    bandera: string;
+    metodosPago: { nombre: string }[];
+    monedas: OpcionMoneda[];
+    presentacionMoneda: "unica" | "toggle" | "apilado";
+  }
+
+  // Mapa mínimo ISO -> slug de país, duplicado a propósito de
+  // resolverPaisSlugDesdeCfCountry en lib/precios.ts: ese módulo también
+  // importa el catálogo completo de modelos (para el selector en cascada de
+  // /precios/, que este widget no necesita) — importarlo aquí metería esos
+  // ~40 KB en el bundle de CADA una de las 252 páginas de modelo. Esta
+  // copia solo tiene la tabla de 14 países, nada más.
+  const ISO_A_SLUG: Record<string, string> = {
+    CO: "colombia", CL: "chile", BR: "brasil", EC: "ecuador", SV: "el-salvador",
+    PA: "panama", GT: "guatemala", HN: "honduras", MX: "mexico", NI: "nicaragua",
+    PE: "peru", PY: "paraguay", VE: "venezuela", AR: "argentina",
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-precios-modelo-widget]").forEach((root) => {
+    const paises: PaisPrecioPublico[] = JSON.parse(root.dataset.paises || "[]");
+    const paisesPorSlug = Object.fromEntries(paises.map((p) => [p.slug, p]));
+    const grupo = (root.dataset.grupo === "plotter" ? "plotter" : "impresora") as "impresora" | "plotter";
+    const marcaNombre = root.dataset.marcaNombre || "";
+    const modeloNombre = root.dataset.modeloNombre || "";
+    const errorNombre = root.dataset.errorNombre || "";
+
+    const select = root.querySelector<HTMLSelectElement>("[data-pais-select]");
+    const monedaOpcionesEl = root.querySelector<HTMLElement>("[data-moneda-opciones]");
+    const bloqueLocalTituloEl = root.querySelector<HTMLElement>("[data-bloque-local-titulo]");
+    const tarjetasLocalEl = root.querySelector<HTMLElement>("[data-planes-local]");
+    const bloqueInternacionalEl = root.querySelector<HTMLElement>("[data-bloque-internacional]");
+    const bloqueInternacionalTituloEl = root.querySelector<HTMLElement>("[data-bloque-internacional-titulo]");
+    const tarjetasInternacionalEl = root.querySelector<HTMLElement>("[data-planes-internacional]");
+    const metodosEl = root.querySelector<HTMLElement>("[data-metodos-pago]");
+    const metodosTituloEl = root.querySelector<HTMLElement>("[data-metodos-titulo]");
+    if (!select || !tarjetasLocalEl || !metodosEl || !metodosTituloEl) return;
+
+    const numero = root.dataset.whatsappNumero || "";
+    const urlOrigen = root.dataset.urlOrigen || "";
+    const notaConError = root.dataset.notaConError || "";
+    const notaSinError = root.dataset.notaSinError || "";
+    const mensajeTemplate = root.dataset.mensajeTemplate || "";
+    const precioNoDisponible = root.dataset.precioNoDisponible || "";
+    const ctaPlanLabel = root.dataset.ctaPlan || "";
+    const masPopularLabel = root.dataset.masPopular || "";
+    const metodosTituloTemplate = root.dataset.metodosTituloTemplate || "";
+    const bloqueLocalTituloTemplate = root.dataset.bloqueLocalTituloTemplate || "";
+    const bloqueInternacionalTituloTexto = root.dataset.bloqueInternacionalTitulo || "";
+    const descuentoBadgeTemplate = root.dataset.descuentoBadgeTemplate || "";
+    const descuentoCountdownTemplate = root.dataset.descuentoCountdownTemplate || "";
+
+    const PLANES = [
+      { key: "profesional" as const, icono: "💼", nombre: root.dataset.planProfesionalNombre || "", duracion: root.dataset.planProfesionalDuracion || "", destacado: false },
+      { key: "esencial" as const, icono: "🟢", nombre: root.dataset.planEsencialNombre || "", duracion: root.dataset.planEsencialDuracion || "", destacado: true },
+      { key: "elite" as const, icono: "👑", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
+    ];
+
+    // Mismo mecanismo (y misma clave) que /precios/: un descuento persistente
+    // por visitante en todo el sitio, no uno nuevo por página.
+    const DESCUENTO_LS_KEY = "resetenlinea_precios_descuento_intl_v1";
+    function cargarEstadoDescuento(): { pct: number; expiraEn: number; visitas: number } {
+      let datos: { pct: number; expiraEn: number; visitas: number } | null = null;
+      try {
+        datos = JSON.parse(localStorage.getItem(DESCUENTO_LS_KEY) || "null");
+      } catch {
+        datos = null;
+      }
+      if (!datos || typeof datos.expiraEn !== "number" || typeof datos.pct !== "number") {
+        const opciones = [5, 10, 15, 25];
+        datos = { pct: opciones[Math.floor(Math.random() * opciones.length)], expiraEn: Date.now() + 2 * 60 * 60 * 1000, visitas: 1 };
+      } else {
+        datos.visitas = (datos.visitas || 1) + 1;
+      }
+      try {
+        localStorage.setItem(DESCUENTO_LS_KEY, JSON.stringify(datos));
+      } catch {
+        /* localStorage no disponible: el descuento no persiste, no debe romper el widget. */
+      }
+      return datos;
+    }
+    const estadoDescuento = cargarEstadoDescuento();
+
+    function descuentoActivo(): boolean {
+      return Date.now() < estadoDescuento.expiraEn;
+    }
+
+    function formatoCuentaRegresiva(ms: number): string {
+      const totalSeg = Math.max(0, Math.floor(ms / 1000));
+      const h = Math.floor(totalSeg / 3600);
+      const m = Math.floor((totalSeg % 3600) / 60);
+      const s = totalSeg % 60;
+      const pad = (n: number) => String(n).padStart(2, "0");
+      return `${h}:${pad(m)}:${pad(s)}`;
+    }
+
+    let intervaloDescuentoId: number | null = null;
+    function iniciarTickDescuento() {
+      if (intervaloDescuentoId != null) return;
+      intervaloDescuentoId = window.setInterval(() => {
+        const restante = estadoDescuento.expiraEn - Date.now();
+        if (restante <= 0) {
+          window.clearInterval(intervaloDescuentoId!);
+          intervaloDescuentoId = null;
+          renderPrecios();
+          return;
+        }
+        root.querySelectorAll<HTMLElement>("[data-countdown]").forEach((el) => {
+          el.textContent = descuentoCountdownTemplate.replaceAll("{tiempo}", formatoCuentaRegresiva(restante));
+        });
+      }, 1000);
+    }
+
+    function formatoPrecio(monto: number | null | undefined, moneda: string): string {
+      if (monto == null) return precioNoDisponible;
+      try {
+        return new Intl.NumberFormat(undefined, { style: "currency", currency: moneda, maximumFractionDigits: 0 }).format(monto);
+      } catch {
+        return `${monto} ${moneda}`;
+      }
+    }
+
+    function whatsappHref(nota: string): string {
+      const mensaje = mensajeTemplate.replaceAll("{nota}", nota).replaceAll("{url}", urlOrigen);
+      return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    }
+
+    function poblarMonedaOpciones(pais: PaisPrecioPublico, monedaCodigoActual: string) {
+      if (!monedaOpcionesEl) return;
+      monedaOpcionesEl.innerHTML = "";
+      if (pais.presentacionMoneda !== "toggle") {
+        pais.monedas.forEach((m) => {
+          const badge = document.createElement("p");
+          badge.className = "precios-moneda-valor";
+          badge.textContent = m.codigo;
+          monedaOpcionesEl!.appendChild(badge);
+        });
+        return;
+      }
+      pais.monedas.forEach((m) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "precios-marca-boton precios-moneda-boton";
+        btn.classList.toggle("precios-marca-boton-activo", m.codigo === monedaCodigoActual);
+        btn.dataset.sound = "select";
+        btn.textContent = m.codigo;
+        btn.addEventListener("click", () => {
+          if (estado.monedaCodigo === m.codigo) return;
+          estado.monedaCodigo = m.codigo;
+          renderPrecios();
+        });
+        monedaOpcionesEl!.appendChild(btn);
+      });
+    }
+
+    function construirTarjetas(contenedorEl: HTMLElement, opcion: OpcionMoneda, pais: PaisPrecioPublico) {
+      const aplicarDescuento = Boolean(opcion.descontable) && descuentoActivo();
+      const precios = opcion.precios[grupo];
+
+      contenedorEl.innerHTML = "";
+      PLANES.forEach((plan) => {
+        const montoBase = precios ? precios[plan.key] : null;
+        const descuentaEstaTarjeta = aplicarDescuento && montoBase != null;
+        const montoFinal = descuentaEstaTarjeta ? Math.round(montoBase! * (1 - estadoDescuento.pct / 100)) : montoBase;
+        const precioTexto = formatoPrecio(montoFinal, opcion.codigo);
+        const notaTemplate = errorNombre ? notaConError : notaSinError;
+        const nota = notaTemplate
+          .replaceAll("{marca}", marcaNombre)
+          .replaceAll("{modelo}", modeloNombre)
+          .replaceAll("{error}", errorNombre)
+          .replaceAll("{plan}", plan.nombre)
+          .replaceAll("{duracion}", plan.duracion)
+          .replaceAll("{pais}", pais.nombre)
+          .replaceAll("{precio}", precioTexto);
+
+        const article = document.createElement("article");
+        article.className = plan.destacado ? "precios-plan precios-plan-destacado" : "precios-plan";
+
+        if (plan.destacado) {
+          const badge = document.createElement("span");
+          badge.className = "precios-plan-badge";
+          badge.textContent = masPopularLabel;
+          article.appendChild(badge);
+        }
+
+        const icono = document.createElement("p");
+        icono.className = "precios-plan-icono";
+        icono.setAttribute("aria-hidden", "true");
+        icono.textContent = plan.icono;
+
+        const nombre = document.createElement("h3");
+        nombre.textContent = plan.nombre;
+
+        const duracion = document.createElement("p");
+        duracion.className = "precios-plan-duracion";
+        duracion.textContent = plan.duracion;
+
+        article.append(icono, nombre, duracion);
+
+        if (descuentaEstaTarjeta) {
+          const original = document.createElement("p");
+          original.className = "precios-plan-precio-original";
+          original.textContent = formatoPrecio(montoBase, opcion.codigo);
+          article.appendChild(original);
+        }
+
+        const precio = document.createElement("p");
+        precio.className = "precios-plan-precio";
+        precio.append(document.createTextNode(precioTexto));
+        if (descuentaEstaTarjeta) {
+          const badgeDescuento = document.createElement("span");
+          badgeDescuento.className = "precios-plan-badge-descuento";
+          badgeDescuento.textContent = descuentoBadgeTemplate.replaceAll("{pct}", String(estadoDescuento.pct));
+          precio.appendChild(badgeDescuento);
+        }
+        article.appendChild(precio);
+
+        if (descuentaEstaTarjeta) {
+          const countdown = document.createElement("p");
+          countdown.className = "precios-plan-countdown";
+          countdown.dataset.countdown = "true";
+          countdown.textContent = descuentoCountdownTemplate.replaceAll(
+            "{tiempo}",
+            formatoCuentaRegresiva(estadoDescuento.expiraEn - Date.now())
+          );
+          article.appendChild(countdown);
+          iniciarTickDescuento();
+        }
+
+        const boton = document.createElement("a");
+        boton.className = "whatsapp-cta whatsapp-cta-elevar precios-plan-cta";
+        boton.href = whatsappHref(nota);
+        boton.target = "_blank";
+        boton.rel = "noopener noreferrer nofollow";
+        boton.dataset.sourceId = `precios_modelo_${plan.key}`;
+        boton.dataset.sound = "confirm";
+        boton.textContent = ctaPlanLabel;
+        article.appendChild(boton);
+
+        contenedorEl.appendChild(article);
+      });
+    }
+
+    const estado = { monedaCodigo: "" };
+
+    function renderPrecios() {
+      const pais = paisesPorSlug[select!.value] || paises[0];
+
+      if (!pais.monedas.some((m) => m.codigo === estado.monedaCodigo)) {
+        estado.monedaCodigo = pais.monedas[0]?.codigo || "";
+      }
+      poblarMonedaOpciones(pais, estado.monedaCodigo);
+
+      if (pais.presentacionMoneda === "apilado") {
+        const local = pais.monedas.find((m) => m.ambito === "local") || pais.monedas[0];
+        const internacional = pais.monedas.find((m) => m.ambito === "internacional") || pais.monedas[1] || pais.monedas[0];
+
+        if (bloqueLocalTituloEl) {
+          bloqueLocalTituloEl.hidden = false;
+          bloqueLocalTituloEl.textContent = bloqueLocalTituloTemplate.replaceAll("{pais}", pais.nombre);
+        }
+        construirTarjetas(tarjetasLocalEl!, local, pais);
+
+        if (bloqueInternacionalEl) bloqueInternacionalEl.hidden = false;
+        if (bloqueInternacionalTituloEl) bloqueInternacionalTituloEl.textContent = bloqueInternacionalTituloTexto;
+        if (tarjetasInternacionalEl) construirTarjetas(tarjetasInternacionalEl, internacional, pais);
+      } else {
+        const monedaActual = pais.monedas.find((m) => m.codigo === estado.monedaCodigo) || pais.monedas[0];
+        if (bloqueLocalTituloEl) bloqueLocalTituloEl.hidden = true;
+        construirTarjetas(tarjetasLocalEl!, monedaActual, pais);
+        if (bloqueInternacionalEl) bloqueInternacionalEl.hidden = true;
+        if (tarjetasInternacionalEl) tarjetasInternacionalEl.innerHTML = "";
+      }
+
+      metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
+      metodosEl!.innerHTML = "";
+      pais.metodosPago.forEach((metodo) => {
+        const li = document.createElement("li");
+        li.className = "precios-metodo-chip";
+        li.textContent = metodo.nombre;
+        metodosEl!.appendChild(li);
+      });
+    }
+
+    select.addEventListener("change", () => {
+      estado.monedaCodigo = "";
+      renderPrecios();
+    });
+
+    renderPrecios(); // primer render con el respaldo (Colombia) del servidor, sin parpadeo
+
+    // Corrige el país apenas se conoce el real — /api/pais.json.ts no
+    // requiere permiso del navegador (lee cf-ipcountry en el borde).
+    fetch("/api/pais.json", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data: { codigo_pais?: string | null }) => {
+        const slug = ISO_A_SLUG[(data.codigo_pais || "").toUpperCase()] || "otro";
+        if (paisesPorSlug[slug] && select!.value !== slug) {
+          select!.value = slug;
+          estado.monedaCodigo = "";
+          renderPrecios();
+        }
+      })
+      .catch(() => {
+        /* se queda en el país de respaldo (Colombia) */
+      });
+  });
+</script>
+
+<style is:global>
+  /* Ver el mismo comentario en PreciosPage.astro: is:global porque el
+     script reconstruye tarjetas/opciones con document.createElement, que
+     nunca recibe el atributo de scope que Astro añade solo al HTML
+     compilado. Duplicado deliberado de las clases "precios-" y
+     "whatsapp-cta" — este widget vive en un archivo aparte, sin componente
+     compartido. */
+  .precios-modelo-widget {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .precios-modelo-widget [hidden] {
+    display: none !important;
+  }
+
+  .precios-modelo-widget-titulo {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .whatsapp-cta {
+    display: inline-block;
+    background: #25d366;
+    color: #062f1a;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .whatsapp-cta:hover {
+    background: #1fb958;
+  }
+
+  .whatsapp-cta-elevar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #20d043;
+    color: #ffffff;
+    font-weight: 700;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .whatsapp-cta-elevar:hover {
+    background: #1bb93a;
+    color: #ffffff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .whatsapp-cta-icono {
+    flex-shrink: 0;
+    align-self: stretch;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    margin: -0.75rem 0;
+    object-fit: contain;
+    transform: scale(0.8);
+  }
+
+  .precios-box {
+    background: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .precios-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: flex-end;
+  }
+
+  .precios-campo {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .precios-campo select {
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 0.95rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    min-width: 220px;
+  }
+
+  .precios-campo-moneda {
+    align-items: flex-start;
+  }
+
+  .precios-moneda-opciones {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .precios-moneda-valor {
+    margin: 0;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+  }
+
+  .precios-moneda-boton {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .precios-marca-boton {
+    padding: 0.7rem 1.25rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .precios-marca-boton:hover {
+    border-color: var(--color-primary);
+  }
+
+  .precios-marca-boton-activo {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #ffffff;
+  }
+
+  .precios-bloque-titulo {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.98rem;
+  }
+
+  .precios-planes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+    align-items: end;
+    margin-bottom: var(--space-md);
+  }
+
+  .precios-plan {
+    position: relative;
+    display: grid;
+    gap: 0.4rem;
+    justify-items: center;
+    text-align: center;
+    padding: var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .precios-plan-destacado {
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-floating);
+    transform: scale(1.04);
+    padding-top: calc(var(--space-sm) + 0.75rem);
+  }
+
+  .precios-plan-badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.9rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  .precios-plan-icono {
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  .precios-plan h3 {
+    margin: 0;
+  }
+
+  .precios-plan-duracion {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .precios-plan-precio {
+    margin: 0.25rem 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-text);
+  }
+
+  .precios-plan-destacado .precios-plan-precio {
+    font-size: 1.65rem;
+    color: var(--color-primary-dark);
+  }
+
+  .precios-plan-precio-original {
+    margin: 0.25rem 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+    text-decoration: line-through;
+  }
+
+  .precios-plan-badge-descuento {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    vertical-align: middle;
+  }
+
+  .precios-plan-countdown {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #dc2626;
+  }
+
+  .precios-plan-cta {
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .precios-metodos {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .precios-metodos h5 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .precios-metodos-nota {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-subtle);
+  }
+
+  .precios-metodos-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .precios-metodo-chip {
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .precios-modelo-widget .precios-planes {
+      grid-template-columns: 1fr;
+    }
+
+    .precios-modelo-widget .precios-plan-destacado {
+      transform: none;
+      order: -1;
+    }
+  }
+</style>

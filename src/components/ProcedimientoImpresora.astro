@@ -59,6 +59,7 @@ import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import InfoCard from "./ui/InfoCard.astro";
 import WhatsAppCTA from "./WhatsAppCTA.astro";
 import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
+import PreciosModeloWidget from "./pages/PreciosModeloWidget.astro";
 import { getSensorTintaParaMarca } from "../data/sensor-tinta";
 import { getProcesoImage } from "../lib/proceso-images.js";
 import {
@@ -485,6 +486,17 @@ const subpasosConexion = [
           4) {t(locale, "procedimiento.paso4Titulo")}
         </a>
       </h3>
+      <InfoCard>
+        <PreciosModeloWidget
+          locale={locale}
+          marcaSlug={marcaSlug}
+          modeloSlug={modeloSlug}
+          marcaNombre={marca}
+          modeloNombre={modelo}
+          errorNombre={errorPrincipal?.descripcion}
+          urlPath={localizedPath}
+        />
+      </InfoCard>
       <InfoCard>
         <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} />
       </InfoCard>

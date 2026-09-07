@@ -772,6 +772,8 @@
     "precioNoDisponible": "문의하기",
     "ctaPlan": "플랜 선택",
     "notaWhatsapp": "{marca} {modelo} 리셋\n오류: {error}\n{plan} 플랜 ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "{marca} {modelo} 리셋\n{plan} 플랜 ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "플랜 선택",
     "metodosPagoTitulo": "{pais}에서 이용 가능한 결제 수단",
     "metodosPagoNota": "허용된 은행과 기관만 표시됩니다. 정확한 계좌 정보는 플랜 확정 후 WhatsApp으로 안내해 드립니다.",
     "bloqueLocalTitulo": "현지 통화 가격 · {pais} 현지 담당자",

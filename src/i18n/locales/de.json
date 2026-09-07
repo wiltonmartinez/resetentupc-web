@@ -764,6 +764,8 @@
     "precioNoDisponible": "Auf Anfrage",
     "ctaPlan": "Plan wählen",
     "notaWhatsapp": "{marca} {modelo} Reset\nFehler: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "{marca} {modelo} Reset\nPlan {plan} ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "Wähle deinen Plan",
     "metodosPagoTitulo": "Verfügbare Zahlungsmethoden in {pais}",
     "metodosPagoNota": "Wir zeigen nur die akzeptierten Banken und Institutionen. Die genauen Kontodaten teilen wir dir nach Bestätigung deines Plans per WhatsApp mit.",
     "bloqueLocalTitulo": "Preis in deiner Landeswährung · Vertreter in {pais}",

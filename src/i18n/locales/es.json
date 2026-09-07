@@ -810,6 +810,8 @@
     "precioNoDisponible": "Consultar",
     "ctaPlan": "Elegir Plan",
     "notaWhatsapp": "Reset {marca} {modelo}\nError: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "Reset {marca} {modelo}\nPlan {plan} ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "Elige tu plan",
     "metodosPagoTitulo": "Medios de pago disponibles en {pais}",
     "metodosPagoNota": "Solo mostramos los bancos e instituciones aceptadas. Los datos exactos de la cuenta te los compartimos por WhatsApp al confirmar tu plan.",
     "bloqueLocalTitulo": "Precio en tu moneda local · Agente en {pais}",
