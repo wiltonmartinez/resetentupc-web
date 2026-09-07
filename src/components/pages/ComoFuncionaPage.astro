@@ -17,6 +17,7 @@ import EvidenceCard from "../ui/EvidenceCard.astro";
 import YouTubeFacade from "../ui/YouTubeFacade.astro";
 import ClienteSatisfechoEmbed from "../ui/ClienteSatisfechoEmbed.astro";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
+import PreciosCascadaWidget from "./PreciosCascadaWidget.astro";
 import { fetchAllPages } from "../../lib/fetch-paginated";
 import { listarTestimonios } from "../../lib/nucleo-api";
 import { extractYoutubeId } from "../../lib/youtube";
@@ -803,6 +804,7 @@ const erroresTab = [
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso4Titulo")}</h3>
         <p>{t(locale, "comoFuncionaProceso.paso4Texto")}</p>
+        <PreciosCascadaWidget locale={locale} urlPath={whatsappUrlPath} />
       </div>
     </div>
 
