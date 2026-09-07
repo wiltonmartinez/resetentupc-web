@@ -724,31 +724,32 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 
       metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
       metodosEl!.innerHTML = "";
-      // Un mismo logo (ej. "Bre-B") puede aparecer en más de un nombre de
-      // método ("Nequi / Bre-B" y "Daviplata / Bre-B" son 2 medios de pago
-      // reales distintos, pero comparten ese logo) — sin este control se
-      // veía repetido. Una vez mostrado, no se vuelve a mostrar en la
-      // siguiente tarjeta de ese mismo país.
+      // Cada logo va en su propia tarjeta independiente (nunca 2 logos
+      // adentro de la misma tarjeta) — y un mismo logo compartido entre 2
+      // medios de pago distintos (ej. "Bre-B" en "Nequi / Bre-B" y
+      // "Daviplata / Bre-B") solo se muestra una vez por país.
       const logosYaMostrados = new Set<string>();
       pais.metodosPago.forEach((metodo) => {
-        const li = document.createElement("li");
-        li.className = "precios-metodo-chip";
         const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
         if (logosNuevos.length > 0) {
-          li.classList.add("precios-metodo-chip-logo");
           logosNuevos.forEach((src) => {
             logosYaMostrados.add(src);
+            const li = document.createElement("li");
+            li.className = "precios-metodo-chip precios-metodo-chip-logo";
             const img = document.createElement("img");
             img.src = src;
             img.alt = metodo.nombre;
             img.loading = "lazy";
             img.className = "precios-metodo-logo";
             li.appendChild(img);
+            metodosEl!.appendChild(li);
           });
         } else {
+          const li = document.createElement("li");
+          li.className = "precios-metodo-chip";
           li.textContent = metodo.nombre;
+          metodosEl!.appendChild(li);
         }
-        metodosEl!.appendChild(li);
       });
     }
 

@@ -407,29 +407,31 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
 
       metodosTituloEl!.textContent = metodosTituloTemplate.replaceAll("{pais}", pais.nombre);
       metodosEl!.innerHTML = "";
-      // Ver el mismo comentario en PreciosPage.astro: un logo compartido
-      // ("Bre-B" entre "Nequi / Bre-B" y "Daviplata / Bre-B") no debe
-      // repetirse en 2 tarjetas del mismo país.
+      // Ver el mismo comentario en PreciosPage.astro: cada logo va en su
+      // propia tarjeta independiente, y un logo compartido ("Bre-B" entre
+      // "Nequi / Bre-B" y "Daviplata / Bre-B") no se repite en el mismo país.
       const logosYaMostrados = new Set<string>();
       pais.metodosPago.forEach((metodo) => {
-        const li = document.createElement("li");
-        li.className = "precios-metodo-chip";
         const logosNuevos = (metodo.logos || []).filter((src) => !logosYaMostrados.has(src));
         if (logosNuevos.length > 0) {
-          li.classList.add("precios-metodo-chip-logo");
           logosNuevos.forEach((src) => {
             logosYaMostrados.add(src);
+            const li = document.createElement("li");
+            li.className = "precios-metodo-chip precios-metodo-chip-logo";
             const img = document.createElement("img");
             img.src = src;
             img.alt = metodo.nombre;
             img.loading = "lazy";
             img.className = "precios-metodo-logo";
             li.appendChild(img);
+            metodosEl!.appendChild(li);
           });
         } else {
+          const li = document.createElement("li");
+          li.className = "precios-metodo-chip";
           li.textContent = metodo.nombre;
+          metodosEl!.appendChild(li);
         }
-        metodosEl!.appendChild(li);
       });
     }
 
