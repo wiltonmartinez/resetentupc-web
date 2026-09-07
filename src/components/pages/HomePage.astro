@@ -105,11 +105,6 @@ const seriesDisponibles = Array.from(
   <p class="hero-tagline"><em>{t(locale, "home.heroTagline")}</em></p>
   <TrustpilotWidget />
 
-  <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="hero-descarga-boton" data-sound="select">
-    ⬇️ {t(locale, "comoFuncionaProceso.paso31BotonDescarga")}
-  </a>
-  <p class="hero-descarga-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
-
   <WhatsAppCTA
     sourceId="home-hero"
     label={t(locale, "home.heroCta")}
@@ -117,6 +112,14 @@ const seriesDisponibles = Array.from(
     urlPath={buildLocalizedPath(locale, "/")}
     elevar
   />
+
+  <div class="hero-descarga-secundaria">
+    <p class="hero-descarga-texto">{t(locale, "home.heroDescargaTexto")}</p>
+    <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="hero-descarga-boton" data-sound="select">
+      ⬇️ {t(locale, "comoFuncionaProceso.paso31BotonDescarga")}
+    </a>
+    <p class="hero-descarga-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
+  </div>
 </section>
 
 <section class="modelos">
@@ -560,20 +563,43 @@ const seriesDisponibles = Array.from(
     }
   }
 
-  /* Mismo botón rojo (y misma copia) que ya usa el Paso 3.1 de "Cómo
-     funciona" para descargar el módulo — clases propias porque ese estilo
-     vive con scope en ComoFuncionaPage.astro y no llega hasta acá. */
+  /* CTA secundario: separado del botón principal de WhatsApp por un
+     divisor sutil y con jerarquía visual claramente menor (más chico, sin
+     el peso del CTA verde) para que ambos botones no compitan — pero
+     siempre visible y accesible, porque un técnico ya en conversación sí
+     lo necesita para conectarse. */
+  .hero-descarga-secundaria {
+    display: grid;
+    gap: 0.4rem;
+    justify-items: center;
+    margin-top: 0.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--color-border);
+    width: 100%;
+    max-width: 22rem;
+  }
+
+  .hero-descarga-texto {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  /* Mismo rojo (y misma copia) que ya usa el Paso 3.1 de "Cómo funciona"
+     para descargar el módulo — clases propias porque ese estilo vive con
+     scope en ComoFuncionaPage.astro y no llega hasta acá. Más chico que
+     antes a propósito: acá es el CTA secundario, no el principal. */
   .hero-descarga-boton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 0.3rem;
-    padding: 0.65rem 1.25rem;
+    padding: 0.5rem 1.1rem;
     border-radius: 10px;
     background: #dc2626;
     color: #ffffff;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     text-decoration: none;
     transition:
       background-color 0.15s ease,
@@ -590,7 +616,7 @@ const seriesDisponibles = Array.from(
 
   .hero-descarga-microtexto {
     margin: 0;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--color-text-subtle);
     text-align: center;
   }
