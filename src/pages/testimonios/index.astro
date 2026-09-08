@@ -1,0 +1,6 @@
+---
+// Redirect permanente: URL antigua/externa -> ubicación real bajo
+// prueba-social/. Mismo patrón que prueba-social/reset-realizados/index.astro.
+export const prerender = false;
+return Astro.redirect("/prueba-social/testimonios-trustpilot/", 301);
+---
