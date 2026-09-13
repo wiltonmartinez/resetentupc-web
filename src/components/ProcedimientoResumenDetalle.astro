@@ -272,6 +272,7 @@ const cascadaDefaults: Record<CascadaToken, string> = {
 };
 const resumenPaso1TextoParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPasoTexto1"), cascadaDefaults);
 const resumenPaso5TextoParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPasoTexto5"), cascadaDefaults);
+const paso1TituloParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPaso1"), cascadaDefaults);
 
 // Bullet "Impresora conectada..." del Paso 2: 4 variantes segun marca+error
 // (Epson, Canon, Epson-SC con 0014BD, Epson-SC con cualquier otro error), ya
@@ -471,7 +472,11 @@ const subpasosConexion = [
         <span class="detalle-linea" aria-hidden="true" />
       </div>
       <div class="detalle-contenido">
-        <h3>{t(locale, "comoFuncionaProceso.resumenPaso1")}</h3>
+        <h3>
+          {paso1TituloParts.map((part) =>
+            part.token ? <span {...{ [`data-cascada-${part.token}`]: true }}>{part.text}</span> : part.text
+          )}
+        </h3>
 
         <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada.
              Vive acá (Paso 1) para que elegir el equipo y el error sea la
