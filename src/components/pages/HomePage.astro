@@ -8,6 +8,12 @@
  * retiró a la espera de la nueva estructura paso a paso; el catálogo
  * completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
  *
+ * La grilla de errores rota en CADA carga/F5 (no solo por deploy): el
+ * build arma el conjunto completo de combinaciones válidas por columna y
+ * lo embebe como datos; un script de cliente sortea una al azar por
+ * columna al cargar la página (ver "aida-errores-grid" más abajo). Esto
+ * evita convertir el Home a SSR solo para esta rotación.
+ *
  * Paleta estricta: fondo del Hero en gris (--color-bg-muted), tarjetas en
  * blanco (--color-bg-card), títulos en azul oscuro (--home-azul — el teal
  * --color-primary del resto del sitio no es "azul oscuro"), botón de
@@ -33,14 +39,13 @@ const { locale } = Astro.props;
 const catalogoHref = "/catalogo/";
 
 // Grilla de 3 "ventanas" de error clickeables (Epson / Canon / Epson-SC):
-// cada recarga/deploy sortea una combinación distinta de error+modelo por
-// columna (esta página es estática/prerenderizada, así que la rotación se
-// renueva en cada deploy, no por visita — no hay forma de sortear "por
-// visita" sin convertirla a SSR). Solo se sortea entre combinaciones que
+// el build arma, por columna, TODAS las combinaciones de error+modelo que
 // tengan página real (modelos-muestra.json) Y foto real disponible
 // (src/assets/errores, mismo mapeo que ya usa ErrorSelector.astro) — nunca
-// se fabrica ni se enlaza a un modelo sin página.
-function elegirAlAzar(lista) {
+// se fabrica ni se enlaza a un modelo sin página. Ese conjunto ("pool") se
+// embebe como datos en el HTML; el script de cliente al final de este
+// archivo sortea una combinación por columna en cada carga/F5.
+function elegirAlAzar<T>(lista: T[]): T {
   return lista[Math.floor(Math.random() * lista.length)];
 }
 
@@ -61,35 +66,55 @@ function combinacionesConImagen(marcaSlug: string) {
   return combinaciones;
 }
 
+interface OpcionGrid {
+  href: string;
+  ariaLabel: string;
+  imagenUrl: string;
+}
+
+async function construirPool(marcaSlug: string): Promise<OpcionGrid[]> {
+  const combinaciones = combinacionesConImagen(marcaSlug);
+  return Promise.all(
+    combinaciones.map(async (combo) => {
+      const info = nombresPorModelo.get(`${combo.marcaSlug}:${combo.modeloSlug}`);
+      const nombreCompleto = info ? `${info.nombreMarca} ${info.nombreModelo}` : combo.modeloSlug;
+      return {
+        href: buildLocalizedPath(locale, `/reset/${combo.marcaSlug}/${combo.modeloSlug}/`),
+        ariaLabel: `${t(locale, "home.verModelo")}: ${nombreCompleto}`,
+        imagenUrl: (await getImage({ src: combo.imagen, format: "webp", width: 320 })).src,
+      };
+    })
+  );
+}
+
 const COLUMNAS_MARCA = ["epson", "canon", "epson-sc"];
 
-const erroresGridRaw = COLUMNAS_MARCA.map((marcaSlug) => {
-  const combinaciones = combinacionesConImagen(marcaSlug);
-  return combinaciones.length > 0 ? elegirAlAzar(combinaciones) : null;
-}).filter((combo): combo is NonNullable<typeof combo> => combo !== null);
+const poolPorMarca: Record<string, OpcionGrid[]> = {};
+for (const marcaSlug of COLUMNAS_MARCA) {
+  poolPorMarca[marcaSlug] = await construirPool(marcaSlug);
+}
 
-const erroresGrid = await Promise.all(
-  erroresGridRaw.map(async (combo) => {
-    const info = nombresPorModelo.get(`${combo.marcaSlug}:${combo.modeloSlug}`);
-    return {
-      ...combo,
-      nombreCompleto: info ? `${info.nombreMarca} ${info.nombreModelo}` : combo.modeloSlug,
-      imagenUrl: (await getImage({ src: combo.imagen, format: "webp", width: 320 })).src,
-    };
-  })
-);
+// Primer render (SSR/no-JS): una combinación al azar por columna, igual
+// que antes — el script cliente la reemplaza apenas carga la página.
+const erroresGrid = COLUMNAS_MARCA.map((marcaSlug) => {
+  const opciones = poolPorMarca[marcaSlug];
+  return opciones.length > 0 ? { marcaSlug, ...elegirAlAzar(opciones) } : null;
+}).filter((x): x is { marcaSlug: string } & OpcionGrid => x !== null);
+
+const poolJson = JSON.stringify(poolPorMarca);
 ---
 
 <section class="aida-hero">
   <div class="aida-hero-contenido">
     <h1>{t(locale, "homeLanding.heroTitulo")}</h1>
 
-    <div class="aida-errores-grid">
+    <div class="aida-errores-grid" data-pool={poolJson}>
       {erroresGrid.map((err) => (
         <a
           class="aida-error-card"
-          href={buildLocalizedPath(locale, `/reset/${err.marcaSlug}/${err.modeloSlug}/`)}
-          aria-label={`${t(locale, "home.verModelo")}: ${err.nombreCompleto}`}
+          data-marca={err.marcaSlug}
+          href={err.href}
+          aria-label={err.ariaLabel}
           data-sound="select"
         >
           <img src={err.imagenUrl} alt="" loading="lazy" />
@@ -128,6 +153,36 @@ const erroresGrid = await Promise.all(
     <p class="aida-hero-descarga-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
   </div>
 </section>
+
+<script>
+  // Sortea una combinación de error+modelo por columna en cada carga/F5,
+  // entre las opciones ya validadas en el build (ver poolPorMarca en el
+  // frontmatter) — nunca inventa una imagen ni enlaza a un modelo sin
+  // página real.
+  document.querySelectorAll(".aida-errores-grid").forEach((grid) => {
+    const poolRaw = grid.getAttribute("data-pool");
+    if (!poolRaw) return;
+
+    let pool: Record<string, { href: string; ariaLabel: string; imagenUrl: string }[]>;
+    try {
+      pool = JSON.parse(poolRaw);
+    } catch {
+      return;
+    }
+
+    grid.querySelectorAll<HTMLAnchorElement>(".aida-error-card").forEach((card) => {
+      const marca = card.getAttribute("data-marca");
+      const opciones = marca ? pool[marca] : null;
+      if (!opciones || opciones.length === 0) return;
+
+      const elegido = opciones[Math.floor(Math.random() * opciones.length)];
+      card.setAttribute("href", elegido.href);
+      card.setAttribute("aria-label", elegido.ariaLabel);
+      const img = card.querySelector("img");
+      if (img) img.src = elegido.imagenUrl;
+    });
+  });
+</script>
 
 <style>
   .aida-hero {
