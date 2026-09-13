@@ -14,15 +14,15 @@
  */
 import { Image, getImage, type ImageMetadata } from "astro:assets";
 import { getErrorImage } from "../lib/error-images.js";
-import { t } from "../i18n/utils";
-import Tabs from "./ui/Tabs.astro";
-import EvidenceCard from "./ui/EvidenceCard.astro";
+import { t, buildLocalizedPath } from "../i18n/utils";
 import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import PreciosCascadaWidget from "./pages/PreciosCascadaWidget.astro";
 import { fetchAllPages } from "../lib/fetch-paginated";
+import { listarTestimonios } from "../lib/nucleo-api";
 import { extractYoutubeId } from "../lib/youtube";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../config/site";
+import modelosCompletos from "../data/modelos-muestra.json";
 import procEpson1 from "../assets/procedimiento/1.png";
 import procEpson2 from "../assets/procedimiento/2.png";
 import procEpson3 from "../assets/procedimiento/3.png";
@@ -116,6 +116,29 @@ try {
   console.error("Error fetching cliente-satisfecho para ProcedimientoResumenDetalle:", error);
 }
 
+// Paso 6: una reseña real de Trustpilot al azar (mismo catálogo público que
+// usa /prueba-social/testimonios-trustpilot/), justo después del chat, como
+// prueba social adicional. Si Núcleo no responde o no hay ninguna con
+// imagen, no se muestra nada — nunca se fabrica una reseña.
+let testimonioAleatorio: { imagen: string; destino: string } | null = null;
+try {
+  const testimonios = await listarTestimonios();
+  const conImagen = testimonios.filter((testimonio: any) => testimonio.url_imgur?.trim());
+  if (conImagen.length > 0) {
+    const elegido = conImagen[Math.floor(Math.random() * conImagen.length)];
+    testimonioAleatorio = {
+      imagen: elegido.url_imgur,
+      destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur,
+    };
+  }
+} catch (error) {
+  console.error("Error fetching testimonios-trustpilot para ProcedimientoResumenDetalle:", error);
+}
+
+// Páginas de modelo realmente válidas (mismo criterio que la grilla de
+// errores del Home): nunca se enlaza el Paso 1 a un modelo sin página real.
+const paginasValidas = new Set(modelosCompletos.map((m) => `${m.marcaSlug}:${m.modeloSlug}`));
+
 // Imagenes del grid de resumen (Bloque 1), una serie de 6 por marca. La marca
 // activa en el selector de diagnostico de abajo decide cual serie se muestra
 // (Epson por defecto); el toggle es puramente visual en el cliente porque las
@@ -196,30 +219,35 @@ const modelosCanon = [
 const modelosEpsonSc = ["F570", "F571", "T3170", "T3170x"];
 const OTRO_MODELO_VALOR = "otro";
 
-// Fotos reales por modelo exacto (no solo por marca) para Epson-Almohadillas
-// y Canon-5B00: src/assets/errores/ ya tiene una captura por cada modelo del
-// desplegable (ej. G3110.png, G6010.png), asi que en vez de mostrar siempre
-// la misma foto generica, se sirve la del modelo que el usuario realmente
-// eligio. Si un modelo no tiene foto propia (raro, catalogo incompleto), esa
-// entrada simplemente no aparece en el mapa y el cliente mantiene la foto
-// generica por defecto sin fabricar nada.
-type FotoModelo = { src: string; srcModal: string };
-const construirFotosPorModelo = async (modelos: string[]): Promise<Record<string, FotoModelo>> => {
+// Foto + enlace real por modelo exacto (no solo por marca) para
+// Epson-Almohadillas y Canon: src/assets/errores/ ya tiene una captura por
+// cada modelo del desplegable (ej. G3110.png, G6010.png), asi que en vez de
+// mostrar siempre la misma foto generica, el Paso 1 sirve la del modelo que
+// el usuario realmente eligio, como enlace directo a /reset/{marca}/{modelo}/.
+// Un modelo solo entra al mapa si tiene foto real Y pagina real — nunca se
+// fabrica una imagen ni se enlaza a un modelo sin pagina (mismo criterio que
+// la grilla de errores del Home).
+type FotoConHref = { src: string; href: string };
+const construirFotosConHref = async (modelos: string[], marcaSlug: string): Promise<Record<string, FotoConHref>> => {
   const entradas = await Promise.all(
     modelos.map(async (modelo) => {
+      const modeloSlug = modelo.toLowerCase();
+      if (!paginasValidas.has(`${marcaSlug}:${modeloSlug}`)) return null;
       const img = getErrorImage(modelo);
       if (!img) return null;
-      const [thumb, modal] = await Promise.all([
-        getImage({ src: img, format: "webp", width: img.width }),
-        getImage({ src: img, format: "webp", width: 960 }),
-      ]);
-      return [modelo, { src: thumb.src, srcModal: modal.src }] as const;
+      const optimizada = await getImage({ src: img, format: "webp", width: img.width });
+      return [modelo, { src: optimizada.src, href: buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`) }] as const;
     })
   );
-  return Object.fromEntries(entradas.filter((e): e is [string, FotoModelo] => e !== null));
+  return Object.fromEntries(entradas.filter((e): e is [string, FotoConHref] => e !== null));
 };
-const fotosEpsonAlmohadillas = await construirFotosPorModelo(modelosEpsonAlmohadillas);
-const fotosCanon = await construirFotosPorModelo(modelosCanon);
+const fotosEpsonConHref = await construirFotosConHref(modelosEpsonAlmohadillas, "epson");
+const fotosCanonConHref = await construirFotosConHref(modelosCanon, "canon");
+
+// Paso 1 por defecto: Epson L3250 + Almohadillas (el caso mas comun), como
+// unica ventana de error visible — sin pestañas de otros errores.
+const PASO1_MODELO_DEFAULT = "L3250";
+const paso1FotoDefault = fotosEpsonConHref[PASO1_MODELO_DEFAULT];
 
 const modeloEjemplo = t(locale, "comoFuncionaProceso.resumenModeloEjemplo");
 const cascadaDefaults: Record<CascadaToken, string> = {
@@ -253,76 +281,6 @@ const subpasosConexion = [
   { numero: "3.2", imagen: pasoConectarWebp, titulo: t(locale, "proceso.paso2Titulo"), texto: t(locale, "proceso.paso2Texto") },
   { numero: "3.3", imagen: pasoCompartirWebp, titulo: t(locale, "proceso.paso3Titulo"), texto: t(locale, "proceso.paso3Texto") },
   { numero: "3.4", imagen: pasoWhatsappWebp, titulo: t(locale, "proceso.paso4Titulo"), texto: t(locale, "proceso.paso4Texto") },
-];
-
-// Tabs del Paso 1: un ejemplo real por marca (imagen real del error, via
-// error-images.js con fallback por modeloSlug ya que "epson-almohadillas" y
-// "canon-5b00" no tienen una foto propia, solo por modelo — a diferencia de
-// "epson-sc-0014bd" que sí tiene su propia foto de error y de solución).
-const erroresTab = [
-  {
-    id: "epson-almohadillas",
-    label: "Epson Almohadillas",
-    errorId: "epson-almohadillas",
-    modeloSlug: "l3110",
-    nombreMarca: "Epson",
-    nombreModelo: "L3110",
-    pregunta: t(locale, "comoFuncionaProceso.paso1Pregunta"),
-  },
-  {
-    id: "canon-5b00",
-    label: "Canon 5B00",
-    errorId: "canon-5b00",
-    modeloSlug: "g3110",
-    nombreMarca: "Canon",
-    nombreModelo: "G3110",
-    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaCanon"),
-  },
-  {
-    id: "epson-sc-0014bd",
-    label: "Epson-SC 0014BD",
-    errorId: "epson-sc-0014bd",
-    modeloSlug: "epson-sc-0014bd",
-    nombreMarca: "Epson-SC",
-    nombreModelo: "F570",
-    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc"),
-  },
-  {
-    id: "epson-sc-00000008",
-    label: "Epson-SC 00000008 - 00080000",
-    errorId: "epson-sc-00000008",
-    modeloSlug: "epson-sc-0014bd",
-    nombreMarca: "Epson-SC",
-    nombreModelo: "F570",
-    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc2"),
-  },
-  {
-    id: "epson-sc-00000004",
-    label: "Epson-SC 00000004 - 00040000",
-    errorId: "epson-sc-00000004",
-    modeloSlug: "epson-sc-0014bd",
-    nombreMarca: "Epson-SC",
-    nombreModelo: "F570",
-    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc3"),
-  },
-  {
-    id: "epson-sc-00000001",
-    label: "Epson-SC 00000001 - 00010000",
-    errorId: "epson-sc-00000001",
-    modeloSlug: "epson-sc-0014bd",
-    nombreMarca: "Epson-SC",
-    nombreModelo: "F570",
-    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc4"),
-  },
-  {
-    id: "epson-sc-0000000c",
-    label: "Epson-SC 0000000c - 000c0000",
-    errorId: "epson-sc-0000000c",
-    modeloSlug: "epson-sc-0014bd",
-    nombreMarca: "Epson-SC",
-    nombreModelo: "F570",
-    pregunta: t(locale, "comoFuncionaProceso.paso1PreguntaEpsonSc5"),
-  },
 ];
 ---
 
@@ -492,7 +450,6 @@ const erroresTab = [
              primera interacción real del procedimiento, no un bloque aparte
              antes de la grilla de resumen. -->
         <section class="selector-diagnostico" data-selector-diagnostico>
-          <h4 class="selector-titulo">{t(locale, "comoFuncionaProceso.selectorTitulo")}</h4>
           <div class="selector-marcas" role="radiogroup">
             {marcasSelector.map((marca) => (
               <button type="button" class="selector-btn" data-selector-marca data-value={marca.id} data-sound="select">
@@ -542,45 +499,29 @@ const erroresTab = [
           </div>
         </section>
 
-        <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
-          {erroresTab.map((error, index) => {
-            const fotosPorModelo =
-              error.id === "epson-almohadillas" ? fotosEpsonAlmohadillas : error.id === "canon-5b00" ? fotosCanon : null;
-            return (
-            <div
-              data-tab-panel={error.id}
-              hidden={index !== 0}
-              data-fotos-modelo={fotosPorModelo ? JSON.stringify(fotosPorModelo) : undefined}
-            >
-              {/*
-                El {modelo} de esta pregunta SOLO existe en las preguntas de
-                Epson-Almohadillas y Canon-5B00 (las unicas con una foto real
-                por cada modelo del desplegable en src/assets/errores/). Se
-                renderiza vacio por defecto y el cliente lo completa —junto con
-                la foto correspondiente— recien cuando el modelo elegido tiene
-                una foto real que lo respalde (ver [data-modelo-evidencia] en
-                el script mas abajo). Las demas preguntas (Epson-SC) no tienen
-                el token y quedan igual.
-              */}
-              <p>
-                {renderTemplateParts(error.pregunta, { ...cascadaDefaults, modelo: "" }).map((part) =>
-                  part.token === "modelo" ? <span data-modelo-evidencia>{part.text}</span> : part.text
-                )}
-              </p>
-              <EvidenceCard
-                errorId={error.errorId}
-                modeloSlug={error.modeloSlug}
-                nombreMarca={error.nombreMarca}
-                nombreModelo={error.nombreModelo}
-                errorCaption={t(locale, "modelo.evidenciaErrorCaption")}
-                solucionCaption={t(locale, "modelo.evidenciaSolucionCaption")}
-                flipHint={t(locale, "modelo.evidenciaFlipHint")}
-                locale={locale}
-              />
-            </div>
-            );
-          })}
-        </Tabs>
+        <!--
+          Ventana de error única (sin pestañas de otros errores): por
+          defecto Epson L3250 + Almohadillas. El script del selector la
+          actualiza en vivo cuando el usuario elige un modelo con foto real
+          en el desplegable de arriba (Epson-Almohadillas o Canon) — nunca
+          se enlaza a un modelo sin página real ni se fabrica una imagen.
+        -->
+        <p>
+          {renderTemplateParts(t(locale, "comoFuncionaProceso.paso1Pregunta"), { ...cascadaDefaults, modelo: PASO1_MODELO_DEFAULT }).map((part) =>
+            part.token === "modelo" ? <span data-modelo-evidencia>{part.text}</span> : part.text
+          )}
+        </p>
+        <a
+          class="paso1-imagen-error"
+          href={paso1FotoDefault?.href ?? buildLocalizedPath(locale, "/reset/epson/l3250/")}
+          data-fotos-epson={JSON.stringify(fotosEpsonConHref)}
+          data-fotos-canon={JSON.stringify(fotosCanonConHref)}
+          data-texto-ver-modelo={t(locale, "home.verModelo")}
+          aria-label={`${t(locale, "home.verModelo")}: Epson ${PASO1_MODELO_DEFAULT}`}
+          data-sound="select"
+        >
+          <img src={paso1FotoDefault?.src} alt="" loading="lazy" />
+        </a>
       </div>
     </div>
 
@@ -738,6 +679,17 @@ const erroresTab = [
             </div>
           );
         })}
+
+        {testimonioAleatorio && (
+          <a
+            class="paso6-testimonio"
+            href={testimonioAleatorio.destino}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+          >
+            <img src={testimonioAleatorio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
+          </a>
+        )}
       </div>
     </div>
   </section>
@@ -804,25 +756,6 @@ const erroresTab = [
       });
     };
 
-    // Vincula la marca+error elegidos aca arriba con la pestana equivalente
-    // del bloque "Identificacion del error" (Paso 1, mas abajo): al elegir
-    // una combinacion con evidencia real, se activa esa pestana para que la
-    // foto del error correcto aparezca sin que el usuario tenga que buscarla.
-    const tabsPorCombinacion: { marcaId: string; errorValor: string; tabId: string }[] = [
-      { marcaId: "epson", errorValor: almohadillasLabel, tabId: "epson-almohadillas" },
-      { marcaId: "canon", errorValor: "5B00", tabId: "canon-5b00" },
-      { marcaId: "epson-sc", errorValor: "0014BD", tabId: "epson-sc-0014bd" },
-      { marcaId: "epson-sc", errorValor: "00000008 - 00080000", tabId: "epson-sc-00000008" },
-      { marcaId: "epson-sc", errorValor: "00000004 - 00040000", tabId: "epson-sc-00000004" },
-      { marcaId: "epson-sc", errorValor: "00000001 - 00010000", tabId: "epson-sc-00000001" },
-      { marcaId: "epson-sc", errorValor: "0000000c - 000c0000", tabId: "epson-sc-0000000c" },
-    ];
-    const activarTabError = (marcaId: string, errorValor: string) => {
-      const match = tabsPorCombinacion.find((t) => t.marcaId === marcaId && t.errorValor === errorValor);
-      if (!match) return;
-      document.querySelector<HTMLButtonElement>(`[data-tab-target="${match.tabId}"]`)?.click();
-    };
-
     // Variante segun marca+error: "epson"/"canon" para esas marcas (el error
     // no importa), y para Epson-SC depende de si el error es 0014BD o
     // cualquier otro. La reutilizan el bullet USB del Paso 2, el requisito de
@@ -850,53 +783,40 @@ const erroresTab = [
       });
     };
 
-    // Foto de evidencia por modelo exacto (solo Epson-Almohadillas y
-    // Canon-5B00 tienen una foto real por cada modelo del desplegable, via
-    // [data-fotos-modelo] servido desde el frontmatter). Si el modelo
-    // elegido tiene foto propia, se reemplaza la miniatura + la del zoom y
-    // se completa [data-modelo-evidencia] con ese modelo; si no la tiene, se
-    // vuelve a la foto original del panel (guardada en data-original-*) y el
-    // span de modelo queda vacio, para no afirmar un modelo que la foto no
-    // respalda.
-    const panelesConFotoPorModelo: Record<string, HTMLElement | null> = {
-      epson: document.querySelector('[data-tab-panel="epson-almohadillas"]'),
-      canon: document.querySelector('[data-tab-panel="canon-5b00"]'),
-    };
-    const fotosPorMarcaJs: Record<string, Record<string, { src: string; srcModal: string }>> = {};
-    Object.entries(panelesConFotoPorModelo).forEach(([marca, panel]) => {
-      try {
-        fotosPorMarcaJs[marca] = JSON.parse(panel?.dataset.fotosModelo ?? "{}");
-      } catch {
-        fotosPorMarcaJs[marca] = {};
-      }
-      const img = panel?.querySelector<HTMLImageElement>(".evidence-imagen img");
-      const modalBtn = panel?.querySelector<HTMLButtonElement>(".evidence-ampliar");
-      if (img && !img.dataset.original) img.dataset.original = img.src;
-      if (modalBtn && !modalBtn.dataset.originalModalSrc) modalBtn.dataset.originalModalSrc = modalBtn.dataset.modalSrc ?? "";
-    });
+    // Ventana de error única del Paso 1 (sin pestañas): solo Epson-Almohadillas
+    // y Canon tienen una foto + página real por cada modelo del desplegable
+    // (ver [data-fotos-epson]/[data-fotos-canon], servidos desde el
+    // frontmatter — mismo criterio que la grilla de errores del Home, nunca
+    // se enlaza a un modelo sin página). Si el modelo elegido tiene foto
+    // propia, se reemplaza la imagen y el enlace; si no la tiene, la ventana
+    // se queda tal como estaba (nunca queda con un enlace roto).
+    const paso1Link = raiz.closest(".detalle-contenido")?.querySelector<HTMLAnchorElement>(".paso1-imagen-error") ?? null;
+    const paso1Img = paso1Link?.querySelector<HTMLImageElement>("img") ?? null;
+    const paso1ModeloSpan = raiz.closest(".detalle-contenido")?.querySelector<HTMLElement>("[data-modelo-evidencia]") ?? null;
+    const textoVerModelo = paso1Link?.dataset.textoVerModelo ?? "";
+    let fotosEpsonJs: Record<string, { src: string; href: string }> = {};
+    let fotosCanonJs: Record<string, { src: string; href: string }> = {};
+    try {
+      fotosEpsonJs = JSON.parse(paso1Link?.dataset.fotosEpson ?? "{}");
+    } catch {
+      /* datos invalidos: la ventana se queda en su estado por defecto */
+    }
+    try {
+      fotosCanonJs = JSON.parse(paso1Link?.dataset.fotosCanon ?? "{}");
+    } catch {
+      /* datos invalidos: la ventana se queda en su estado por defecto */
+    }
 
-    const actualizarFotoEvidenciaPorModelo = (marcaId: string, modelo: string) => {
-      const panel = panelesConFotoPorModelo[marcaId];
-      if (!panel) return;
-      const foto = fotosPorMarcaJs[marcaId]?.[modelo];
-      const img = panel.querySelector<HTMLImageElement>(".evidence-imagen img");
-      const modalBtn = panel.querySelector<HTMLButtonElement>(".evidence-ampliar");
-      const modeloSpan = panel.querySelector<HTMLElement>("[data-modelo-evidencia]");
-      if (foto) {
-        if (img) {
-          img.src = foto.src;
-          img.removeAttribute("srcset");
-        }
-        if (modalBtn) modalBtn.dataset.modalSrc = foto.srcModal;
-        if (modeloSpan) modeloSpan.textContent = modelo;
-      } else {
-        if (img && img.dataset.original) {
-          img.src = img.dataset.original;
-          img.removeAttribute("srcset");
-        }
-        if (modalBtn) modalBtn.dataset.modalSrc = modalBtn.dataset.originalModalSrc ?? "";
-        if (modeloSpan) modeloSpan.textContent = "";
-      }
+    const actualizarImagenPaso1 = (marcaId: string, marcaLabel: string, modelo: string) => {
+      if (!paso1Link || !paso1Img) return;
+      const mapa = marcaId === "epson" ? fotosEpsonJs : marcaId === "canon" ? fotosCanonJs : null;
+      const foto = mapa ? mapa[modelo] : undefined;
+      if (!foto) return;
+      paso1Img.src = foto.src;
+      paso1Img.removeAttribute("srcset");
+      paso1Link.setAttribute("href", foto.href);
+      paso1Link.setAttribute("aria-label", `${textoVerModelo}: ${marcaLabel} ${modelo}`);
+      if (paso1ModeloSpan) paso1ModeloSpan.textContent = modelo;
     };
 
     const actualizarModelo = (valor: string) => {
@@ -1076,7 +996,6 @@ const erroresTab = [
         document.querySelectorAll<HTMLElement>("[data-cascada-error]").forEach((el) => {
           el.textContent = valor;
         });
-        activarTabError(marcaActivaId, valor);
         actualizarWhatsAppCta();
         const variante = calcularVarianteMarcaError(marcaActivaId, valor);
         actualizarRequisitoUsb(variante);
@@ -1126,7 +1045,7 @@ const erroresTab = [
           }
         }
         actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
-        actualizarFotoEvidenciaPorModelo(marcaActivaId, esOtro ? "" : lista.value);
+        actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, esOtro ? "" : lista.value);
         sincronizarWidgetPrecios();
         guardarSeleccion();
       });
@@ -1196,11 +1115,6 @@ const erroresTab = [
     border-radius: 16px;
     background: var(--color-bg-card);
     box-shadow: var(--shadow-card);
-  }
-
-  .selector-titulo {
-    margin: 0;
-    font-size: 1.3rem;
   }
 
   .selector-marcas,
@@ -1278,6 +1192,40 @@ const erroresTab = [
   .selector-modelo-lista:focus {
     outline: none;
     border-color: #1d4ed8;
+  }
+
+  /* Ventana de error única del Paso 1: solo la foto, clickeable, sin texto
+     de título ni pestañas de otros errores (mismo patrón que la grilla de
+     errores del Hero del Home). */
+  .paso1-imagen-error {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 4 / 3;
+    background: var(--color-bg-card);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .paso1-imagen-error:hover,
+  .paso1-imagen-error:focus-visible {
+    border-color: #f97316;
+    transform: translateY(-2px);
+  }
+
+  .paso1-imagen-error:focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 2px;
+  }
+
+  .paso1-imagen-error img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   /* BLOQUE 1 */
@@ -1747,6 +1695,33 @@ const erroresTab = [
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: var(--color-text-subtle);
+  }
+
+  /* Reseña real de Trustpilot al azar, justo después del chat del Paso 6 —
+     prueba social adicional (mismo catálogo que
+     /prueba-social/testimonios-trustpilot/). */
+  .paso6-testimonio {
+    display: block;
+    width: min(320px, 100%);
+    margin-top: 1.25rem;
+    line-height: 0;
+    background: #ffffff;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    border-radius: 14px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .paso6-testimonio:hover {
+    border-color: #f97316;
+    transform: translateY(-2px);
+  }
+
+  .paso6-testimonio img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   @media (max-width: 640px) {
