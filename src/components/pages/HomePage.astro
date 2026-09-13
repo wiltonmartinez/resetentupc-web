@@ -1,12 +1,12 @@
 ---
 /**
- * Home — bloque Hero (Atención del embudo AIDA): título, grilla de
- * "Errores y Modelos Frecuentes" (Epson / Canon / Epson-SC, en lugar del
- * subtítulo largo anterior), buscador rápido, sello de Trustpilot y CTAs
- * principales (WhatsApp + descarga). El resto del embudo
- * (Interés/Deseo/Prueba Social/Acción) se retiró a la espera de la nueva
- * estructura paso a paso; el catálogo completo de modelos vive en
- * /catalogo/ (ver CatalogoPage.astro).
+ * Home — bloque Hero (Atención del embudo AIDA): título, grilla de 3
+ * "ventanas" de error clickeables (Epson / Canon / Epson-SC — sin texto,
+ * solo la foto real del error, en lugar del subtítulo largo original),
+ * buscador rápido, sello de Trustpilot y CTAs principales (WhatsApp +
+ * descarga). El resto del embudo (Interés/Deseo/Prueba Social/Acción) se
+ * retiró a la espera de la nueva estructura paso a paso; el catálogo
+ * completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
  *
  * Paleta estricta: fondo del Hero en gris (--color-bg-muted), tarjetas en
  * blanco (--color-bg-card), títulos en azul oscuro (--home-azul — el teal
@@ -20,6 +20,8 @@ import { t, buildLocalizedPath } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import { getErrorImage } from "../../lib/error-images.js";
+import modelosCompletos from "../../data/modelos-muestra.json";
+import erroresData from "../../data/errores.json";
 import { USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
 interface Props {
@@ -30,45 +32,51 @@ const { locale } = Astro.props;
 
 const catalogoHref = "/catalogo/";
 
-// Grilla "Errores y Modelos Frecuentes": 3 columnas fijas (Epson / Canon /
-// Epson-SC), cada una con su imagen real de error (ver src/assets/errores,
-// mismo mapeo que ya usa ErrorSelector.astro) y algunos modelos frecuentes
-// elegidos al azar — se renuevan en cada deploy porque esta página es
-// estática/prerenderizada, no hay forma de sortear "por visita" sin SSR.
-function elegirAlAzar(lista, cantidad) {
-  return [...lista].sort(() => Math.random() - 0.5).slice(0, cantidad);
+// Grilla de 3 "ventanas" de error clickeables (Epson / Canon / Epson-SC):
+// cada recarga/deploy sortea una combinación distinta de error+modelo por
+// columna (esta página es estática/prerenderizada, así que la rotación se
+// renueva en cada deploy, no por visita — no hay forma de sortear "por
+// visita" sin convertirla a SSR). Solo se sortea entre combinaciones que
+// tengan página real (modelos-muestra.json) Y foto real disponible
+// (src/assets/errores, mismo mapeo que ya usa ErrorSelector.astro) — nunca
+// se fabrica ni se enlaza a un modelo sin página.
+function elegirAlAzar(lista) {
+  return lista[Math.floor(Math.random() * lista.length)];
 }
 
-const MODELOS_EPSON = ["L3250", "L1250", "L4260", "L3210", "L3110", "L3150", "ET-2800", "ET-2400"];
-const MODELOS_CANON = ["G3010", "G2100", "G3100", "G3110", "G4110"];
-const MODELOS_PLOTTER = ["F570", "F571", "T3170", "T3170X"];
+const paginasValidas = new Set(modelosCompletos.map((m) => `${m.marcaSlug}:${m.modeloSlug}`));
+const nombresPorModelo = new Map(modelosCompletos.map((m) => [`${m.marcaSlug}:${m.modeloSlug}`, m]));
 
-const ERRORES_GRID = [
-  {
-    id: "epson-almohadillas",
-    tituloKey: "home.grupoAlmohadillas",
-    imagen: getErrorImage("l3250"),
-    modelos: elegirAlAzar(MODELOS_EPSON, 4),
-  },
-  {
-    id: "canon-5b00",
-    tituloKey: "home.grupoCanon5b00",
-    imagen: getErrorImage("g3110"),
-    modelos: elegirAlAzar(MODELOS_CANON, 4),
-  },
-  {
-    id: "sc-plotter",
-    tituloKey: "homeLanding.erroresGridPlotterTitulo",
-    imagen: getErrorImage("epson-sc-00010000"),
-    modelos: MODELOS_PLOTTER,
-  },
-];
+function combinacionesConImagen(marcaSlug: string) {
+  const conceptos = (erroresData.errores as any[]).filter((c) => c.marcaSlug === marcaSlug);
+  const combinaciones: { marcaSlug: string; modeloSlug: string; imagen: ImageMetadata }[] = [];
+  for (const concepto of conceptos) {
+    for (const modelo of concepto.modelos_confirmados as { marcaSlug: string; modeloSlug: string }[]) {
+      if (!paginasValidas.has(`${modelo.marcaSlug}:${modelo.modeloSlug}`)) continue;
+      const imagen = getErrorImage(concepto.error_id) ?? getErrorImage(modelo.modeloSlug);
+      if (!imagen) continue;
+      combinaciones.push({ marcaSlug: modelo.marcaSlug, modeloSlug: modelo.modeloSlug, imagen });
+    }
+  }
+  return combinaciones;
+}
+
+const COLUMNAS_MARCA = ["epson", "canon", "epson-sc"];
+
+const erroresGridRaw = COLUMNAS_MARCA.map((marcaSlug) => {
+  const combinaciones = combinacionesConImagen(marcaSlug);
+  return combinaciones.length > 0 ? elegirAlAzar(combinaciones) : null;
+}).filter((combo): combo is NonNullable<typeof combo> => combo !== null);
 
 const erroresGrid = await Promise.all(
-  ERRORES_GRID.map(async (err) => ({
-    ...err,
-    imagenUrl: err.imagen ? (await getImage({ src: err.imagen, format: "webp", width: 320 })).src : "",
-  }))
+  erroresGridRaw.map(async (combo) => {
+    const info = nombresPorModelo.get(`${combo.marcaSlug}:${combo.modeloSlug}`);
+    return {
+      ...combo,
+      nombreCompleto: info ? `${info.nombreMarca} ${info.nombreModelo}` : combo.modeloSlug,
+      imagenUrl: (await getImage({ src: combo.imagen, format: "webp", width: 320 })).src,
+    };
+  })
 );
 ---
 
@@ -78,18 +86,14 @@ const erroresGrid = await Promise.all(
 
     <div class="aida-errores-grid">
       {erroresGrid.map((err) => (
-        <div class="aida-error-card">
-          <div class="aida-error-card-imagen">
-            {err.imagenUrl && <img src={err.imagenUrl} alt={t(locale, err.tituloKey)} loading="lazy" />}
-          </div>
-          <h2>{t(locale, err.tituloKey)}</h2>
-          <p class="aida-error-card-modelos-label">{t(locale, "homeLanding.erroresGridModelosLabel")}</p>
-          <ul class="aida-error-card-modelos">
-            {err.modelos.map((modelo) => (
-              <li>{modelo}</li>
-            ))}
-          </ul>
-        </div>
+        <a
+          class="aida-error-card"
+          href={buildLocalizedPath(locale, `/reset/${err.marcaSlug}/${err.modeloSlug}/`)}
+          aria-label={`${t(locale, "home.verModelo")}: ${err.nombreCompleto}`}
+          data-sound="select"
+        >
+          <img src={err.imagenUrl} alt="" loading="lazy" />
+        </a>
       ))}
     </div>
 
@@ -159,68 +163,33 @@ const erroresGrid = await Promise.all(
   }
 
   .aida-error-card {
-    display: grid;
-    justify-items: center;
-    gap: 0.4rem;
-    background: var(--color-bg-card);
-    border: 1px solid rgba(249, 115, 22, 0.35);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
-    padding: var(--space-sm);
-    text-align: center;
-  }
-
-  .aida-error-card-imagen {
+    display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
-    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
     overflow: hidden;
-    background: var(--color-bg-muted);
+    transition: border-color 0.15s ease, transform 0.15s ease;
   }
 
-  .aida-error-card-imagen img {
+  .aida-error-card:hover,
+  .aida-error-card:focus-visible {
+    border-color: var(--home-naranja);
+    transform: translateY(-2px);
+  }
+
+  .aida-error-card:focus-visible {
+    outline: 2px solid var(--home-azul);
+    outline-offset: 2px;
+  }
+
+  .aida-error-card img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: contain;
-  }
-
-  .aida-error-card h2 {
-    margin: 0.2rem 0 0;
-    color: var(--home-azul);
-    font-size: 0.95rem;
-    line-height: 1.25;
-  }
-
-  .aida-error-card-modelos-label {
-    margin: 0.35rem 0 0;
-    width: 100%;
-    padding-top: 0.35rem;
-    border-top: 1px solid var(--home-naranja);
-    color: var(--color-text-subtle);
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  .aida-error-card-modelos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.3rem;
-  }
-
-  .aida-error-card-modelos li {
-    background: var(--color-bg-muted);
-    border-radius: var(--radius-full);
-    padding: 0.15rem 0.55rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--color-text);
   }
 
   .aida-hero-buscador {
