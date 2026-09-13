@@ -486,15 +486,6 @@ const subpasosConexion = [
               </button>
             ))}
           </div>
-          {marcasSelector.map((marca) => (
-            <div class="selector-errores" data-selector-errores-panel={marca.id}>
-              {marca.errores.map((error) => (
-                <button type="button" class="selector-btn selector-btn-error" data-selector-error data-value={error} data-sound="select">
-                  {error}
-                </button>
-              ))}
-            </div>
-          ))}
           <div class="selector-modelo-wrap" data-selector-modelo-wrap data-almohadillas-label={errorDefaultLabel}>
             <label for="selector-modelo-input">{t(locale, "comoFuncionaProceso.selectorModeloLabel")}</label>
             <input
@@ -526,6 +517,15 @@ const subpasosConexion = [
               <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
             </select>
           </div>
+          {marcasSelector.map((marca) => (
+            <div class="selector-errores" data-selector-errores-panel={marca.id}>
+              {marca.errores.map((error) => (
+                <button type="button" class="selector-btn selector-btn-error" data-selector-error data-value={error} data-sound="select">
+                  {error}
+                </button>
+              ))}
+            </div>
+          ))}
         </section>
 
         <!--
@@ -1025,10 +1025,17 @@ const subpasosConexion = [
           el.hidden = el.dataset.chatMarca !== varianteChat;
         });
         actualizarWhatsAppCta();
-        // No se guarda acá: errorActivo/modeloActivo todavía podrían ser los
-        // de la marca anterior (no se limpian al cambiar de marca) — guardar
-        // ahora persistiría una combinación a medio hacer. Se guarda recién
-        // al completar error o modelo, que ya reflejan la marca vigente.
+
+        // Marca -> Modelo -> Error: el error por defecto de cada marca (el
+        // primero de su lista — Almohadillas en Epson, 5B00 en Canon,
+        // 0014BD en Epson-SC) se activa solo, así el modelo queda
+        // disponible de inmediato sin obligar a elegir el error primero.
+        // El usuario sigue pudiendo cambiarlo tocando otro botón de error.
+        const panelActivo = raiz.querySelector<HTMLElement>(`[data-selector-errores-panel="${marcaValor}"]`);
+        panelActivo?.querySelector<HTMLButtonElement>("[data-selector-error]")?.click();
+        // No se guarda acá: el click de arriba ya guarda la seleccion
+        // completa (marca+error) una vez que el error por defecto queda
+        // activo.
       });
     });
 
