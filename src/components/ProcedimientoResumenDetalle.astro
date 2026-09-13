@@ -200,7 +200,6 @@ const splitTemplate = (template: string): [string, string] => {
   return [prefix, suffix ?? ""];
 };
 
-const [resumenPaso1Prefix, resumenPaso1Suffix] = splitTemplate(t(locale, "comoFuncionaProceso.resumenPaso1"));
 const [paso2ErrorPrefix, paso2ErrorSuffix] = splitTemplate(t(locale, "comoFuncionaProceso.paso2ReqErrorVerificado"));
 const errorDefaultLabel = t(locale, "comoFuncionaProceso.errorAlmohadillasLabel");
 const otroErrorLabel = t(locale, "comoFuncionaProceso.otroErrorLabel");
@@ -473,7 +472,7 @@ const subpasosConexion = [
         <span class="detalle-linea" aria-hidden="true" />
       </div>
       <div class="detalle-contenido">
-        <h3>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</h3>
+        <h3>{t(locale, "comoFuncionaProceso.resumenPaso1")}</h3>
 
         <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada.
              Vive acá (Paso 1) para que elegir el equipo y el error sea la
@@ -528,15 +527,6 @@ const subpasosConexion = [
             </select>
           </div>
         </section>
-
-        <!-- Dato capturado en vivo, destacado: mismo [data-cascada-error]
-             que ya actualiza el título de arriba, solo que acá se muestra
-             centrado y en tipografía grande para que el usuario confirme
-             de un vistazo qué error quedó seleccionado. -->
-        <p class="paso1-error-destacado">
-          <span class="paso1-error-destacado-label">{t(locale, "comoFuncionaProceso.paso1ErrorSeleccionadoLabel")}</span>
-          <span class="paso1-error-destacado-valor" data-cascada-error>{errorDefaultLabel}</span>
-        </p>
 
         <!--
           Ventana de error única (sin pestañas de otros errores): por
@@ -1286,32 +1276,6 @@ const subpasosConexion = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-
-  /* Dato del error capturado en vivo, destacado: centrado y en tipografía
-     grande/llamativa (azul oscuro), para que se note de un vistazo qué
-     error quedó seleccionado en el formulario de arriba. */
-  .paso1-error-destacado {
-    margin: 0;
-    display: grid;
-    justify-items: center;
-    gap: 0.15rem;
-    text-align: center;
-  }
-
-  .paso1-error-destacado-label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-subtle);
-  }
-
-  .paso1-error-destacado-valor {
-    font-size: clamp(1.5rem, 5vw, 2.15rem);
-    font-weight: 800;
-    line-height: 1.15;
-    color: #1e3a8a;
   }
 
   /* Ventana de error única del Paso 1: solo la foto, clickeable, sin texto
