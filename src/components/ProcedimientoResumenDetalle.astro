@@ -1002,14 +1002,52 @@ const subpasosConexion = [
       }
     };
 
+    // Epson, Canon y Epson-SC (cualquier error de cada una) muestran una
+    // lista de modelos frecuentes en vez del campo de texto libre, para
+    // elegir con un clic en lugar de escribir. La opcion "Otro" de cada
+    // lista vuelve a mostrar el campo de texto.
+    const mostrarListaDeModelos = (marcaId: string) => {
+      const mostrarListaEpson = marcaId === "epson";
+      const mostrarListaCanon = marcaId === "canon";
+      const mostrarListaEpsonSc = marcaId === "epson-sc";
+      const mostrarAlgunaLista = mostrarListaEpson || mostrarListaCanon || mostrarListaEpsonSc;
+      if (modeloInput) modeloInput.hidden = mostrarAlgunaLista;
+      if (listaEpson) {
+        listaEpson.hidden = !mostrarListaEpson;
+        if (!mostrarListaEpson) listaEpson.value = "";
+      }
+      if (listaCanon) {
+        listaCanon.hidden = !mostrarListaCanon;
+        if (!mostrarListaCanon) listaCanon.value = "";
+      }
+      if (listaEpsonSc) {
+        listaEpsonSc.hidden = !mostrarListaEpsonSc;
+        if (!mostrarListaEpsonSc) listaEpsonSc.value = "";
+      }
+    };
+
+    // Selector "en escalera": Marca (siempre visible) -> Modelo (aparece al
+    // elegir marca) -> Error (aparece recien al elegir modelo). Esta
+    // función revela el panel de error de la marca activa y activa su
+    // error por defecto (el primero de su lista — Almohadillas en Epson,
+    // 5B00 en Canon, 0014BD en Epson-SC) la PRIMERA vez que hay un modelo
+    // para esta marca; si el usuario ya había elegido un error, no lo
+    // vuelve a tocar (solo cambiar de marca reinicia errorActivo).
+    const revelarErrorSiHaceFalta = () => {
+      if (errorActivo) return;
+      const panelActivo = raiz.querySelector<HTMLElement>(`[data-selector-errores-panel="${marcaActivaId}"]`);
+      panelActivo?.querySelector<HTMLButtonElement>("[data-selector-error]")?.click();
+    };
+
     marcaBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         marcaBtns.forEach((b) => b.classList.toggle("selector-btn-activo", b === btn));
+        // Escalera: al elegir marca todavía no se muestra ningún error —
+        // recién aparece cuando se elige un modelo (ver revelarErrorSiHaceFalta).
         erroresPaneles.forEach((panel) => {
-          panel.style.display = panel.dataset.selectorErroresPanel === btn.dataset.value ? "flex" : "none";
+          panel.style.display = "none";
         });
         raiz.querySelectorAll<HTMLElement>("[data-selector-error]").forEach((b) => b.classList.remove("selector-btn-activo"));
-        if (modeloWrap) modeloWrap.style.display = "none";
 
         const marcaValor = btn.dataset.value ?? "";
         marcaActivaId = marcaValor;
@@ -1029,30 +1067,31 @@ const subpasosConexion = [
         });
         actualizarWhatsAppCta();
 
-        // Cambiar de marca sí borra el modelo elegido (es un equipo
-        // distinto); cambiar de error dentro de la misma marca NO debe
-        // borrarlo — ver el handler de error más abajo, que ahora lo
-        // conserva porque acá queda en "" al entrar a una marca nueva.
+        // Cambiar de marca es un equipo distinto: reinicia modelo Y error
+        // (a diferencia de cambiar de error dentro de la misma marca, que
+        // conserva el modelo — ver el handler de las listas más abajo).
         actualizarModelo("");
+        errorActivo = "";
+        document.querySelectorAll<HTMLElement>("[data-cascada-error]").forEach((el) => {
+          el.textContent = "";
+        });
 
-        // Marca -> Modelo -> Error: el error por defecto de cada marca (el
-        // primero de su lista — Almohadillas en Epson, 5B00 en Canon,
-        // 0014BD en Epson-SC) se activa solo, así el modelo queda
-        // disponible de inmediato sin obligar a elegir el error primero.
-        // El usuario sigue pudiendo cambiarlo tocando otro botón de error.
-        const panelActivo = raiz.querySelector<HTMLElement>(`[data-selector-errores-panel="${marcaValor}"]`);
-        panelActivo?.querySelector<HTMLButtonElement>("[data-selector-error]")?.click();
-        // No se guarda acá: el click de arriba ya guarda la seleccion
-        // completa (marca+error) una vez que el error por defecto queda
-        // activo.
+        if (modeloWrap) modeloWrap.style.display = "grid";
+        mostrarListaDeModelos(marcaValor);
+        // No se guarda acá: falta elegir modelo (y con él, el error) para
+        // tener una selección completa.
       });
     });
 
     raiz.querySelectorAll<HTMLButtonElement>("[data-selector-error]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const panel = btn.closest<HTMLElement>("[data-selector-errores-panel]");
+        // Revela el panel del error clickeado (escalera: aparece recien
+        // acá, ya sea por un click real del usuario, por el default
+        // automatico de revelarErrorSiHaceFalta, o al restaurar una
+        // seleccion guardada).
+        if (panel) panel.style.display = "flex";
         panel?.querySelectorAll<HTMLElement>("[data-selector-error]").forEach((b) => b.classList.toggle("selector-btn-activo", b === btn));
-        if (modeloWrap) modeloWrap.style.display = "grid";
 
         const valor = btn.dataset.value ?? "";
         errorActivo = valor;
@@ -1063,40 +1102,6 @@ const subpasosConexion = [
         const variante = calcularVarianteMarcaError(marcaActivaId, valor);
         actualizarRequisitoUsb(variante);
         actualizarVideoReset(variante);
-
-        // Epson, Canon y Epson-SC (cualquier error de cada una) muestran una
-        // lista de modelos frecuentes en vez del campo de texto libre, para
-        // elegir con un clic en lugar de escribir. La opcion "Otro" de cada
-        // lista vuelve a mostrar el campo de texto.
-        const mostrarListaEpson = marcaActivaId === "epson";
-        const mostrarListaCanon = marcaActivaId === "canon";
-        const mostrarListaEpsonSc = marcaActivaId === "epson-sc";
-        const mostrarAlgunaLista = mostrarListaEpson || mostrarListaCanon || mostrarListaEpsonSc;
-        if (modeloInput) modeloInput.hidden = mostrarAlgunaLista;
-        if (listaEpson) {
-          listaEpson.hidden = !mostrarListaEpson;
-          if (!mostrarListaEpson) listaEpson.value = "";
-        }
-        if (listaCanon) {
-          listaCanon.hidden = !mostrarListaCanon;
-          if (!mostrarListaCanon) listaCanon.value = "";
-        }
-        if (listaEpsonSc) {
-          listaEpsonSc.hidden = !mostrarListaEpsonSc;
-          if (!mostrarListaEpsonSc) listaEpsonSc.value = "";
-        }
-        // Cambiar de error dentro de la misma marca NO debe borrar el
-        // modelo que el usuario ya habia elegido (bug reportado: Epson +
-        // L120 + Almohadillas -> cambiar a E-11 borraba el modelo). Si ya
-        // habia uno (modeloActivo viene en "" recien al entrar a una marca
-        // nueva, ver el handler de marca), se conserva y solo se refresca
-        // la imagen/enlace por si el modelo tiene foto propia; si no habia
-        // ninguno todavia, se deja el placeholder de siempre.
-        if (modeloActivo) {
-          actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, modeloActivo);
-        } else if (mostrarAlgunaLista) {
-          actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
-        }
         sincronizarWidgetPrecios();
         guardarSeleccion();
       });
@@ -1104,6 +1109,7 @@ const subpasosConexion = [
 
     modeloInput?.addEventListener("input", () => {
       actualizarModelo(modeloInput.value.trim() || modeloInput.dataset.modeloEjemplo || "");
+      revelarErrorSiHaceFalta();
       sincronizarWidgetPrecios();
       guardarSeleccion();
     });
@@ -1120,6 +1126,7 @@ const subpasosConexion = [
         }
         actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
         actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, esOtro ? "" : lista.value);
+        revelarErrorSiHaceFalta();
         sincronizarWidgetPrecios();
         guardarSeleccion();
       });
@@ -1211,6 +1218,21 @@ const subpasosConexion = [
     box-shadow: var(--shadow-card);
   }
 
+  /* Selector "en escalera": Marca -> Modelo -> Error aparecen uno tras
+     otro (ver el script de arriba); este fade + desplazamiento breve es
+     lo que da la sensación de "escalón" cada vez que un bloque nuevo se
+     revela, en vez de aparecer de golpe. */
+  @keyframes selector-escalon {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .selector-marcas,
   .selector-errores {
     display: flex;
@@ -1220,6 +1242,7 @@ const subpasosConexion = [
 
   .selector-errores {
     display: none;
+    animation: selector-escalon 0.3s ease-out;
   }
 
   .selector-btn {
@@ -1252,6 +1275,7 @@ const subpasosConexion = [
     display: none;
     gap: 0.4rem;
     max-width: 320px;
+    animation: selector-escalon 0.3s ease-out;
   }
 
   .selector-modelo-wrap label {
@@ -1911,5 +1935,12 @@ const subpasosConexion = [
     width: 100%;
     height: auto;
     display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .selector-modelo-wrap,
+    .selector-errores {
+      animation: none;
+    }
   }
 </style>
