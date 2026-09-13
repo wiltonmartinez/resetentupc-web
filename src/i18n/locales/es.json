@@ -366,6 +366,8 @@
   "comoFuncionaProceso": {
     "tituloResumen": "Así funciona el proceso, paso a paso",
     "resumenPaso1": "Identificar el problema: {error}",
+    "paso1ErrorSeleccionadoLabel": "Error seleccionado",
+    "paso1VideoLabel": "Video del proceso de diagnóstico",
     "paso1Pregunta": "¿Tu impresora Epson {modelo} muestra un mensaje como \"Una almohadilla de tinta llegó al final de su vida útil\"?",
     "paso1ImagenPlaceholder": "Espacio para la captura del Epson Status Monitor",
     "paso1PreguntaCanon": "¿Tu Canon {modelo} muestra el código de error 5B00 (Absorbedor de tinta lleno)?",

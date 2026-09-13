@@ -21,6 +21,7 @@ import PreciosCascadaWidget from "./pages/PreciosCascadaWidget.astro";
 import { fetchAllPages } from "../lib/fetch-paginated";
 import { listarTestimonios } from "../lib/nucleo-api";
 import { extractYoutubeId } from "../lib/youtube";
+import { getPruebaSocialBannerVideo } from "../lib/prueba-social-banners";
 import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../config/site";
 import modelosCompletos from "../data/modelos-muestra.json";
 import procEpson1 from "../assets/procedimiento/1.png";
@@ -53,6 +54,12 @@ interface Props {
 }
 
 const { locale, urlPath } = Astro.props;
+
+// Video en bucle del Paso 1 (src/assets/prueba-social/diagnostico/banner-video.mp4),
+// vía el mismo helper que ya usan las páginas de Prueba Social. Si el
+// archivo no está disponible, simplemente no se renderiza el <video> — no
+// se rompe el Paso 1 por esto.
+const paso1VideoDiagnostico = getPruebaSocialBannerVideo("diagnostico");
 
 // Evidencia real embebida en los pasos 5 y 6 -- un caso al azar por cada
 // variante marca+error (elegido en build time, se renueva en cada deploy)
@@ -116,24 +123,34 @@ try {
   console.error("Error fetching cliente-satisfecho para ProcedimientoResumenDetalle:", error);
 }
 
-// Paso 6: una reseña real de Trustpilot al azar (mismo catálogo público que
-// usa /prueba-social/testimonios-trustpilot/), justo después del chat, como
-// prueba social adicional. Si Núcleo no responde o no hay ninguna con
-// imagen, no se muestra nada — nunca se fabrica una reseña.
-let testimonioAleatorio: { imagen: string; destino: string } | null = null;
+// Reseñas reales de Trustpilot (mismo catálogo público que usa
+// /prueba-social/testimonios-trustpilot/), en dos lugares: una al azar en
+// el Paso 6 (justo después del chat) y el pool completo para la sección
+// "Prueba Social" que va después de los 6 pasos — esa se re-sortea en
+// cliente en cada carga/F5 (ver el <script> más abajo), no solo por
+// deploy. Si Núcleo no responde o no hay ninguna con imagen, no se muestra
+// nada — nunca se fabrica una reseña.
+type Testimonio = { imagen: string; destino: string };
+let testimonioAleatorio: Testimonio | null = null;
+let testimoniosPool: Testimonio[] = [];
 try {
   const testimonios = await listarTestimonios();
-  const conImagen = testimonios.filter((testimonio: any) => testimonio.url_imgur?.trim());
-  if (conImagen.length > 0) {
-    const elegido = conImagen[Math.floor(Math.random() * conImagen.length)];
-    testimonioAleatorio = {
-      imagen: elegido.url_imgur,
-      destino: elegido.url_trustpilot_review?.trim() || elegido.url_imgur,
-    };
+  testimoniosPool = testimonios
+    .filter((testimonio: any) => testimonio.url_imgur?.trim())
+    .map((testimonio: any) => ({
+      imagen: testimonio.url_imgur,
+      destino: testimonio.url_trustpilot_review?.trim() || testimonio.url_imgur,
+    }));
+  if (testimoniosPool.length > 0) {
+    testimonioAleatorio = testimoniosPool[Math.floor(Math.random() * testimoniosPool.length)];
   }
 } catch (error) {
   console.error("Error fetching testimonios-trustpilot para ProcedimientoResumenDetalle:", error);
 }
+
+// Primer render (SSR/no-JS): 3 al azar del pool — el script cliente las
+// reemplaza apenas carga la página (ver más abajo).
+const testimoniosDestacadosInicial = [...testimoniosPool].sort(() => Math.random() - 0.5).slice(0, 3);
 
 // Páginas de modelo realmente válidas (mismo criterio que la grilla de
 // errores del Home): nunca se enlaza el Paso 1 a un modelo sin página real.
@@ -285,13 +302,6 @@ const subpasosConexion = [
 ---
 
 <div class="procedimiento-resumen-detalle">
-  <!-- Espacio reservado para banner-video.mp4 (video en bucle, pendiente de
-       agregar) — antes acá vivía el selector de diagnóstico, que ahora está
-       dentro del Paso 1 ("Identificar el Problema") más abajo. -->
-  <div class="video-banner-espacio" aria-hidden="true"></div>
-
-  <div class="seccion-divisor" aria-hidden="true" />
-
   <!-- BLOQUE 1: Grid de resumen, dinámico por marca -->
   <section class="resumen-grid" aria-label={t(locale, "comoFuncionaProceso.tituloResumen")}>
     <h2 class="resumen-titulo">{t(locale, "comoFuncionaProceso.tituloResumen")}</h2>
@@ -445,6 +455,23 @@ const subpasosConexion = [
       <div class="detalle-contenido">
         <h3>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</h3>
 
+        {paso1VideoDiagnostico && (
+          <div class="paso1-video-banner">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              disablePictureInPicture
+              controlsList="nodownload noremoteplayback nofullscreen"
+              oncontextmenu="return false"
+              aria-label={t(locale, "comoFuncionaProceso.paso1VideoLabel")}
+            >
+              <source src={paso1VideoDiagnostico} type="video/mp4" />
+            </video>
+          </div>
+        )}
+
         <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada.
              Vive acá (Paso 1) para que elegir el equipo y el error sea la
              primera interacción real del procedimiento, no un bloque aparte
@@ -498,6 +525,15 @@ const subpasosConexion = [
             </select>
           </div>
         </section>
+
+        <!-- Dato capturado en vivo, destacado: mismo [data-cascada-error]
+             que ya actualiza el título de arriba, solo que acá se muestra
+             centrado y en tipografía grande para que el usuario confirme
+             de un vistazo qué error quedó seleccionado. -->
+        <p class="paso1-error-destacado">
+          <span class="paso1-error-destacado-label">{t(locale, "comoFuncionaProceso.paso1ErrorSeleccionadoLabel")}</span>
+          <span class="paso1-error-destacado-valor" data-cascada-error>{errorDefaultLabel}</span>
+        </p>
 
         <!--
           Ventana de error única (sin pestañas de otros errores): por
@@ -693,6 +729,24 @@ const subpasosConexion = [
       </div>
     </div>
   </section>
+
+  {testimoniosPool.length > 0 && (
+    <>
+      <div class="resenas-dinamicas-divisor" aria-hidden="true"></div>
+
+      <section class="resenas-dinamicas" data-testimonios={JSON.stringify(testimoniosPool)}>
+        <h2 class="resenas-dinamicas-titulo">{t(locale, "comoFuncionaProceso.resenasTitulo")}</h2>
+        <p class="resenas-dinamicas-subtitulo">{t(locale, "comoFuncionaProceso.resenasSubtitulo")}</p>
+        <div class="resenas-dinamicas-grid" data-testimonios-grid>
+          {testimoniosDestacadosInicial.map((testimonio) => (
+            <a class="resenas-dinamicas-card" href={testimonio.destino} target="_blank" rel="noopener noreferrer nofollow">
+              <img src={testimonio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
+            </a>
+          ))}
+        </div>
+      </section>
+    </>
+  )}
 </div>
 
 <script>
@@ -1077,35 +1131,55 @@ const subpasosConexion = [
   });
 </script>
 
+<script>
+  // Sección "Prueba Social" después de los 6 pasos: sortea 3 reseñas del
+  // pool completo (embebido en [data-testimonios]) en CADA carga/F5, no
+  // solo por deploy — mismo criterio que la grilla de errores del Hero del
+  // Home. Reemplaza las 3 elegidas al azar en el build (SSR/no-JS) apenas
+  // carga la página.
+  function escapeAttr(str: string) {
+    return str.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
+  }
+
+  interface Testimonio {
+    imagen: string;
+    destino: string;
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-testimonios]").forEach((seccion) => {
+    let pool: Testimonio[];
+    try {
+      pool = JSON.parse(seccion.dataset.testimonios ?? "[]");
+    } catch {
+      return;
+    }
+    if (!Array.isArray(pool) || pool.length === 0) return;
+
+    const grid = seccion.querySelector<HTMLElement>("[data-testimonios-grid]");
+    if (!grid) return;
+
+    const barajado = [...pool];
+    for (let i = barajado.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [barajado[i], barajado[j]] = [barajado[j], barajado[i]];
+    }
+
+    grid.innerHTML = barajado
+      .slice(0, 3)
+      .map(
+        (testimonio) => `
+          <a class="resenas-dinamicas-card" href="${escapeAttr(testimonio.destino)}" target="_blank" rel="noopener noreferrer nofollow">
+            <img src="${escapeAttr(testimonio.imagen)}" alt="" loading="lazy" />
+          </a>`
+      )
+      .join("");
+  });
+</script>
+
 <style>
   .procedimiento-resumen-detalle {
     display: grid;
     gap: 2.5rem;
-  }
-
-  /* Separador sutil entre bloques — franja de 1px con gradiente que se
-     desvanece en los bordes, en vez de una linea solida que corte de forma
-     abrupta. */
-  .seccion-divisor {
-    height: 1px;
-    width: 100%;
-    background: linear-gradient(to right, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
-  }
-
-  /* Espacio reservado para el video en bucle (banner-video.mp4, pendiente):
-     mismo alto/proporción que ocupará el video real, para que agregarlo
-     después no reacomode el resto de la página. Contenedor blanco con
-     borde punteado, mismo criterio que los demás placeholders del sitio
-     (ver .video-placeholder más abajo, para cuando falta el video real de
-     evidencia). */
-  .video-banner-espacio {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-width: 960px;
-    margin: 0 auto;
-    border-radius: var(--radius-lg);
-    border: 2px dashed var(--color-border);
-    background: var(--color-bg-card);
   }
 
   .selector-diagnostico {
@@ -1192,6 +1266,49 @@ const subpasosConexion = [
   .selector-modelo-lista:focus {
     outline: none;
     border-color: #1d4ed8;
+  }
+
+  /* Video en bucle del Paso 1 (banner-video.mp4): mismo alto/proporción
+     16:9 que tenía el espacio reservado, ahora con el video real. */
+  .paso1-video-banner {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-bg-muted);
+  }
+
+  .paso1-video-banner video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Dato del error capturado en vivo, destacado: centrado y en tipografía
+     grande/llamativa (azul oscuro), para que se note de un vistazo qué
+     error quedó seleccionado en el formulario de arriba. */
+  .paso1-error-destacado {
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.15rem;
+    text-align: center;
+  }
+
+  .paso1-error-destacado-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-subtle);
+  }
+
+  .paso1-error-destacado-valor {
+    font-size: clamp(1.5rem, 5vw, 2.15rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #1e3a8a;
   }
 
   /* Ventana de error única del Paso 1: solo la foto, clickeable, sin texto
@@ -1735,5 +1852,70 @@ const subpasosConexion = [
       height: 2rem;
       font-size: 0.9rem;
     }
+  }
+
+  /* Prueba Social dinámica: justo debajo de los 6 pasos, separador en
+     naranja (paleta estricta — nunca en botones) + 3 reseñas que el script
+     de arriba re-sortea en cada carga/F5 desde el pool completo. */
+  .resenas-dinamicas-divisor {
+    height: 2px;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    background: linear-gradient(to right, transparent, #f97316 15%, #f97316 85%, transparent);
+  }
+
+  .resenas-dinamicas {
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    text-align: center;
+  }
+
+  .resenas-dinamicas-titulo {
+    margin: 0;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    color: #1e3a8a;
+  }
+
+  .resenas-dinamicas-subtitulo {
+    margin: 0 0 0.5rem;
+    color: var(--color-text-subtle);
+    font-size: 0.95rem;
+  }
+
+  .resenas-dinamicas-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .resenas-dinamicas-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  :global(.resenas-dinamicas-card) {
+    display: block;
+    line-height: 0;
+    background: #ffffff;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    border-radius: 14px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  :global(.resenas-dinamicas-card:hover) {
+    border-color: #f97316;
+    transform: translateY(-2px);
+  }
+
+  :global(.resenas-dinamicas-card img) {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 </style>
