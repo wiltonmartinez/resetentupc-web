@@ -1,26 +1,22 @@
 ---
 /**
- * Home reestructurado como embudo AIDA (Atención → Interés → Deseo →
- * Prueba Social → Acción), enfocado 100% en conversión y urgencia. El
- * catálogo masivo de modelos (buscador+filtros+grilla+favoritos) se movió
- * a /catalogo/ (ver CatalogoPage.astro) — acá solo queda un buscador
- * rápido que enlaza para allá.
+ * Home — bloque Hero (Atención del embudo AIDA): título, subtítulo,
+ * buscador rápido, sello de Trustpilot y CTAs principales (WhatsApp +
+ * descarga). El resto del embudo (Interés/Deseo/Prueba Social/Acción) se
+ * retiró a la espera de la nueva estructura paso a paso; el catálogo
+ * completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
  *
- * Paleta estricta pedida: fondos/estructura en gris (--color-bg-muted),
- * tarjetas en blanco (--color-bg-card), títulos/botones de información en
- * azul oscuro (--home-azul, nuevo — el teal --color-primary del resto del
- * sitio no es "azul oscuro"), separadores en naranja (--home-naranja,
- * mismo tono que ya usa Header.astro), descargas en rojo (mismo rojo que
- * ya usa el resto del sitio para este CTA) y WhatsApp en verde
- * (--color-whatsapp, ya global). Nunca naranja en botones.
+ * Paleta estricta: fondo del Hero en gris (--color-bg-muted), tarjeta del
+ * buscador en blanco (--color-bg-card), título en azul oscuro
+ * (--home-azul — el teal --color-primary del resto del sitio no es "azul
+ * oscuro"), botón de descarga en rojo, botón de WhatsApp en verde
+ * (--color-whatsapp, global). Naranja reservado para líneas separadoras,
+ * nunca para botones.
  */
 import { t, buildLocalizedPath } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
-import YouTubeFacade from "../ui/YouTubeFacade.astro";
-import { fetchAllPages } from "../../lib/fetch-paginated";
-import { extractYoutubeId } from "../../lib/youtube";
-import { USB_REDIRECTOR_DOWNLOAD_URL, TECHNICIAN_ID, NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
+import { USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -29,45 +25,6 @@ interface Props {
 const { locale } = Astro.props;
 
 const catalogoHref = "/catalogo/";
-
-// Interés: slider de errores críticos — cada uno enlaza a /catalogo/ ya
-// filtrado (mismos ids que CatalogoPage.astro/GRUPOS_ERROR), así el
-// visitante llega directo a sus modelos compatibles sin tener que volver
-// a elegir marca/error allá.
-const ERRORES_SLIDER = [
-  { marca: "epson", error: "epson-almohadillas", labelKey: "home.grupoAlmohadillas", icono: "🟢" },
-  { marca: "canon", error: "canon-5b00", labelKey: "home.grupoCanon5b00", icono: "🟡" },
-  { marca: "canon", error: "canon-1700", labelKey: "home.grupoCanon1700", icono: "🟠" },
-  { marca: "epson-sc", error: "sc-bloqueo", labelKey: "home.grupoScBloqueo", icono: "🔴" },
-  { marca: "epson-sc", error: "sc-revision", labelKey: "home.grupoScRevision", icono: "🟣" },
-] as const;
-
-const PASOS_USUARIO = [
-  { numero: 1, tituloKey: "homeLanding.pasoUsuario1Titulo", textoKey: "homeLanding.pasoUsuario1Texto" },
-  { numero: 2, tituloKey: "homeLanding.pasoUsuario2Titulo", textoKey: "homeLanding.pasoUsuario2Texto" },
-  { numero: 3, tituloKey: "homeLanding.pasoUsuario3Titulo", textoKey: "homeLanding.pasoUsuario3Texto" },
-  { numero: 4, tituloKey: "homeLanding.pasoUsuario4Titulo", textoKey: "homeLanding.pasoUsuario4Texto" },
-  { numero: 5, tituloKey: "homeLanding.pasoUsuario5Titulo", textoKey: "homeLanding.pasoUsuario5Texto" },
-] as const;
-
-// Prueba Social: 1 video real al azar (misma fuente y mismo criterio ya
-// usado en ComoFuncionaPage.astro — build-time, se renueva en cada
-// deploy; esta página es estática/prerenderizada, no SSR, así que no hay
-// forma de sortear "por visita" sin convertirla a SSR).
-type VideoEvidencia = { youtubeId: string; titulo: string } | null;
-let videoDestacado: VideoEvidencia = null;
-try {
-  const evidencias = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`);
-  const conVideo = evidencias
-    .map((e: any) => ({ ...e, youtubeId: extractYoutubeId(e.youtube_id) || extractYoutubeId(e.enlace_youtube) }))
-    .filter((e: any) => e.youtubeId);
-  if (conVideo.length > 0) {
-    const elegido = conVideo[Math.floor(Math.random() * conVideo.length)];
-    videoDestacado = { youtubeId: elegido.youtubeId, titulo: `${elegido.marca} ${elegido.modelo}` };
-  }
-} catch (error) {
-  console.error("Error fetching reset-realizados para Home:", error);
-}
 ---
 
 <section class="aida-hero">
@@ -107,120 +64,9 @@ try {
   </div>
 </section>
 
-<div class="aida-divisor" aria-hidden="true"></div>
-
-<section class="aida-interes">
-  <h2>{t(locale, "homeLanding.interesTitulo")}</h2>
-  <p class="aida-seccion-subtitulo">{t(locale, "homeLanding.interesSubtitulo")}</p>
-
-  <div class="aida-slider" id="aida-error-slider">
-    {ERRORES_SLIDER.map((err) => (
-      <a class="aida-slider-item" href={`${catalogoHref}?marca=${err.marca}&error=${err.error}`} data-sound="select">
-        <span class="aida-slider-icono" aria-hidden="true">{err.icono}</span>
-        <span class="aida-slider-label">{t(locale, err.labelKey)}</span>
-      </a>
-    ))}
-  </div>
-</section>
-
-<div class="aida-divisor" aria-hidden="true"></div>
-
-<section class="aida-deseo">
-  <h2>{t(locale, "homeLanding.deseoTitulo")}</h2>
-  <p class="aida-seccion-subtitulo">{t(locale, "homeLanding.deseoSubtitulo")}</p>
-
-  <div class="aida-deseo-grid">
-    <div class="aida-card">
-      <span class="aida-card-icono" aria-hidden="true">🚫</span>
-      <h3>{t(locale, "homeLanding.deseoNoIntrusivoTitulo")}</h3>
-      <p>{t(locale, "homeLanding.deseoNoIntrusivoTexto")}</p>
-    </div>
-    <div class="aida-card">
-      <span class="aida-card-icono" aria-hidden="true">🔌</span>
-      <h3>{t(locale, "homeLanding.deseoUsbRedirectorTitulo")}</h3>
-      <p>{t(locale, "homeLanding.deseoUsbRedirectorTexto")}</p>
-      <p class="aida-card-technician-id">
-        Technician ID: <strong>{TECHNICIAN_ID}</strong>
-      </p>
-    </div>
-  </div>
-
-  <ol class="aida-pasos">
-    {PASOS_USUARIO.map((paso) => (
-      <li class="aida-paso">
-        <span class="aida-paso-numero">{paso.numero}</span>
-        <div>
-          <h4>{t(locale, paso.tituloKey)}</h4>
-          <p>{t(locale, paso.textoKey)}</p>
-        </div>
-      </li>
-    ))}
-  </ol>
-
-  <div class="aida-requisitos">
-    <h3>{t(locale, "homeLanding.requisitosTitulo")}</h3>
-    <ul>
-      <li>🖥️ {t(locale, "homeLanding.requisitoWindows")}</li>
-      <li>🔌 {t(locale, "homeLanding.requisitoUsb")}</li>
-      <li>🌐 {t(locale, "homeLanding.requisitoInternet")}</li>
-    </ul>
-  </div>
-</section>
-
-{videoDestacado && (
-  <>
-    <div class="aida-divisor" aria-hidden="true"></div>
-    <section class="aida-prueba-social">
-      <h2>{t(locale, "homeLanding.pruebaSocialTitulo")}</h2>
-      <p class="aida-seccion-subtitulo">{t(locale, "homeLanding.pruebaSocialSubtitulo")}</p>
-      <div class="aida-prueba-social-video">
-        <YouTubeFacade
-          youtubeId={videoDestacado.youtubeId}
-          titulo={videoDestacado.titulo}
-          reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
-        />
-      </div>
-    </section>
-  </>
-)}
-
-<div class="aida-divisor" aria-hidden="true"></div>
-
-<section class="aida-accion">
-  <h2>{t(locale, "homeLanding.accionTitulo")}</h2>
-
-  <div class="aida-garantia-card">
-    <span class="aida-card-icono" aria-hidden="true">🛡️</span>
-    <h3>{t(locale, "homeLanding.accionGarantiaTitulo")}</h3>
-    <p>{t(locale, "homeLanding.accionGarantiaTexto")}</p>
-  </div>
-
-  <div class="aida-accion-ctas">
-    <WhatsAppCTA
-      sourceId="home-accion-final"
-      label={t(locale, "homeLanding.accionCtaWhatsapp")}
-      locale={locale}
-      urlPath={buildLocalizedPath(locale, "/")}
-      elevar
-      destacado
-    />
-    <a href={catalogoHref} class="aida-link-catalogo">{t(locale, "homeLanding.accionCtaCatalogo")} →</a>
-  </div>
-</section>
-
 <style>
-  /* --- Paleta estricta de esta página --- */
-  .aida-hero,
-  .aida-interes,
-  .aida-deseo,
-  .aida-prueba-social,
-  .aida-accion {
-    --home-azul: #1e3a8a;
-    --home-naranja: #f97316;
-    --home-rojo: #dc2626;
-  }
-
   .aida-hero {
+    --home-azul: #1e3a8a;
     background: var(--color-bg-muted);
     border-radius: var(--radius-lg);
     padding: var(--space-lg) var(--space-md);
@@ -301,7 +147,7 @@ try {
     gap: 0.4rem;
     padding: 0.75rem 1.25rem;
     border-radius: var(--radius-full);
-    background: var(--home-rojo);
+    background: #dc2626;
     color: #ffffff;
     font-weight: 700;
     text-decoration: none;
@@ -317,225 +163,6 @@ try {
     margin: 0;
     font-size: 0.78rem;
     color: var(--color-text-subtle);
-  }
-
-  /* Divisores: SIEMPRE naranja — la única función permitida para este color. */
-  .aida-divisor {
-    height: 3px;
-    border-radius: var(--radius-full);
-    background: var(--home-naranja);
-    margin: var(--space-lg) 0;
-    opacity: 0.85;
-  }
-
-  .aida-interes h2,
-  .aida-deseo h2,
-  .aida-prueba-social h2,
-  .aida-accion h2 {
-    margin: 0 0 0.25rem;
-    color: var(--home-azul);
-    font-size: 1.4rem;
-    text-align: center;
-  }
-
-  .aida-seccion-subtitulo {
-    margin: 0 0 var(--space-md);
-    text-align: center;
-    color: var(--color-text-muted);
-  }
-
-  .aida-slider {
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    padding: 0.25rem 0.1rem 0.75rem;
-    scroll-snap-type: x proximity;
-  }
-
-  .aida-slider-item {
-    scroll-snap-align: start;
-    flex: 0 0 auto;
-    display: grid;
-    justify-items: center;
-    gap: 0.4rem;
-    min-width: 9.5rem;
-    padding: var(--space-sm);
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
-    text-decoration: none;
-    color: var(--color-text);
-    text-align: center;
-    transition: border-color 0.15s ease, transform 0.15s ease;
-  }
-
-  .aida-slider-item:hover {
-    border-color: var(--home-azul);
-    transform: translateY(-2px);
-  }
-
-  .aida-slider-icono {
-    font-size: 1.6rem;
-  }
-
-  .aida-slider-label {
-    font-weight: 600;
-    font-size: 0.88rem;
-  }
-
-  .aida-deseo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--space-sm);
-    margin-bottom: var(--space-md);
-  }
-
-  .aida-card {
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-card);
-    padding: var(--space-md);
-  }
-
-  .aida-card-icono {
-    font-size: 1.8rem;
-  }
-
-  .aida-card h3 {
-    margin: 0.4rem 0 0.3rem;
-    color: var(--home-azul);
-    font-size: 1.05rem;
-  }
-
-  .aida-card p {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.92rem;
-  }
-
-  .aida-card-technician-id {
-    margin-top: 0.6rem !important;
-    font-size: 0.85rem !important;
-    color: var(--color-text) !important;
-  }
-
-  .aida-pasos {
-    list-style: none;
-    margin: 0 0 var(--space-md);
-    padding: 0;
-    display: grid;
-    gap: 0.6rem;
-  }
-
-  .aida-paso {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
-  }
-
-  .aida-paso-numero {
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.9rem;
-    height: 1.9rem;
-    border-radius: 50%;
-    background: var(--home-azul);
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.9rem;
-  }
-
-  .aida-paso h4 {
-    margin: 0 0 0.15rem;
-    font-size: 0.95rem;
-    color: var(--color-text);
-  }
-
-  .aida-paso p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-  }
-
-  .aida-requisitos {
-    background: var(--color-bg-muted);
-    border-radius: var(--radius-md);
-    padding: var(--space-sm) var(--space-md);
-    text-align: center;
-  }
-
-  .aida-requisitos h3 {
-    margin: 0 0 0.5rem;
-    color: var(--home-azul);
-    font-size: 1rem;
-  }
-
-  .aida-requisitos ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem 1.25rem;
-    font-weight: 600;
-    font-size: 0.88rem;
-    color: var(--color-text);
-  }
-
-  .aida-prueba-social-video {
-    max-width: 32rem;
-    margin: 0 auto;
-  }
-
-  .aida-accion {
-    text-align: center;
-  }
-
-  .aida-garantia-card {
-    max-width: 30rem;
-    margin: 0 auto var(--space-md);
-    background: var(--color-bg-card);
-    border: 2px solid var(--home-naranja);
-    border-radius: var(--radius-md);
-    padding: var(--space-md);
-  }
-
-  .aida-garantia-card h3 {
-    margin: 0.4rem 0 0.3rem;
-    color: var(--home-azul);
-  }
-
-  .aida-garantia-card p {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.92rem;
-  }
-
-  .aida-accion-ctas {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .aida-link-catalogo {
-    color: var(--home-azul);
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 0.92rem;
-  }
-
-  .aida-link-catalogo:hover {
-    text-decoration: underline;
   }
 
   @media (max-width: 640px) {
