@@ -125,14 +125,12 @@ try {
 }
 
 // Reseñas reales de Trustpilot (mismo catálogo público que usa
-// /prueba-social/testimonios-trustpilot/), en dos lugares: una al azar en
-// el Paso 6 (justo después del chat) y el pool completo para la sección
-// "Prueba Social" que va después de los 6 pasos — esa se re-sortea en
-// cliente en cada carga/F5 (ver el <script> más abajo), no solo por
-// deploy. Si Núcleo no responde o no hay ninguna con imagen, no se muestra
-// nada — nunca se fabrica una reseña.
+// /prueba-social/testimonios-trustpilot/): pool completo para la sección
+// "Prueba Social" que va después de los 6 pasos, re-sorteado en cliente en
+// cada carga/F5 (ver el <script> más abajo), no solo por deploy. Si Núcleo
+// no responde o no hay ninguna con imagen, no se muestra nada — nunca se
+// fabrica una reseña.
 type Testimonio = { imagen: string; destino: string };
-let testimonioAleatorio: Testimonio | null = null;
 let testimoniosPool: Testimonio[] = [];
 try {
   const testimonios = await listarTestimonios();
@@ -142,9 +140,6 @@ try {
       imagen: testimonio.url_imgur,
       destino: testimonio.url_trustpilot_review?.trim() || testimonio.url_imgur,
     }));
-  if (testimoniosPool.length > 0) {
-    testimonioAleatorio = testimoniosPool[Math.floor(Math.random() * testimoniosPool.length)];
-  }
 } catch (error) {
   console.error("Error fetching testimonios-trustpilot para ProcedimientoResumenDetalle:", error);
 }
@@ -784,16 +779,6 @@ const subpasosConexion = [
           );
         })}
 
-        {testimonioAleatorio && (
-          <a
-            class="paso6-testimonio"
-            href={testimonioAleatorio.destino}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-          >
-            <img src={testimonioAleatorio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
-          </a>
-        )}
       </div>
     </div>
   </section>
@@ -2000,33 +1985,6 @@ const subpasosConexion = [
     margin-top: 0.5rem;
     font-size: 0.85rem;
     color: var(--color-text-subtle);
-  }
-
-  /* Reseña real de Trustpilot al azar, justo después del chat del Paso 6 —
-     prueba social adicional (mismo catálogo que
-     /prueba-social/testimonios-trustpilot/). */
-  .paso6-testimonio {
-    display: block;
-    width: min(320px, 100%);
-    margin-top: 1.25rem;
-    line-height: 0;
-    background: #ffffff;
-    border: 1px solid rgba(249, 115, 22, 0.4);
-    border-radius: 14px;
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
-  }
-
-  .paso6-testimonio:hover {
-    border-color: #f97316;
-    transform: translateY(-2px);
-  }
-
-  .paso6-testimonio img {
-    width: 100%;
-    height: auto;
-    display: block;
   }
 
   @media (max-width: 640px) {

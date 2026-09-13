@@ -30,11 +30,12 @@ import { t, buildLocalizedPath, findErroresConfirmadosForModelo } from "../../i1
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
 import ProcedimientoResumenDetalle from "../ProcedimientoResumenDetalle.astro";
+import FaqAccordion from "../ui/FaqAccordion.astro";
 import { getErrorImage } from "../../lib/error-images.js";
 import { getModeloImage } from "../../lib/model-images.js";
 import modelosCompletos from "../../data/modelos-muestra.json";
 import erroresData from "../../data/errores.json";
-import { USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+import { USB_REDIRECTOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -123,6 +124,23 @@ const erroresGrid = COLUMNAS_MARCA.map((marcaSlug) => {
 }).filter((x): x is { marcaSlug: string } & OpcionGrid => x !== null);
 
 const poolJson = JSON.stringify(poolPorMarca);
+
+// FAQ genérico (mismo namespace ya traducido a los 10 idiomas que usa
+// ComoFuncionaPage.astro) para el cierre del Home, debajo de las reseñas.
+const faqItems: { pregunta: string; respuesta: string }[] = t(locale, "faq.items");
+
+// CTA final (WhatsApp + descarga), debajo del FAQ: mismos textos/valores
+// por defecto que el CTA del Hero, pero con su propio source_id. El
+// wrapper [data-whatsapp-dinamico] hace que el botón de WhatsApp refleje
+// en vivo la marca/modelo/error elegidos en el selector de diagnóstico de
+// arriba (ver actualizarWhatsAppCta en ProcedimientoResumenDetalle.astro).
+const homeUrlPath = buildLocalizedPath(locale, "/");
+const whatsappUrlOrigen = `${SITE_URL}${homeUrlPath}`;
+const cascadaDefaults = {
+  marca: "Epson",
+  modelo: "L3210",
+  error: t(locale, "comoFuncionaProceso.errorAlmohadillasLabel"),
+};
 ---
 
 <section class="aida-hero">
@@ -206,7 +224,45 @@ const poolJson = JSON.stringify(poolPorMarca);
 
 <div class="home-divisor" aria-hidden="true"></div>
 
-<ProcedimientoResumenDetalle locale={locale} urlPath={buildLocalizedPath(locale, "/")} />
+<ProcedimientoResumenDetalle locale={locale} urlPath={homeUrlPath} />
+
+<div class="home-divisor" aria-hidden="true"></div>
+
+<section class="home-faq" id="preguntas-frecuentes">
+  <h2 class="home-faq-titulo">{t(locale, "faq.heading")}</h2>
+  <FaqAccordion items={faqItems} />
+</section>
+
+<section
+  class="home-cta-final"
+  data-whatsapp-dinamico
+  data-whatsapp-number={WHATSAPP_NUMBER}
+  data-url-origen={whatsappUrlOrigen}
+  data-msg-with-error={t(locale, "whatsapp.greetingWithError")}
+  data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
+  data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
+>
+  <div class="home-cta-final-botones">
+    <WhatsAppCTA
+      sourceId="home-final"
+      label={t(locale, "homeLanding.heroCtaWhatsapp")}
+      locale={locale}
+      urlPath={homeUrlPath}
+      marca={cascadaDefaults.marca}
+      modelo={cascadaDefaults.modelo}
+      error={cascadaDefaults.error}
+      elevar
+    />
+    <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
+      ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
+    </a>
+  </div>
+  <p class="home-cta-final-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
+</section>
+
+<div class="home-divisor" aria-hidden="true"></div>
+
+<TrustpilotWidget locale={locale} />
 
 <script>
   // Sortea una combinación de error+modelo por columna en cada carga/F5,
@@ -679,5 +735,38 @@ const poolJson = JSON.stringify(poolPorMarca);
     max-width: 960px;
     margin: 0 auto;
     background: linear-gradient(to right, transparent, #f97316 15%, #f97316 85%, transparent);
+  }
+
+  .home-faq {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .home-faq-titulo {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .home-cta-final {
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .home-cta-final-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .home-cta-final-microtexto {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--color-text-subtle);
   }
 </style>
