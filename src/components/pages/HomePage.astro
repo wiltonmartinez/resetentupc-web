@@ -4,9 +4,13 @@
  * "ventanas" de error clickeables (Epson / Canon / Epson-SC — sin texto,
  * solo la foto real del error, en lugar del subtítulo largo original),
  * buscador rápido, sello de Trustpilot y CTAs principales (WhatsApp +
- * descarga). El resto del embudo (Interés/Deseo/Prueba Social/Acción) se
- * retiró a la espera de la nueva estructura paso a paso; el catálogo
- * completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
+ * descarga). Debajo del Hero, la sección de Interés/Procedimiento: el
+ * selector de diagnóstico + grilla de resumen (6 pasos) + desglose
+ * detallado, vía el componente compartido ProcedimientoResumenDetalle.astro
+ * (el mismo que usa /como-funciona/ — un solo lugar para mantenerlo, sin
+ * duplicar markup/CSS/JS ni las llamadas a la API de Núcleo). El resto del
+ * embudo (Prueba Social/Acción) sigue pendiente de la nueva estructura; el
+ * catálogo completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
  *
  * La grilla de errores rota en CADA carga/F5 (no solo por deploy): el
  * build arma el conjunto completo de combinaciones válidas por columna y
@@ -25,6 +29,7 @@ import { getImage } from "astro:assets";
 import { t, buildLocalizedPath, findErroresConfirmadosForModelo } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
+import ProcedimientoResumenDetalle from "../ProcedimientoResumenDetalle.astro";
 import { getErrorImage } from "../../lib/error-images.js";
 import { getModeloImage } from "../../lib/model-images.js";
 import modelosCompletos from "../../data/modelos-muestra.json";
@@ -198,6 +203,10 @@ const poolJson = JSON.stringify(poolPorMarca);
     <p class="aida-hero-descarga-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
   </div>
 </section>
+
+<div class="home-divisor" aria-hidden="true"></div>
+
+<ProcedimientoResumenDetalle locale={locale} urlPath={buildLocalizedPath(locale, "/")} />
 
 <script>
   // Sortea una combinación de error+modelo por columna en cada carga/F5,
@@ -658,5 +667,17 @@ const poolJson = JSON.stringify(poolPorMarca);
       flex: 1 1 auto;
       order: 2;
     }
+  }
+
+  /* Transición Hero -> Interés/Procedimiento: línea naranja, igual que el
+     resto de separadores de sección del sitio (ver .seccion-divisor en
+     ComoFuncionaPage.astro) pero en naranja en vez de gris, para que la
+     paleta estricta del Home quede consistente. */
+  .home-divisor {
+    height: 2px;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    background: linear-gradient(to right, transparent, #f97316 15%, #f97316 85%, transparent);
   }
 </style>
