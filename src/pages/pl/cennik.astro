@@ -1,0 +1,27 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PreciosPage from "../../components/pages/PreciosPage.astro";
+import { t, buildStaticPagePath } from "../../i18n/utils";
+import { resolverPaisSlugDesdeCfCountry, esVisitanteEuropeo } from "../../lib/precios";
+
+const locale = "pl" as const;
+const path = buildStaticPagePath(locale, "precios");
+const paisInicialSlug = resolverPaisSlugDesdeCfCountry(Astro.request.headers.get("cf-ipcountry"));
+const defaultEur = esVisitanteEuropeo(Astro.request.headers.get("cf-ipcountry"));
+const marca = Astro.url.searchParams.get("marca") || "";
+const modelo = Astro.url.searchParams.get("modelo") || "";
+const error = Astro.url.searchParams.get("error") || "";
+---
+
+<BaseLayout
+  wide
+  title={t(locale, "preciosPage.title")}
+  description={t(locale, "preciosPage.description")}
+  locale={locale}
+  path={path}
+  pageKey="precios"
+>
+  <PreciosPage locale={locale} paisInicialSlug={paisInicialSlug} urlPath={path} marca={marca} modelo={modelo} error={error} defaultEur={defaultEur} />
+</BaseLayout>

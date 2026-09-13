@@ -18,9 +18,11 @@ import it from "./locales/it.json";
 import de from "./locales/de.json";
 import ru from "./locales/ru.json";
 import ko from "./locales/ko.json";
+import pl from "./locales/pl.json";
+import nl from "./locales/nl.json";
 import erroresData from "../data/errores.json";
 
-const dictionaries: Record<Locale, Record<string, any>> = { es, en, pt, fr, it, de, ru, ko };
+const dictionaries: Record<Locale, Record<string, any>> = { es, en, pt, fr, it, de, ru, ko, pl, nl };
 
 export function t(locale: Locale, key: string): any {
   const value = key.split(".").reduce<any>((acc, part) => acc?.[part], dictionaries[locale]);

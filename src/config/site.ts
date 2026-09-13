@@ -43,7 +43,7 @@ export const GA_MEASUREMENT_ID = "";
 
 export const DEFAULT_LOCALE = "es";
 
-export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it", "de", "ru", "ko"] as const;
+export const SUPPORTED_LOCALES = ["es", "en", "pt", "fr", "it", "de", "ru", "ko", "pl", "nl"] as const;
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
@@ -56,6 +56,8 @@ export const LOCALE_PATH_PREFIX: Record<Locale, string> = {
   de: "/de",
   ru: "/ru",
   ko: "/ko",
+  pl: "/pl",
+  nl: "/nl",
 };
 
 export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
@@ -67,6 +69,8 @@ export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
   de: "de",
   ru: "ru",
   ko: "ko",
+  pl: "pl",
+  nl: "nl",
 };
 
 export const X_DEFAULT_LOCALE: Locale = "es";
@@ -80,13 +84,17 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   de: "Deutsch",
   ru: "Русский",
   ko: "한국어",
+  pl: "Polski",
+  nl: "Nederlands",
 };
 
 // Banderas para el selector de idioma en la UI. es/en/pt son los tres
 // idiomas que se ofrecen activamente en el selector (ver LanguageSelector.astro,
 // LOCALES_VISIBLES) — el resto queda acá por si se necesita mostrar la bandera
 // del idioma actual aunque no esté en esa lista corta (ej. alguien llega
-// directo a una página en fr/it/de/ru/ko por un enlace viejo).
+// directo a una página en fr/it/de/ru/ko/pl/nl por un enlace viejo). pl/nl
+// son contenido en borrador (traducción automática, ver pl.json/nl.json) y
+// noindex,nofollow por defecto — ver LOCALES_INDEXABLES en BaseLayout.astro.
 export const LOCALE_FLAGS: Record<Locale, string> = {
   es: "🇪🇸",
   en: "🇺🇸",
@@ -96,6 +104,8 @@ export const LOCALE_FLAGS: Record<Locale, string> = {
   de: "🇩🇪",
   ru: "🇷🇺",
   ko: "🇰🇷",
+  pl: "🇵🇱",
+  nl: "🇳🇱",
 };
 
 export const PAGE_SLUGS = {
@@ -108,6 +118,8 @@ export const PAGE_SLUGS = {
     de: "wie-es-funktioniert",
     ru: "kak-eto-rabotaet",
     ko: "iyong-bangbeop",
+    pl: "jak-to-dziala",
+    nl: "hoe-het-werkt",
   },
   preguntasFrecuentes: {
     es: "preguntas-frecuentes",
@@ -118,6 +130,8 @@ export const PAGE_SLUGS = {
     de: "haeufige-fragen",
     ru: "chasto-zadavaemye-voprosy",
     ko: "jaju-mudneun-jilmun",
+    pl: "czeste-pytania",
+    nl: "veelgestelde-vragen",
   },
   contacto: {
     es: "contacto",
@@ -128,6 +142,8 @@ export const PAGE_SLUGS = {
     de: "kontakt",
     ru: "kontakty",
     ko: "munuihagi",
+    pl: "kontakt",
+    nl: "contact",
   },
   terminosCondiciones: {
     es: "terminos-y-condiciones",
@@ -138,6 +154,8 @@ export const PAGE_SLUGS = {
     de: "allgemeine-geschaeftsbedingungen",
     ru: "usloviya-ispolzovaniya",
     ko: "iyong-yakgwan",
+    pl: "regulamin",
+    nl: "algemene-voorwaarden",
   },
   consultaGarantia: {
     es: "consulta-garantia",
@@ -148,6 +166,8 @@ export const PAGE_SLUGS = {
     de: "garantie-abfrage",
     ru: "proverka-garantii",
     ko: "bojeung-hwagin",
+    pl: "sprawdz-gwarancje",
+    nl: "garantie-controleren",
   },
   precios: {
     es: "precios",
@@ -158,6 +178,8 @@ export const PAGE_SLUGS = {
     de: "preise",
     ru: "tseny",
     ko: "gagyeog",
+    pl: "cennik",
+    nl: "prijzen",
   },
 } as const satisfies Record<string, Record<Locale, string>>;
 

@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TerminosCondicionesPage from "../../components/pages/TerminosCondicionesPage.astro";
+import { t, buildStaticPagePath } from "../../i18n/utils";
+
+const locale = "pl" as const;
+---
+
+<BaseLayout
+  wide
+  title={t(locale, "terminos.meta.title")}
+  description={t(locale, "terminos.meta.description")}
+  locale={locale}
+  path={buildStaticPagePath(locale, "terminosCondiciones")}
+  pageKey="terminosCondiciones"
+>
+  <TerminosCondicionesPage locale={locale} />
+</BaseLayout>

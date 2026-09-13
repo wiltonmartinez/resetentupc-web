@@ -5,6 +5,11 @@ import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 import banderaEs from "../assets/idioma/ES.png";
 import banderaEn from "../assets/idioma/EN.png";
 import banderaPt from "../assets/idioma/PT.png";
+import banderaFr from "../assets/idioma/FR.png";
+import banderaIt from "../assets/idioma/IT.png";
+import banderaDe from "../assets/idioma/DE.png";
+import banderaPl from "../assets/idioma/PL.png";
+import banderaNl from "../assets/idioma/NL.png";
 
 interface Props {
   locale: Locale;
@@ -23,15 +28,21 @@ const label = t(locale, "common.selectLanguage");
 // idioma actual — solo el menú desplegable se limita a estos tres.
 const LOCALES_VISIBLES: Locale[] = ["es", "en", "pt"];
 
-// Imagen de bandera real para los tres idiomas activos (src/assets/idioma) —
-// más nítida y consistente entre plataformas que el emoji, que en Windows a
-// veces cae al código de dos letras en vez de la bandera. Los otros 5
-// idiomas (solo posibles en el botón disparador si el visitante ya está en
-// esa página) siguen usando el emoji de LOCALE_FLAGS como respaldo.
+// Imagen de bandera real (src/assets/idioma) — más nítida y consistente
+// entre plataformas que el emoji, que en Windows a veces cae al código de
+// dos letras en vez de la bandera. Cubre todos los idiomas que ya tienen
+// archivo propio; ru/ko (sin archivo todavía) siguen usando el emoji de
+// LOCALE_FLAGS como respaldo — solo posibles en el botón disparador si el
+// visitante ya está en esa página, ya que no están en LOCALES_VISIBLES.
 const BANDERA_IMG: Partial<Record<Locale, ImageMetadata>> = {
   es: banderaEs,
   en: banderaEn,
   pt: banderaPt,
+  fr: banderaFr,
+  it: banderaIt,
+  de: banderaDe,
+  pl: banderaPl,
+  nl: banderaNl,
 };
 
 // Prueba Social y Ruleta ya tienen ruta propia por idioma (ver
