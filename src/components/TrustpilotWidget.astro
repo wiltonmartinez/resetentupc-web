@@ -1,12 +1,36 @@
 ---
-import { TRUSTPILOT_BUSINESSUNIT_ID, TRUSTPILOT_REVIEW_URL } from "../config/site";
+import { TRUSTPILOT_BUSINESSUNIT_ID, TRUSTPILOT_REVIEW_URL, type Locale } from "../config/site";
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = "es" } = Astro.props;
+
+// El texto del widget ("Lee nuestras X reseñas...") lo genera el script
+// externo de Trustpilot a partir de data-locale — no pasa por nuestro
+// propio t(), así que hay que traducirlo acá aparte. Antes quedaba fijo en
+// "es-ES" sin importar el idioma de la página (se veía en español incluso
+// en /pl/, /nl/, etc.).
+const TRUSTPILOT_LOCALE: Record<Locale, string> = {
+  es: "es-ES",
+  en: "en-US",
+  pt: "pt-BR",
+  fr: "fr-FR",
+  it: "it-IT",
+  de: "de-DE",
+  ru: "ru-RU",
+  ko: "ko-KR",
+  pl: "pl-PL",
+  nl: "nl-NL",
+};
 ---
 
 <div class="trustpilot-wrapper">
   <!-- TrustBox widget - Micro Review Count -->
   <div
     class="trustpilot-widget"
-    data-locale="es-ES"
+    data-locale={TRUSTPILOT_LOCALE[locale]}
     data-template-id="5419b6a8b0d04a076446a9ad"
     data-businessunit-id={TRUSTPILOT_BUSINESSUNIT_ID}
     data-style-height="24px"
