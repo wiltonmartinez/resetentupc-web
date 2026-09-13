@@ -93,6 +93,21 @@
     "heroCtaDescargaMicrotexto": "Búscanos como resetenlinea.com · 100% libre de virus",
     "interesTitulo": "Elige tu error y te mostramos la solución",
     "interesSubtitulo": "Toca cualquier error para ver los modelos compatibles en el catálogo",
+    "interesFaqTitulo": "Preguntas rápidas sobre nuestro sistema asistido",
+    "interesFaqItems": [
+      {
+        "pregunta": "¿Es seguro para mi PC?",
+        "respuesta": "Sí, 100% seguro. Cero programas intrusivos: no usamos AnyDesk ni TeamViewer. Todo se hace mediante una redirección limpia del puerto USB."
+      },
+      {
+        "pregunta": "¿Cómo funciona el proceso?",
+        "respuesta": "Es un servicio asistido de 4 pasos: descargas el ejecutable limpio, copias tu ID temporal, conectas el cable USB de la impresora y nos escribes por WhatsApp para hacer el reseteo remoto."
+      },
+      {
+        "pregunta": "¿Venden software para instalar en casa?",
+        "respuesta": "No vendemos software de 1 PC ni reseteadores para guardar: somos un servicio técnico profesional por sesión asistida. Solo atendemos bloqueos de almohadillas Epson, error 5B00 Canon y Plotters Epson SC."
+      }
+    ],
     "deseoTitulo": "Así funciona nuestro Sistema Seguro de Reset Remoto",
     "deseoSubtitulo": "Sin programas intrusivos: nunca usamos AnyDesk ni TeamViewer",
     "deseoNoIntrusivoTitulo": "Cero AnyDesk, cero TeamViewer",

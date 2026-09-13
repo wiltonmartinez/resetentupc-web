@@ -4,9 +4,13 @@
  * "ventanas" de error clickeables (Epson / Canon / Epson-SC — sin texto,
  * solo la foto real del error, en lugar del subtítulo largo original),
  * buscador rápido, sello de Trustpilot y CTAs principales (WhatsApp +
- * descarga). El resto del embudo (Interés/Deseo/Prueba Social/Acción) se
- * retiró a la espera de la nueva estructura paso a paso; el catálogo
- * completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
+ * descarga). Debajo del Hero, la sección de Interés: 3 preguntas rápidas
+ * en un acordeón (componente FaqAccordion.astro ya usado en
+ * ComoFuncionaPage/ModeloPage) para resolver sin fricción las dudas más
+ * comunes antes de escribir por WhatsApp. El resto del embudo
+ * (Deseo/Prueba Social/Acción) sigue pendiente de la nueva estructura
+ * paso a paso; el catálogo completo de modelos vive en /catalogo/ (ver
+ * CatalogoPage.astro).
  *
  * La grilla de errores rota en CADA carga/F5 (no solo por deploy): el
  * build arma el conjunto completo de combinaciones válidas por columna y
@@ -25,6 +29,7 @@ import { getImage } from "astro:assets";
 import { t, buildLocalizedPath, findErroresConfirmadosForModelo } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
+import FaqAccordion from "../ui/FaqAccordion.astro";
 import { getErrorImage } from "../../lib/error-images.js";
 import { getModeloImage } from "../../lib/model-images.js";
 import modelosCompletos from "../../data/modelos-muestra.json";
@@ -38,6 +43,9 @@ interface Props {
 const { locale } = Astro.props;
 
 const catalogoHref = "/catalogo/";
+
+// Interés: 3 preguntas rápidas en acordeón, justo debajo del Hero.
+const interesFaqItems: { pregunta: string; respuesta: string }[] = t(locale, "homeLanding.interesFaqItems");
 
 // Índice para el buscador rápido en vivo (ver "aida-hero-buscador-wrap" más
 // abajo): mismo filtro que ya usa CatalogoPage.astro (foto de portada O
@@ -196,6 +204,15 @@ const poolJson = JSON.stringify(poolPorMarca);
       </a>
     </div>
     <p class="aida-hero-descarga-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
+  </div>
+</section>
+
+<div class="home-divisor" aria-hidden="true"></div>
+
+<section class="home-interes">
+  <div class="home-interes-contenido">
+    <h2>{t(locale, "homeLanding.interesFaqTitulo")}</h2>
+    <FaqAccordion items={interesFaqItems} />
   </div>
 </section>
 
@@ -658,5 +675,46 @@ const poolJson = JSON.stringify(poolPorMarca);
       flex: 1 1 auto;
       order: 2;
     }
+  }
+
+  /* --- Interés: 3 preguntas rápidas en acordeón --- */
+  .home-divisor {
+    height: 2px;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    background: linear-gradient(to right, transparent, #f97316 15%, #f97316 85%, transparent);
+  }
+
+  .home-interes {
+    background: var(--color-bg-card);
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .home-interes-contenido {
+    max-width: 720px;
+    margin: 0 auto;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .home-interes h2 {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+    color: #1e3a8a;
+  }
+
+  /* Bordes de cada pregunta en naranja (en vez del gris por defecto de
+     FaqAccordion) — el selector ancestro ".home-interes" limita el efecto
+     a esta sección, sin afectar los demás usos del mismo componente
+     (ComoFuncionaPage.astro, ModeloPage.astro). Naranja solo en líneas
+     divisorias: nunca en botones (paleta estricta del Home). */
+  .home-interes :global(.faq-item) {
+    border-color: rgba(249, 115, 22, 0.35);
+  }
+
+  .home-interes :global(.faq-item[open]) {
+    border-color: #f97316;
   }
 </style>
