@@ -119,7 +119,9 @@
     "accionGarantiaTitulo": "+30 días de garantía extra, gratis",
     "accionGarantiaTexto": "Envíanos el video de tu procedimiento o recomiéndanos con un colega, y suma 30 días adicionales a tu garantía.",
     "accionCtaWhatsapp": "Hablar con un Técnico Ahora",
-    "accionCtaCatalogo": "Ver catálogo completo de impresoras"
+    "accionCtaCatalogo": "Ver catálogo completo de impresoras",
+    "erroresGridPlotterTitulo": "Error de Plotter (Epson-SC)",
+    "erroresGridModelosLabel": "Modelos frecuentes"
   },
   "common": {
     "whatsappButton": "Escribir por WhatsApp",

@@ -1,21 +1,25 @@
 ---
 /**
- * Home — bloque Hero (Atención del embudo AIDA): título, subtítulo,
- * buscador rápido, sello de Trustpilot y CTAs principales (WhatsApp +
- * descarga). El resto del embudo (Interés/Deseo/Prueba Social/Acción) se
- * retiró a la espera de la nueva estructura paso a paso; el catálogo
- * completo de modelos vive en /catalogo/ (ver CatalogoPage.astro).
+ * Home — bloque Hero (Atención del embudo AIDA): título, grilla de
+ * "Errores y Modelos Frecuentes" (Epson / Canon / Epson-SC, en lugar del
+ * subtítulo largo anterior), buscador rápido, sello de Trustpilot y CTAs
+ * principales (WhatsApp + descarga). El resto del embudo
+ * (Interés/Deseo/Prueba Social/Acción) se retiró a la espera de la nueva
+ * estructura paso a paso; el catálogo completo de modelos vive en
+ * /catalogo/ (ver CatalogoPage.astro).
  *
- * Paleta estricta: fondo del Hero en gris (--color-bg-muted), tarjeta del
- * buscador en blanco (--color-bg-card), título en azul oscuro
- * (--home-azul — el teal --color-primary del resto del sitio no es "azul
- * oscuro"), botón de descarga en rojo, botón de WhatsApp en verde
- * (--color-whatsapp, global). Naranja reservado para líneas separadoras,
- * nunca para botones.
+ * Paleta estricta: fondo del Hero en gris (--color-bg-muted), tarjetas en
+ * blanco (--color-bg-card), títulos en azul oscuro (--home-azul — el teal
+ * --color-primary del resto del sitio no es "azul oscuro"), botón de
+ * descarga en rojo, botón de WhatsApp en verde (--color-whatsapp,
+ * global). Naranja reservado para líneas/bordes separadores, nunca para
+ * botones.
  */
+import { getImage } from "astro:assets";
 import { t, buildLocalizedPath } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
+import { getErrorImage } from "../../lib/error-images.js";
 import { USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
 
 interface Props {
@@ -25,12 +29,69 @@ interface Props {
 const { locale } = Astro.props;
 
 const catalogoHref = "/catalogo/";
+
+// Grilla "Errores y Modelos Frecuentes": 3 columnas fijas (Epson / Canon /
+// Epson-SC), cada una con su imagen real de error (ver src/assets/errores,
+// mismo mapeo que ya usa ErrorSelector.astro) y algunos modelos frecuentes
+// elegidos al azar — se renuevan en cada deploy porque esta página es
+// estática/prerenderizada, no hay forma de sortear "por visita" sin SSR.
+function elegirAlAzar(lista, cantidad) {
+  return [...lista].sort(() => Math.random() - 0.5).slice(0, cantidad);
+}
+
+const MODELOS_EPSON = ["L3250", "L1250", "L4260", "L3210", "L3110", "L3150", "ET-2800", "ET-2400"];
+const MODELOS_CANON = ["G3010", "G2100", "G3100", "G3110", "G4110"];
+const MODELOS_PLOTTER = ["F570", "F571", "T3170", "T3170X"];
+
+const ERRORES_GRID = [
+  {
+    id: "epson-almohadillas",
+    tituloKey: "home.grupoAlmohadillas",
+    imagen: getErrorImage("l3250"),
+    modelos: elegirAlAzar(MODELOS_EPSON, 4),
+  },
+  {
+    id: "canon-5b00",
+    tituloKey: "home.grupoCanon5b00",
+    imagen: getErrorImage("g3110"),
+    modelos: elegirAlAzar(MODELOS_CANON, 4),
+  },
+  {
+    id: "sc-plotter",
+    tituloKey: "homeLanding.erroresGridPlotterTitulo",
+    imagen: getErrorImage("epson-sc-00010000"),
+    modelos: MODELOS_PLOTTER,
+  },
+];
+
+const erroresGrid = await Promise.all(
+  ERRORES_GRID.map(async (err) => ({
+    ...err,
+    imagenUrl: err.imagen ? (await getImage({ src: err.imagen, format: "webp", width: 320 })).src : "",
+  }))
+);
 ---
 
 <section class="aida-hero">
   <div class="aida-hero-contenido">
     <h1>{t(locale, "homeLanding.heroTitulo")}</h1>
-    <p class="aida-hero-subtitulo">{t(locale, "homeLanding.heroSubtitulo")}</p>
+
+    <div class="aida-errores-grid">
+      {erroresGrid.map((err) => (
+        <div class="aida-error-card">
+          <div class="aida-error-card-imagen">
+            {err.imagenUrl && <img src={err.imagenUrl} alt={t(locale, err.tituloKey)} loading="lazy" />}
+          </div>
+          <h2>{t(locale, err.tituloKey)}</h2>
+          <p class="aida-error-card-modelos-label">{t(locale, "homeLanding.erroresGridModelosLabel")}</p>
+          <ul class="aida-error-card-modelos">
+            {err.modelos.map((modelo) => (
+              <li>{modelo}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
 
     <form class="aida-hero-buscador" action={catalogoHref} method="get" data-sound="select">
       <svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
@@ -67,6 +128,7 @@ const catalogoHref = "/catalogo/";
 <style>
   .aida-hero {
     --home-azul: #1e3a8a;
+    --home-naranja: #f97316;
     background: var(--color-bg-muted);
     border-radius: var(--radius-lg);
     padding: var(--space-lg) var(--space-md);
@@ -74,10 +136,10 @@ const catalogoHref = "/catalogo/";
   }
 
   .aida-hero-contenido {
-    max-width: 640px;
+    max-width: 960px;
     margin: 0 auto;
     display: grid;
-    gap: var(--space-sm);
+    gap: var(--space-md);
     justify-items: center;
   }
 
@@ -88,10 +150,77 @@ const catalogoHref = "/catalogo/";
     color: var(--home-azul);
   }
 
-  .aida-hero-subtitulo {
+  /* --- Grilla "Errores y Modelos Frecuentes" (1 fila x 3 columnas) --- */
+  .aida-errores-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .aida-error-card {
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    background: var(--color-bg-card);
+    border: 1px solid rgba(249, 115, 22, 0.35);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-sm);
+    text-align: center;
+  }
+
+  .aida-error-card-imagen {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--color-bg-muted);
+  }
+
+  .aida-error-card-imagen img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .aida-error-card h2 {
+    margin: 0.2rem 0 0;
+    color: var(--home-azul);
+    font-size: 0.95rem;
+    line-height: 1.25;
+  }
+
+  .aida-error-card-modelos-label {
+    margin: 0.35rem 0 0;
+    width: 100%;
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--home-naranja);
+    color: var(--color-text-subtle);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .aida-error-card-modelos {
+    list-style: none;
     margin: 0;
-    color: var(--color-text-muted);
-    font-size: clamp(0.9rem, 2vw, 1.05rem);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .aida-error-card-modelos li {
+    background: var(--color-bg-muted);
+    border-radius: var(--radius-full);
+    padding: 0.15rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-text);
   }
 
   .aida-hero-buscador {
@@ -166,6 +295,10 @@ const catalogoHref = "/catalogo/";
   }
 
   @media (max-width: 640px) {
+    .aida-errores-grid {
+      grid-template-columns: 1fr;
+    }
+
     .aida-hero-buscador {
       flex-wrap: wrap;
       border-radius: var(--radius-md);
