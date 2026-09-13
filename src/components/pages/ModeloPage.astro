@@ -185,57 +185,9 @@ const breadcrumbJsonLd = {
     </div>
   </header>
 
-  <!-- 2. Interés: por qué elegir el servicio (beneficios) + video resumido -->
+  <!-- 2. Interés: video resumido del proceso (el grid de beneficios se
+       muestra más abajo, justo antes de la confianza + CTA final). -->
   <section class="modelo-interes">
-    <div class="beneficios-header">
-      <h2 class="beneficios-titulo">{interesTitulo}</h2>
-      <p class="beneficios-subtitulo">{t(locale, "comoFuncionaProceso.beneficiosSubtitulo")}</p>
-    </div>
-    <div class="beneficios-cards">
-      {beneficios.map((beneficio) =>
-        beneficio.id === "sorteos" ? (
-          <button type="button" class="beneficio-card beneficio-card-clickable" data-ruleta-trigger aria-haspopup="dialog">
-            <div class="beneficio-icono-wrap">
-              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
-            </div>
-            <h3>{beneficio.titulo}</h3>
-            <p>{beneficio.texto}</p>
-            <span class="beneficio-cta">{t(locale, "comoFuncionaProceso.jugarRuletaCta")}</span>
-          </button>
-        ) : (
-          <div class="beneficio-card">
-            <div class="beneficio-icono-wrap">
-              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
-            </div>
-            <h3>{beneficio.titulo}</h3>
-            <p>{beneficio.texto}</p>
-          </div>
-        )
-      )}
-    </div>
-
-    <div class="modelo-cta-seccion">
-      <WhatsAppCTA
-        marca={nombreMarca}
-        modelo={nombreModelo}
-        sourceId={`${sourceIdBase}-beneficios`}
-        urlPath={localizedPath}
-        locale={locale}
-        label={ctaBeneficiosLabel}
-        elevar
-      />
-      <p class="modelo-cta-subtexto">{t(locale, "modelo.ctaBeneficiosSubtexto")}</p>
-    </div>
-
-    <dialog class="ruleta-dialog" data-ruleta-dialog aria-label={t(locale, "ruletaPage.heading")}>
-      <button type="button" class="ruleta-dialog-close" data-ruleta-close aria-label={t(locale, "comoFuncionaProceso.cerrarRuletaLabel")}>
-        ×
-      </button>
-      <div class="ruleta-dialog-embed">
-        <iframe data-ruleta-iframe data-src={RULETA_URL} title={t(locale, "ruletaPage.heading")} loading="lazy" />
-      </div>
-    </dialog>
-
     <div class="modelo-video-resumen">
       <h3 class="modelo-video-resumen-titulo">{t(locale, "modelo.videoResumenTitulo")}</h3>
       {videoInteres ? (
@@ -322,6 +274,61 @@ const breadcrumbJsonLd = {
        conexión USB" ahora los renderiza ProcedimientoImpresora, dentro de
        la sección "2. Confirmación del problema" de arriba (este último,
        justo después del Paso 3 del desarrollo detallado). -->
+
+  <!-- 3.5 Beneficios: grid de 3x3, deliberadamente al final del recorrido
+       (justo antes de la confianza + widget de Trustpilot y el CTA final de
+       WhatsApp), para reforzar por qué elegirnos justo antes de pedir la
+       acción. -->
+  <section class="modelo-interes">
+    <div class="beneficios-header">
+      <h2 class="beneficios-titulo">{interesTitulo}</h2>
+      <p class="beneficios-subtitulo">{t(locale, "comoFuncionaProceso.beneficiosSubtitulo")}</p>
+    </div>
+    <div class="beneficios-cards">
+      {beneficios.map((beneficio) =>
+        beneficio.id === "sorteos" ? (
+          <button type="button" class="beneficio-card beneficio-card-clickable" data-ruleta-trigger aria-haspopup="dialog">
+            <div class="beneficio-icono-wrap">
+              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+            </div>
+            <h3>{beneficio.titulo}</h3>
+            <p>{beneficio.texto}</p>
+            <span class="beneficio-cta">{t(locale, "comoFuncionaProceso.jugarRuletaCta")}</span>
+          </button>
+        ) : (
+          <div class="beneficio-card">
+            <div class="beneficio-icono-wrap">
+              <Image src={beneficio.icono} alt="" width={80} height={80} loading="lazy" />
+            </div>
+            <h3>{beneficio.titulo}</h3>
+            <p>{beneficio.texto}</p>
+          </div>
+        )
+      )}
+    </div>
+
+    <div class="modelo-cta-seccion">
+      <WhatsAppCTA
+        marca={nombreMarca}
+        modelo={nombreModelo}
+        sourceId={`${sourceIdBase}-beneficios`}
+        urlPath={localizedPath}
+        locale={locale}
+        label={ctaBeneficiosLabel}
+        elevar
+      />
+      <p class="modelo-cta-subtexto">{t(locale, "modelo.ctaBeneficiosSubtexto")}</p>
+    </div>
+
+    <dialog class="ruleta-dialog" data-ruleta-dialog aria-label={t(locale, "ruletaPage.heading")}>
+      <button type="button" class="ruleta-dialog-close" data-ruleta-close aria-label={t(locale, "comoFuncionaProceso.cerrarRuletaLabel")}>
+        ×
+      </button>
+      <div class="ruleta-dialog-embed">
+        <iframe data-ruleta-iframe data-src={RULETA_URL} title={t(locale, "ruletaPage.heading")} loading="lazy" />
+      </div>
+    </dialog>
+  </section>
 
   <!-- 4. Confianza y reducción de fricción -->
   <InfoCard tone="muted">

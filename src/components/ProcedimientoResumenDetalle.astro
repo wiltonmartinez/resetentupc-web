@@ -99,10 +99,13 @@ try {
   console.error("Error fetching reset-realizados para ProcedimientoResumenDetalle:", error);
 }
 
-// Conversacion embebida del Paso 6: una por marca (Epson/Canon) para que
-// coincida con la marca elegida en el selector de diagnostico, mas una
-// "default" (cualquier caso, sin filtrar) para Epson-SC o mientras no se
-// eligio marca todavia. Mismo catalogo publico que usa Prueba Social.
+// Conversacion embebida del Paso 6: una por marca (Epson/Canon/Epson-SC) para
+// que coincida siempre con la marca elegida en el selector de diagnostico —
+// la variante "default" (cualquier caso, sin filtrar) queda solo como
+// respaldo si esa marca puntual no tiene todavia ninguna captura real en
+// Nucleo, nunca como reemplazo directo de Epson-SC (mostraba la conversacion
+// de un cliente de otra marca, incoherente con lo seleccionado arriba).
+// Mismo catalogo publico que usa Prueba Social.
 type ClienteEmbed = { url: string; titulo: string } | null;
 const clientesPorVariante: Record<string, ClienteEmbed> = { epson: null, canon: null, default: null };
 try {
@@ -119,7 +122,7 @@ try {
 
   clientesPorVariante.epson = elegirDe(conCaptura.filter((c: any) => marcaEs(c, "epson")));
   clientesPorVariante.canon = elegirDe(conCaptura.filter((c: any) => marcaEs(c, "canon")));
-  clientesPorVariante.default = elegirDe(conCaptura);
+  clientesPorVariante.default = elegirDe(conCaptura.filter((c: any) => marcaEs(c, "epson-sc"))) ?? elegirDe(conCaptura);
 } catch (error) {
   console.error("Error fetching cliente-satisfecho para ProcedimientoResumenDetalle:", error);
 }
@@ -747,6 +750,7 @@ const subpasosConexion = [
     <div class="detalle-paso" id="paso-como-funciona-6">
       <div class="detalle-riel">
         <span class="detalle-numero">6</span>
+        <span class="detalle-linea" aria-hidden="true" />
       </div>
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso6Titulo")}</h3>

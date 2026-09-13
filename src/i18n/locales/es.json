@@ -878,7 +878,7 @@
     "planEliteNombre": "Elite",
     "planEliteDuracion": "12 meses",
     "precioNoDisponible": "Consultar",
-    "ctaPlan": "Elegir Plan",
+    "ctaPlan": "Consultar por WhatsApp",
     "notaWhatsapp": "Reset {marca} {modelo}\nError: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
     "notaWhatsappSinError": "Reset {marca} {modelo}\nPlan {plan} ({duracion}) · {pais} · {precio}",
     "modeloWidgetTitulo": "Elige tu plan",
