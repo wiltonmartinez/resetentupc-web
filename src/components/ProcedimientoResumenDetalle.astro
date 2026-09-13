@@ -202,11 +202,10 @@ const splitTemplate = (template: string): [string, string] => {
 
 const [paso2ErrorPrefix, paso2ErrorSuffix] = splitTemplate(t(locale, "comoFuncionaProceso.paso2ReqErrorVerificado"));
 const errorDefaultLabel = t(locale, "comoFuncionaProceso.errorAlmohadillasLabel");
-const otroErrorLabel = t(locale, "comoFuncionaProceso.otroErrorLabel");
 
 const marcasSelector = [
-  { id: "epson", label: "Epson", errores: [errorDefaultLabel, "E-11", otroErrorLabel] },
-  { id: "canon", label: "Canon", errores: ["5B00", "1700", "P07", "E-08", otroErrorLabel] },
+  { id: "epson", label: "Epson", errores: [errorDefaultLabel, "E-11"] },
+  { id: "canon", label: "Canon", errores: ["5B00", "1700", "P07", "E-08"] },
   {
     id: "epson-sc",
     label: "Epson-SC",
@@ -486,7 +485,7 @@ const subpasosConexion = [
               </button>
             ))}
           </div>
-          <div class="selector-modelo-wrap" data-selector-modelo-wrap data-almohadillas-label={errorDefaultLabel}>
+          <div class="selector-modelo-wrap" data-selector-modelo-wrap>
             <label for="selector-modelo-input">{t(locale, "comoFuncionaProceso.selectorModeloLabel")}</label>
             <input
               type="text"
@@ -762,7 +761,6 @@ const subpasosConexion = [
     const listaEpsonSc = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="epson-sc"]');
     const todasLasListas = [listaEpson, listaCanon, listaEpsonSc];
     const OTRO_MODELO_VALOR = "otro";
-    const almohadillasLabel = modeloWrap?.dataset.almohadillasLabel ?? "";
     let marcaActivaId = "";
     let marcaActivaLabel = "";
     let modeloActivo = "";
@@ -1026,6 +1024,12 @@ const subpasosConexion = [
         });
         actualizarWhatsAppCta();
 
+        // Cambiar de marca sí borra el modelo elegido (es un equipo
+        // distinto); cambiar de error dentro de la misma marca NO debe
+        // borrarlo — ver el handler de error más abajo, que ahora lo
+        // conserva porque acá queda en "" al entrar a una marca nueva.
+        actualizarModelo("");
+
         // Marca -> Modelo -> Error: el error por defecto de cada marca (el
         // primero de su lista — Almohadillas en Epson, 5B00 en Canon,
         // 0014BD en Epson-SC) se activa solo, así el modelo queda
@@ -1055,11 +1059,11 @@ const subpasosConexion = [
         actualizarRequisitoUsb(variante);
         actualizarVideoReset(variante);
 
-        // Epson + Almohadillas, Canon (cualquier error) y Epson-SC (cualquier
-        // error) muestran una lista de modelos frecuentes en vez del campo de
-        // texto libre, para elegir con un clic en lugar de escribir. La
-        // opcion "Otro" de cada lista vuelve a mostrar el campo de texto.
-        const mostrarListaEpson = marcaActivaId === "epson" && valor === almohadillasLabel;
+        // Epson, Canon y Epson-SC (cualquier error de cada una) muestran una
+        // lista de modelos frecuentes en vez del campo de texto libre, para
+        // elegir con un clic en lugar de escribir. La opcion "Otro" de cada
+        // lista vuelve a mostrar el campo de texto.
+        const mostrarListaEpson = marcaActivaId === "epson";
         const mostrarListaCanon = marcaActivaId === "canon";
         const mostrarListaEpsonSc = marcaActivaId === "epson-sc";
         const mostrarAlgunaLista = mostrarListaEpson || mostrarListaCanon || mostrarListaEpsonSc;
@@ -1076,7 +1080,18 @@ const subpasosConexion = [
           listaEpsonSc.hidden = !mostrarListaEpsonSc;
           if (!mostrarListaEpsonSc) listaEpsonSc.value = "";
         }
-        if (mostrarAlgunaLista) actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
+        // Cambiar de error dentro de la misma marca NO debe borrar el
+        // modelo que el usuario ya habia elegido (bug reportado: Epson +
+        // L120 + Almohadillas -> cambiar a E-11 borraba el modelo). Si ya
+        // habia uno (modeloActivo viene en "" recien al entrar a una marca
+        // nueva, ver el handler de marca), se conserva y solo se refresca
+        // la imagen/enlace por si el modelo tiene foto propia; si no habia
+        // ninguno todavia, se deja el placeholder de siempre.
+        if (modeloActivo) {
+          actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, modeloActivo);
+        } else if (mostrarAlgunaLista) {
+          actualizarModelo(modeloInput?.dataset.modeloEjemplo ?? "");
+        }
         sincronizarWidgetPrecios();
         guardarSeleccion();
       });
