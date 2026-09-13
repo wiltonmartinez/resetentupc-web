@@ -13,7 +13,6 @@ import { t, buildStaticPagePath, buildWhatsAppMessage, buildWhatsAppLink } from 
 import FaqAccordion from "../ui/FaqAccordion.astro";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import ProcedimientoResumenDetalle from "../ProcedimientoResumenDetalle.astro";
-import { listarTestimonios } from "../../lib/nucleo-api";
 import { RULETA_URL, SITE_URL, WHATSAPP_NUMBER, type Locale } from "../../config/site";
 import iconoReset from "../../assets/beneficios/icono-reset.png";
 import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
@@ -30,27 +29,6 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-
-// Seccion de Prueba Social (Bloque 2.5, antes del CTA final): 3 resenas
-// reales al azar del mismo catalogo publico que usa TestimoniosTruspilotPage
-// (Nucleo /api/public/testimonios/) — nunca texto ni nombres inventados, solo
-// las capturas reales ya validadas. Si Nucleo no responde o hay menos de 3
-// con imagen, se muestran las que haya (sin fabricar nada para completar).
-let testimoniosDestacados: { imagen: string; destino: string }[] = [];
-try {
-  const testimonios = await listarTestimonios();
-  const conImagen = testimonios.filter((testimonio) => testimonio.url_imgur?.trim());
-  for (let i = conImagen.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [conImagen[i], conImagen[j]] = [conImagen[j], conImagen[i]];
-  }
-  testimoniosDestacados = conImagen.slice(0, 3).map((t) => ({
-    imagen: t.url_imgur,
-    destino: t.url_trustpilot_review?.trim() || t.url_imgur,
-  }));
-} catch (error) {
-  console.error("Error fetching testimonios-trustpilot para Cómo Funciona:", error);
-}
 
 // Valores por defecto (Epson + Almohadillas) para el mensaje inicial de los
 // 2 botones de WhatsApp propios de esta página (banner CRO y CTA final) —
@@ -198,22 +176,6 @@ const beneficios = [
     </a>
     <p class="whatsapp-banner-subtitulo">{t(locale, "comoFuncionaProceso.whatsappBannerSubtitulo")}</p>
   </section>
-
-  {testimoniosDestacados.length > 0 && (
-    <section class="prueba-social-resenas">
-      <div class="prueba-social-header">
-        <h2>{t(locale, "comoFuncionaProceso.resenasTitulo")}</h2>
-        <p>{t(locale, "comoFuncionaProceso.resenasSubtitulo")}</p>
-      </div>
-      <div class="prueba-social-grid">
-        {testimoniosDestacados.map((testimonio) => (
-          <a class="resena-card" href={testimonio.destino} target="_blank" rel="noopener noreferrer nofollow">
-            <img src={testimonio.imagen} alt={t(locale, "comoFuncionaProceso.testimonioTrustpilotAlt")} loading="lazy" />
-          </a>
-        ))}
-      </div>
-    </section>
-  )}
 
   <!-- BLOQUE 3: CTA + FAQ -->
   <section
@@ -481,65 +443,6 @@ const beneficios = [
     font-size: 0.92rem;
     line-height: 1.5;
     color: var(--color-text-muted, #4b5563);
-  }
-
-  /* Prueba Social: resenas reales de Trustpilot, antes del CTA final */
-  .prueba-social-resenas {
-    max-width: 80rem;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .prueba-social-header {
-    text-align: center;
-    max-width: 42rem;
-    margin: 0 auto 2rem;
-  }
-
-  .prueba-social-header h2 {
-    margin: 0 0 0.5rem;
-    font-size: 1.5rem;
-    font-weight: 800;
-  }
-
-  .prueba-social-header p {
-    margin: 0;
-    color: var(--color-text-muted, #4b5563);
-    font-size: 1rem;
-  }
-
-  .prueba-social-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 768px) {
-    .prueba-social-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .resena-card {
-    display: block;
-    line-height: 0;
-    background: #ffffff;
-    border: 1px solid #f3f4f6;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    overflow: hidden;
-    transition: box-shadow 300ms, transform 300ms;
-  }
-
-  .resena-card:hover {
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    transform: translateY(-0.25rem);
-  }
-
-  .resena-card img {
-    width: 100%;
-    height: auto;
-    display: block;
   }
 
   /* BLOQUE 3 */
