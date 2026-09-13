@@ -32,6 +32,7 @@ const clienteSatisfechoPath = "/prueba-social/cliente-satisfecho/";
 const preciosPath = staticPagePathSinPrefijo("precios");
 const consultaGarantiaPath = staticPagePathSinPrefijo("consultaGarantia");
 const contactoPath = staticPagePathSinPrefijo("contacto");
+const catalogoPath = "/catalogo/";
 
 const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimoniosPath, resetEvidenciaPath, clienteSatisfechoPath].includes(
   path
@@ -76,6 +77,15 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             />
           </svg>
           <span>{t(locale, "nav.home")}</span>
+        </a>
+        <a href={catalogoPath} class:list={{ "is-active": path === catalogoPath }}>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+            <rect x="3.5" y="4.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6" />
+            <rect x="13.5" y="4.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6" />
+            <rect x="3.5" y="14.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6" />
+            <rect x="13.5" y="14.5" width="7" height="7" rx="1.2" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <span>{t(locale, "nav.catalogo")}</span>
         </a>
         <a
           href={buildStaticPagePath(locale, "comoFunciona")}

@@ -1,0 +1,34 @@
+---
+// Página ES-only (mismo criterio que /prueba-social/diagnostico-gratis/):
+// el catálogo completo de modelos, trasladado acá desde el Home para que
+// este último quede libre de la grilla masiva.
+// SSR (no prerender): necesita leer ?marca=&error=&q= de Astro.url.searchParams
+// en cada visita (el slider de errores y el buscador rápido del Home enlazan
+// acá con esos parámetros) — en una página estática quedarían siempre vacíos.
+export const prerender = false;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CatalogoPage from "../components/pages/CatalogoPage.astro";
+import { t } from "../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  wide
+  title={t(locale, "catalogoPage.title")}
+  description={t(locale, "catalogoPage.description")}
+  locale={locale}
+  path="/catalogo/"
+>
+  <h1>{t(locale, "catalogoPage.heading")}</h1>
+  <p class="catalogo-intro">{t(locale, "catalogoPage.intro")}</p>
+  <CatalogoPage locale={locale} />
+</BaseLayout>
+
+<style>
+  .catalogo-intro {
+    margin: 0 0 var(--space-sm);
+    color: var(--color-text-muted);
+  }
+</style>

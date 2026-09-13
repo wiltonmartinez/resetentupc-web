@@ -1,13 +1,26 @@
 ---
-import { t, buildLocalizedPath, findErroresConfirmadosForModelo } from "../../i18n/utils";
+/**
+ * Home reestructurado como embudo AIDA (Atención → Interés → Deseo →
+ * Prueba Social → Acción), enfocado 100% en conversión y urgencia. El
+ * catálogo masivo de modelos (buscador+filtros+grilla+favoritos) se movió
+ * a /catalogo/ (ver CatalogoPage.astro) — acá solo queda un buscador
+ * rápido que enlaza para allá.
+ *
+ * Paleta estricta pedida: fondos/estructura en gris (--color-bg-muted),
+ * tarjetas en blanco (--color-bg-card), títulos/botones de información en
+ * azul oscuro (--home-azul, nuevo — el teal --color-primary del resto del
+ * sitio no es "azul oscuro"), separadores en naranja (--home-naranja,
+ * mismo tono que ya usa Header.astro), descargas en rojo (mismo rojo que
+ * ya usa el resto del sitio para este CTA) y WhatsApp en verde
+ * (--color-whatsapp, ya global). Nunca naranja en botones.
+ */
+import { t, buildLocalizedPath } from "../../i18n/utils";
 import WhatsAppCTA from "../WhatsAppCTA.astro";
 import TrustpilotWidget from "../TrustpilotWidget.astro";
-import ModeloImage from "../ui/ModeloImage.astro";
-import FavoritoEstrella from "../ui/FavoritoEstrella.astro";
-import modelosCompletos from "../../data/modelos-muestra.json";
-import { obtenerPopularidad } from "../../lib/popularidad.js";
-import { getModeloImage } from "../../lib/model-images.js";
-import { USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../../config/site";
+import YouTubeFacade from "../ui/YouTubeFacade.astro";
+import { fetchAllPages } from "../../lib/fetch-paginated";
+import { extractYoutubeId } from "../../lib/youtube";
+import { USB_REDIRECTOR_DOWNLOAD_URL, TECHNICIAN_ID, NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -15,869 +28,530 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const GRUPOS_ERROR = [
-  { id: "epson-almohadillas", marca: "epson", labelKey: "home.grupoAlmohadillas", errorIds: ["epson-almohadillas"] },
-  { id: "canon-5b00", marca: "canon", labelKey: "home.grupoCanon5b00", errorIds: ["canon-5b00"] },
-  { id: "canon-1700", marca: "canon", labelKey: "home.grupoCanon1700", errorIds: ["canon-1700"] },
-  {
-    id: "sc-bloqueo",
-    marca: "epson-sc",
-    labelKey: "home.grupoScBloqueo",
-    errorIds: ["epson-sc-00010000", "epson-sc-00040000", "epson-sc-00080000", "epson-sc-000c0000"],
-  },
-  {
-    id: "sc-notificacion",
-    marca: "epson-sc",
-    labelKey: "home.grupoScNotificacion",
-    errorIds: ["epson-sc-00000001", "epson-sc-00000004", "epson-sc-00000008", "epson-sc-0000000c"],
-  },
-  {
-    id: "sc-combinacion",
-    marca: "epson-sc",
-    labelKey: "home.grupoScCombinacion",
-    errorIds: [
-      "epson-sc-00080001",
-      "epson-sc-00080004",
-      "epson-sc-0008000c",
-      "epson-sc-00040008",
-      "epson-sc-00040001",
-      "epson-sc-0004000c",
-      "epson-sc-00010004",
-      "epson-sc-00010008",
-      "epson-sc-0001000c",
-    ],
-  },
-  { id: "sc-revision", marca: "epson-sc", labelKey: "home.grupoScRevision", errorIds: ["epson-sc-0014bd"] },
+const catalogoHref = "/catalogo/";
+
+// Interés: slider de errores críticos — cada uno enlaza a /catalogo/ ya
+// filtrado (mismos ids que CatalogoPage.astro/GRUPOS_ERROR), así el
+// visitante llega directo a sus modelos compatibles sin tener que volver
+// a elegir marca/error allá.
+const ERRORES_SLIDER = [
+  { marca: "epson", error: "epson-almohadillas", labelKey: "home.grupoAlmohadillas", icono: "🟢" },
+  { marca: "canon", error: "canon-5b00", labelKey: "home.grupoCanon5b00", icono: "🟡" },
+  { marca: "canon", error: "canon-1700", labelKey: "home.grupoCanon1700", icono: "🟠" },
+  { marca: "epson-sc", error: "sc-bloqueo", labelKey: "home.grupoScBloqueo", icono: "🔴" },
+  { marca: "epson-sc", error: "sc-revision", labelKey: "home.grupoScRevision", icono: "🟣" },
 ] as const;
 
-// La "serie" de un modelo es su prefijo alfabético (XP-200 → "XP", G1100 → "G",
-// Artisan-1430 → "Artisan"): agrupa modelos de una misma familia dentro de una marca.
-function serieDeModelo(nombreModelo: string): string {
-  return nombreModelo.match(/^[A-Za-z]+/)?.[0] ?? "";
+const PASOS_USUARIO = [
+  { numero: 1, tituloKey: "homeLanding.pasoUsuario1Titulo", textoKey: "homeLanding.pasoUsuario1Texto" },
+  { numero: 2, tituloKey: "homeLanding.pasoUsuario2Titulo", textoKey: "homeLanding.pasoUsuario2Texto" },
+  { numero: 3, tituloKey: "homeLanding.pasoUsuario3Titulo", textoKey: "homeLanding.pasoUsuario3Texto" },
+  { numero: 4, tituloKey: "homeLanding.pasoUsuario4Titulo", textoKey: "homeLanding.pasoUsuario4Texto" },
+  { numero: 5, tituloKey: "homeLanding.pasoUsuario5Titulo", textoKey: "homeLanding.pasoUsuario5Texto" },
+] as const;
+
+// Prueba Social: 1 video real al azar (misma fuente y mismo criterio ya
+// usado en ComoFuncionaPage.astro — build-time, se renueva en cada
+// deploy; esta página es estática/prerenderizada, no SSR, así que no hay
+// forma de sortear "por visita" sin convertirla a SSR).
+type VideoEvidencia = { youtubeId: string; titulo: string } | null;
+let videoDestacado: VideoEvidencia = null;
+try {
+  const evidencias = await fetchAllPages(`${NUCLEO_API_BASE_URL}/api/public/reset-realizados/`);
+  const conVideo = evidencias
+    .map((e: any) => ({ ...e, youtubeId: extractYoutubeId(e.youtube_id) || extractYoutubeId(e.enlace_youtube) }))
+    .filter((e: any) => e.youtubeId);
+  if (conVideo.length > 0) {
+    const elegido = conVideo[Math.floor(Math.random() * conVideo.length)];
+    videoDestacado = { youtubeId: elegido.youtubeId, titulo: `${elegido.marca} ${elegido.modelo}` };
+  }
+} catch (error) {
+  console.error("Error fetching reset-realizados para Home:", error);
 }
-
-// Modelos agregados por tráfico/SEO que todavía no tienen foto de portada ni error
-// confirmado no se listan en la grilla pública (evita tarjetas vacías/genéricas), pero
-// su página /reset/{marca}/{modelo}/ sigue existiendo (getStaticPaths usa modelosCompletos
-// sin filtrar) para no romper las redirecciones que apuntan a ellos. En cuanto se les
-// agregue imagen o un error confirmado, reaparecen solos — no es una lista manual.
-const modelos = modelosCompletos.filter(
-  (modelo) =>
-    getModeloImage(modelo.modeloSlug) !== null ||
-    findErroresConfirmadosForModelo(modelo.marcaSlug, modelo.modeloSlug).length > 0
-);
-
-const modelosConGrupos = modelos.map((modelo) => {
-  const idsModelo = new Set(findErroresConfirmadosForModelo(modelo.marcaSlug, modelo.modeloSlug).map((c) => c.error_id));
-  const grupos = GRUPOS_ERROR.filter((g) => g.errorIds.some((id) => idsModelo.has(id))).map((g) => g.id);
-  const id = `${modelo.marcaSlug}:${modelo.modeloSlug}`;
-  const nombreCompleto = `${modelo.nombreMarca} ${modelo.nombreModelo}`;
-  const ariaLabelFavorito = t(locale, "home.favoritoAgregar").replace("{nombre}", nombreCompleto);
-  const serie = serieDeModelo(modelo.nombreModelo);
-  const serieKey = serie ? `${modelo.marcaSlug}::${serie}` : "";
-  return { modelo, grupos, id, popularidad: obtenerPopularidad(modelo), nombreCompleto, ariaLabelFavorito, serieKey };
-});
-
-const marcasDisponibles = Array.from(
-  modelos.reduce((map, m) => (map.has(m.marcaSlug) ? map : map.set(m.marcaSlug, m.nombreMarca)), new Map<string, string>())
-)
-  .map(([slug, nombre]) => ({ slug, nombre }))
-  .sort((a, b) => a.nombre.localeCompare(b.nombre));
-
-const gruposUsados = new Set(modelosConGrupos.flatMap((m) => m.grupos));
-const gruposDisponibles = GRUPOS_ERROR.filter((g) => gruposUsados.has(g.id));
-
-const seriesDisponibles = Array.from(
-  modelos.reduce((map, m) => {
-    const serie = serieDeModelo(m.nombreModelo);
-    if (!serie) return map;
-    const key = `${m.marcaSlug}::${serie}`;
-    if (!map.has(key)) map.set(key, { key, marcaSlug: m.marcaSlug, nombreMarca: m.nombreMarca, serie });
-    return map;
-  }, new Map<string, { key: string; marcaSlug: string; nombreMarca: string; serie: string }>())
-)
-  .map(([, v]) => v)
-  .sort((a, b) => a.nombreMarca.localeCompare(b.nombreMarca) || a.serie.localeCompare(b.serie));
 ---
 
-<section class="hero">
-  <h1>{t(locale, "proceso.titulo")}</h1>
-  <p class="hero-tagline"><em>{t(locale, "home.heroTagline")}</em></p>
-  <TrustpilotWidget locale={locale} />
+<section class="aida-hero">
+  <div class="aida-hero-contenido">
+    <h1>{t(locale, "homeLanding.heroTitulo")}</h1>
+    <p class="aida-hero-subtitulo">{t(locale, "homeLanding.heroSubtitulo")}</p>
 
-  <WhatsAppCTA
-    sourceId="home-hero"
-    label={t(locale, "home.heroCta")}
-    locale={locale}
-    urlPath={buildLocalizedPath(locale, "/")}
-    elevar
-  />
-
-  <div class="hero-descarga-secundaria">
-    <p class="hero-descarga-texto">{t(locale, "home.heroDescargaTexto")}</p>
-    <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="hero-descarga-boton" data-sound="select">
-      ⬇️ {t(locale, "comoFuncionaProceso.paso31BotonDescarga")}
-    </a>
-    <p class="hero-descarga-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
-  </div>
-</section>
-
-<section class="modelos">
-  <h2>{t(locale, "home.modelosTitle")}</h2>
-
-  <div class="modelos-buscador-fila">
-    <div class="modelos-buscador" id="modelos-buscador">
-      <svg class="modelos-buscador-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+    <form class="aida-hero-buscador" action={catalogoHref} method="get" data-sound="select">
+      <svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
         <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6" />
         <path d="M16.5 16.5l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
       </svg>
       <input
         type="search"
-        id="modelos-buscador-input"
-        placeholder={t(locale, "home.buscadorPlaceholder")}
-        aria-label={t(locale, "home.buscadorPlaceholder")}
-        autocomplete="off"
-        role="combobox"
-        aria-expanded="false"
-        aria-controls="modelos-buscador-panel"
-        aria-autocomplete="list"
+        name="q"
+        placeholder={t(locale, "homeLanding.heroBuscadorPlaceholder")}
+        aria-label={t(locale, "homeLanding.heroBuscadorPlaceholder")}
       />
-      <button type="button" class="modelos-buscador-clear" id="modelos-buscador-clear" hidden aria-label={t(locale, "home.buscadorLimpiar")}>
-        <svg viewBox="0 0 20 20" width="14" height="14" fill="none" aria-hidden="true">
-          <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-        </svg>
-      </button>
+      <button type="submit">{t(locale, "homeLanding.heroBuscadorBoton")}</button>
+    </form>
 
-      <div
-        class="modelos-buscador-panel"
-        id="modelos-buscador-panel"
-        role="listbox"
-        hidden
-        data-texto-resultados={t(locale, "home.buscadorResultados")}
-        data-texto-resultado-singular={t(locale, "home.buscadorResultadoSingular")}
-        data-texto-sin-resultados={t(locale, "home.buscadorSinResultados")}
-      >
-      </div>
+    <TrustpilotWidget locale={locale} />
+
+    <div class="aida-hero-ctas">
+      <WhatsAppCTA
+        sourceId="home-hero"
+        label={t(locale, "homeLanding.heroCtaWhatsapp")}
+        locale={locale}
+        urlPath={buildLocalizedPath(locale, "/")}
+        elevar
+      />
+      <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
+        ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
+      </a>
     </div>
-
-    <div class="modelos-filtros">
-      <select id="filtro-marca" aria-label={t(locale, "home.filtroMarcaLabel")}>
-        <option value="">{t(locale, "home.filtroMarcaTodas")}</option>
-        {marcasDisponibles.map((m) => (
-          <option value={m.slug}>{m.nombre}</option>
-        ))}
-      </select>
-      <select id="filtro-serie" aria-label={t(locale, "home.filtroSerieLabel")}>
-        <option value="">{t(locale, "home.filtroSerieTodas")}</option>
-        {seriesDisponibles.map((s) => (
-          <option value={s.key} data-marca={s.marcaSlug}>{s.nombreMarca} {s.serie}</option>
-        ))}
-      </select>
-      <select id="filtro-error" aria-label={t(locale, "home.filtroErrorLabel")}>
-        <option value="">{t(locale, "home.filtroErrorTodos")}</option>
-        {gruposDisponibles.map((g) => (
-          <option value={g.id} data-marca={g.marca}>{t(locale, g.labelKey)}</option>
-        ))}
-      </select>
-      <select id="filtro-orden" aria-label={t(locale, "home.filtrarPorLabel")}>
-        <option value="az">{t(locale, "home.ordenAZ")}</option>
-        <option value="za">{t(locale, "home.ordenZA")}</option>
-        <option value="favoritos">{t(locale, "home.ordenFavoritos")}</option>
-      </select>
-    </div>
+    <p class="aida-hero-descarga-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
   </div>
-
-  <div
-    class="modelos-grid"
-    id="modelos-grid"
-    data-texto-favorito-agregar={t(locale, "home.favoritoAgregar")}
-    data-texto-favorito-quitar={t(locale, "home.favoritoQuitar")}
-  >
-    {modelosConGrupos.map(({ modelo, grupos, id, popularidad, nombreCompleto, ariaLabelFavorito, serieKey }) => {
-      const href = buildLocalizedPath(locale, `/reset/${modelo.marcaSlug}/${modelo.modeloSlug}/`);
-      return (
-        <div
-          class="modelo-card"
-          data-buscar={`${modelo.nombreMarca} ${modelo.nombreModelo}`.toLowerCase()}
-          data-marca={modelo.marcaSlug}
-          data-grupos={grupos.join(",")}
-          data-serie={serieKey}
-          data-modelo-id={id}
-          data-popularidad={popularidad}
-          data-nombre={nombreCompleto}
-        >
-          <a class="modelo-card-enlace" href={href}>
-            <ModeloImage
-              modeloSlug={modelo.modeloSlug}
-              nombreMarca={modelo.nombreMarca}
-              nombreModelo={modelo.nombreModelo}
-              variant="cover"
-            />
-          </a>
-          <FavoritoEstrella modeloId={id} variante="flotante" ariaLabel={ariaLabelFavorito} />
-          <div class="modelo-card-body">
-            <span class="modelo-card-marca">{t(locale, "modelo.prefijoTitulo")} {modelo.nombreMarca}</span>
-            <span class="modelo-card-modelo">{modelo.nombreModelo}</span>
-            <a class="modelo-card-verlink" href={href}>{t(locale, "home.verModelo")}</a>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-  <p
-    class="modelos-grid-vacio"
-    id="modelos-grid-vacio"
-    hidden
-    data-texto-sin-resultados={t(locale, "home.buscadorSinResultados")}
-    data-texto-sin-favoritos={t(locale, "home.favoritosVacio")}
-  >
-    {t(locale, "home.buscadorSinResultados")}
-  </p>
 </section>
 
-<script>
-  import { obtenerFavoritos, alternarFavorito } from "../../lib/favoritos.js";
-  import { playFeedback } from "../../lib/sound-manager.js";
+<div class="aida-divisor" aria-hidden="true"></div>
 
-  function escapeHtml(str) {
-    return str.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-  }
+<section class="aida-interes">
+  <h2>{t(locale, "homeLanding.interesTitulo")}</h2>
+  <p class="aida-seccion-subtitulo">{t(locale, "homeLanding.interesSubtitulo")}</p>
 
-  function highlight(text, query) {
-    const safe = escapeHtml(text);
-    if (!query) return safe;
-    const idx = text.toLowerCase().indexOf(query);
-    if (idx === -1) return safe;
-    const before = escapeHtml(text.slice(0, idx));
-    const match = escapeHtml(text.slice(idx, idx + query.length));
-    const after = escapeHtml(text.slice(idx + query.length));
-    return `${before}<mark>${match}</mark>${after}`;
-  }
+  <div class="aida-slider" id="aida-error-slider">
+    {ERRORES_SLIDER.map((err) => (
+      <a class="aida-slider-item" href={`${catalogoHref}?marca=${err.marca}&error=${err.error}`} data-sound="select">
+        <span class="aida-slider-icono" aria-hidden="true">{err.icono}</span>
+        <span class="aida-slider-label">{t(locale, err.labelKey)}</span>
+      </a>
+    ))}
+  </div>
+</section>
 
-  document.querySelectorAll("#modelos-buscador").forEach((wrapper) => {
-    const input = wrapper.querySelector("#modelos-buscador-input");
-    const clearBtn = wrapper.querySelector("#modelos-buscador-clear");
-    const panel = wrapper.querySelector("#modelos-buscador-panel");
-    const grid = document.getElementById("modelos-grid");
-    const gridVacio = document.getElementById("modelos-grid-vacio");
-    const filtroMarca = document.getElementById("filtro-marca");
-    const filtroSerie = document.getElementById("filtro-serie");
-    const filtroError = document.getElementById("filtro-error");
-    const filtroOrden = document.getElementById("filtro-orden");
-    if (!input || !panel || !grid) return;
+<div class="aida-divisor" aria-hidden="true"></div>
 
-    const MAX_RESULTADOS = 8;
-    const textoResultados = panel.dataset.textoResultados || "{n} resultados";
-    const textoResultadoSingular = panel.dataset.textoResultadoSingular || textoResultados.replace("{n}", "1");
-    const textoSinResultados = panel.dataset.textoSinResultados || "";
-    const textoSinFavoritos = gridVacio ? gridVacio.dataset.textoSinFavoritos || "" : "";
-    const textoFavoritoAgregar = grid.dataset.textoFavoritoAgregar || "Agregar a favoritos";
-    const textoFavoritoQuitar = grid.dataset.textoFavoritoQuitar || "Quitar de favoritos";
+<section class="aida-deseo">
+  <h2>{t(locale, "homeLanding.deseoTitulo")}</h2>
+  <p class="aida-seccion-subtitulo">{t(locale, "homeLanding.deseoSubtitulo")}</p>
 
-    let favoritos = obtenerFavoritos();
+  <div class="aida-deseo-grid">
+    <div class="aida-card">
+      <span class="aida-card-icono" aria-hidden="true">🚫</span>
+      <h3>{t(locale, "homeLanding.deseoNoIntrusivoTitulo")}</h3>
+      <p>{t(locale, "homeLanding.deseoNoIntrusivoTexto")}</p>
+    </div>
+    <div class="aida-card">
+      <span class="aida-card-icono" aria-hidden="true">🔌</span>
+      <h3>{t(locale, "homeLanding.deseoUsbRedirectorTitulo")}</h3>
+      <p>{t(locale, "homeLanding.deseoUsbRedirectorTexto")}</p>
+      <p class="aida-card-technician-id">
+        Technician ID: <strong>{TECHNICIAN_ID}</strong>
+      </p>
+    </div>
+  </div>
 
-    const cards = Array.from(grid.querySelectorAll(".modelo-card")).map((card) => ({
-      el: card,
-      id: card.getAttribute("data-modelo-id") || "",
-      texto: (card.getAttribute("data-buscar") || "").toLowerCase(),
-      marca: card.getAttribute("data-marca") || "",
-      grupos: (card.getAttribute("data-grupos") || "").split(",").filter(Boolean),
-      serie: card.getAttribute("data-serie") || "",
-      popularidad: Number(card.getAttribute("data-popularidad")) || 0,
-      nombre: card.getAttribute("data-nombre") || "",
-      marcaTexto: card.querySelector(".modelo-card-marca")?.textContent.trim() || "",
-      modelo: card.querySelector(".modelo-card-modelo")?.textContent.trim() || "",
-      href: card.querySelector(".modelo-card-verlink")?.getAttribute("href") || "",
-    }));
+  <ol class="aida-pasos">
+    {PASOS_USUARIO.map((paso) => (
+      <li class="aida-paso">
+        <span class="aida-paso-numero">{paso.numero}</span>
+        <div>
+          <h4>{t(locale, paso.tituloKey)}</h4>
+          <p>{t(locale, paso.textoKey)}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
 
-    let activeIndex = -1;
-    let currentMatches = [];
+  <div class="aida-requisitos">
+    <h3>{t(locale, "homeLanding.requisitosTitulo")}</h3>
+    <ul>
+      <li>🖥️ {t(locale, "homeLanding.requisitoWindows")}</li>
+      <li>🔌 {t(locale, "homeLanding.requisitoUsb")}</li>
+      <li>🌐 {t(locale, "homeLanding.requisitoInternet")}</li>
+    </ul>
+  </div>
+</section>
 
-    function ordenActual() {
-      return filtroOrden ? filtroOrden.value : "az";
-    }
+{videoDestacado && (
+  <>
+    <div class="aida-divisor" aria-hidden="true"></div>
+    <section class="aida-prueba-social">
+      <h2>{t(locale, "homeLanding.pruebaSocialTitulo")}</h2>
+      <p class="aida-seccion-subtitulo">{t(locale, "homeLanding.pruebaSocialSubtitulo")}</p>
+      <div class="aida-prueba-social-video">
+        <YouTubeFacade
+          youtubeId={videoDestacado.youtubeId}
+          titulo={videoDestacado.titulo}
+          reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
+        />
+      </div>
+    </section>
+  </>
+)}
 
-    function matchesFiltros(c) {
-      const marcaSel = filtroMarca ? filtroMarca.value : "";
-      const serieSel = filtroSerie ? filtroSerie.value : "";
-      const grupoSel = filtroError ? filtroError.value : "";
-      if (marcaSel && c.marca !== marcaSel) return false;
-      if (serieSel && c.serie !== serieSel) return false;
-      if (grupoSel && !c.grupos.includes(grupoSel)) return false;
-      if (ordenActual() === "favoritos" && !favoritos.has(c.id)) return false;
-      return true;
-    }
+<div class="aida-divisor" aria-hidden="true"></div>
 
-    function compararOrden(a, b) {
-      const orden = ordenActual();
-      if (orden === "az") return a.modelo.localeCompare(b.modelo);
-      if (orden === "za") return b.modelo.localeCompare(a.modelo);
-      if (orden === "favoritos") return a.modelo.localeCompare(b.modelo);
-      return a.modelo.localeCompare(b.modelo);
-    }
+<section class="aida-accion">
+  <h2>{t(locale, "homeLanding.accionTitulo")}</h2>
 
-    function aplicarOrdenGrid() {
-      cards
-        .slice()
-        .sort(compararOrden)
-        .forEach((c, i) => {
-          c.el.style.order = String(i);
-        });
-    }
+  <div class="aida-garantia-card">
+    <span class="aida-card-icono" aria-hidden="true">🛡️</span>
+    <h3>{t(locale, "homeLanding.accionGarantiaTitulo")}</h3>
+    <p>{t(locale, "homeLanding.accionGarantiaTexto")}</p>
+  </div>
 
-    function actualizarEstrellas() {
-      cards.forEach((c) => {
-        const botones = c.el.querySelectorAll("[data-favorito-toggle]");
-        if (!botones.length) return;
-        const esFav = favoritos.has(c.id);
-        const etiqueta = (esFav ? textoFavoritoQuitar : textoFavoritoAgregar).replace("{nombre}", c.nombre);
-        botones.forEach((boton) => {
-          boton.setAttribute("aria-pressed", String(esFav));
-          boton.setAttribute("aria-label", etiqueta);
-        });
-      });
-    }
-
-    function score(card, query) {
-      const modeloLower = card.modelo.toLowerCase();
-      const marcaLower = card.marcaTexto.toLowerCase();
-      if (modeloLower.startsWith(query)) return 0;
-      if (marcaLower.startsWith(query)) return 1;
-      if (modeloLower.includes(query)) return 2;
-      return 3;
-    }
-
-    function renderPanel(query) {
-      if (!query) {
-        panel.hidden = true;
-        panel.innerHTML = "";
-        input.setAttribute("aria-expanded", "false");
-        return;
-      }
-
-      const matches = cards
-        .filter((c) => matchesFiltros(c) && c.texto.includes(query))
-        .sort((a, b) => score(a, query) - score(b, query) || a.modelo.localeCompare(b.modelo));
-
-      currentMatches = matches.slice(0, MAX_RESULTADOS);
-      activeIndex = -1;
-
-      if (matches.length === 0) {
-        panel.innerHTML = `<p class="modelos-buscador-vacio">${escapeHtml(textoSinResultados)}</p>`;
-      } else {
-        const textoConteo = matches.length === 1 ? textoResultadoSingular : textoResultados.replace("{n}", String(matches.length));
-        const encabezado = `<p class="modelos-buscador-conteo">${textoConteo}</p>`;
-        const items = currentMatches
-          .map(
-            (c, i) => `
-            <a class="modelos-buscador-item" href="${c.href}" role="option" id="modelos-buscador-opcion-${i}" data-index="${i}">
-              <span class="modelos-buscador-item-titulo">${highlight(c.marcaTexto, query)} ${highlight(c.modelo, query)}</span>
-            </a>`
-          )
-          .join("");
-        const masTexto = matches.length > MAX_RESULTADOS ? `<p class="modelos-buscador-mas">+${matches.length - MAX_RESULTADOS}</p>` : "";
-        panel.innerHTML = encabezado + items + masTexto;
-      }
-
-      panel.hidden = false;
-      input.setAttribute("aria-expanded", "true");
-    }
-
-    function syncGrid(query) {
-      let visibles = 0;
-      cards.forEach((c) => {
-        const coincide = matchesFiltros(c) && (query === "" || c.texto.includes(query));
-        c.el.hidden = !coincide;
-        if (coincide) visibles++;
-      });
-      if (gridVacio) {
-        gridVacio.hidden = visibles !== 0;
-        gridVacio.textContent = ordenActual() === "favoritos" ? textoSinFavoritos : textoSinResultados;
-      }
-      return visibles;
-    }
-
-    function setActive(index) {
-      const opciones = panel.querySelectorAll(".modelos-buscador-item");
-      opciones.forEach((op) => op.classList.remove("is-active"));
-      activeIndex = index;
-      if (index >= 0 && opciones[index]) {
-        opciones[index].classList.add("is-active");
-        opciones[index].scrollIntoView({ block: "nearest" });
-        input.setAttribute("aria-activedescendant", opciones[index].id);
-      } else {
-        input.removeAttribute("aria-activedescendant");
-      }
-    }
-
-    input.addEventListener("input", () => {
-      const query = input.value.trim().toLowerCase();
-      clearBtn.hidden = query === "";
-      renderPanel(query);
-      syncGrid(query);
-    });
-
-    input.addEventListener("keydown", (event) => {
-      const opciones = panel.querySelectorAll(".modelos-buscador-item");
-      if (!opciones.length) return;
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        setActive((activeIndex + 1) % opciones.length);
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        setActive((activeIndex - 1 + opciones.length) % opciones.length);
-      } else if (event.key === "Enter") {
-        if (activeIndex >= 0 && opciones[activeIndex]) {
-          event.preventDefault();
-          window.location.href = opciones[activeIndex].getAttribute("href");
-        }
-      } else if (event.key === "Escape") {
-        panel.hidden = true;
-        input.setAttribute("aria-expanded", "false");
-      }
-    });
-
-    input.addEventListener("focus", () => {
-      if (input.value.trim()) renderPanel(input.value.trim().toLowerCase());
-    });
-
-    clearBtn.addEventListener("click", () => {
-      input.value = "";
-      clearBtn.hidden = true;
-      renderPanel("");
-      syncGrid("");
-      input.focus();
-    });
-
-    function refrescarPorFiltro() {
-      const query = input.value.trim().toLowerCase();
-      if (query) renderPanel(query);
-      syncGrid(query);
-    }
-
-    // Reutilizado por "Error" y "Serie": ambos selects dependen de la Marca elegida —
-    // solo muestran las opciones que le corresponden, igual que ya hacía "Error".
-    function actualizarOpcionesPorMarca(select) {
-      if (!select) return;
-      const marcaSel = filtroMarca ? filtroMarca.value : "";
-      const opciones = Array.from(select.querySelectorAll("option[data-marca]"));
-      let seleccionOculta = false;
-      opciones.forEach((opcion) => {
-        const coincide = !marcaSel || opcion.dataset.marca === marcaSel;
-        opcion.hidden = !coincide;
-        if (opcion.selected && !coincide) seleccionOculta = true;
-      });
-      if (seleccionOculta) select.value = "";
-    }
-
-    if (filtroMarca) {
-      filtroMarca.addEventListener("change", () => {
-        actualizarOpcionesPorMarca(filtroError);
-        actualizarOpcionesPorMarca(filtroSerie);
-        refrescarPorFiltro();
-      });
-    }
-    if (filtroError) filtroError.addEventListener("change", refrescarPorFiltro);
-    if (filtroSerie) {
-      filtroSerie.addEventListener("change", () => {
-        // Elegir una Serie ya implica su Marca (ej. "Epson XP" → Marca Epson): se
-        // sincroniza el select de Marca para no obligar a elegirla dos veces.
-        const marcaDeSerie = filtroSerie.options[filtroSerie.selectedIndex]?.dataset.marca || "";
-        if (marcaDeSerie && filtroMarca && filtroMarca.value !== marcaDeSerie) {
-          filtroMarca.value = marcaDeSerie;
-          actualizarOpcionesPorMarca(filtroError);
-          actualizarOpcionesPorMarca(filtroSerie);
-        }
-        refrescarPorFiltro();
-      });
-    }
-
-    if (filtroOrden) {
-      filtroOrden.addEventListener("change", () => {
-        aplicarOrdenGrid();
-        refrescarPorFiltro();
-      });
-    }
-
-    grid.addEventListener("click", (event) => {
-      const boton = event.target.closest("[data-favorito-toggle]");
-      if (!boton || !grid.contains(boton)) return;
-      event.preventDefault();
-      event.stopPropagation();
-      const id = boton.getAttribute("data-modelo-id") || "";
-      if (!id) return;
-      const esFavoritoAhora = alternarFavorito(id);
-      if (esFavoritoAhora) favoritos.add(id);
-      else favoritos.delete(id);
-      actualizarEstrellas();
-      playFeedback(esFavoritoAhora ? "favoritoAgregar" : "favoritoQuitar");
-      if (ordenActual() === "favoritos") refrescarPorFiltro();
-    });
-
-    actualizarOpcionesPorMarca(filtroError);
-    actualizarOpcionesPorMarca(filtroSerie);
-    actualizarEstrellas();
-    aplicarOrdenGrid();
-    syncGrid("");
-
-    document.addEventListener("click", (event) => {
-      if (!wrapper.contains(event.target)) {
-        panel.hidden = true;
-        input.setAttribute("aria-expanded", "false");
-      }
-    });
-  });
-</script>
+  <div class="aida-accion-ctas">
+    <WhatsAppCTA
+      sourceId="home-accion-final"
+      label={t(locale, "homeLanding.accionCtaWhatsapp")}
+      locale={locale}
+      urlPath={buildLocalizedPath(locale, "/")}
+      elevar
+      destacado
+    />
+    <a href={catalogoHref} class="aida-link-catalogo">{t(locale, "homeLanding.accionCtaCatalogo")} →</a>
+  </div>
+</section>
 
 <style>
-  .hero {
+  /* --- Paleta estricta de esta página --- */
+  .aida-hero,
+  .aida-interes,
+  .aida-deseo,
+  .aida-prueba-social,
+  .aida-accion {
+    --home-azul: #1e3a8a;
+    --home-naranja: #f97316;
+    --home-rojo: #dc2626;
+  }
+
+  .aida-hero {
+    background: var(--color-bg-muted);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg) var(--space-md);
     text-align: center;
-    padding: var(--space-lg) 0 var(--space-md);
+  }
+
+  .aida-hero-contenido {
+    max-width: 640px;
+    margin: 0 auto;
     display: grid;
     gap: var(--space-sm);
     justify-items: center;
   }
 
-  .hero h1 {
+  .aida-hero h1 {
     margin: 0;
-    min-width: 0;
-    max-width: 100%;
-    font-size: clamp(1.3rem, 4.1vw, 1.82rem);
-    line-height: 1.15;
-    white-space: nowrap;
+    font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+    line-height: 1.2;
+    color: var(--home-azul);
   }
 
-  .hero-tagline {
+  .aida-hero-subtitulo {
     margin: 0;
-    min-width: 0;
-    max-width: 100%;
-    font-size: clamp(0.8rem, 2vw, 1rem);
     color: var(--color-text-muted);
-    white-space: nowrap;
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
   }
 
-  @media (max-width: 510px) {
-    .hero h1,
-    .hero-tagline {
-      white-space: normal;
-    }
-  }
-
-  /* CTA secundario: separado del botón principal de WhatsApp por un
-     divisor sutil y con jerarquía visual claramente menor (más chico, sin
-     el peso del CTA verde) para que ambos botones no compitan — pero
-     siempre visible y accesible, porque un técnico ya en conversación sí
-     lo necesita para conectarse. */
-  .hero-descarga-secundaria {
-    display: grid;
-    gap: 0.4rem;
-    justify-items: center;
-    margin-top: 0.25rem;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--color-border);
+  .aida-hero-buscador {
+    display: flex;
     width: 100%;
-    max-width: 22rem;
-  }
-
-  .hero-descarga-texto {
-    margin: 0;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--color-text-muted);
-  }
-
-  /* Mismo rojo (y misma copia) que ya usa el Paso 3.1 de "Cómo funciona"
-     para descargar el módulo — clases propias porque ese estilo vive con
-     scope en ComoFuncionaPage.astro y no llega hasta acá. Más chico que
-     antes a propósito: acá es el CTA secundario, no el principal. */
-  .hero-descarga-boton {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1.1rem;
-    border-radius: 10px;
-    background: #dc2626;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 0.82rem;
-    text-decoration: none;
-    transition:
-      background-color 0.15s ease,
-      transform 0.15s ease,
-      box-shadow 0.15s ease;
-  }
-
-  .hero-descarga-boton:hover {
-    background: #b91c1c;
-    color: #ffffff;
-    transform: translateY(-0.125rem);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  }
-
-  .hero-descarga-microtexto {
-    margin: 0;
-    font-size: 0.72rem;
-    color: var(--color-text-subtle);
-    text-align: center;
-  }
-
-  .modelos h2 {
-    margin-top: 0;
-    margin-bottom: var(--space-sm);
-  }
-
-  .modelos-buscador-fila {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: var(--space-sm);
-    align-items: flex-start;
-  }
-
-  .modelos-buscador {
-    position: relative;
-    flex: 1 1 260px;
-    min-width: 0;
-  }
-
-  .modelos-filtros {
-    display: flex;
-    gap: 0.5rem;
-    flex: 0 1 auto;
-    min-width: 0;
-  }
-
-  .modelos-filtros select {
-    padding: 0.65rem 2rem 0.65rem 0.9rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    font: inherit;
-    font-size: 0.85rem;
+    max-width: 26rem;
     background: var(--color-bg-card);
-    color: var(--color-text);
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='12' height='12' fill='none'%3E%3Cpath d='M5 7.5l5 5 5-5' stroke='%23888' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    min-width: 0;
-  }
-
-  .modelos-filtros select:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 1px;
-  }
-
-  @media (max-width: 640px) {
-    .modelos-filtros {
-      flex: 1 1 100%;
-      flex-wrap: wrap;
-    }
-
-    .modelos-filtros select {
-      flex: 1 1 calc(50% - 0.25rem);
-      min-width: 0;
-    }
-  }
-
-  .modelos-grid-vacio {
-    margin: var(--space-md) 0 0;
-    padding: 1.2rem;
-    text-align: center;
-    border: 1px dashed var(--color-border);
-    border-radius: var(--radius-md);
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-  }
-
-  .modelos-buscador-icon {
-    position: absolute;
-    top: 50%;
-    left: 0.9rem;
-    transform: translateY(-50%);
-    color: var(--color-text-subtle);
-    pointer-events: none;
-  }
-
-  .modelos-buscador input {
-    width: 100%;
-    padding: 0.7rem 1rem 0.7rem 2.5rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-full);
+    padding: 0.35rem 0.35rem 0.35rem 1rem;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-subtle);
+  }
+
+  .aida-hero-buscador input {
+    flex: 1;
+    border: none;
+    background: none;
     font: inherit;
     font-size: 0.95rem;
-    background: var(--color-bg-card);
     color: var(--color-text);
+    min-width: 0;
   }
 
-  .modelos-buscador input:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 1px;
+  .aida-hero-buscador input:focus {
+    outline: none;
   }
 
-  .modelos-buscador-clear {
-    position: absolute;
-    top: 50%;
-    right: 0.6rem;
-    transform: translateY(-50%);
-    width: 1.6rem;
-    height: 1.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .aida-hero-buscador button {
     border: none;
     border-radius: var(--radius-full);
-    background: var(--color-bg-muted);
-    color: var(--color-text-subtle);
+    padding: 0.55rem 1.1rem;
+    background: var(--home-azul);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.85rem;
     cursor: pointer;
   }
 
-  .modelos-buscador-clear:hover {
-    color: var(--color-text);
-  }
-
-  .modelos-buscador-panel {
-    position: absolute;
-    top: calc(100% + 0.4rem);
-    left: 0;
-    right: 0;
-    z-index: 20;
-    max-height: 70vh;
-    overflow-y: auto;
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-floating);
-    padding: 0.4rem;
-  }
-
-  /* El contenido de .modelos-buscador-panel (conteo/item/titulo/mark/mas/vacio)
-     se genera con innerHTML desde el script de abajo, así que nunca recibe el
-     atributo de scoping de Astro — sin :global() estas reglas nunca coinciden
-     con nada (se comprobó en vivo: el panel entero se renderizaba con estilos
-     por defecto del navegador, sin flex/padding/negrita, y la imagen se veía
-     enorme porque su tamaño tampoco se aplicaba). */
-  :global(.modelos-buscador-conteo) {
-    margin: 0.2rem 0.5rem 0.4rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--color-text-subtle);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  :global(.modelos-buscador-item) {
+  .aida-hero-ctas {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+
+  /* Botón de descarga: SIEMPRE rojo — nunca naranja (paleta estricta). */
+  .aida-boton-descarga {
+    display: inline-flex;
     align-items: center;
-    gap: 0.7rem;
-    padding: 0.5rem;
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    color: var(--color-text);
-  }
-
-  :global(.modelos-buscador-item:hover),
-  :global(.modelos-buscador-item.is-active) {
-    background: var(--color-bg-muted);
-  }
-
-  :global(.modelos-buscador-item-titulo) {
+    gap: 0.4rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-full);
+    background: var(--home-rojo);
+    color: #ffffff;
     font-weight: 700;
-    font-size: 0.95rem;
-    min-width: 0;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
   }
 
-  :global(.modelos-buscador-item mark) {
-    background: var(--color-primary-light);
-    color: var(--color-primary-dark);
-    border-radius: 0.2rem;
-    padding: 0 0.1rem;
+  .aida-boton-descarga:hover {
+    background: #b91c1c;
+    transform: translateY(-0.125rem);
   }
 
-  :global(.modelos-buscador-mas) {
-    margin: 0.3rem 0.5rem 0.2rem;
-    font-size: 0.8rem;
+  .aida-hero-descarga-microtexto {
+    margin: 0;
+    font-size: 0.78rem;
     color: var(--color-text-subtle);
+  }
+
+  /* Divisores: SIEMPRE naranja — la única función permitida para este color. */
+  .aida-divisor {
+    height: 3px;
+    border-radius: var(--radius-full);
+    background: var(--home-naranja);
+    margin: var(--space-lg) 0;
+    opacity: 0.85;
+  }
+
+  .aida-interes h2,
+  .aida-deseo h2,
+  .aida-prueba-social h2,
+  .aida-accion h2 {
+    margin: 0 0 0.25rem;
+    color: var(--home-azul);
+    font-size: 1.4rem;
     text-align: center;
   }
 
-  :global(.modelos-buscador-vacio) {
-    margin: 0;
-    padding: 0.9rem 0.6rem;
+  .aida-seccion-subtitulo {
+    margin: 0 0 var(--space-md);
     text-align: center;
     color: var(--color-text-muted);
-    font-size: 0.9rem;
   }
 
-  .modelos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 0.75rem;
-  }
-
-  .modelo-card {
-    position: relative;
+  .aida-slider {
     display: flex;
-    flex-direction: column;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding: 0.25rem 0.1rem 0.75rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .aida-slider-item {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    min-width: 9.5rem;
+    padding: var(--space-sm);
+    background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background: var(--color-bg-card);
     box-shadow: var(--shadow-card);
-    overflow: hidden;
+    text-decoration: none;
+    color: var(--color-text);
+    text-align: center;
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
 
-  .modelo-card:hover {
-    border-color: var(--color-primary);
+  .aida-slider-item:hover {
+    border-color: var(--home-azul);
     transform: translateY(-2px);
   }
 
-  .modelo-card[hidden] {
-    display: none;
+  .aida-slider-icono {
+    font-size: 1.6rem;
   }
 
-  .modelo-card-enlace {
-    display: block;
-    text-decoration: none;
-    color: inherit;
+  .aida-slider-label {
+    font-weight: 600;
+    font-size: 0.88rem;
   }
 
-  .modelo-card-body {
+  .aida-deseo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .aida-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-md);
+  }
+
+  .aida-card-icono {
+    font-size: 1.8rem;
+  }
+
+  .aida-card h3 {
+    margin: 0.4rem 0 0.3rem;
+    color: var(--home-azul);
+    font-size: 1.05rem;
+  }
+
+  .aida-card p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+  }
+
+  .aida-card-technician-id {
+    margin-top: 0.6rem !important;
+    font-size: 0.85rem !important;
+    color: var(--color-text) !important;
+  }
+
+  .aida-pasos {
+    list-style: none;
+    margin: 0 0 var(--space-md);
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .aida-paso {
     display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.9rem 1rem;
+    gap: 0.75rem;
+    align-items: flex-start;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
   }
 
-  .modelo-card-marca {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-subtle);
-  }
-
-  .modelo-card-titulo-fila {
+  .aida-paso-numero {
+    flex: none;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--home-azul);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.9rem;
   }
 
-  .modelo-card-modelo {
-    font-weight: 700;
+  .aida-paso h4 {
+    margin: 0 0 0.15rem;
+    font-size: 0.95rem;
     color: var(--color-text);
   }
 
-  .modelo-card-verlink {
-    display: inline-block;
-    margin-top: 0.35rem;
+  .aida-paso p {
+    margin: 0;
     font-size: 0.85rem;
-    color: var(--color-primary);
-    font-weight: 600;
-    text-decoration: none;
+    color: var(--color-text-muted);
   }
 
-  .modelo-card-verlink:hover {
+  .aida-requisitos {
+    background: var(--color-bg-muted);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    text-align: center;
+  }
+
+  .aida-requisitos h3 {
+    margin: 0 0 0.5rem;
+    color: var(--home-azul);
+    font-size: 1rem;
+  }
+
+  .aida-requisitos ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--color-text);
+  }
+
+  .aida-prueba-social-video {
+    max-width: 32rem;
+    margin: 0 auto;
+  }
+
+  .aida-accion {
+    text-align: center;
+  }
+
+  .aida-garantia-card {
+    max-width: 30rem;
+    margin: 0 auto var(--space-md);
+    background: var(--color-bg-card);
+    border: 2px solid var(--home-naranja);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+  }
+
+  .aida-garantia-card h3 {
+    margin: 0.4rem 0 0.3rem;
+    color: var(--home-azul);
+  }
+
+  .aida-garantia-card p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+  }
+
+  .aida-accion-ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .aida-link-catalogo {
+    color: var(--home-azul);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+
+  .aida-link-catalogo:hover {
     text-decoration: underline;
   }
 
+  @media (max-width: 640px) {
+    .aida-hero-buscador {
+      flex-wrap: wrap;
+      border-radius: var(--radius-md);
+      padding: 0.6rem;
+    }
+
+    .aida-hero-buscador input {
+      flex: 1 1 100%;
+      padding: 0.3rem 0;
+    }
+
+    .aida-hero-buscador button {
+      flex: 1 1 100%;
+    }
+  }
 </style>
