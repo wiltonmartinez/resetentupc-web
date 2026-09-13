@@ -118,7 +118,10 @@
     "evidenciaFlipHint": "Tik om de oplossing te zien",
     "sensorUbicacionTitulo": "Locatie van de inktsensor",
     "sensorLimpioTitulo": "Schone sensor",
-    "sensorSucioTitulo": "Vuile sensor"
+    "sensorSucioTitulo": "Vuile sensor",
+    "evidenciaFotoNoDisponible": "Foto momenteel niet beschikbaar",
+    "sensorHintVerLimpio": "Klik om de schone sensor te zien",
+    "sensorHintVerSucio": "Klik om de vuile sensor te zien"
   },
   "flujoServicio": {
     "titulo": "Zo werkt onze service, van begin tot eind",

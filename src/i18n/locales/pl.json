@@ -118,7 +118,10 @@
     "evidenciaFlipHint": "Dotknij, aby zobaczyć rozwiązanie",
     "sensorUbicacionTitulo": "Lokalizacja czujnika atramentu",
     "sensorLimpioTitulo": "Czysty czujnik",
-    "sensorSucioTitulo": "Brudny czujnik"
+    "sensorSucioTitulo": "Brudny czujnik",
+    "evidenciaFotoNoDisponible": "Zdjęcie chwilowo niedostępne",
+    "sensorHintVerLimpio": "Kliknij, aby zobaczyć czysty czujnik",
+    "sensorHintVerSucio": "Kliknij, aby zobaczyć brudny czujnik"
   },
   "flujoServicio": {
     "titulo": "Tak wygląda nasza usługa, od początku do końca",
@@ -714,8 +717,7 @@
         "li2": "tego samego kontaktu,",
         "li3": "tego samego adresu e-mail,",
         "li4": "tego samego modelu drukarki, oraz",
-        "li5": "ważnego, nieprzeterminowanego certyfikatu."
-        ,
+        "li5": "ważnego, nieprzeterminowanego certyfikatu.",
         "legal": "ZALECANA WERYFIKACJA PRAWNA — warunki przeniesienia/ponownego wykorzystania gwarancji."
       },
       "certificado": {

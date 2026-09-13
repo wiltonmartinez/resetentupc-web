@@ -118,7 +118,10 @@
     "evidenciaFlipHint": "Tap to see the solution",
     "sensorUbicacionTitulo": "Ink sensor location",
     "sensorLimpioTitulo": "Clean sensor",
-    "sensorSucioTitulo": "Dirty sensor"
+    "sensorSucioTitulo": "Dirty sensor",
+    "evidenciaFotoNoDisponible": "Photo not available at the moment",
+    "sensorHintVerLimpio": "Click to see the clean sensor",
+    "sensorHintVerSucio": "Click to see the dirty sensor"
   },
   "flujoServicio": {
     "titulo": "Here's how our service works, start to finish",

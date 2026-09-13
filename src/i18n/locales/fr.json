@@ -118,7 +118,10 @@
     "evidenciaFlipHint": "Touchez pour voir la solution",
     "sensorUbicacionTitulo": "Emplacement du capteur d'encre",
     "sensorLimpioTitulo": "Capteur propre",
-    "sensorSucioTitulo": "Capteur sale"
+    "sensorSucioTitulo": "Capteur sale",
+    "evidenciaFotoNoDisponible": "Photo non disponible pour le moment",
+    "sensorHintVerLimpio": "Cliquez pour voir le capteur propre",
+    "sensorHintVerSucio": "Cliquez pour voir le capteur sale"
   },
   "flujoServicio": {
     "titulo": "Voici comment fonctionne notre service, de bout en bout",

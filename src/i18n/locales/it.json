@@ -118,7 +118,10 @@
     "evidenciaFlipHint": "Tocca per vedere la soluzione",
     "sensorUbicacionTitulo": "Posizione del sensore di inchiostro",
     "sensorLimpioTitulo": "Sensore pulito",
-    "sensorSucioTitulo": "Sensore sporco"
+    "sensorSucioTitulo": "Sensore sporco",
+    "evidenciaFotoNoDisponible": "Foto non disponibile al momento",
+    "sensorHintVerLimpio": "Clicca per vedere il sensore pulito",
+    "sensorHintVerSucio": "Clicca per vedere il sensore sporco"
   },
   "flujoServicio": {
     "titulo": "Ecco come funziona il nostro servizio, dall'inizio alla fine",

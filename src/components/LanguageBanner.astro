@@ -1,5 +1,5 @@
 ---
-import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale, type StaticPageKey } from "../config/site";
+import { SUPPORTED_LOCALES, RETIRED_LOCALES, LOCALE_LABELS, type Locale, type StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 
 interface Props {
@@ -10,7 +10,11 @@ interface Props {
 
 const { locale, path, pageKey } = Astro.props;
 
-const alternates = SUPPORTED_LOCALES.filter((l) => l !== locale).map((l) => ({
+// No sugerir idiomas retirados (ver RETIRED_LOCALES): cualquier URL a esa
+// alternativa redirige de inmediato al español, así que ofrecerla acá solo
+// llevaría al visitante a un salto confuso "cambiá de idioma" -> vuelta al
+// español.
+const alternates = SUPPORTED_LOCALES.filter((l) => l !== locale && !RETIRED_LOCALES.includes(l)).map((l) => ({
   locale: l,
   label: LOCALE_LABELS[l],
   href: pageKey ? buildStaticPagePath(l, pageKey) : buildLocalizedPath(l, path),

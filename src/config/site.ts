@@ -75,6 +75,17 @@ export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
 
 export const X_DEFAULT_LOCALE: Locale = "es";
 
+/**
+ * Idiomas retirados de circulación: el código (páginas, diccionarios) sigue
+ * existiendo para no perder el trabajo ya hecho, pero un visitante real
+ * nunca ve su contenido — src/middleware.ts redirige 301 cualquier URL
+ * /ru/... o /ko/... al equivalente en español, y LanguageBanner.astro no
+ * los ofrece como sugerencia. Ya iban noindex,nofollow y nunca estuvieron
+ * en LOCALES_VISIBLES (el menú de idiomas de LanguageSelector.astro).
+ * Reactivar un idioma es quitarlo de esta lista.
+ */
+export const RETIRED_LOCALES: Locale[] = ["ru", "ko"];
+
 export const LOCALE_LABELS: Record<Locale, string> = {
   es: "Español",
   en: "English",

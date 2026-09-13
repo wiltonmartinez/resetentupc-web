@@ -118,7 +118,10 @@
     "evidenciaFlipHint": "Toque para ver a solução",
     "sensorUbicacionTitulo": "Localização do sensor de tinta",
     "sensorLimpioTitulo": "Sensor limpo",
-    "sensorSucioTitulo": "Sensor sujo"
+    "sensorSucioTitulo": "Sensor sujo",
+    "evidenciaFotoNoDisponible": "Foto não disponível no momento",
+    "sensorHintVerLimpio": "Clique para ver o sensor limpo",
+    "sensorHintVerSucio": "Clique para ver o sensor sujo"
   },
   "flujoServicio": {
     "titulo": "Veja como funciona nosso serviço, do início ao fim",

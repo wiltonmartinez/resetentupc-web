@@ -1,5 +1,43 @@
 import type { MiddlewareHandler } from "astro";
 import modelos from "./data/modelos-muestra.json";
+import { PAGE_SLUGS, RETIRED_LOCALES, type StaticPageKey } from "./config/site";
+
+// slug retirado -> slug en español, por cada página estática con slug propio
+// por idioma (precios, como-funciona, etc.) — las páginas dinámicas (home,
+// prueba-social, reset/{marca}/{modelo}, ruleta) no necesitan este mapa:
+// alcanza con quitarles el prefijo de idioma, ya que usan el mismo slug en
+// todos los idiomas. Se construye desde RETIRED_LOCALES (no hardcodeado)
+// para no desincronizarse si esa lista cambia.
+const SLUG_ES_POR_IDIOMA_RETIRADO = new Map<string, Map<string, string>>(
+  RETIRED_LOCALES.map((idioma) => [idioma, new Map<string, string>()])
+);
+for (const key of Object.keys(PAGE_SLUGS) as StaticPageKey[]) {
+  const entry = PAGE_SLUGS[key];
+  for (const idioma of RETIRED_LOCALES) {
+    SLUG_ES_POR_IDIOMA_RETIRADO.get(idioma)!.set(entry[idioma], entry.es);
+  }
+}
+
+function resolverRedireccionIdiomaRetirado(pathname: string): string | null {
+  for (const idioma of RETIRED_LOCALES) {
+    const prefijo = `/${idioma}`;
+    if (pathname !== prefijo && !pathname.startsWith(`${prefijo}/`)) continue;
+
+    const resto = pathname.slice(prefijo.length).replace(/^\/+|\/+$/g, "");
+    if (!resto) return "/";
+
+    const segmentos = resto.split("/");
+    const slugEs = SLUG_ES_POR_IDIOMA_RETIRADO.get(idioma)?.get(segmentos[0]);
+    if (slugEs) {
+      const cola = segmentos.slice(1).join("/");
+      return `/${slugEs}${cola ? "/" + cola : ""}/`;
+    }
+    // Rutas dinámicas (prueba-social, reset/{marca}/{modelo}, ruleta): mismo
+    // slug en todos los idiomas, solo se le quita el prefijo.
+    return `/${resto}/`;
+  }
+  return null;
+}
 
 /**
  * Redirige URLs viejas de WordPress a las páginas equivalentes del sitio nuevo.
@@ -254,6 +292,11 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const { pathname } = context.url;
 
   if (pathname.startsWith("/_") || pathname.startsWith("/wp-content")) return next();
+
+  const destinoIdiomaRetirado = resolverRedireccionIdiomaRetirado(pathname);
+  if (destinoIdiomaRetirado) {
+    return context.redirect(destinoIdiomaRetirado, 301);
+  }
 
   if (esRutaMuerta(pathname)) {
     const headers = new Headers({ "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex" });
