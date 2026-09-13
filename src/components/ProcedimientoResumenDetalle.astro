@@ -327,57 +327,10 @@ const erroresTab = [
 ---
 
 <div class="procedimiento-resumen-detalle">
-  <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada -->
-  <section class="selector-diagnostico" data-selector-diagnostico>
-    <h2 class="selector-titulo">{t(locale, "comoFuncionaProceso.selectorTitulo")}</h2>
-    <div class="selector-marcas" role="radiogroup">
-      {marcasSelector.map((marca) => (
-        <button type="button" class="selector-btn" data-selector-marca data-value={marca.id} data-sound="select">
-          {marca.label}
-        </button>
-      ))}
-    </div>
-    {marcasSelector.map((marca) => (
-      <div class="selector-errores" data-selector-errores-panel={marca.id}>
-        {marca.errores.map((error) => (
-          <button type="button" class="selector-btn selector-btn-error" data-selector-error data-value={error} data-sound="select">
-            {error}
-          </button>
-        ))}
-      </div>
-    ))}
-    <div class="selector-modelo-wrap" data-selector-modelo-wrap data-almohadillas-label={errorDefaultLabel}>
-      <label for="selector-modelo-input">{t(locale, "comoFuncionaProceso.selectorModeloLabel")}</label>
-      <input
-        type="text"
-        id="selector-modelo-input"
-        data-selector-modelo
-        data-modelo-ejemplo={modeloEjemplo}
-        placeholder={t(locale, "comoFuncionaProceso.selectorModeloPlaceholder")}
-      />
-      <select class="selector-modelo-lista" data-selector-modelo-lista="epson" hidden>
-        <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
-        {modelosEpsonAlmohadillas.map((modelo) => (
-          <option value={modelo}>{modelo}</option>
-        ))}
-        <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
-      </select>
-      <select class="selector-modelo-lista" data-selector-modelo-lista="canon" hidden>
-        <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
-        {modelosCanon.map((modelo) => (
-          <option value={modelo}>{modelo}</option>
-        ))}
-        <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
-      </select>
-      <select class="selector-modelo-lista" data-selector-modelo-lista="epson-sc" hidden>
-        <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
-        {modelosEpsonSc.map((modelo) => (
-          <option value={modelo}>{modelo}</option>
-        ))}
-        <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
-      </select>
-    </div>
-  </section>
+  <!-- Espacio reservado para banner-video.mp4 (video en bucle, pendiente de
+       agregar) — antes acá vivía el selector de diagnóstico, que ahora está
+       dentro del Paso 1 ("Identificar el Problema") más abajo. -->
+  <div class="video-banner-espacio" aria-hidden="true"></div>
 
   <div class="seccion-divisor" aria-hidden="true" />
 
@@ -533,6 +486,62 @@ const erroresTab = [
       </div>
       <div class="detalle-contenido">
         <h3>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</h3>
+
+        <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada.
+             Vive acá (Paso 1) para que elegir el equipo y el error sea la
+             primera interacción real del procedimiento, no un bloque aparte
+             antes de la grilla de resumen. -->
+        <section class="selector-diagnostico" data-selector-diagnostico>
+          <h4 class="selector-titulo">{t(locale, "comoFuncionaProceso.selectorTitulo")}</h4>
+          <div class="selector-marcas" role="radiogroup">
+            {marcasSelector.map((marca) => (
+              <button type="button" class="selector-btn" data-selector-marca data-value={marca.id} data-sound="select">
+                {marca.label}
+              </button>
+            ))}
+          </div>
+          {marcasSelector.map((marca) => (
+            <div class="selector-errores" data-selector-errores-panel={marca.id}>
+              {marca.errores.map((error) => (
+                <button type="button" class="selector-btn selector-btn-error" data-selector-error data-value={error} data-sound="select">
+                  {error}
+                </button>
+              ))}
+            </div>
+          ))}
+          <div class="selector-modelo-wrap" data-selector-modelo-wrap data-almohadillas-label={errorDefaultLabel}>
+            <label for="selector-modelo-input">{t(locale, "comoFuncionaProceso.selectorModeloLabel")}</label>
+            <input
+              type="text"
+              id="selector-modelo-input"
+              data-selector-modelo
+              data-modelo-ejemplo={modeloEjemplo}
+              placeholder={t(locale, "comoFuncionaProceso.selectorModeloPlaceholder")}
+            />
+            <select class="selector-modelo-lista" data-selector-modelo-lista="epson" hidden>
+              <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
+              {modelosEpsonAlmohadillas.map((modelo) => (
+                <option value={modelo}>{modelo}</option>
+              ))}
+              <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
+            </select>
+            <select class="selector-modelo-lista" data-selector-modelo-lista="canon" hidden>
+              <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
+              {modelosCanon.map((modelo) => (
+                <option value={modelo}>{modelo}</option>
+              ))}
+              <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
+            </select>
+            <select class="selector-modelo-lista" data-selector-modelo-lista="epson-sc" hidden>
+              <option value="">{t(locale, "comoFuncionaProceso.selectorModeloListaPlaceholder")}</option>
+              {modelosEpsonSc.map((modelo) => (
+                <option value={modelo}>{modelo}</option>
+              ))}
+              <option value={OTRO_MODELO_VALOR}>{t(locale, "comoFuncionaProceso.otroModeloOption")}</option>
+            </select>
+          </div>
+        </section>
+
         <Tabs tabs={erroresTab.map(({ id, label }) => ({ id, label }))}>
           {erroresTab.map((error, index) => {
             const fotosPorModelo =
@@ -1164,6 +1173,22 @@ const erroresTab = [
     background: linear-gradient(to right, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
   }
 
+  /* Espacio reservado para el video en bucle (banner-video.mp4, pendiente):
+     mismo alto/proporción que ocupará el video real, para que agregarlo
+     después no reacomode el resto de la página. Contenedor blanco con
+     borde punteado, mismo criterio que los demás placeholders del sitio
+     (ver .video-placeholder más abajo, para cuando falta el video real de
+     evidencia). */
+  .video-banner-espacio {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-width: 960px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--color-border);
+    background: var(--color-bg-card);
+  }
+
   .selector-diagnostico {
     display: grid;
     gap: 1.1rem;
@@ -1423,6 +1448,12 @@ const erroresTab = [
   .detalle-contenido h3 {
     margin: 0.3rem 0 0.75rem;
     font-size: 1.2rem;
+  }
+
+  /* Selector de diagnóstico anidado dentro del Paso 1: separación propia
+     antes de las pestañas de ejemplo que vienen debajo. */
+  .detalle-contenido .selector-diagnostico {
+    margin-bottom: 1.5rem;
   }
 
   .detalle-requisitos {
