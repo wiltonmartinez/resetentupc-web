@@ -30,13 +30,22 @@ const {
   path,
   pageKey,
   ogImage = "/og-image.png",
-  noindex = false,
+  noindex: noindexProp = false,
   marcaDefault,
   modeloDefault,
   ocultarBotonContacto = false,
   ocultarNotificacionCompra = false,
   wide = false,
 } = Astro.props;
+
+// SEO: mientras un idioma no esté "activado" acá, todas sus páginas van
+// noindex,follow (siguen rastreables/enlazables, pero no compiten en
+// resultados de búsqueda con el contenido en español). Activar un idioma
+// más adelante es agregarlo a esta lista — un solo cambio, nada más que
+// tocar por página. `noindexProp` (la prop explícita de cada página) sigue
+// pudiendo forzar noindex en español si algún día hace falta.
+const LOCALES_INDEXABLES: Locale[] = ["es"];
+const noindex = noindexProp || !LOCALES_INDEXABLES.includes(locale);
 
 // El canonical siempre se arma desde `path`/`pageKey` (rutas fijas del propio
 // código), nunca desde Astro.url — así que un query param como
