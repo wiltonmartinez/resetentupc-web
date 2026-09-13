@@ -39,10 +39,11 @@ const {
 } = Astro.props;
 
 // SEO: mientras un idioma no esté "activado" acá, todas sus páginas van
-// noindex,follow (siguen rastreables/enlazables, pero no compiten en
-// resultados de búsqueda con el contenido en español). Activar un idioma
-// más adelante es agregarlo a esta lista — un solo cambio, nada más que
-// tocar por página. `noindexProp` (la prop explícita de cada página) sigue
+// noindex,nofollow (fuera de resultados de búsqueda y sin transmitir
+// link equity hacia sus enlaces salientes — el tráfico a esos idiomas es
+// solo directo o desde YouTube, no orgánico). Activar un idioma más
+// adelante es agregarlo a esta lista — un solo cambio, nada más que tocar
+// por página. `noindexProp` (la prop explícita de cada página) sigue
 // pudiendo forzar noindex en español si algún día hace falta.
 const LOCALES_INDEXABLES: Locale[] = ["es"];
 const noindex = noindexProp || !LOCALES_INDEXABLES.includes(locale);
@@ -70,7 +71,7 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex ? (
-      <meta name="robots" content="noindex, follow" />
+      <meta name="robots" content="noindex, nofollow" />
     ) : (
       <>
         <link rel="canonical" href={canonicalUrl} />
