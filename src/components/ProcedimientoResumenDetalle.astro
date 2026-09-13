@@ -14,6 +14,7 @@
  */
 import { Image, getImage, type ImageMetadata } from "astro:assets";
 import { getErrorImage } from "../lib/error-images.js";
+import { getModeloImage } from "../lib/model-images.js";
 import { t, buildLocalizedPath } from "../i18n/utils";
 import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
@@ -234,24 +235,31 @@ const modelosCanon = [
 const modelosEpsonSc = ["F570", "F571", "T3170", "T3170x"];
 const OTRO_MODELO_VALOR = "otro";
 
-// Foto + enlace real por modelo exacto (no solo por marca) para
-// Epson-Almohadillas y Canon: src/assets/errores/ ya tiene una captura por
-// cada modelo del desplegable (ej. G3110.png, G6010.png), asi que en vez de
-// mostrar siempre la misma foto generica, el Paso 1 sirve la del modelo que
-// el usuario realmente eligio, como enlace directo a /reset/{marca}/{modelo}/.
-// Un modelo solo entra al mapa si tiene foto real Y pagina real — nunca se
-// fabrica una imagen ni se enlaza a un modelo sin pagina (mismo criterio que
-// la grilla de errores del Home).
-type FotoConHref = { src: string; href: string };
+// Foto de error + foto de la impresora (catálogo) + enlace real por modelo
+// exacto (no solo por marca) para Epson-Almohadillas y Canon: tanto
+// src/assets/errores/ (captura del error, ej. G3110.png) como
+// src/assets/modelos/ (foto real del equipo, ej. G3110.png en esa otra
+// carpeta) tienen una imagen por cada modelo del desplegable, así que en
+// vez de mostrar siempre la misma foto genérica, el Paso 1 sirve las del
+// modelo que el usuario realmente eligió, como enlace directo a
+// /reset/{marca}/{modelo}/. Un modelo solo entra al mapa si tiene página
+// real (la foto del error o la del equipo pueden faltar sueltas sin
+// bloquear el resto — nunca se fabrica ninguna imagen ni se enlaza a un
+// modelo sin página, mismo criterio que la grilla de errores del Home).
+type FotoConHref = { srcError: string | null; srcModelo: string | null; href: string };
 const construirFotosConHref = async (modelos: string[], marcaSlug: string): Promise<Record<string, FotoConHref>> => {
   const entradas = await Promise.all(
     modelos.map(async (modelo) => {
       const modeloSlug = modelo.toLowerCase();
       if (!paginasValidas.has(`${marcaSlug}:${modeloSlug}`)) return null;
-      const img = getErrorImage(modelo);
-      if (!img) return null;
-      const optimizada = await getImage({ src: img, format: "webp", width: img.width });
-      return [modelo, { src: optimizada.src, href: buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`) }] as const;
+      const imgError = getErrorImage(modelo);
+      const imgModelo = getModeloImage(modeloSlug);
+      if (!imgError && !imgModelo) return null;
+      const [srcError, srcModelo] = await Promise.all([
+        imgError ? getImage({ src: imgError, format: "webp", width: imgError.width }).then((r) => r.src) : Promise.resolve(null),
+        imgModelo ? getImage({ src: imgModelo, format: "webp", width: 320 }).then((r) => r.src) : Promise.resolve(null),
+      ]);
+      return [modelo, { srcError, srcModelo, href: buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`) }] as const;
     })
   );
   return Object.fromEntries(entradas.filter((e): e is [string, FotoConHref] => e !== null));
@@ -259,9 +267,56 @@ const construirFotosConHref = async (modelos: string[], marcaSlug: string): Prom
 const fotosEpsonConHref = await construirFotosConHref(modelosEpsonAlmohadillas, "epson");
 const fotosCanonConHref = await construirFotosConHref(modelosCanon, "canon");
 
-// Paso 1 por defecto: Epson L3250 + Almohadillas (el caso mas comun), como
-// unica ventana de error visible — sin pestañas de otros errores.
-const PASO1_MODELO_DEFAULT = "L3250";
+// Epson-SC es distinto: la foto de error no depende del modelo exacto (es
+// la misma pantalla del plotter para cualquier modelo), sino del código de
+// error elegido — src/assets/errores/epson-sc-{codigo}.* Se arma un mapa
+// aparte, por VALOR del botón de error (ej. "0014BD"), reutilizando la
+// misma correspondencia código->foto ya usada en errores.json. La foto del
+// equipo sí depende del modelo, igual que Epson/Canon.
+const ERROR_ID_EPSON_SC: Record<string, string> = {
+  "0014BD": "epson-sc-0014bd",
+  "00000008 - 00080000": "epson-sc-00000008",
+  "00000004 - 00040000": "epson-sc-00000004",
+  "00000001 - 00010000": "epson-sc-00000001",
+  "0000000c - 000c0000": "epson-sc-0000000c",
+};
+const construirFotosErrorEpsonSc = async (): Promise<Record<string, string>> => {
+  const entradas = await Promise.all(
+    Object.entries(ERROR_ID_EPSON_SC).map(async ([errorValor, errorId]) => {
+      const img = getErrorImage(errorId);
+      if (!img) return null;
+      const optimizada = await getImage({ src: img, format: "webp", width: img.width });
+      return [errorValor, optimizada.src] as const;
+    })
+  );
+  return Object.fromEntries(entradas.filter((e): e is [string, string] => e !== null));
+};
+const fotosErrorEpsonSc = await construirFotosErrorEpsonSc();
+
+const construirModelosConHref = async (modelos: string[], marcaSlug: string): Promise<Record<string, { srcModelo: string | null; href: string }>> => {
+  const entradas = await Promise.all(
+    modelos.map(async (modelo) => {
+      const modeloSlug = modelo.toLowerCase();
+      if (!paginasValidas.has(`${marcaSlug}:${modeloSlug}`)) return null;
+      const imgModelo = getModeloImage(modeloSlug);
+      const srcModelo = imgModelo ? (await getImage({ src: imgModelo, format: "webp", width: 320 })).src : null;
+      return [modelo, { srcModelo, href: buildLocalizedPath(locale, `/reset/${marcaSlug}/${modeloSlug}/`) }] as const;
+    })
+  );
+  return Object.fromEntries(entradas.filter((e): e is [string, { srcModelo: string | null; href: string }] => e !== null));
+};
+const modelosEpsonScConHref = await construirModelosConHref(modelosEpsonSc, "epson-sc");
+
+// Paso 1 por defecto de cada marca: el caso más común de cada una, como
+// única ventana de error visible (sin pestañas de otros errores). Se activa
+// solo al elegir la marca (ver el script más abajo) — el usuario sigue
+// pudiendo cambiar modelo y error a mano.
+const MODELO_DEFAULT_POR_MARCA: Record<string, string> = {
+  epson: "L3210",
+  canon: "G6010",
+  "epson-sc": "F570",
+};
+const PASO1_MODELO_DEFAULT = MODELO_DEFAULT_POR_MARCA.epson;
 const paso1FotoDefault = fotosEpsonConHref[PASO1_MODELO_DEFAULT];
 
 const modeloEjemplo = t(locale, "comoFuncionaProceso.resumenModeloEjemplo");
@@ -533,28 +588,44 @@ const subpasosConexion = [
         </section>
 
         <!--
-          Ventana de error única (sin pestañas de otros errores): por
-          defecto Epson L3250 + Almohadillas. El script del selector la
-          actualiza en vivo cuando el usuario elige un modelo con foto real
-          en el desplegable de arriba (Epson-Almohadillas o Canon) — nunca
-          se enlaza a un modelo sin página real ni se fabrica una imagen.
+          Ventana de error única (sin pestañas de otros errores) + foto de
+          la impresora correspondiente al lado: por defecto Epson L3210 +
+          Almohadillas. El script del selector actualiza ambas en vivo
+          cuando el usuario elige marca/modelo/error arriba — nunca se
+          enlaza a un modelo sin página real ni se fabrica una imagen.
         -->
         <p>
           {renderTemplateParts(t(locale, "comoFuncionaProceso.paso1Pregunta"), { ...cascadaDefaults, modelo: PASO1_MODELO_DEFAULT }).map((part) =>
             part.token === "modelo" ? <span data-modelo-evidencia>{part.text}</span> : part.text
           )}
         </p>
-        <a
-          class="paso1-imagen-error"
-          href={paso1FotoDefault?.href ?? buildLocalizedPath(locale, "/reset/epson/l3250/")}
+        <div
+          class="paso1-fotos"
+          data-paso1-fotos
           data-fotos-epson={JSON.stringify(fotosEpsonConHref)}
           data-fotos-canon={JSON.stringify(fotosCanonConHref)}
+          data-fotos-epson-sc-error={JSON.stringify(fotosErrorEpsonSc)}
+          data-modelos-epson-sc={JSON.stringify(modelosEpsonScConHref)}
           data-texto-ver-modelo={t(locale, "home.verModelo")}
-          aria-label={`${t(locale, "home.verModelo")}: Epson ${PASO1_MODELO_DEFAULT}`}
-          data-sound="select"
         >
-          <img src={paso1FotoDefault?.src} alt="" loading="lazy" />
-        </a>
+          <a
+            class="paso1-imagen-error"
+            href={paso1FotoDefault?.href ?? buildLocalizedPath(locale, "/reset/epson/l3210/")}
+            aria-label={`${t(locale, "home.verModelo")}: Epson ${PASO1_MODELO_DEFAULT}`}
+            data-sound="select"
+          >
+            <img src={paso1FotoDefault?.srcError ?? ""} alt="" loading="lazy" />
+          </a>
+          <a
+            class="paso1-imagen-modelo"
+            href={paso1FotoDefault?.href ?? buildLocalizedPath(locale, "/reset/epson/l3210/")}
+            aria-label={`${t(locale, "home.verModelo")}: Epson ${PASO1_MODELO_DEFAULT}`}
+            data-sound="select"
+            hidden={!paso1FotoDefault?.srcModelo}
+          >
+            <img src={paso1FotoDefault?.srcModelo ?? ""} alt="" loading="lazy" />
+          </a>
+        </div>
       </div>
     </div>
 
@@ -766,6 +837,9 @@ const subpasosConexion = [
     const listaEpsonSc = raiz.querySelector<HTMLSelectElement>('[data-selector-modelo-lista="epson-sc"]');
     const todasLasListas = [listaEpson, listaCanon, listaEpsonSc];
     const OTRO_MODELO_VALOR = "otro";
+    // Debe coincidir con MODELO_DEFAULT_POR_MARCA del frontmatter (Astro no
+    // comparte esas constantes con este <script>, que corre en el cliente).
+    const MODELO_DEFAULT_POR_MARCA: Record<string, string> = { epson: "L3210", canon: "G6010", "epson-sc": "F570" };
     let marcaActivaId = "";
     let marcaActivaLabel = "";
     let modeloActivo = "";
@@ -833,40 +907,98 @@ const subpasosConexion = [
       });
     };
 
-    // Ventana de error única del Paso 1 (sin pestañas): solo Epson-Almohadillas
-    // y Canon tienen una foto + página real por cada modelo del desplegable
-    // (ver [data-fotos-epson]/[data-fotos-canon], servidos desde el
-    // frontmatter — mismo criterio que la grilla de errores del Home, nunca
-    // se enlaza a un modelo sin página). Si el modelo elegido tiene foto
-    // propia, se reemplaza la imagen y el enlace; si no la tiene, la ventana
-    // se queda tal como estaba (nunca queda con un enlace roto).
-    const paso1Link = raiz.closest(".detalle-contenido")?.querySelector<HTMLAnchorElement>(".paso1-imagen-error") ?? null;
-    const paso1Img = paso1Link?.querySelector<HTMLImageElement>("img") ?? null;
+    // Ventana de error + foto de la impresora del Paso 1 (sin pestañas):
+    // Epson-Almohadillas y Canon tienen ambas fotos por modelo exacto (ver
+    // [data-fotos-epson]/[data-fotos-canon]); Epson-SC es distinto — la
+    // foto de error depende del código de error elegido, no del modelo
+    // ([data-fotos-epson-sc-error]), mientras que la foto de la impresora
+    // sí depende del modelo ([data-modelos-epson-sc]). Todo servido desde
+    // el frontmatter, mismo criterio que la grilla de errores del Home:
+    // nunca se enlaza a un modelo sin página ni se fabrica una imagen — si
+    // algo no resuelve, esa foto puntual se queda tal como estaba.
+    const paso1Fotos = raiz.closest(".detalle-contenido")?.querySelector<HTMLElement>("[data-paso1-fotos]") ?? null;
+    const paso1LinkError = paso1Fotos?.querySelector<HTMLAnchorElement>(".paso1-imagen-error") ?? null;
+    const paso1ImgError = paso1LinkError?.querySelector<HTMLImageElement>("img") ?? null;
+    const paso1LinkModelo = paso1Fotos?.querySelector<HTMLAnchorElement>(".paso1-imagen-modelo") ?? null;
+    const paso1ImgModelo = paso1LinkModelo?.querySelector<HTMLImageElement>("img") ?? null;
     const paso1ModeloSpan = raiz.closest(".detalle-contenido")?.querySelector<HTMLElement>("[data-modelo-evidencia]") ?? null;
-    const textoVerModelo = paso1Link?.dataset.textoVerModelo ?? "";
-    let fotosEpsonJs: Record<string, { src: string; href: string }> = {};
-    let fotosCanonJs: Record<string, { src: string; href: string }> = {};
+    const textoVerModelo = paso1Fotos?.dataset.textoVerModelo ?? "";
+
+    interface FotoModeloJs {
+      srcError: string | null;
+      srcModelo: string | null;
+      href: string;
+    }
+    let fotosEpsonJs: Record<string, FotoModeloJs> = {};
+    let fotosCanonJs: Record<string, FotoModeloJs> = {};
+    let fotosErrorEpsonScJs: Record<string, string> = {};
+    let modelosEpsonScJs: Record<string, { srcModelo: string | null; href: string }> = {};
     try {
-      fotosEpsonJs = JSON.parse(paso1Link?.dataset.fotosEpson ?? "{}");
+      fotosEpsonJs = JSON.parse(paso1Fotos?.dataset.fotosEpson ?? "{}");
     } catch {
       /* datos invalidos: la ventana se queda en su estado por defecto */
     }
     try {
-      fotosCanonJs = JSON.parse(paso1Link?.dataset.fotosCanon ?? "{}");
+      fotosCanonJs = JSON.parse(paso1Fotos?.dataset.fotosCanon ?? "{}");
+    } catch {
+      /* datos invalidos: la ventana se queda en su estado por defecto */
+    }
+    try {
+      fotosErrorEpsonScJs = JSON.parse(paso1Fotos?.dataset.fotosEpsonScError ?? "{}");
+    } catch {
+      /* datos invalidos: la ventana se queda en su estado por defecto */
+    }
+    try {
+      modelosEpsonScJs = JSON.parse(paso1Fotos?.dataset.modelosEpsonSc ?? "{}");
     } catch {
       /* datos invalidos: la ventana se queda en su estado por defecto */
     }
 
-    const actualizarImagenPaso1 = (marcaId: string, marcaLabel: string, modelo: string) => {
-      if (!paso1Link || !paso1Img) return;
-      const mapa = marcaId === "epson" ? fotosEpsonJs : marcaId === "canon" ? fotosCanonJs : null;
-      const foto = mapa ? mapa[modelo] : undefined;
-      if (!foto) return;
-      paso1Img.src = foto.src;
-      paso1Img.removeAttribute("srcset");
-      paso1Link.setAttribute("href", foto.href);
-      paso1Link.setAttribute("aria-label", `${textoVerModelo}: ${marcaLabel} ${modelo}`);
+    const aplicarFotoError = (src: string | null | undefined) => {
+      if (!paso1ImgError || !src) return;
+      paso1ImgError.src = src;
+      paso1ImgError.removeAttribute("srcset");
+    };
+    const aplicarFotoModelo = (src: string | null | undefined) => {
+      if (!paso1LinkModelo || !paso1ImgModelo) return;
+      if (!src) {
+        paso1LinkModelo.hidden = true;
+        return;
+      }
+      paso1ImgModelo.src = src;
+      paso1ImgModelo.removeAttribute("srcset");
+      paso1LinkModelo.hidden = false;
+    };
+    const aplicarEnlace = (href: string, marcaLabel: string, modelo: string) => {
+      const etiqueta = `${textoVerModelo}: ${marcaLabel} ${modelo}`;
+      paso1LinkError?.setAttribute("href", href);
+      paso1LinkError?.setAttribute("aria-label", etiqueta);
+      paso1LinkModelo?.setAttribute("href", href);
+      paso1LinkModelo?.setAttribute("aria-label", etiqueta);
       if (paso1ModeloSpan) paso1ModeloSpan.textContent = modelo;
+    };
+
+    const actualizarImagenPaso1 = (marcaId: string, marcaLabel: string, modelo: string, errorValor: string) => {
+      if (!paso1LinkError || !paso1ImgError) return;
+
+      if (marcaId === "epson" || marcaId === "canon") {
+        const foto = (marcaId === "epson" ? fotosEpsonJs : fotosCanonJs)[modelo];
+        if (!foto) return;
+        aplicarFotoError(foto.srcError);
+        aplicarFotoModelo(foto.srcModelo);
+        aplicarEnlace(foto.href, marcaLabel, modelo);
+        return;
+      }
+
+      if (marcaId === "epson-sc") {
+        const srcError = errorValor ? fotosErrorEpsonScJs[errorValor] : undefined;
+        const infoModelo = modelo ? modelosEpsonScJs[modelo] : undefined;
+        if (srcError) aplicarFotoError(srcError);
+        if (infoModelo) {
+          aplicarFotoModelo(infoModelo.srcModelo);
+          aplicarEnlace(infoModelo.href, marcaLabel, modelo);
+        }
+      }
     };
 
     const actualizarModelo = (valor: string) => {
@@ -1078,8 +1210,21 @@ const subpasosConexion = [
 
         if (modeloWrap) modeloWrap.style.display = "grid";
         mostrarListaDeModelos(marcaValor);
-        // No se guarda acá: falta elegir modelo (y con él, el error) para
-        // tener una selección completa.
+
+        // Modelo por defecto de cada marca (Epson L3210, Canon G6010,
+        // Epson-SC F570): se preselecciona solo, disparando el mismo
+        // evento "change" que si el usuario lo hubiera elegido a mano —
+        // actualiza la foto de error, la foto de la impresora, y (via
+        // revelarErrorSiHaceFalta, dentro del handler de la lista) activa
+        // el error por defecto de esa marca. El usuario sigue pudiendo
+        // cambiar modelo y error a mano despues.
+        const modeloDefault = MODELO_DEFAULT_POR_MARCA[marcaValor];
+        const listaActiva =
+          marcaValor === "epson" ? listaEpson : marcaValor === "canon" ? listaCanon : marcaValor === "epson-sc" ? listaEpsonSc : null;
+        if (modeloDefault && listaActiva) {
+          listaActiva.value = modeloDefault;
+          listaActiva.dispatchEvent(new Event("change", { bubbles: true }));
+        }
       });
     });
 
@@ -1102,6 +1247,10 @@ const subpasosConexion = [
         const variante = calcularVarianteMarcaError(marcaActivaId, valor);
         actualizarRequisitoUsb(variante);
         actualizarVideoReset(variante);
+        // Epson-SC: la foto de error depende del codigo elegido, no solo
+        // del modelo — hace falta refrescarla aca tambien (Epson/Canon no
+        // cambian de foto por esto, la llamada es inofensiva para ellas).
+        actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, modeloActivo, valor);
         sincronizarWidgetPrecios();
         guardarSeleccion();
       });
@@ -1125,7 +1274,7 @@ const subpasosConexion = [
           }
         }
         actualizarModelo(esOtro ? (modeloInput?.dataset.modeloEjemplo ?? "") : lista.value || modeloInput?.dataset.modeloEjemplo || "");
-        actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, esOtro ? "" : lista.value);
+        actualizarImagenPaso1(marcaActivaId, marcaActivaLabel, esOtro ? "" : lista.value, errorActivo);
         revelarErrorSiHaceFalta();
         sincronizarWidgetPrecios();
         guardarSeleccion();
@@ -1329,13 +1478,21 @@ const subpasosConexion = [
     object-fit: cover;
   }
 
-  /* Ventana de error única del Paso 1: solo la foto, clickeable, sin texto
-     de título ni pestañas de otros errores (mismo patrón que la grilla de
-     errores del Hero del Home). */
-  .paso1-imagen-error {
-    display: block;
+  /* Ventana de error única del Paso 1 + foto de la impresora al lado:
+     solo las fotos, clickeables, sin texto de título ni pestañas de otros
+     errores (mismo patrón que la grilla de errores del Hero del Home). */
+  .paso1-fotos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     width: 100%;
-    max-width: 420px;
+    max-width: 640px;
+  }
+
+  .paso1-imagen-error,
+  .paso1-imagen-modelo {
+    display: block;
+    flex: 1 1 200px;
     aspect-ratio: 4 / 3;
     background: var(--color-bg-card);
     border: 1px solid rgba(249, 115, 22, 0.4);
@@ -1346,21 +1503,34 @@ const subpasosConexion = [
   }
 
   .paso1-imagen-error:hover,
-  .paso1-imagen-error:focus-visible {
+  .paso1-imagen-error:focus-visible,
+  .paso1-imagen-modelo:hover,
+  .paso1-imagen-modelo:focus-visible {
     border-color: #f97316;
     transform: translateY(-2px);
   }
 
-  .paso1-imagen-error:focus-visible {
+  .paso1-imagen-error:focus-visible,
+  .paso1-imagen-modelo:focus-visible {
     outline: 2px solid #1d4ed8;
     outline-offset: 2px;
   }
 
-  .paso1-imagen-error img {
+  .paso1-imagen-error img,
+  .paso1-imagen-modelo img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  /* [hidden] comparte especificidad con .paso1-imagen-modelo — sin esta
+     regla el display:block de arriba gana y la foto de la impresora
+     quedaría visible (vacía) aunque el script le ponga hidden cuando un
+     modelo no tiene foto propia (mismo gotcha ya resuelto en
+     HomePage.astro/ContactForm.astro). */
+  .paso1-imagen-modelo[hidden] {
+    display: none;
   }
 
   /* BLOQUE 1 */
