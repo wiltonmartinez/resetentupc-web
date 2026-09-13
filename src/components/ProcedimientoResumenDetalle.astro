@@ -302,6 +302,26 @@ const subpasosConexion = [
 ---
 
 <div class="procedimiento-resumen-detalle">
+  <!-- Video en bucle del diagnóstico: primer elemento del bloque, justo
+       después del separador que lo antecede en cada página (.home-divisor
+       en el Home, .seccion-divisor en /como-funciona/). -->
+  {paso1VideoDiagnostico && (
+    <div class="paso1-video-banner">
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        disablePictureInPicture
+        controlsList="nodownload noremoteplayback nofullscreen"
+        oncontextmenu="return false"
+        aria-label={t(locale, "comoFuncionaProceso.paso1VideoLabel")}
+      >
+        <source src={paso1VideoDiagnostico} type="video/mp4" />
+      </video>
+    </div>
+  )}
+
   <!-- BLOQUE 1: Grid de resumen, dinámico por marca -->
   <section class="resumen-grid" aria-label={t(locale, "comoFuncionaProceso.tituloResumen")}>
     <h2 class="resumen-titulo">{t(locale, "comoFuncionaProceso.tituloResumen")}</h2>
@@ -454,23 +474,6 @@ const subpasosConexion = [
       </div>
       <div class="detalle-contenido">
         <h3>{resumenPaso1Prefix}<span data-cascada-error>{errorDefaultLabel}</span>{resumenPaso1Suffix}</h3>
-
-        {paso1VideoDiagnostico && (
-          <div class="paso1-video-banner">
-            <video
-              autoplay
-              loop
-              muted
-              playsinline
-              disablePictureInPicture
-              controlsList="nodownload noremoteplayback nofullscreen"
-              oncontextmenu="return false"
-              aria-label={t(locale, "comoFuncionaProceso.paso1VideoLabel")}
-            >
-              <source src={paso1VideoDiagnostico} type="video/mp4" />
-            </video>
-          </div>
-        )}
 
         <!-- Selector de diagnóstico: marca -> error -> modelo, en cascada.
              Vive acá (Paso 1) para que elegir el equipo y el error sea la
