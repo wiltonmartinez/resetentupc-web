@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { LOCALE_LABELS, LOCALE_FLAGS, HREFLANG_BY_LOCALE, type Locale, type StaticPageKey } from "../config/site";
+import { SUPPORTED_LOCALES, RETIRED_LOCALES, LOCALE_LABELS, LOCALE_FLAGS, HREFLANG_BY_LOCALE, type Locale, type StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 import banderaEs from "../assets/idioma/ES.png";
 import banderaEn from "../assets/idioma/EN.png";
@@ -20,20 +20,20 @@ interface Props {
 const { locale, path, pageKey } = Astro.props;
 const label = t(locale, "common.selectLanguage");
 
-// El selector ofrece activamente solo estos tres idiomas — fr/it/de/ru/ko
-// siguen existiendo, funcionando y rastreables (no devuelven 404, se
-// mantienen en el sitemap), simplemente ya no se promocionan en la
-// navegación. Si el visitante ya está en uno de esos idiomas (llegó por un
-// enlace viejo o un resultado de búsqueda), el botón sigue mostrando su
-// idioma actual — solo el menú desplegable se limita a estos tres.
-const LOCALES_VISIBLES: Locale[] = ["es", "en", "pt"];
+// El menú muestra los 8 idiomas activos del sitio (todos los que no están
+// retirados — ver RETIRED_LOCALES). Solo español está indexado/SEO
+// (LOCALES_INDEXABLES en BaseLayout.astro); los otros 7 igual se muestran
+// acá porque el visitante puede navegar a ellos manualmente, aunque no
+// compitan en buscadores. ru/ko sí quedan fuera del menú (retirados: ver
+// middleware.ts, redirigen al español si alguien entra por un enlace viejo).
+const LOCALES_VISIBLES: Locale[] = SUPPORTED_LOCALES.filter((l) => !RETIRED_LOCALES.includes(l));
 
 // Imagen de bandera real (src/assets/idioma) — más nítida y consistente
 // entre plataformas que el emoji, que en Windows a veces cae al código de
-// dos letras en vez de la bandera. Cubre todos los idiomas que ya tienen
-// archivo propio; ru/ko (sin archivo todavía) siguen usando el emoji de
-// LOCALE_FLAGS como respaldo — solo posibles en el botón disparador si el
-// visitante ya está en esa página, ya que no están en LOCALES_VISIBLES.
+// dos letras en vez de la bandera. Cubre los 8 idiomas activos (todos
+// tienen archivo propio). ru/ko no tienen archivo — igual da, están
+// retirados (ver RETIRED_LOCALES) y ya no aparecen ni en este menú ni en
+// el botón disparador.
 const BANDERA_IMG: Partial<Record<Locale, ImageMetadata>> = {
   es: banderaEs,
   en: banderaEn,
