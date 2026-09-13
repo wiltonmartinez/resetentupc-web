@@ -11,6 +11,12 @@
   ],
   "assets": {
     "binding": "ASSETS",
-    "directory": "dist"
+    "directory": "dist",
+    // ru/ko están retirados (ver RETIRED_LOCALES en config/site.ts): el
+    // Worker debe correr SIEMPRE en estas rutas para que el redirect de
+    // middleware.ts se aplique, incluso si Cloudflare ya tiene el archivo
+    // estático viejo cacheado en el borde — sin esto, un hit de caché sirve
+    // el HTML directo y nunca pasa por el middleware.
+    "run_worker_first": ["/ru/*", "/ko/*"]
   }
 }
