@@ -55,8 +55,11 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
       <thead>
         <tr>
           <th>{t(locale, "consultaGarantiaPage.colPedido")}</th>
-          <th>{t(locale, "consultaGarantiaPage.colDescarga")}</th>
+          <th>{t(locale, "consultaGarantiaPage.colMarca")}</th>
+          <th>{t(locale, "consultaGarantiaPage.colModelo")}</th>
+          <th>{t(locale, "consultaGarantiaPage.colError")}</th>
           <th>{t(locale, "consultaGarantiaPage.colEstado")}</th>
+          <th>{t(locale, "consultaGarantiaPage.colDescarga")}</th>
         </tr>
       </thead>
       <tbody data-garantia-tbody></tbody>
@@ -103,7 +106,19 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
       resultadoEl!.hidden = true;
     }
 
-    function renderResultado(pedidos: Array<{ numero_pedido: number; estado: string | null; descarga_url: string | null }>) {
+    interface Pedido {
+      numero_pedido: number;
+      estado: string | null;
+      descarga_url: string | null;
+      // Opcionales: la API de Núcleo puede no traerlos todavía en pedidos
+      // viejos o mientras se despliega ese cambio — se muestran vacíos
+      // ("—") en vez de romper la fila.
+      marca?: string | null;
+      modelo?: string | null;
+      error?: string | null;
+    }
+
+    function renderResultado(pedidos: Pedido[]) {
       limpiarResultado();
       if (pedidos.length === 0) {
         mostrarMensaje(textos.sinResultados);
@@ -116,6 +131,22 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
         const tdPedido = document.createElement("td");
         tdPedido.textContent = `#${pedido.numero_pedido}`;
         tr.appendChild(tdPedido);
+
+        const tdMarca = document.createElement("td");
+        tdMarca.textContent = pedido.marca || textos.estadoVacio;
+        tr.appendChild(tdMarca);
+
+        const tdModelo = document.createElement("td");
+        tdModelo.textContent = pedido.modelo || textos.estadoVacio;
+        tr.appendChild(tdModelo);
+
+        const tdError = document.createElement("td");
+        tdError.textContent = pedido.error || textos.estadoVacio;
+        tr.appendChild(tdError);
+
+        const tdEstado = document.createElement("td");
+        tdEstado.textContent = pedido.estado || textos.estadoVacio;
+        tr.appendChild(tdEstado);
 
         const tdDescarga = document.createElement("td");
         if (pedido.descarga_url) {
@@ -133,10 +164,6 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
           tdDescarga.appendChild(span);
         }
         tr.appendChild(tdDescarga);
-
-        const tdEstado = document.createElement("td");
-        tdEstado.textContent = pedido.estado || textos.estadoVacio;
-        tr.appendChild(tdEstado);
 
         tbody!.appendChild(tr);
       });
