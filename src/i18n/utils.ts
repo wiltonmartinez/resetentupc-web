@@ -115,11 +115,13 @@ export interface WhatsAppMessageParams {
 }
 
 export function buildWhatsAppMessage({ locale, marca, modelo, error, nota, urlOrigen }: WhatsAppMessageParams): string {
+  // Un solo saludo con marca+modelo (sin el error) para que el mensaje sea
+  // siempre el mismo, sincronizado con la marca/modelo elegidos arriba —
+  // sin la rama previa que agregaba una línea "Error: {error}" cuando
+  // también había un error seleccionado.
   const template: string =
     marca && modelo
-      ? error
-        ? t(locale, "whatsapp.greetingWithError")
-        : t(locale, "whatsapp.greetingWithoutError")
+      ? t(locale, "whatsapp.greetingWithoutError")
       : nota
         ? t(locale, "whatsapp.greetingConPlan")
         : t(locale, "whatsapp.greetingGeneric");

@@ -850,13 +850,14 @@ const subpasosConexion = [
         const numero = wrap.dataset.whatsappNumber ?? "";
         const urlOrigen = wrap.dataset.urlOrigen ?? "";
         // Alcanza con tener la marca para dejar de usar el saludo generico —
-        // no se espera a que tambien haya modelo, para que elegir marca+error
-        // ya se refleje en el mensaje aunque el usuario todavia no haya
-        // escrito o seleccionado su modelo exacto.
+        // no se espera a que tambien haya modelo, para que elegir marca ya
+        // se refleje en el mensaje aunque el usuario todavia no haya escrito
+        // o seleccionado su modelo exacto. Un solo saludo con marca+modelo
+        // (sin el error) siempre que haya marca, para que el mensaje sea
+        // consistente con el resto del sitio (ver buildWhatsAppMessage en
+        // i18n/utils.ts, misma decision del lado servidor).
         const plantilla = marcaActivaLabel
-          ? errorActivo
-            ? (wrap.dataset.msgWithError ?? "")
-            : (wrap.dataset.msgWithoutError ?? "")
+          ? (wrap.dataset.msgWithoutError ?? "")
           : (wrap.dataset.msgGeneric ?? "");
         const mensaje = plantilla
           .replaceAll("{marca}", marcaActivaLabel)

@@ -519,7 +519,7 @@
   },
   "whatsapp": {
     "greetingWithError": "Hola, mi impresora {marca} {modelo} está bloqueada y no puedo imprimir. Necesito el reset urgente, ¿me confirman disponibilidad ahora?\n\nError: {error}\n\nVengo desde:\n{url}",
-    "greetingWithoutError": "Hola, necesito resetear mi {marca} {modelo}, está bloqueada y no puedo seguir trabajando. ¿Me confirman disponibilidad ahora?\n\nVengo desde:\n{url}",
+    "greetingWithoutError": "Hola, necesito resetear mi {marca} {modelo}, está bloqueada y no puedo seguir trabajando. ¿Me confirman disponibilidad ahora? Vengo desde: {url}",
     "greetingGeneric": "Hola, mi impresora quedó bloqueada y necesito un reset urgente.\nMarca y modelo: \nError o mensaje que muestra: \n\nVengo desde:\n{url}",
     "greetingConPlan": "Hola, quiero contratar el servicio de reset asistido.\n\n{nota}\n\nVengo desde:\n{url}"
   },

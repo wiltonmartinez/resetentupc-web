@@ -206,12 +206,19 @@ const cascadaDefaults = {
 
     <TrustpilotWidget locale={locale} />
 
-    <div class="aida-hero-ctas">
+    <div
+      class="aida-hero-ctas"
+      data-whatsapp-dinamico
+      data-whatsapp-number={WHATSAPP_NUMBER}
+      data-url-origen={whatsappUrlOrigen}
+      data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
+      data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
+    >
       <WhatsAppCTA
         sourceId="home-hero"
         label={t(locale, "homeLanding.heroCtaWhatsapp")}
         locale={locale}
-        urlPath={buildLocalizedPath(locale, "/")}
+        urlPath={homeUrlPath}
         elevar
       />
       <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
@@ -238,7 +245,6 @@ const cascadaDefaults = {
   data-whatsapp-dinamico
   data-whatsapp-number={WHATSAPP_NUMBER}
   data-url-origen={whatsappUrlOrigen}
-  data-msg-with-error={t(locale, "whatsapp.greetingWithError")}
   data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
   data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
 >
