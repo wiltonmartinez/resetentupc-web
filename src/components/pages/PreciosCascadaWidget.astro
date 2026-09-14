@@ -396,6 +396,74 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       return erroresDisponibles().find((e) => e.id === estado.errorId)?.nombre || "";
     }
 
+    // Sincroniza este widget con el selector de diagnóstico principal de la
+    // página (Paso 1), en sentido inverso a sincronizarWidgetPrecios() de
+    // ProcedimientoResumenDetalle.astro: si el visitante elige marca/modelo/
+    // error ACÁ (en vez de arriba), el selector principal también se
+    // actualiza — mismas marca/modelo/error en los dos lugares, sin
+    // obligar a elegir dos veces. Mismo criterio que la sincronización
+    // inversa (eventos DOM + chequeo de "ya está en ese valor" antes de
+    // disparar un click/change, para no generar un ping-pong infinito
+    // entre los dos scripts independientes).
+    const selectorPrincipal = document.querySelector<HTMLElement>("[data-selector-diagnostico]");
+    function sincronizarSelectorPrincipal() {
+      if (!selectorPrincipal || !estado.marca) return;
+
+      const marcaBtn = selectorPrincipal.querySelector<HTMLButtonElement>(
+        `[data-selector-marca][data-value="${estado.marca}"]`
+      );
+      if (marcaBtn && !marcaBtn.classList.contains("selector-btn-activo")) {
+        // El click de marca allá arriba dispara su propio modelo/error por
+        // defecto y su propia sincronización hacia este widget — el resto
+        // de esta sincronización se retoma en la próxima pasada.
+        marcaBtn.click();
+        return;
+      }
+
+      if (estado.modelo) {
+        const nombreModelo = modeloNombre().trim().toLowerCase();
+        const listaActiva = selectorPrincipal.querySelector<HTMLSelectElement>(
+          `[data-selector-modelo-lista="${estado.marca}"]`
+        );
+        const inputModelo = selectorPrincipal.querySelector<HTMLInputElement>("[data-selector-modelo]");
+        const opcion = listaActiva
+          ? Array.from(listaActiva.options).find((o) => o.value.trim().toLowerCase() === nombreModelo)
+          : undefined;
+        if (listaActiva && opcion) {
+          if (listaActiva.value !== opcion.value) {
+            listaActiva.value = opcion.value;
+            listaActiva.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        } else if (inputModelo) {
+          // Modelo elegido acá que no está en la lista de "frecuentes" de
+          // arriba (el widget admite catálogo completo, la lista de arriba
+          // solo los más comunes por marca): cae a su campo de texto libre.
+          if (inputModelo.hidden && listaActiva && listaActiva.value !== "otro") {
+            listaActiva.value = "otro";
+            listaActiva.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          if (inputModelo.value.trim().toLowerCase() !== nombreModelo) {
+            inputModelo.value = modeloNombre();
+            inputModelo.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }
+      }
+
+      const nombreError = errorNombre().trim().toLowerCase();
+      if (nombreError) {
+        const panel = selectorPrincipal.querySelector<HTMLElement>(
+          `[data-selector-errores-panel="${estado.marca}"]`
+        );
+        const errorBtn = panel
+          ? Array.from(panel.querySelectorAll<HTMLButtonElement>("[data-selector-error]")).find((b) => {
+              const valor = (b.dataset.value || "").trim().toLowerCase();
+              return valor === nombreError || nombreError.includes(valor) || valor.includes(nombreError);
+            })
+          : undefined;
+        if (errorBtn && !errorBtn.classList.contains("selector-btn-activo")) errorBtn.click();
+      }
+    }
+
     function seleccionCompleta(): boolean {
       return Boolean(estado.marca && estado.modelo && (estado.errorId || estado.errorOtro.trim()));
     }
@@ -630,6 +698,8 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     }
 
     function renderPrecios() {
+      sincronizarSelectorPrincipal();
+
       const pais = paisesPorSlug[select!.value] || paises[0];
       poblarMonedaOpciones(pais);
 
