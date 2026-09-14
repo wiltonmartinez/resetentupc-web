@@ -867,6 +867,17 @@ const subpasosConexion = [
           .replace(/[ \t]{2,}/g, " ")
           .replace(/[ \t]+([,.;:])/g, "$1");
         link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+
+        // Burbuja de notificación del botón flotante (ContactHub.astro): si
+        // este wrap trae plantillas de burbuja, la actualiza con la misma
+        // marca/modelo elegidos arriba — mismo criterio que el mensaje.
+        const bubble = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble]");
+        const bubbleModeloTpl = wrap.dataset.bubbleModelo;
+        const bubbleGenericoTpl = wrap.dataset.bubbleGenerico;
+        if (bubble && (bubbleModeloTpl || bubbleGenericoTpl)) {
+          const bubbleTemplate = marcaActivaLabel && modeloActivo ? (bubbleModeloTpl ?? "") : (bubbleGenericoTpl ?? "");
+          bubble.textContent = bubbleTemplate.replaceAll("{marca}", marcaActivaLabel).replaceAll("{modelo}", modeloActivo);
+        }
       });
     };
 

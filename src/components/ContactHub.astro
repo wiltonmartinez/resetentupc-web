@@ -44,7 +44,16 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 ---
 
 {mostrarWhatsapp && (
-  <div class="contact-hub">
+  <div
+    class="contact-hub"
+    data-whatsapp-dinamico
+    data-whatsapp-number={WHATSAPP_NUMBER}
+    data-url-origen={urlOrigen}
+    data-msg-without-error={t(locale, "whatsapp.greetingWithoutError")}
+    data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
+    data-bubble-modelo={t(locale, "contactHub.bubbleMensajeModelo")}
+    data-bubble-generico={t(locale, "contactHub.bubbleMensaje")}
+  >
     <p class="contact-hub-bubble" data-whatsapp-bubble hidden>
       {bubbleMensaje}
     </p>
@@ -56,6 +65,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       data-sound="confirm"
       data-analytics-event="contact_hub_whatsapp"
       data-whatsapp-fab
+      data-source-id="contact-hub-whatsapp"
       aria-label={t(locale, "contactHub.whatsapp")}
     >
       <Image
