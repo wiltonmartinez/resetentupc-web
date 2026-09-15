@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
+import { t, buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
 import { SITE_URL, type Locale } from "../../config/site";
 import whatsappLogo from "../../assets/whatsapp/3.png";
 
@@ -19,16 +19,65 @@ const { nombre, rol, whatsapp, sourceId, urlPath, locale, whatsappLabel } = Astr
 const urlOrigen = `${SITE_URL}${urlPath}`;
 const message = buildWhatsAppMessage({ locale, urlOrigen });
 const waLink = buildWhatsAppLink(whatsapp, message);
+// Plantilla con marca+modelo (misma que usa el resto del sitio) para que el
+// script del cliente reconstruya el mensaje si hay una selección guardada
+// en el Home — ver el <script> más abajo.
+const plantillaConMarcaModelo = t(locale, "whatsapp.greetingWithoutError");
 ---
 
 <div class="contact-card">
   <h3>{nombre}</h3>
   <p class="contact-card-rol">{rol}</p>
-  <a class="contact-card-whatsapp" href={waLink} data-source-id={sourceId} data-sound="confirm" target="_blank" rel="noopener noreferrer nofollow">
+  <a
+    class="contact-card-whatsapp"
+    href={waLink}
+    data-source-id={sourceId}
+    data-sound="confirm"
+    target="_blank"
+    rel="noopener noreferrer nofollow"
+    data-whatsapp-numero={whatsapp}
+    data-msg-plantilla={plantillaConMarcaModelo}
+    data-url-origen={urlOrigen}
+  >
     <Image src={whatsappLogo} alt="" width={72} height={72} class="contact-card-whatsapp-icono" />
     {whatsappLabel}
   </a>
 </div>
+
+<script>
+  // Trae la marca/modelo elegidos en el Home (si los hay, vía la misma
+  // clave GLOBAL de localStorage que ya comparten /precios/,
+  // /prueba-social/ y las páginas de modelo) para que el botón de
+  // WhatsApp de cada persona del equipo arranque la conversación con ese
+  // contexto, en vez del saludo genérico de siempre — sin tocar el número
+  // propio de cada quien.
+  const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
+  const MARCA_LABEL: Record<string, string> = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
+
+  function leerSeleccionGlobal(): { marca?: string; modelo?: string } | null {
+    try {
+      return JSON.parse(localStorage.getItem(SELECCION_GLOBAL_KEY) || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  const cache = leerSeleccionGlobal();
+  if (cache?.marca && cache?.modelo) {
+    const marcaLabel = MARCA_LABEL[cache.marca] || cache.marca;
+    document.querySelectorAll<HTMLAnchorElement>("[data-whatsapp-numero]").forEach((link) => {
+      const numero = link.dataset.whatsappNumero || "";
+      const plantilla = link.dataset.msgPlantilla || "";
+      const urlOrigen = link.dataset.urlOrigen || "";
+      if (!numero || !plantilla) return;
+      const mensaje = plantilla
+        .replaceAll("{marca}", marcaLabel)
+        .replaceAll("{modelo}", cache.modelo!)
+        .replaceAll("{url}", urlOrigen);
+      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    });
+  }
+</script>
 
 <style>
   .contact-card {
