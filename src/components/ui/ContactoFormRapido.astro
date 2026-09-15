@@ -188,7 +188,14 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
   const MARCA_LABEL: Record<string, string> = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
   const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
   const DESTINATARIO = { email: "info@resetenlinea.com", nombre: "Wilton Martínez Escorcia" };
-  const ORIGEN = "resetenlinea-site-contacto-rapido";
+  // Debe ser EXACTO "resetenlinea-site-contacto" — send-email.php lo
+  // compara con === contra ese único string fijo para decidir si aplica
+  // las protecciones/ramas del formulario de contacto (rate-limit,
+  // verificar_correo, anti-saboteo, y las dos acciones nuevas de este
+  // formulario). Cualquier otro valor cae al modo genérico de la app de
+  // Atajos, que espera un payload distinto — mismo "origen" que ya
+  // comparten verificar_correo/verificar_garantia en ContactForm.astro.
+  const ORIGEN = "resetenlinea-site-contacto";
 
   function leerPrefill(): { marca?: string; modelo?: string; error?: string } | null {
     try {
