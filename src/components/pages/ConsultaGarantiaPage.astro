@@ -50,7 +50,7 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
 
   <p class="garantia-mensaje" data-garantia-mensaje role="status" aria-live="polite" hidden></p>
 
-  <div class="garantia-resultado" data-garantia-resultado hidden>
+  <div class="garantia-resultado" data-garantia-resultado>
     <table class="garantia-tabla">
       <thead>
         <tr>
@@ -101,9 +101,11 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
       mensajeEl!.hidden = !texto;
     }
 
+    // La tabla (con sus encabezados) queda siempre visible, incluso antes de
+    // consultar — así el cliente ve de entrada qué columnas va a mostrar el
+    // resultado. Solo se vacían las filas, nunca se oculta el contenedor.
     function limpiarResultado() {
       tbody!.innerHTML = "";
-      resultadoEl!.hidden = true;
     }
 
     interface Pedido {
@@ -167,7 +169,6 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
 
         tbody!.appendChild(tr);
       });
-      resultadoEl!.hidden = false;
     }
 
     form.addEventListener("submit", async (event) => {
