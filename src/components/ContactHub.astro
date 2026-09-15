@@ -112,16 +112,15 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     </div>
 
     <div>
-      <label for="seleccion-popup-error" data-seleccion-popup-label-error>{t(locale, "seleccionPopup.labelError")}</label>
-      <input
-        type="text"
+      <label for="seleccion-popup-error">{t(locale, "seleccionPopup.labelError")}</label>
+      <select
         id="seleccion-popup-error"
         data-seleccion-popup-error
-        list="seleccion-popup-error-lista"
-        placeholder={t(locale, "seleccionPopup.placeholderErrorTexto")}
-        autocomplete="off"
-      />
-      <datalist id="seleccion-popup-error-lista" data-seleccion-popup-error-lista></datalist>
+        data-texto-sin-marca={t(locale, "seleccionPopup.opcionErrorPlaceholderSinMarca")}
+        data-texto-elegir={t(locale, "seleccionPopup.opcionErrorPlaceholder")}
+      >
+        <option value="">{t(locale, "seleccionPopup.opcionErrorPlaceholderSinMarca")}</option>
+      </select>
     </div>
 
     <button
@@ -211,15 +210,18 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   // Epson-SC es la única "plotter" del catálogo — mismo criterio que
   // GRUPO_POR_MARCA en src/lib/precios.ts y metodos_pago.php del lado PHP.
   const GRUPO_POR_MARCA: Record<string, "impresora" | "plotter"> = { epson: "impresora", canon: "impresora", "epson-sc": "plotter" };
-  // Solo se usa como respaldo si la página de modelo no trajera un error
-  // principal (no debería pasar) — el valor real casi siempre viene de
-  // [data-procedimiento] (ver más abajo).
-  const ERROR_DEFECTO_POR_MARCA: Record<string, string> = { epson: "Almohadillas", canon: "5B00" };
-  const ERRORES_SUGERIDOS_POR_MARCA: Record<string, string[]> = {
+  // Catálogo cerrado de errores del popup — a propósito más corto que el del
+  // selector de Home (ProcedimientoResumenDetalle.astro): acá es solo para
+  // arrancar la conversación de WhatsApp, no para elegir el procedimiento
+  // exacto. El primer valor de cada lista es el que se preselecciona por
+  // defecto en Epson/Canon (Epson-SC no tiene default: por eso se pregunta
+  // por popup en vez de asumir uno, ver abrirPopupSoloError()).
+  const ERRORES_POR_MARCA: Record<string, string[]> = {
     epson: ["Almohadillas", "E-11"],
-    canon: ["5B00", "1700", "P07", "E-08"],
-    "epson-sc": ["0014BD", "00000008 - 00080000", "00000004 - 00040000", "00000001 - 00010000"],
+    canon: ["5B00", "1700"],
+    "epson-sc": ["0014BD", "00080008", "00040004", "00010001", "000C000C"],
   };
+  const ERROR_DEFECTO_POR_MARCA: Record<string, string> = { epson: "Almohadillas", canon: "5B00" };
 
   // Misma lógica que actualizarWhatsAppCta() de ProcedimientoResumenDetalle.astro
   // (marca+modelo sin el error en el saludo) — duplicada a propósito, porque
@@ -258,28 +260,44 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   const popupCampoModelo = document.querySelector<HTMLElement>("[data-seleccion-popup-campo-modelo]");
   const popupMarcaSelect = document.querySelector<HTMLSelectElement>("[data-seleccion-popup-marca]");
   const popupModeloInput = document.querySelector<HTMLInputElement>("[data-seleccion-popup-modelo]");
-  const popupErrorInput = document.querySelector<HTMLInputElement>("[data-seleccion-popup-error]");
-  const popupErrorLista = document.querySelector<HTMLDataListElement>("[data-seleccion-popup-error-lista]");
+  const popupErrorSelect = document.querySelector<HTMLSelectElement>("[data-seleccion-popup-error]");
   const popupTitulo = document.querySelector<HTMLElement>("[data-seleccion-popup-titulo]");
   const popupIntro = document.querySelector<HTMLElement>("[data-seleccion-popup-intro]");
   const popupCerrar = document.querySelector<HTMLButtonElement>("[data-seleccion-popup-cerrar]");
   const popupConfirmarBtn = document.querySelector<HTMLButtonElement>("[data-seleccion-popup-confirmar]");
 
-  if (popup && popupForm && popupMarcaSelect && popupModeloInput && popupErrorInput && popupErrorLista) {
+  if (popup && popupForm && popupMarcaSelect && popupModeloInput && popupErrorSelect) {
     let modoSoloError = false;
     let marcaFijaSlug = "";
     let modeloFijo = "";
 
-    const actualizarSugerenciasError = (marca: string) => {
-      popupErrorLista.innerHTML = "";
-      (ERRORES_SUGERIDOS_POR_MARCA[marca] ?? []).forEach((valor) => {
+    // conDefault=true (Epson/Canon en el popup completo): preselecciona el
+    // primer valor de la lista, sin opción vacía — "por defecto" pedido.
+    // conDefault=false (Epson-SC, o sin marca todavía): arranca en blanco,
+    // obligando a elegir — no hay default confiable para plotters.
+    const actualizarOpcionesError = (marca: string, conDefault: boolean) => {
+      popupErrorSelect.innerHTML = "";
+      const opciones = ERRORES_POR_MARCA[marca] ?? [];
+      if (!conDefault || opciones.length === 0) {
+        const vacia = document.createElement("option");
+        vacia.value = "";
+        vacia.textContent = marca ? (popupErrorSelect.dataset.textoElegir ?? "") : (popupErrorSelect.dataset.textoSinMarca ?? "");
+        popupErrorSelect.appendChild(vacia);
+      }
+      opciones.forEach((valor) => {
         const opt = document.createElement("option");
         opt.value = valor;
-        popupErrorLista.appendChild(opt);
+        opt.textContent = valor;
+        popupErrorSelect.appendChild(opt);
       });
     };
 
-    popupMarcaSelect.addEventListener("change", () => actualizarSugerenciasError(popupMarcaSelect.value));
+    popupMarcaSelect.addEventListener("change", () => {
+      const marca = popupMarcaSelect.value;
+      // Epson-SC no tiene default ni siquiera en el popup completo — "por
+      // defecto: preguntar" también aplica acá, no solo en la página de modelo.
+      actualizarOpcionesError(marca, GRUPO_POR_MARCA[marca] !== "plotter");
+    });
     popupCerrar?.addEventListener("click", () => popup.close());
 
     const abrirPopupCompleto = () => {
@@ -288,8 +306,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       popupCampoModelo?.removeAttribute("hidden");
       popupMarcaSelect.value = "";
       popupModeloInput.value = "";
-      popupErrorInput.value = "";
-      actualizarSugerenciasError("");
+      actualizarOpcionesError("", true);
       if (popupTitulo) popupTitulo.textContent = popupConfirmarBtn?.dataset.textoTituloCompleto ?? "";
       if (popupIntro) popupIntro.textContent = popupConfirmarBtn?.dataset.textoIntroCompleto ?? "";
       if (!popup.open) popup.showModal();
@@ -301,8 +318,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       modeloFijo = modelo;
       popupCampoMarca?.setAttribute("hidden", "");
       popupCampoModelo?.setAttribute("hidden", "");
-      popupErrorInput.value = "";
-      actualizarSugerenciasError(marca);
+      actualizarOpcionesError(marca, false);
       const marcaLabel = LABEL_POR_MARCA[marca] ?? marca;
       if (popupTitulo) {
         popupTitulo.textContent = (popupConfirmarBtn?.dataset.textoTituloSoloError ?? "")
@@ -315,7 +331,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
     popupForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const error = popupErrorInput.value.trim();
+      const error = popupErrorSelect.value;
       if (!error) return;
 
       if (modoSoloError) {
@@ -473,54 +489,73 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     }
   }
 
+  /* Popup discreto a propósito: chico, esquinado abajo a la derecha (cerca
+     del propio botón de WhatsApp que va a alimentar) en vez de un modal
+     grande centrado — pide un dato puntual sin sentirse como una interrupción
+     de pantalla completa. */
   .seleccion-popup {
+    margin: 0;
+    position: fixed;
+    right: var(--space-sm);
+    bottom: calc(var(--space-sm) + 4.25rem);
+    left: auto;
+    top: auto;
     padding: 0;
-    border: none;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-floating);
-    max-width: 26rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    max-width: 19rem;
     width: calc(100vw - 2 * var(--space-sm));
     background: var(--color-bg-card);
     color: var(--color-text);
   }
 
   .seleccion-popup::backdrop {
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(15, 23, 42, 0.18);
+  }
+
+  @media (max-width: 480px) {
+    .seleccion-popup {
+      right: var(--space-xs);
+      bottom: calc(var(--space-xs) + 4rem);
+    }
   }
 
   .seleccion-popup-form {
     display: grid;
-    gap: 0.85rem;
-    padding: var(--space-md);
+    gap: 0.6rem;
+    padding: 0.9rem 1rem;
     position: relative;
   }
 
   .seleccion-popup-form h2 {
     margin: 0;
-    padding-right: 1.5rem;
-    font-size: 1.15rem;
+    padding-right: 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
   }
 
   .seleccion-popup-form p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
+    color: var(--color-text-subtle);
   }
 
   .seleccion-popup-form label {
     display: block;
     font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 0.3rem;
+    font-size: 0.78rem;
+    margin-bottom: 0.2rem;
   }
 
   .seleccion-popup-form select,
   .seleccion-popup-form input {
     width: 100%;
-    padding: 0.6rem 0.75rem;
+    padding: 0.4rem 0.55rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     font: inherit;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     background: var(--color-bg-card);
     color: var(--color-text);
     box-sizing: border-box;
@@ -528,27 +563,27 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
   .seleccion-popup-cerrar {
     position: absolute;
-    top: 0.6rem;
-    right: 0.75rem;
+    top: 0.4rem;
+    right: 0.55rem;
     border: none;
     background: transparent;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     line-height: 1;
     cursor: pointer;
     color: var(--color-text-subtle);
-    padding: 0.2rem 0.4rem;
+    padding: 0.1rem 0.3rem;
   }
 
   .seleccion-popup-confirmar {
-    margin-top: 0.25rem;
-    padding: 0.7rem 1.2rem;
+    margin-top: 0.15rem;
+    padding: 0.45rem 1rem;
     border: none;
     border-radius: var(--radius-full);
     background: var(--color-primary);
     color: white;
     font: inherit;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.82rem;
     cursor: pointer;
   }
 
