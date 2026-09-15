@@ -43,7 +43,7 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
   <div class="site-header-inner">
     <a class="site-logo" href={buildLocalizedPath(locale, "/")}>
       {logo ? (
-        <Image src={logo} alt="ResetEnLinea.com" width={28} height={28} class="site-logo-imagen" />
+        <Image src={logo} alt="ResetEnLinea.com" width={34} height={34} class="site-logo-imagen" />
       ) : (
         <span class="site-logo-mark" aria-hidden="true">R</span>
       )}
@@ -287,9 +287,12 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
     font-size: 1.1rem;
     color: #ffffff;
   }
+  /* Mismo alto que el bloque de texto de al lado (título + eslogan en 2
+     líneas) — no el ancho literal del eslogan, que lo haría enorme en una
+     barra de header angosta. */
   .site-logo-imagen {
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2.15rem;
+    height: 2.15rem;
     object-fit: contain;
     flex: none;
   }
@@ -309,8 +312,8 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2.15rem;
+    height: 2.15rem;
     border-radius: var(--radius-sm);
     background: var(--color-primary);
     color: white;
