@@ -4,17 +4,16 @@
  * modelo + error (precargados desde la URL o la selección global guardada
  * en localStorage — misma clave que usan /precios/, /reset/{marca}/{modelo}/
  * y ContactCard.astro), país + WhatsApp (país autodetectado por IP vía
- * /api/pais.json, editable a mano), correo con verificación por código de
- * 6 dígitos antes de enviar.
+ * /api/pais.json, editable a mano), correo, y un único botón de envío.
  *
- * Sin wizard de varios pasos: todo vive en una sola pantalla. El envío NO
- * pasa por un endpoint propio de Astro — va directo, por fetch() desde el
- * cliente, al mismo script PHP externo que ya usa el resto del sitio
- * (CONTACT_FORM_EMAIL_ENDPOINT, ver src/config/site.ts), con dos acciones
- * nuevas que ese PHP todavía no tiene: "enviar_codigo_verificacion" y
- * "verificar_codigo_y_enviar". Hasta que se agreguen del lado del PHP, el
- * botón de enviar código mostrará el error genérico — ver el comentario al
- * final de este archivo con el contrato exacto que espera el frontend.
+ * Sin verificación por código ni wizard de varios pasos: una sola pantalla,
+ * un solo submit. El envío va directo, por fetch() desde el cliente, al
+ * mismo script PHP externo que ya usa el resto del sitio
+ * (CONTACT_FORM_EMAIL_ENDPOINT, ver src/config/site.ts) con
+ * origen="resetenlinea-site-contacto" y SIN "action" — el mismo camino que
+ * ya usa ese script para el mensaje final (rate-limit de 3/24h por IP,
+ * honeypot, tiempo mínimo de llenado, filtro anti-saboteo, destinatario
+ * resuelto por clave fija, país agregado del lado del PHP).
  */
 import { t } from "../../i18n/utils";
 import { CONTACT_FORM_EMAIL_ENDPOINT, CONTACT_FORM_SECRET, SITE_URL, type Locale } from "../../config/site";
@@ -36,7 +35,7 @@ const MARCAS = [
 const ERRORES_POR_MARCA: Record<string, string[]> = {
   epson: [t(locale, "comoFuncionaProceso.errorAlmohadillasLabel"), "E-11"],
   canon: ["5B00", "1700"],
-  "epson-sc": ["0014BD", "00000008 - 00080000", "00000004 - 00040000", "00000001 - 00010000", "0000000c - 000c0000"],
+  "epson-sc": ["0014BD", "00080008", "00040004", "00010001", "000C000C"],
 };
 ---
 
@@ -46,16 +45,10 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
   data-endpoint={CONTACT_FORM_EMAIL_ENDPOINT}
   data-secret={CONTACT_FORM_SECRET}
   data-url-origen={urlOrigen}
+  data-texto-enviar={t(locale, "contactoRapido.botonEnviar")}
   data-texto-enviando={t(locale, "contactoRapido.botonEnviando")}
-  data-texto-boton-codigo={t(locale, "contactoRapido.botonEnviarCodigo")}
-  data-texto-confirmando={t(locale, "contactoRapido.botonConfirmando")}
-  data-texto-boton-confirmar={t(locale, "contactoRapido.botonConfirmar")}
-  data-texto-otp-info={t(locale, "contactoRapido.otpInfo")}
-  data-texto-reenviar={t(locale, "contactoRapido.botonReenviar")}
-  data-texto-reenviar-cooldown={t(locale, "contactoRapido.botonReenviarCooldown")}
   data-texto-error-email={t(locale, "contactoRapido.errorEmailInvalido")}
   data-texto-error-whatsapp={t(locale, "contactoRapido.errorWhatsappRequerido")}
-  data-texto-error-codigo={t(locale, "contactoRapido.errorCodigoRequerido")}
   data-texto-error-generico={t(locale, "contactoRapido.errorGenerico")}
   data-texto-error-contenido={t(locale, "contactoRapido.errorContenido")}
   data-texto-exito={t(locale, "contactoRapido.exito")}
@@ -124,28 +117,16 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
 
     <label class="cfr-checkbox">
       <input type="checkbox" data-cfr-marketing />
-      {t(locale, "contactoRapido.marketingLabel")}
+      ☑️ {t(locale, "contactoRapido.marketingLabel")}
     </label>
 
     <input type="text" name="website" class="cfr-honeypot" data-cfr-honeypot tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-    <button type="submit" class="cfr-boton-principal" data-cfr-enviar-codigo>
-      {t(locale, "contactoRapido.botonEnviarCodigo")}
-    </button>
-
-    <div class="cfr-otp" data-cfr-otp-wrap hidden>
-      <p class="cfr-otp-info" data-cfr-otp-info></p>
-      <label class="cfr-campo">
-        <span class="cfr-label">{t(locale, "contactoRapido.codigoLabel")}</span>
-        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" data-cfr-codigo placeholder="000000" />
-      </label>
-      <div class="cfr-otp-botones">
-        <button type="button" class="cfr-boton-principal" data-cfr-confirmar>{t(locale, "contactoRapido.botonConfirmar")}</button>
-        <button type="button" class="cfr-boton-reenviar" data-cfr-reenviar>{t(locale, "contactoRapido.botonReenviar")}</button>
-      </div>
-    </div>
-
     <p class="cfr-mensaje" data-cfr-mensaje role="status" aria-live="polite" hidden></p>
+
+    <button type="submit" class="cfr-boton-principal" data-cfr-enviar>
+      {t(locale, "contactoRapido.botonEnviar")}
+    </button>
   </form>
 </div>
 
@@ -183,18 +164,14 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
     ES: { dial: "34", bandera: "🇪🇸", nombre: "España" },
   };
   const PAIS_DEFECTO = "CO";
-  const RESEND_COOLDOWN_SEG = 60;
 
   const MARCA_LABEL: Record<string, string> = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
   const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
   const DESTINATARIO = { email: "info@resetenlinea.com", nombre: "Wilton Martínez Escorcia" };
   // Debe ser EXACTO "resetenlinea-site-contacto" — send-email.php lo
   // compara con === contra ese único string fijo para decidir si aplica
-  // las protecciones/ramas del formulario de contacto (rate-limit,
-  // verificar_correo, anti-saboteo, y las dos acciones nuevas de este
-  // formulario). Cualquier otro valor cae al modo genérico de la app de
-  // Atajos, que espera un payload distinto — mismo "origen" que ya
-  // comparten verificar_correo/verificar_garantia en ContactForm.astro.
+  // las protecciones del formulario de contacto (rate-limit, anti-saboteo,
+  // destinatario por clave fija, país por IP).
   const ORIGEN = "resetenlinea-site-contacto";
 
   function leerPrefill(): { marca?: string; modelo?: string; error?: string } | null {
@@ -231,27 +208,9 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
     const whatsappRequeridoMarca = root.querySelector<HTMLElement>("[data-cfr-whatsapp-requerido]");
     const marketingCheck = root.querySelector<HTMLInputElement>("[data-cfr-marketing]");
     const honeypot = root.querySelector<HTMLInputElement>("[data-cfr-honeypot]");
-    const botonEnviarCodigo = root.querySelector<HTMLButtonElement>("[data-cfr-enviar-codigo]");
-    const otpWrap = root.querySelector<HTMLElement>("[data-cfr-otp-wrap]");
-    const otpInfo = root.querySelector<HTMLElement>("[data-cfr-otp-info]");
-    const codigoInput = root.querySelector<HTMLInputElement>("[data-cfr-codigo]");
-    const botonConfirmar = root.querySelector<HTMLButtonElement>("[data-cfr-confirmar]");
-    const botonReenviar = root.querySelector<HTMLButtonElement>("[data-cfr-reenviar]");
+    const botonEnviar = root.querySelector<HTMLButtonElement>("[data-cfr-enviar]");
     const mensajeEl = root.querySelector<HTMLElement>("[data-cfr-mensaje]");
-    if (
-      !form ||
-      !modeloInput ||
-      !emailInput ||
-      !paisSelect ||
-      !whatsappInput ||
-      !noWhatsappCheck ||
-      !botonEnviarCodigo ||
-      !otpWrap ||
-      !codigoInput ||
-      !botonConfirmar ||
-      !botonReenviar ||
-      !mensajeEl
-    ) {
+    if (!form || !modeloInput || !emailInput || !paisSelect || !whatsappInput || !noWhatsappCheck || !botonEnviar || !mensajeEl) {
       return;
     }
 
@@ -387,44 +346,8 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
       paginaOrigen: "Página de origen",
     };
 
-    // ---------- Reenvío de código: cooldown ----------
-    let cooldownId: number | null = null;
-    function iniciarCooldown() {
-      let restante = RESEND_COOLDOWN_SEG;
-      botonReenviar.disabled = true;
-      const plantilla = root.dataset.textoReenviarCooldown || "";
-      botonReenviar.textContent = plantilla.replace("{segundos}", String(restante));
-      cooldownId = window.setInterval(() => {
-        restante -= 1;
-        if (restante <= 0) {
-          window.clearInterval(cooldownId!);
-          cooldownId = null;
-          botonReenviar.disabled = false;
-          botonReenviar.textContent = root.dataset.textoReenviar || "";
-          return;
-        }
-        botonReenviar.textContent = plantilla.replace("{segundos}", String(restante));
-      }, 1000);
-    }
-
-    // ---------- Paso 1: pedir código ----------
-    async function pedirCodigo(): Promise<boolean> {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          secret,
-          action: "enviar_codigo_verificacion",
-          origen: ORIGEN,
-          url_origen: urlOrigen,
-          email: emailInput.value.trim(),
-        }),
-      });
-      const data = await res.json().catch(() => null);
-      return Boolean(data && data.ok);
-    }
-
-    async function manejarEnvioCodigo(event: Event) {
+    // ---------- Envío directo: un solo POST, sin verificación por código ----------
+    async function manejarEnvio(event: Event) {
       event.preventDefault();
       mostrarMensaje("");
 
@@ -446,45 +369,13 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
         return;
       }
 
-      const textoOriginal = botonEnviarCodigo.textContent;
-      botonEnviarCodigo.disabled = true;
-      botonEnviarCodigo.textContent = root.dataset.textoEnviando || "";
-
-      try {
-        const ok = await pedirCodigo();
-        if (ok) {
-          otpWrap!.hidden = false;
-          if (otpInfo) otpInfo.textContent = (root.dataset.textoOtpInfo || "").replace("{email}", emailInput.value.trim());
-          codigoInput.focus();
-          iniciarCooldown();
-        } else {
-          mostrarMensaje(root.dataset.textoErrorGenerico || "", "error");
-        }
-      } catch {
-        mostrarMensaje(root.dataset.textoErrorGenerico || "", "error");
-      } finally {
-        botonEnviarCodigo.disabled = false;
-        botonEnviarCodigo.textContent = textoOriginal;
-      }
-    }
-
-    // ---------- Paso 2: verificar código y enviar ----------
-    async function manejarConfirmar() {
-      mostrarMensaje("");
-      const codigo = codigoInput.value.trim();
-      if (!/^\d{6}$/.test(codigo)) {
-        mostrarMensaje(root.dataset.textoErrorCodigo || "", "error");
-        codigoInput.focus();
-        return;
-      }
-
       const datos = armarDatos();
       const asunto = construirAsunto("Contacto rápido — ResetEnLinea.com", datos);
       const mensaje = construirCuerpoMensaje(datos, LABELS);
 
-      const textoOriginal = botonConfirmar.textContent;
-      botonConfirmar.disabled = true;
-      botonConfirmar.textContent = root.dataset.textoConfirmando || "";
+      const textoOriginal = botonEnviar.textContent;
+      botonEnviar.disabled = true;
+      botonEnviar.textContent = root.dataset.textoEnviando || "";
 
       try {
         const res = await fetch(endpoint, {
@@ -492,13 +383,11 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             secret,
-            action: "verificar_codigo_y_enviar",
             origen: ORIGEN,
             url_origen: urlOrigen,
-            email: datos.email,
-            codigo,
             to: DESTINATARIO.email,
             to_name: DESTINATARIO.nombre,
+            recipient: "wilton",
             subject: asunto,
             message: mensaje,
             reply_email: datos.email,
@@ -513,31 +402,17 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
           form!.hidden = true;
           mostrarMensaje(root.dataset.textoExito || "", "exito");
         } else {
-          mostrarMensaje(root.dataset.textoErrorCodigo || "", "error");
+          mostrarMensaje((data && data.error) || root.dataset.textoErrorGenerico || "", "error");
         }
       } catch {
         mostrarMensaje(root.dataset.textoErrorGenerico || "", "error");
       } finally {
-        botonConfirmar.disabled = false;
-        botonConfirmar.textContent = textoOriginal;
+        botonEnviar.disabled = false;
+        botonEnviar.textContent = textoOriginal;
       }
     }
 
-    async function manejarReenviar() {
-      mostrarMensaje("");
-      botonReenviar.disabled = true;
-      const ok = await pedirCodigo().catch(() => false);
-      if (ok) {
-        iniciarCooldown();
-      } else {
-        mostrarMensaje(root.dataset.textoErrorGenerico || "", "error");
-        botonReenviar.disabled = false;
-      }
-    }
-
-    form.addEventListener("submit", manejarEnvioCodigo);
-    botonConfirmar.addEventListener("click", manejarConfirmar);
-    botonReenviar.addEventListener("click", manejarReenviar);
+    form.addEventListener("submit", manejarEnvio);
   });
 </script>
 
@@ -547,17 +422,11 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
     gap: 1rem;
   }
 
-  .cfr-campo {
-    display: grid;
-    gap: 0.4rem;
-  }
-
   /* [hidden] pierde contra el display:grid/flex de arriba a igual
      especificidad (la regla del autor gana sobre la del user-agent) — hace
      falta este override explícito para que hidden realmente oculte. */
   .cfr-campo[hidden],
-  .cfr-botones[hidden],
-  .cfr-otp[hidden] {
+  .cfr-botones[hidden] {
     display: none;
   }
 
@@ -663,7 +532,7 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
     opacity: 0;
   }
 
-  /* Botones de acción: SIEMPRE azul oscuro o verde — nunca naranja (paleta
+  /* Botón de acción: SIEMPRE azul oscuro o verde — nunca naranja (paleta
      estricta de la página, el naranja queda reservado a los separadores). */
   .cfr-boton-principal {
     padding: 0.8rem 1.4rem;
@@ -689,48 +558,6 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
     transform: none;
   }
 
-  .cfr-otp {
-    display: grid;
-    gap: 0.75rem;
-    padding: 0.9rem 1rem;
-    border-radius: var(--radius-md);
-    background: var(--color-bg-muted);
-    border: 1px solid var(--color-border);
-  }
-
-  .cfr-otp-info {
-    margin: 0;
-    font-size: 0.88rem;
-    color: var(--color-text-muted);
-  }
-
-  .cfr-otp-botones {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    align-items: center;
-  }
-
-  .cfr-boton-reenviar {
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--color-primary);
-    font: inherit;
-    font-weight: 700;
-    font-size: 0.85rem;
-    cursor: pointer;
-  }
-
-  .cfr-boton-reenviar:hover:not(:disabled) {
-    text-decoration: underline;
-  }
-
-  .cfr-boton-reenviar:disabled {
-    color: var(--color-text-subtle);
-    cursor: default;
-  }
-
   .cfr-mensaje {
     margin: 0;
     padding: 0.75rem 1rem;
@@ -752,30 +579,3 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
     color: var(--color-primary-dark);
   }
 </style>
-
-<!--
-  CONTRATO PENDIENTE DEL LADO DE send-email.php (fuera de este repo):
-
-  1) action: "enviar_codigo_verificacion"
-     Body:  { secret, action, origen, url_origen, email }
-     Debe:  generar un código de 6 dígitos, guardarlo asociado a ese email
-            con expiración de 10 minutos, y enviarlo por correo a "email".
-     Responde: { ok: true } o { ok: false, error: "..." }
-
-  2) action: "verificar_codigo_y_enviar"
-     Body:  { secret, action, origen, url_origen, email, codigo, to, to_name,
-              subject, message, reply_email, reply_name, marketing_optin,
-              website, form_rendered_at }
-     Debe:  validar que "codigo" sea el vigente (no vencido) para "email";
-            si es válido, enviar el correo final (to/subject/message, con
-            reply_email/reply_name para que se pueda responder directo al
-            cliente) y, si marketing_optin es true, agregar el email a la
-            lista de marketing SEPARADA de los pedidos transaccionales (con
-            enlace de baja/unsubscribe visible en cualquier correo masivo
-            que se le envíe después). "website"/"form_rendered_at" son el
-            mismo honeypot/anti-bot que ya usa el resto del sitio.
-     Responde: { ok: true } o { ok: false, error: "codigo_invalido" | "codigo_expirado" | "..." }
-
-  Hasta que send-email.php reconozca estas dos acciones, este formulario
-  mostrará el mensaje de error genérico al intentar enviar el código.
--->
