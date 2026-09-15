@@ -851,6 +851,20 @@
     "bubbleMensaje": "¿Necesitas ayuda con tu impresora?",
     "bubbleMensajeModelo": "¿Necesitas Reset Asistido {marca} {modelo}?"
   },
+  "seleccionPopup": {
+    "titulo": "Contanos qué equipo tenés",
+    "intro": "Así el botón de WhatsApp y el resto del sitio ya muestran tu equipo — podés cambiarlo cuando quieras.",
+    "labelMarca": "Marca",
+    "opcionMarcaPlaceholder": "-- Selecciona --",
+    "labelModelo": "Modelo",
+    "placeholderModelo": "Ej. L3210",
+    "labelError": "Error o código que ves",
+    "placeholderErrorTexto": "Ej. Almohadillas, 5B00, 0014BD…",
+    "botonConfirmar": "Guardar",
+    "cerrarLabel": "Cerrar",
+    "tituloSoloError": "¿Qué código de error ves en tu {marca} {modelo}?",
+    "introSoloError": "Lo encontrás en la pantalla del equipo o en el mensaje de error del software."
+  },
   "preciosPage": {
     "title": "Precios del Reset Asistido | ResetEnLinea.com",
     "description": "Precios geolocalizados de nuestro servicio de reset asistido, con los medios de pago disponibles en tu país.",

@@ -631,7 +631,11 @@ const subpasosConexion = [
     const modeloNombre = raiz.dataset.modelo || "";
     const select = base ? (document.getElementById(`error-select-${base}`) as HTMLSelectElement | null) : null;
 
-    if (marcaSlug) guardarSeleccionGlobal(marcaSlug, modeloNombre, raiz.dataset.errorPrincipal || "");
+    // Epson-SC (plotter) NO se autoguarda acá: ContactHub.astro le pregunta
+    // el código de error real por popup en vez de asumir el "principal" de
+    // esta página (los plotters tienen muchos códigos posibles, sin uno
+    // claramente "por defecto" como sí lo tienen Epson/Canon).
+    if (marcaSlug && marcaSlug !== "epson-sc") guardarSeleccionGlobal(marcaSlug, modeloNombre, raiz.dataset.errorPrincipal || "");
 
     if (select) {
       const codigoEl = raiz.querySelector<HTMLElement>("[data-procedimiento-codigo]");

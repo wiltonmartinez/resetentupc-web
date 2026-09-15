@@ -81,6 +81,63 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   </div>
 )}
 
+<!--
+  Popup de marca/modelo/error del visitante: se abre solo (nunca en páginas
+  de plotter donde ya viene marca+modelo por la URL — ahí solo pregunta el
+  error) o pidiendo los 3 datos cuando el visitante llega por primera vez a
+  una página sin ese contexto (ej. Home) y todavía no eligió nada. Una vez
+  contestado, alimenta el mismo localStorage global que ya usan el selector
+  de "Cómo Funciona", /precios/ y las páginas de modelo — ver el script de
+  abajo para la lógica completa.
+-->
+<dialog class="seleccion-popup" data-seleccion-popup aria-labelledby="seleccion-popup-titulo">
+  <form method="dialog" class="seleccion-popup-form" data-seleccion-popup-form>
+    <button type="button" class="seleccion-popup-cerrar" data-seleccion-popup-cerrar aria-label={t(locale, "seleccionPopup.cerrarLabel")}>×</button>
+    <h2 id="seleccion-popup-titulo" data-seleccion-popup-titulo>{t(locale, "seleccionPopup.titulo")}</h2>
+    <p data-seleccion-popup-intro>{t(locale, "seleccionPopup.intro")}</p>
+
+    <div data-seleccion-popup-campo-marca>
+      <label for="seleccion-popup-marca">{t(locale, "seleccionPopup.labelMarca")}</label>
+      <select id="seleccion-popup-marca" data-seleccion-popup-marca>
+        <option value="">{t(locale, "seleccionPopup.opcionMarcaPlaceholder")}</option>
+        <option value="epson">Epson</option>
+        <option value="canon">Canon</option>
+        <option value="epson-sc">Epson-SC</option>
+      </select>
+    </div>
+
+    <div data-seleccion-popup-campo-modelo>
+      <label for="seleccion-popup-modelo">{t(locale, "seleccionPopup.labelModelo")}</label>
+      <input type="text" id="seleccion-popup-modelo" data-seleccion-popup-modelo placeholder={t(locale, "seleccionPopup.placeholderModelo")} />
+    </div>
+
+    <div>
+      <label for="seleccion-popup-error" data-seleccion-popup-label-error>{t(locale, "seleccionPopup.labelError")}</label>
+      <input
+        type="text"
+        id="seleccion-popup-error"
+        data-seleccion-popup-error
+        list="seleccion-popup-error-lista"
+        placeholder={t(locale, "seleccionPopup.placeholderErrorTexto")}
+        autocomplete="off"
+      />
+      <datalist id="seleccion-popup-error-lista" data-seleccion-popup-error-lista></datalist>
+    </div>
+
+    <button
+      type="submit"
+      class="seleccion-popup-confirmar"
+      data-seleccion-popup-confirmar
+      data-texto-titulo-solo-error={t(locale, "seleccionPopup.tituloSoloError")}
+      data-texto-intro-solo-error={t(locale, "seleccionPopup.introSoloError")}
+      data-texto-titulo-completo={t(locale, "seleccionPopup.titulo")}
+      data-texto-intro-completo={t(locale, "seleccionPopup.intro")}
+    >
+      {t(locale, "seleccionPopup.botonConfirmar")}
+    </button>
+  </form>
+</dialog>
+
 <script>
   import { trackEvent } from "../lib/analytics.js";
   import { playFeedback } from "../lib/sound-manager.js";
@@ -116,6 +173,200 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
         }, BUBBLE_AUTOHIDE_MS);
       }
     }, NOTIF_DELAY_MS);
+  }
+
+  // Selección global del visitante (marca/modelo/error): misma clave de
+  // localStorage que ya usan ProcedimientoResumenDetalle.astro (selector de
+  // "Cómo Funciona"), ProcedimientoImpresora.astro (páginas /reset/{marca}/
+  // {modelo}/), PreciosPage.astro y los listados de /prueba-social/. Este
+  // bloque corre en TODAS las páginas (ContactHub va en BaseLayout) — es el
+  // único punto que aplica esa selección al botón flotante de WhatsApp
+  // incluso en páginas que no traen el selector de Home/Cómo Funciona.
+  interface SeleccionGlobal {
+    marca: string;
+    modelo: string;
+    error: string;
+  }
+
+  const SELECCION_LS_KEY = "resetenlinea_seleccion_global_v1";
+
+  function leerSeleccionGlobal(): SeleccionGlobal | null {
+    try {
+      const datos = JSON.parse(localStorage.getItem(SELECCION_LS_KEY) || "null");
+      return datos && datos.marca ? datos : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function guardarSeleccionGlobal(datos: SeleccionGlobal): void {
+    try {
+      localStorage.setItem(SELECCION_LS_KEY, JSON.stringify(datos));
+    } catch {
+      /* localStorage no disponible: la selección simplemente no persiste entre visitas. */
+    }
+  }
+
+  const LABEL_POR_MARCA: Record<string, string> = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
+  // Epson-SC es la única "plotter" del catálogo — mismo criterio que
+  // GRUPO_POR_MARCA en src/lib/precios.ts y metodos_pago.php del lado PHP.
+  const GRUPO_POR_MARCA: Record<string, "impresora" | "plotter"> = { epson: "impresora", canon: "impresora", "epson-sc": "plotter" };
+  // Solo se usa como respaldo si la página de modelo no trajera un error
+  // principal (no debería pasar) — el valor real casi siempre viene de
+  // [data-procedimiento] (ver más abajo).
+  const ERROR_DEFECTO_POR_MARCA: Record<string, string> = { epson: "Almohadillas", canon: "5B00" };
+  const ERRORES_SUGERIDOS_POR_MARCA: Record<string, string[]> = {
+    epson: ["Almohadillas", "E-11"],
+    canon: ["5B00", "1700", "P07", "E-08"],
+    "epson-sc": ["0014BD", "00000008 - 00080000", "00000004 - 00040000", "00000001 - 00010000"],
+  };
+
+  // Misma lógica que actualizarWhatsAppCta() de ProcedimientoResumenDetalle.astro
+  // (marca+modelo sin el error en el saludo) — duplicada a propósito, porque
+  // ese script solo corre en páginas con el selector de Home/Cómo Funciona,
+  // y este bloque necesita funcionar en cualquier página.
+  function aplicarSeleccionAWhatsApp(datos: SeleccionGlobal): void {
+    const marcaLabel = LABEL_POR_MARCA[datos.marca] ?? "";
+    document.querySelectorAll<HTMLElement>("[data-whatsapp-dinamico]").forEach((wrap) => {
+      const link = wrap.querySelector<HTMLAnchorElement>("a[data-source-id]");
+      if (!link) return;
+      const numero = wrap.dataset.whatsappNumber ?? "";
+      const urlOrigen = wrap.dataset.urlOrigen ?? "";
+      const plantilla = marcaLabel ? (wrap.dataset.msgWithoutError ?? "") : (wrap.dataset.msgGeneric ?? "");
+      const mensaje = plantilla
+        .replaceAll("{marca}", marcaLabel)
+        .replaceAll("{modelo}", datos.modelo)
+        .replaceAll("{error}", datos.error)
+        .replaceAll("{url}", urlOrigen)
+        .replace(/[ \t]{2,}/g, " ")
+        .replace(/[ \t]+([,.;:])/g, "$1");
+      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+
+      const bubbleEl = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble]");
+      const bubbleModeloTpl = wrap.dataset.bubbleModelo;
+      const bubbleGenericoTpl = wrap.dataset.bubbleGenerico;
+      if (bubbleEl && (bubbleModeloTpl || bubbleGenericoTpl)) {
+        const bubbleTemplate = marcaLabel && datos.modelo ? (bubbleModeloTpl ?? "") : (bubbleGenericoTpl ?? "");
+        bubbleEl.textContent = bubbleTemplate.replaceAll("{marca}", marcaLabel).replaceAll("{modelo}", datos.modelo);
+      }
+    });
+  }
+
+  const popup = document.querySelector<HTMLDialogElement>("[data-seleccion-popup]");
+  const popupForm = document.querySelector<HTMLFormElement>("[data-seleccion-popup-form]");
+  const popupCampoMarca = document.querySelector<HTMLElement>("[data-seleccion-popup-campo-marca]");
+  const popupCampoModelo = document.querySelector<HTMLElement>("[data-seleccion-popup-campo-modelo]");
+  const popupMarcaSelect = document.querySelector<HTMLSelectElement>("[data-seleccion-popup-marca]");
+  const popupModeloInput = document.querySelector<HTMLInputElement>("[data-seleccion-popup-modelo]");
+  const popupErrorInput = document.querySelector<HTMLInputElement>("[data-seleccion-popup-error]");
+  const popupErrorLista = document.querySelector<HTMLDataListElement>("[data-seleccion-popup-error-lista]");
+  const popupTitulo = document.querySelector<HTMLElement>("[data-seleccion-popup-titulo]");
+  const popupIntro = document.querySelector<HTMLElement>("[data-seleccion-popup-intro]");
+  const popupCerrar = document.querySelector<HTMLButtonElement>("[data-seleccion-popup-cerrar]");
+  const popupConfirmarBtn = document.querySelector<HTMLButtonElement>("[data-seleccion-popup-confirmar]");
+
+  if (popup && popupForm && popupMarcaSelect && popupModeloInput && popupErrorInput && popupErrorLista) {
+    let modoSoloError = false;
+    let marcaFijaSlug = "";
+    let modeloFijo = "";
+
+    const actualizarSugerenciasError = (marca: string) => {
+      popupErrorLista.innerHTML = "";
+      (ERRORES_SUGERIDOS_POR_MARCA[marca] ?? []).forEach((valor) => {
+        const opt = document.createElement("option");
+        opt.value = valor;
+        popupErrorLista.appendChild(opt);
+      });
+    };
+
+    popupMarcaSelect.addEventListener("change", () => actualizarSugerenciasError(popupMarcaSelect.value));
+    popupCerrar?.addEventListener("click", () => popup.close());
+
+    const abrirPopupCompleto = () => {
+      modoSoloError = false;
+      popupCampoMarca?.removeAttribute("hidden");
+      popupCampoModelo?.removeAttribute("hidden");
+      popupMarcaSelect.value = "";
+      popupModeloInput.value = "";
+      popupErrorInput.value = "";
+      actualizarSugerenciasError("");
+      if (popupTitulo) popupTitulo.textContent = popupConfirmarBtn?.dataset.textoTituloCompleto ?? "";
+      if (popupIntro) popupIntro.textContent = popupConfirmarBtn?.dataset.textoIntroCompleto ?? "";
+      if (!popup.open) popup.showModal();
+    };
+
+    const abrirPopupSoloError = (marca: string, modelo: string) => {
+      modoSoloError = true;
+      marcaFijaSlug = marca;
+      modeloFijo = modelo;
+      popupCampoMarca?.setAttribute("hidden", "");
+      popupCampoModelo?.setAttribute("hidden", "");
+      popupErrorInput.value = "";
+      actualizarSugerenciasError(marca);
+      const marcaLabel = LABEL_POR_MARCA[marca] ?? marca;
+      if (popupTitulo) {
+        popupTitulo.textContent = (popupConfirmarBtn?.dataset.textoTituloSoloError ?? "")
+          .replaceAll("{marca}", marcaLabel)
+          .replaceAll("{modelo}", modelo);
+      }
+      if (popupIntro) popupIntro.textContent = popupConfirmarBtn?.dataset.textoIntroSoloError ?? "";
+      if (!popup.open) popup.showModal();
+    };
+
+    popupForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const error = popupErrorInput.value.trim();
+      if (!error) return;
+
+      if (modoSoloError) {
+        const datos: SeleccionGlobal = { marca: marcaFijaSlug, modelo: modeloFijo, error };
+        guardarSeleccionGlobal(datos);
+        aplicarSeleccionAWhatsApp(datos);
+        popup.close();
+        return;
+      }
+
+      const marca = popupMarcaSelect.value;
+      const modelo = popupModeloInput.value.trim();
+      if (!marca || !modelo) return;
+      guardarSeleccionGlobal({ marca, modelo, error });
+      popup.close();
+      // Recarga para que el resto de módulos de la página (selector de "Cómo
+      // Funciona", widget de precios, etc., cuando estén presentes) también
+      // reflejen la selección recién guardada con su propia lógica de
+      // restaurarSeleccion() — más simple y confiable que reimplementar acá
+      // la sincronización de cada uno.
+      window.location.reload();
+    });
+
+    // Decisión al cargar la página: una página de modelo (/reset/{marca}/
+    // {modelo}/) manda sobre cualquier preferencia previa (misma regla que ya
+    // aplica ProcedimientoImpresora.astro para impresoras) — para plotters
+    // se pregunta el error por popup en vez de adivinarlo, porque no hay un
+    // código "por defecto" confiable. Sin ese contexto de página, se usa lo
+    // ya guardado o, si es la primera visita, se pregunta todo.
+    const procedimiento = document.querySelector<HTMLElement>("[data-procedimiento]");
+    const marcaPagina = procedimiento?.dataset.marca ?? "";
+
+    if (marcaPagina && GRUPO_POR_MARCA[marcaPagina] === "plotter") {
+      const modeloPagina = procedimiento?.dataset.modelo ?? "";
+      const previa = leerSeleccionGlobal();
+      if (previa) aplicarSeleccionAWhatsApp(previa);
+      abrirPopupSoloError(marcaPagina, modeloPagina);
+    } else if (marcaPagina) {
+      // Epson/Canon: ProcedimientoImpresora.astro ya guardó marca/modelo/error
+      // apenas cargó (su propio <script>, que corre antes que este por venir
+      // primero en el documento) — acá solo se refleja en el botón flotante.
+      const actual = leerSeleccionGlobal() ?? { marca: marcaPagina, modelo: procedimiento?.dataset.modelo ?? "", error: ERROR_DEFECTO_POR_MARCA[marcaPagina] ?? "" };
+      aplicarSeleccionAWhatsApp(actual);
+    } else {
+      const guardada = leerSeleccionGlobal();
+      if (guardada) {
+        aplicarSeleccionAWhatsApp(guardada);
+      } else {
+        abrirPopupCompleto();
+      }
+    }
   }
 </script>
 
@@ -220,5 +471,88 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       width: 3.25rem;
       height: 3.25rem;
     }
+  }
+
+  .seleccion-popup {
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-floating);
+    max-width: 26rem;
+    width: calc(100vw - 2 * var(--space-sm));
+    background: var(--color-bg-card);
+    color: var(--color-text);
+  }
+
+  .seleccion-popup::backdrop {
+    background: rgba(15, 23, 42, 0.55);
+  }
+
+  .seleccion-popup-form {
+    display: grid;
+    gap: 0.85rem;
+    padding: var(--space-md);
+    position: relative;
+  }
+
+  .seleccion-popup-form h2 {
+    margin: 0;
+    padding-right: 1.5rem;
+    font-size: 1.15rem;
+  }
+
+  .seleccion-popup-form p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .seleccion-popup-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .seleccion-popup-form select,
+  .seleccion-popup-form input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 0.95rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    box-sizing: border-box;
+  }
+
+  .seleccion-popup-cerrar {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.75rem;
+    border: none;
+    background: transparent;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--color-text-subtle);
+    padding: 0.2rem 0.4rem;
+  }
+
+  .seleccion-popup-confirmar {
+    margin-top: 0.25rem;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .seleccion-popup-confirmar:hover {
+    background: var(--color-primary-dark);
   }
 </style>
