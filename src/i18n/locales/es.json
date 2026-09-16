@@ -498,6 +498,7 @@
     "rolWilton": "Admin - Técnico Reset Online - Asesor",
     "rolDiana": "Asesora",
     "rolVendedorRegional": "Asesor regional",
+    "equipoSinDisponibles": "En este momento no hay nadie disponible, pero podés escribirnos igual — te respondemos apenas alguien se conecte.",
     "ubicacion": "Santa Marta, Colombia"
   },
   "contactoRapido": {
@@ -875,7 +876,8 @@
     "ruleta": "Jugar a la Ruleta",
     "whatsapp": "Escribir por WhatsApp",
     "bubbleMensaje": "¿Necesitas ayuda con tu impresora?",
-    "bubbleMensajeModelo": "¿Necesitas Reset Asistido {marca} {modelo}?"
+    "bubbleMensajeModelo": "¿Necesitas Reset Asistido {marca} {modelo}?",
+    "menuVacio": "En este momento no hay nadie disponible. Probá de nuevo en un rato."
   },
   "seleccionPopup": {
     "titulo": "Contanos qué equipo tenés",

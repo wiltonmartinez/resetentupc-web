@@ -1,7 +1,6 @@
 ---
 import { getImage } from "astro:assets";
 import { t, buildStaticPagePath } from "../../i18n/utils";
-import ContactCard from "../ui/ContactCard.astro";
 import ContactoFormRapido from "../ui/ContactoFormRapido.astro";
 import { NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../../config/site";
 import whatsappLogo from "../../assets/whatsapp/3.png";
@@ -36,25 +35,8 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     <section class="contacto-columna contacto-columna-equipo">
       <h2>{t(locale, "contacto.equipoTitulo")}</h2>
       <div class="contacto-equipo">
-        <ContactCard
-          nombre="Wilton Martínez Escorcia"
-          rol={t(locale, "contacto.rolWilton")}
-          whatsapp="573016928346"
-          sourceId="contacto-equipo-wilton"
-          urlPath={path}
-          locale={locale}
-          whatsappLabel={whatsappLabel}
-        />
-        <ContactCard
-          nombre="Diana Cabana Orozco"
-          rol={t(locale, "contacto.rolDiana")}
-          whatsapp="573006279131"
-          sourceId="contacto-equipo-diana"
-          urlPath={path}
-          locale={locale}
-          whatsappLabel={whatsappLabel}
-        />
         <div data-vendedores-regionales></div>
+        <p class="contacto-equipo-vacio" data-equipo-vacio hidden>{t(locale, "contacto.equipoSinDisponibles")}</p>
       </div>
 
       <p class="contacto-ubicacion">
@@ -142,10 +124,10 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     }
   }
 
-  /* Copia exacta del estilo de ContactCard.astro (los estilos de Astro son
-     por-componente — el <template> de vendedor regional vive en esta
-     página, así que necesita su propia copia para verse idéntico a las
-     tarjetas de arriba). */
+  /* Todas las tarjetas de "Nuestro equipo" se arman dinámicamente acá (ver
+     crearTarjetaVendedor() más abajo) — ya no hay un ContactCard.astro
+     separado para las fijas, así que este es el único lugar con este
+     estilo. */
   .contact-card {
     display: grid;
     gap: 0.35rem;
@@ -157,6 +139,44 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
 
   .contact-card h3 {
     margin: 0;
+  }
+
+  .contact-card-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  /* Punto verde + "ONLINE": el endpoint ya filtra por horario de atención
+     (ver comentario en crearTarjetaVendedor más abajo), así que toda tarjeta
+     que llega a renderizarse está, por construcción, disponible ahora mismo. */
+  .contact-card-online {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #1a9f4a;
+  }
+
+  .contact-card-online::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #22c55e;
+  }
+
+  .contacto-equipo-vacio {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: 0.88rem;
+    color: var(--color-text-subtle);
   }
 
   .contact-card-rol {
@@ -271,8 +291,22 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     var tarjeta = document.createElement("div");
     tarjeta.className = "contact-card";
 
+    var encabezado = document.createElement("div");
+    encabezado.className = "contact-card-encabezado";
+
     var h3 = document.createElement("h3");
     h3.textContent = vendedor.nombre;
+
+    // El endpoint solo devuelve vendedores que están EN HORARIO ahora mismo
+    // (ver listar_vendedores_por_pais_db() del lado de Núcleo) — por eso acá
+    // siempre se marca ONLINE, nunca "desconectado": quien no está en
+    // horario directamente no llega a esta lista.
+    var online = document.createElement("span");
+    online.className = "contact-card-online";
+    online.textContent = "ONLINE";
+
+    encabezado.appendChild(h3);
+    encabezado.appendChild(online);
 
     var rol = document.createElement("p");
     rol.className = "contact-card-rol";
@@ -294,12 +328,12 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     link.appendChild(icono);
     link.appendChild(document.createTextNode(" " + whatsappLabel));
 
-    tarjeta.appendChild(h3);
+    tarjeta.appendChild(encabezado);
     tarjeta.appendChild(rol);
     tarjeta.appendChild(link);
 
     if (atributoScope) {
-      [tarjeta, h3, rol, link, icono].forEach(function (el) {
+      [tarjeta, encabezado, h3, online, rol, link, icono].forEach(function (el) {
         el.setAttribute(atributoScope, "");
       });
     }
@@ -309,6 +343,7 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
 
   function cargarVendedoresRegionales() {
     var contenedor = document.querySelector("[data-vendedores-regionales]");
+    var vacio = document.querySelector("[data-equipo-vacio]");
     if (!contenedor) return;
 
     fetch("/api/pais.json", { cache: "no-store" })
@@ -324,14 +359,21 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
       })
       .then(function (datosVendedores) {
         var vendedores = (datosVendedores && datosVendedores.data) || [];
-        if (!vendedores.length) return;
+        if (!vendedores.length) {
+          if (vacio) vacio.hidden = false;
+          return;
+        }
         var mensaje = armarMensaje();
         vendedores.forEach(function (vendedor) {
           contenedor.appendChild(crearTarjetaVendedor(vendedor, mensaje));
         });
       })
       .catch(function () {
-        // sin país detectado o Núcleo inalcanzable: la página sigue con los botones fijos de siempre
+        // sin país detectado, Núcleo inalcanzable, o nadie en horario ahora
+        // mismo: ya no hay tarjetas fijas de respaldo (todo sale de Núcleo,
+        // ver comentario arriba del <script>), así que se avisa en vez de
+        // dejar la sección en blanco sin explicación.
+        if (vacio) vacio.hidden = false;
       });
   }
 
