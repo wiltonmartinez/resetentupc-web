@@ -1,8 +1,10 @@
 ---
+import { getImage } from "astro:assets";
 import { t, buildStaticPagePath } from "../../i18n/utils";
 import ContactCard from "../ui/ContactCard.astro";
 import ContactoFormRapido from "../ui/ContactoFormRapido.astro";
-import type { Locale } from "../../config/site";
+import { NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../../config/site";
+import whatsappLogo from "../../assets/whatsapp/3.png";
 
 interface Props {
   locale: Locale;
@@ -11,6 +13,13 @@ interface Props {
 const { locale } = Astro.props;
 const path = buildStaticPagePath(locale, "contacto");
 const whatsappLabel = t(locale, "common.whatsappButton");
+const urlOrigen = `${SITE_URL}${path}`;
+const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
+// Resuelto una sola vez acá (no con el componente Image, que solo sirve
+// dentro de markup .astro) para poder pasar la URL ya optimizada al script
+// del cliente de más abajo, que arma la tarjeta de vendedor regional a
+// mano con createElement.
+const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, height: 72 });
 ---
 
 <article class="contacto-page">
@@ -45,7 +54,9 @@ const whatsappLabel = t(locale, "common.whatsappButton");
           locale={locale}
           whatsappLabel={whatsappLabel}
         />
+        <div data-vendedores-regionales></div>
       </div>
+
       <p class="contacto-ubicacion">
         <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
           <path
@@ -130,4 +141,176 @@ const whatsappLabel = t(locale, "common.whatsappButton");
       background: linear-gradient(to right, transparent, #f97316 15%, #f97316 85%, transparent);
     }
   }
+
+  /* Copia exacta del estilo de ContactCard.astro (los estilos de Astro son
+     por-componente — el <template> de vendedor regional vive en esta
+     página, así que necesita su propia copia para verse idéntico a las
+     tarjetas de arriba). */
+  .contact-card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .contact-card h3 {
+    margin: 0;
+  }
+
+  .contact-card-rol {
+    margin: 0 0 0.4rem;
+    font-size: 0.85rem;
+    color: var(--color-text-subtle);
+  }
+
+  .contact-card-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    border: none;
+    border-radius: var(--radius-full);
+    background: #20d043;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    width: fit-content;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .contact-card-whatsapp:hover {
+    background: #1bb93a;
+    color: #ffffff;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .contact-card-whatsapp-icono {
+    flex-shrink: 0;
+    align-self: stretch;
+    width: auto;
+    aspect-ratio: 1 / 1;
+    margin: -0.6rem 0;
+    object-fit: contain;
+    transform: scale(0.8);
+  }
 </style>
+
+<script
+  define:vars={{
+    vendedoresApiUrl,
+    urlOrigen,
+    plantillaGenerica: t(locale, "whatsapp.greetingGeneric"),
+    plantillaConMarcaModelo: t(locale, "whatsapp.greetingWithoutError"),
+    rolVendedorRegional: t(locale, "contacto.rolVendedorRegional"),
+    whatsappLabel,
+    whatsappIconoUrl: whatsappLogoOptimizado.src,
+  }}
+>
+  // Botones de WhatsApp "regionales": el visitante ya se detectó por IP en
+  // otro lado de esta misma página (ContactoFormRapido usa /api/pais.json
+  // para el indicativo telefónico) — se repite acá porque son dos
+  // componentes independientes y este necesita el ISO igual, sin ninguno
+  // depender del otro para funcionar.
+  //
+  // IMPORTANTE: un script con define:vars se inyecta tal cual, SIN pasar
+  // por el compilador de TypeScript de Astro (a diferencia de un <script>
+  // normal) — por eso este bloque es JS plano, nada de tipos/interfaces/
+  // "as X", o el navegador lo rechaza con un SyntaxError real.
+  var SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
+  var MARCA_LABEL = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
+
+  function leerSeleccionGlobal() {
+    try {
+      return JSON.parse(localStorage.getItem(SELECCION_GLOBAL_KEY) || "null");
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function armarMensaje() {
+    var cache = leerSeleccionGlobal();
+    if (cache && cache.marca && cache.modelo) {
+      var marcaLabel = MARCA_LABEL[cache.marca] || cache.marca;
+      return plantillaConMarcaModelo.replaceAll("{marca}", marcaLabel).replaceAll("{modelo}", cache.modelo).replaceAll("{url}", urlOrigen);
+    }
+    return plantillaGenerica.replaceAll("{url}", urlOrigen);
+  }
+
+  // Arma la tarjeta a mano con createElement (en vez de clonar un
+  // <template> pre-renderizado) — el compilador de Astro no anida bien un
+  // <template> con un <a> como último hijo dentro de una página .astro
+  // (rompía el HTML final duplicando un <a> fuera de lugar), así que la
+  // tarjeta completa se construye acá en tiempo de ejecución.
+  function crearTarjetaVendedor(vendedor, mensaje) {
+    var tarjeta = document.createElement("div");
+    tarjeta.className = "contact-card";
+
+    var h3 = document.createElement("h3");
+    h3.textContent = vendedor.nombre;
+
+    var rol = document.createElement("p");
+    rol.className = "contact-card-rol";
+    rol.textContent = rolVendedorRegional;
+
+    var link = document.createElement("a");
+    link.className = "contact-card-whatsapp";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer nofollow";
+    link.href = "https://wa.me/" + vendedor.whatsapp + "?text=" + encodeURIComponent(mensaje);
+
+    var icono = document.createElement("img");
+    icono.src = whatsappIconoUrl;
+    icono.alt = "";
+    icono.width = 72;
+    icono.height = 72;
+    icono.className = "contact-card-whatsapp-icono";
+
+    link.appendChild(icono);
+    link.appendChild(document.createTextNode(" " + whatsappLabel));
+
+    tarjeta.appendChild(h3);
+    tarjeta.appendChild(rol);
+    tarjeta.appendChild(link);
+    return tarjeta;
+  }
+
+  function cargarVendedoresRegionales() {
+    var contenedor = document.querySelector("[data-vendedores-regionales]");
+    if (!contenedor) return;
+
+    fetch("/api/pais.json", { cache: "no-store" })
+      .then(function (resPais) {
+        return resPais.json();
+      })
+      .then(function (datosPais) {
+        var paisIso = ((datosPais && datosPais.codigo_pais) || "").toUpperCase();
+        if (!/^[A-Z]{2}$/.test(paisIso)) return null;
+        return fetch(vendedoresApiUrl + "?pais_iso=" + paisIso).then(function (resVendedores) {
+          return resVendedores.json();
+        });
+      })
+      .then(function (datosVendedores) {
+        var vendedores = (datosVendedores && datosVendedores.data) || [];
+        if (!vendedores.length) return;
+        var mensaje = armarMensaje();
+        vendedores.forEach(function (vendedor) {
+          contenedor.appendChild(crearTarjetaVendedor(vendedor, mensaje));
+        });
+      })
+      .catch(function () {
+        // sin país detectado o Núcleo inalcanzable: la página sigue con los botones fijos de siempre
+      });
+  }
+
+  cargarVendedoresRegionales();
+</script>
