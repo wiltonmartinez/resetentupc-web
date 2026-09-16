@@ -251,6 +251,22 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
   // <template> con un <a> como último hijo dentro de una página .astro
   // (rompía el HTML final duplicando un <a> fuera de lugar), así que la
   // tarjeta completa se construye acá en tiempo de ejecución.
+  //
+  // Astro "scopea" el CSS de esta página agregando un atributo
+  // data-astro-cid-XXXXX (hash que cambia en cada build) a cada elemento
+  // de SU template — un nodo armado a mano con createElement() no lo trae,
+  // así que .contact-card y compañía no le aplicaban (se veía como texto
+  // y un link plano, sin tarjeta). Se copia ese atributo desde la raíz de
+  // la página (.contacto-page), que Astro sí marcó, en vez de hardcodear
+  // el hash.
+  var atributoScopeEl = document.querySelector(".contacto-page");
+  var atributoScope = atributoScopeEl
+    ? Array.prototype.find.call(atributoScopeEl.attributes, function (atributo) {
+        return atributo.name.indexOf("data-astro-cid-") === 0;
+      })
+    : null;
+  atributoScope = atributoScope ? atributoScope.name : null;
+
   function crearTarjetaVendedor(vendedor, mensaje) {
     var tarjeta = document.createElement("div");
     tarjeta.className = "contact-card";
@@ -281,6 +297,13 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     tarjeta.appendChild(h3);
     tarjeta.appendChild(rol);
     tarjeta.appendChild(link);
+
+    if (atributoScope) {
+      [tarjeta, h3, rol, link, icono].forEach(function (el) {
+        el.setAttribute(atributoScope, "");
+      });
+    }
+
     return tarjeta;
   }
 

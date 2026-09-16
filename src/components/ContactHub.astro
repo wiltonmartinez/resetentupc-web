@@ -1,12 +1,17 @@
 ---
 /**
- * Botón flotante de WhatsApp: enlace directo, sin menú intermedio. No
+ * Botón flotante de WhatsApp: al hacer clic abre un menú con Wilton
+ * (siempre, número fijo del sitio) + el/los vendedor(es) regionales cuyo
+ * país coincida con el país detectado por IP del visitante (ej. Edgar
+ * Alarcón para México) — mismo backend que ya usa "Nuestro equipo" en
+ * /contacto/ (ver ContactoPage.astro), ahora también acá porque el botón
+ * flotante es el que aparece en TODO el sitio, no solo esa página. No
  * visible en "ru" (Rusia/Europa del Este usa Telegram) ni "ko" (Corea del
  * Sur usa KakaoTalk) — WhatsApp tiene adopción marginal en esos mercados.
  */
 import { Image, getImage } from "astro:assets";
 import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
-import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import { WHATSAPP_NUMBER, NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../config/site";
 import whatsappLogo from "../assets/whatsapp/1.png";
 import whatsappNotif from "../assets/whatsapp/2.png";
 
@@ -23,7 +28,13 @@ const LOCALES_SIN_WHATSAPP: Locale[] = ["ru", "ko"];
 const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
 const urlOrigen = `${SITE_URL}${path}`;
 const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, modelo: modeloDefault, urlOrigen });
-const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
+// href inicial de Wilton calculado server-side (igual que antes tenía el
+// propio FAB) — así el link siempre funciona aunque el script del cliente
+// todavía no haya corrido (ej. JS lento, o la rama del popup que no llama a
+// aplicarSeleccionAWhatsApp() antes de mostrarlo). El script lo reemplaza
+// después si detecta marca/modelo.
+const whatsappHrefWilton = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
+const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
 
 // En una página de modelo (marcaDefault+modeloDefault ya conocidos, ej.
 // /reset/epson/l3210/) la burbuja de notificación es específica al modelo
@@ -53,19 +64,39 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     data-msg-generic={t(locale, "whatsapp.greetingGeneric")}
     data-bubble-modelo={t(locale, "contactHub.bubbleMensajeModelo")}
     data-bubble-generico={t(locale, "contactHub.bubbleMensaje")}
+    data-vendedores-api-url={vendedoresApiUrl}
   >
     <p class="contact-hub-bubble" data-whatsapp-bubble hidden>
       {bubbleMensaje}
     </p>
-    <a
+
+    <div class="contact-hub-menu" data-whatsapp-menu role="menu" hidden>
+      <a
+        class="contact-hub-menu-item"
+        href={whatsappHrefWilton}
+        data-whatsapp-menu-link
+        data-numero={WHATSAPP_NUMBER}
+        data-source-id="contact-hub-wilton"
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        data-sound="confirm"
+        data-analytics-event="contact_hub_whatsapp_wilton"
+        role="menuitem"
+      >
+        <span class="contact-hub-menu-nombre">Wilton Martínez</span>
+        <span class="contact-hub-menu-numero">+{WHATSAPP_NUMBER}</span>
+      </a>
+      <div data-whatsapp-menu-regionales></div>
+    </div>
+
+    <button
+      type="button"
       class="contact-hub-fab"
-      href={whatsappHref}
-      target="_blank"
-      rel="noopener noreferrer nofollow"
-      data-sound="confirm"
-      data-analytics-event="contact_hub_whatsapp"
+      data-sound="select"
+      data-analytics-event="contact_hub_abrir"
       data-whatsapp-fab
-      data-source-id="contact-hub-whatsapp"
+      aria-haspopup="menu"
+      aria-expanded="false"
       aria-label={t(locale, "contactHub.whatsapp")}
     >
       <Image
@@ -77,7 +108,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
         height="112"
         loading="eager"
       />
-    </a>
+    </button>
   </div>
 )}
 
@@ -155,7 +186,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   const NOTIF_DELAY_MS = 4000;
   const BUBBLE_AUTOHIDE_MS = 7000;
 
-  const fab = document.querySelector<HTMLAnchorElement>("[data-whatsapp-fab]");
+  const fab = document.querySelector<HTMLButtonElement>("[data-whatsapp-fab]");
   const fabImg = fab?.querySelector<HTMLImageElement>("[data-whatsapp-fab-img]");
   const bubble = document.querySelector<HTMLElement>("[data-whatsapp-bubble]");
 
@@ -173,6 +204,111 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       }
     }, NOTIF_DELAY_MS);
   }
+
+  // Menú del botón flotante: Wilton (fijo, ya en el HTML) + vendedores
+  // regionales cuyo país coincida con el detectado por IP (mismo endpoint
+  // que usa "Nuestro equipo" en /contacto/ — ver ContactoPage.astro). El
+  // clic en el FAB ya no navega directo: abre/cierra este menú.
+  const contactHub = document.querySelector<HTMLElement>(".contact-hub");
+  const menu = document.querySelector<HTMLElement>("[data-whatsapp-menu]");
+  const menuRegionales = document.querySelector<HTMLElement>("[data-whatsapp-menu-regionales]");
+
+  if (fab && menu) {
+    const cerrarMenu = () => {
+      menu.hidden = true;
+      fab.setAttribute("aria-expanded", "false");
+    };
+    const abrirMenu = () => {
+      menu.hidden = false;
+      fab.setAttribute("aria-expanded", "true");
+    };
+
+    fab.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (menu.hidden) abrirMenu();
+      else cerrarMenu();
+    });
+    document.addEventListener("click", (event) => {
+      if (!menu.hidden && contactHub && !contactHub.contains(event.target as Node)) cerrarMenu();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") cerrarMenu();
+    });
+    menu.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+      link.addEventListener("click", cerrarMenu);
+    });
+  }
+
+  interface VendedorPublico {
+    nombre: string;
+    whatsapp: string;
+  }
+
+  // Astro "scopea" el CSS de este componente agregando un atributo
+  // data-astro-cid-XXXXX (hash que cambia en cada build) a cada elemento
+  // que escribió en el markup — un nodo creado a mano con createElement()
+  // no lo trae, así que .contact-hub-menu-item no le aplicaba (se veía
+  // como link plano sin tarjeta). Se copia ese atributo desde el link de
+  // Wilton, que Astro sí marcó, en vez de hardcodear el hash.
+  const atributoScope = Array.from(menu?.querySelector("a")?.attributes ?? []).find((atributo) => atributo.name.startsWith("data-astro-cid-"))?.name;
+
+  function crearItemMenuVendedor(vendedor: VendedorPublico): HTMLAnchorElement {
+    const link = document.createElement("a");
+    link.className = "contact-hub-menu-item";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer nofollow";
+    link.dataset.whatsappMenuLink = "";
+    link.dataset.numero = vendedor.whatsapp;
+    link.setAttribute("role", "menuitem");
+    link.addEventListener("click", () => menu && (menu.hidden = true));
+
+    const nombre = document.createElement("span");
+    nombre.className = "contact-hub-menu-nombre";
+    nombre.textContent = vendedor.nombre;
+
+    const numero = document.createElement("span");
+    numero.className = "contact-hub-menu-numero";
+    numero.textContent = `+${vendedor.whatsapp}`;
+
+    link.appendChild(nombre);
+    link.appendChild(numero);
+
+    if (atributoScope) {
+      [link, nombre, numero].forEach((el) => el.setAttribute(atributoScope, ""));
+    }
+
+    return link;
+  }
+
+  function cargarVendedoresRegionales(): void {
+    const vendedoresApiUrl = contactHub?.dataset.vendedoresApiUrl;
+    if (!vendedoresApiUrl || !menuRegionales) return;
+
+    fetch("/api/pais.json", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((datosPais: { codigo_pais?: string | null }) => {
+        const paisIso = (datosPais.codigo_pais || "").toUpperCase();
+        if (!/^[A-Z]{2}$/.test(paisIso)) return null;
+        return fetch(`${vendedoresApiUrl}?pais_iso=${paisIso}`).then((res) => res.json());
+      })
+      .then((datosVendedores: { data?: VendedorPublico[] } | null) => {
+        const vendedores = datosVendedores?.data ?? [];
+        vendedores.forEach((vendedor) => {
+          if (!menuRegionales) return;
+          menuRegionales.appendChild(crearItemMenuVendedor(vendedor));
+          // Recién agregado: aplicarle el mismo mensaje que ya tiene el link
+          // de Wilton, por si la selección global (marca/modelo) ya se
+          // resolvió antes de que este fetch termine.
+          const actual = leerSeleccionGlobal();
+          if (actual) aplicarSeleccionAWhatsApp(actual);
+        });
+      })
+      .catch(() => {
+        // sin país detectado o Núcleo inalcanzable: el menú se queda solo con Wilton
+      });
+  }
+
+  cargarVendedoresRegionales();
 
   // Selección global del visitante (marca/modelo/error): misma clave de
   // localStorage que ya usan ProcedimientoResumenDetalle.astro (selector de
@@ -227,12 +363,18 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   // (marca+modelo sin el error en el saludo) — duplicada a propósito, porque
   // ese script solo corre en páginas con el selector de Home/Cómo Funciona,
   // y este bloque necesita funcionar en cualquier página.
+  //
+  // Actualiza TODOS los links dentro de cada [data-whatsapp-dinamico], no
+  // solo uno: el botón flotante ahora puede tener varios (Wilton + vendedores
+  // regionales, ver el menú más arriba), mientras que otros usos de
+  // data-whatsapp-dinamico en el sitio (WhatsAppCTA.astro) siguen teniendo
+  // uno solo — data-numero en el propio link gana sobre el número del wrap,
+  // así cada entrada del menú manda al número que le corresponde.
   function aplicarSeleccionAWhatsApp(datos: SeleccionGlobal): void {
     const marcaLabel = LABEL_POR_MARCA[datos.marca] ?? "";
     document.querySelectorAll<HTMLElement>("[data-whatsapp-dinamico]").forEach((wrap) => {
-      const link = wrap.querySelector<HTMLAnchorElement>("a[data-source-id]");
-      if (!link) return;
-      const numero = wrap.dataset.whatsappNumber ?? "";
+      const links = wrap.querySelectorAll<HTMLAnchorElement>("a[data-source-id], a[data-whatsapp-menu-link]");
+      if (!links.length) return;
       const urlOrigen = wrap.dataset.urlOrigen ?? "";
       const plantilla = marcaLabel ? (wrap.dataset.msgWithoutError ?? "") : (wrap.dataset.msgGeneric ?? "");
       const mensaje = plantilla
@@ -242,7 +384,11 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
         .replaceAll("{url}", urlOrigen)
         .replace(/[ \t]{2,}/g, " ")
         .replace(/[ \t]+([,.;:])/g, "$1");
-      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+      links.forEach((link) => {
+        const numero = link.dataset.numero || wrap.dataset.whatsappNumber || "";
+        if (!numero) return;
+        link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+      });
 
       const bubbleEl = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble]");
       const bubbleModeloTpl = wrap.dataset.bubbleModelo;
@@ -401,11 +547,15 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     justify-content: center;
     width: 3.5rem;
     height: 3.5rem;
+    border: none;
+    padding: 0;
+    background: transparent;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: var(--shadow-floating);
     animation: contact-hub-pulso 2.4s ease-in-out infinite;
     transition: transform 0.15s ease;
+    cursor: pointer;
   }
 
   .contact-hub-fab:hover {
@@ -462,6 +612,56 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     right: 1.15rem;
     border: 0.4rem solid transparent;
     border-top-color: var(--color-bg-card);
+  }
+
+  /* Menú que abre el FAB al hacer clic: Wilton (fijo) + vendedores
+     regionales agregados por JS con la misma clase .contact-hub-menu-item.
+     [hidden] pierde contra el display:grid de abajo a igual especificidad
+     (la regla del autor gana sobre la del user-agent) — hace falta este
+     override explícito para que hidden realmente oculte el menú. */
+  .contact-hub-menu[hidden] {
+    display: none;
+  }
+
+  .contact-hub-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.65rem);
+    display: grid;
+    gap: 0.4rem;
+    width: max-content;
+    min-width: 13rem;
+    max-width: calc(100vw - 2 * var(--space-sm) - 1rem);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-floating);
+    animation: contact-hub-bubble-in 0.2s ease-out;
+  }
+
+  .contact-hub-menu-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-bg-muted);
+  }
+
+  .contact-hub-menu-item:hover {
+    background: var(--color-primary-light);
+  }
+
+  .contact-hub-menu-nombre {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .contact-hub-menu-numero {
+    font-size: 0.8rem;
+    color: var(--color-text-subtle);
   }
 
   @keyframes contact-hub-bubble-in {

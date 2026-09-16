@@ -845,9 +845,13 @@ const subpasosConexion = [
     // y no hace nada.
     const actualizarWhatsAppCta = () => {
       document.querySelectorAll<HTMLElement>("[data-whatsapp-dinamico]").forEach((wrap) => {
-        const link = wrap.querySelector<HTMLAnchorElement>("a[data-source-id]");
-        if (!link) return;
-        const numero = wrap.dataset.whatsappNumber ?? "";
+        // querySelectorAll (no solo el primero): el botón flotante
+        // (ContactHub.astro) puede traer varios links en su menú — Wilton +
+        // vendedores regionales agregados por su propio script — y todos
+        // deben quedar con el mismo mensaje. data-numero en el link (si lo
+        // tiene) manda sobre el número del wrap, así cada uno va al suyo.
+        const links = wrap.querySelectorAll<HTMLAnchorElement>("a[data-source-id], a[data-whatsapp-menu-link]");
+        if (!links.length) return;
         const urlOrigen = wrap.dataset.urlOrigen ?? "";
         // Alcanza con tener la marca para dejar de usar el saludo generico —
         // no se espera a que tambien haya modelo, para que elegir marca ya
@@ -866,7 +870,11 @@ const subpasosConexion = [
           .replaceAll("{url}", urlOrigen)
           .replace(/[ \t]{2,}/g, " ")
           .replace(/[ \t]+([,.;:])/g, "$1");
-        link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+        links.forEach((link) => {
+          const numero = link.dataset.numero || wrap.dataset.whatsappNumber || "";
+          if (!numero) return;
+          link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+        });
 
         // Burbuja de notificación del botón flotante (ContactHub.astro): si
         // este wrap trae plantillas de burbuja, la actualiza con la misma
