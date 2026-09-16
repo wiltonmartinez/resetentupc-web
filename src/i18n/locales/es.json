@@ -906,7 +906,7 @@
     "errorDisclaimerEpson": "El reset solo quita error Almohadillas/E-11. No quita problemas de calidad de impresión o errores físicos.",
     "errorDisclaimerCanon": "El reset solo quita error 5b00/1700. No quita problemas de calidad de impresión o errores físicos.",
     "errorDisclaimerEpsonSc0014bd": "El error 0014bd se quita en el orden Limpieza 100% a las piezas y luego Reset. No quita problemas de calidad de impresión o errores físicos.",
-    "errorDisclaimerEpsonScOtro": "El reset solo quita errores reseteables. No quita problemas de calidad de impresión o errores físicos.",
+    "errorDisclaimerEpsonScOtro": "El reset solo quita errores reseteables. No quita problemas de calidad de impresión o errores físicos. Ni Caja de mantenimiento, Ni error de cartuchos.",
     "errorOtroLabel": "Otro / no lo veo en la lista",
     "errorOtroPlaceholder": "Describe brevemente el error o mensaje que muestra",
     "familiaPlaceholder": "Selecciona una familia",
