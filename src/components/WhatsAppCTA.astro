@@ -1,7 +1,24 @@
 ---
+/**
+ * Botón "Escribir por WhatsApp" reutilizable en todo el sitio (Home, Cómo
+ * Funciona, páginas de modelo, Precios, Prueba Social...). Igual que el
+ * botón flotante (ContactHub.astro), al hacer clic abre un menú con los
+ * vendedores EN HORARIO ahora mismo (nombre, rol, foto, ONLINE + tiempo
+ * restante, bandera del país) en vez de ir directo a un número fijo — todo
+ * sale de /vendedores/ en Núcleo, sin nadie hardcodeado acá tampoco. El
+ * mensaje de WhatsApp (marca/modelo/error) es el mismo para cualquier
+ * vendedor que el visitante elija: son las mismas props de siempre, solo
+ * cambia el destinatario según a quién le escriba.
+ *
+ * Puede haber varias instancias en una misma página (ej. ModeloPage tiene
+ * hasta 4) — el <script> de abajo se deduplica solo (Astro no repite un
+ * <script> idéntico aunque el componente se use varias veces), así que
+ * inicializa TODAS las instancias con querySelectorAll en vez de asumir una
+ * sola, y cada una guarda su propio estado (abierta/cerrada) sin IDs.
+ */
 import { Image } from "astro:assets";
-import { buildWhatsAppMessage, buildWhatsAppLink } from "../i18n/utils";
-import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../config/site";
+import { buildWhatsAppMessage } from "../i18n/utils";
+import { NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../config/site";
 import whatsappLogo from "../assets/whatsapp/3.png";
 
 interface Props {
@@ -22,31 +39,215 @@ interface Props {
 const { marca, modelo, error, sourceId, urlPath, locale, label, destacado = false, elevar = false } = Astro.props;
 
 const urlOrigen = `${SITE_URL}${urlPath}`;
-const message = buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen });
-const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
+const mensaje = buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen });
+const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
 ---
 
-<a
-  class:list={["whatsapp-cta", { "whatsapp-cta-destacado": destacado, "whatsapp-cta-elevar": elevar }]}
-  href={href}
-  data-source-id={sourceId}
-  data-sound="confirm"
-  target="_blank"
-  rel="noopener noreferrer nofollow"
->
-  {elevar && <Image src={whatsappLogo} alt="" width={72} height={72} class="whatsapp-cta-icono" />}
-  {label}
-</a>
+<span class="whatsapp-cta-wrap" data-whatsapp-cta data-vendedores-api-url={vendedoresApiUrl} data-mensaje={mensaje} data-source-id={sourceId}>
+  <button
+    type="button"
+    class:list={["whatsapp-cta", { "whatsapp-cta-destacado": destacado, "whatsapp-cta-elevar": elevar }]}
+    data-whatsapp-cta-boton
+    data-sound="select"
+    aria-haspopup="menu"
+    aria-expanded="false"
+  >
+    {elevar && <Image src={whatsappLogo} alt="" width={72} height={72} class="whatsapp-cta-icono" />}
+    {label}
+  </button>
+
+  <div class="whatsapp-cta-menu" data-whatsapp-cta-menu role="menu" hidden>
+    <div data-whatsapp-cta-menu-items></div>
+    <p class="whatsapp-cta-menu-vacio" data-whatsapp-cta-menu-vacio hidden>
+      En este momento no hay nadie disponible. Probá de nuevo en un rato.
+    </p>
+  </div>
+</span>
+
+<script>
+  interface VendedorPublico {
+    nombre: string;
+    whatsapp: string;
+    foto?: string;
+    roles?: string[];
+    pais_iso?: string;
+    en_linea_restante?: string;
+  }
+
+  function banderaDesdeIso(iso?: string): string {
+    if (!iso) return "";
+    if (iso.toUpperCase() === "ZZ") return "🌐";
+    if (!/^[A-Za-z]{2}$/.test(iso)) return "";
+    const codigos = iso
+      .toUpperCase()
+      .split("")
+      .map((letra) => 0x1f1e6 + (letra.charCodeAt(0) - 65));
+    return String.fromCodePoint(codigos[0], codigos[1]);
+  }
+
+  // Astro "scopea" el CSS de este componente agregando un atributo
+  // data-astro-cid-XXXXX a cada elemento de su template — un nodo armado a
+  // mano con createElement() no lo trae, así que las clases .whatsapp-cta-*
+  // no le aplicarían (mismo problema ya resuelto en ContactHub.astro). Se
+  // copia el atributo desde el wrapper de CADA instancia (siempre
+  // renderizado por Astro), no uno global, porque puede haber varias
+  // instancias de este componente en la misma página.
+  function atributoScopeDe(el: HTMLElement): string | undefined {
+    return Array.from(el.attributes).find((atributo) => atributo.name.startsWith("data-astro-cid-"))?.name;
+  }
+
+  function crearItemMenu(vendedor: VendedorPublico, mensaje: string, atributoScope: string | undefined, cerrar: () => void): HTMLAnchorElement {
+    const link = document.createElement("a");
+    link.className = "whatsapp-cta-menu-item";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer nofollow";
+    link.setAttribute("role", "menuitem");
+    link.href = `https://wa.me/${vendedor.whatsapp}?text=${encodeURIComponent(mensaje)}`;
+    link.addEventListener("click", cerrar);
+
+    const avatar = document.createElement("span");
+    avatar.className = "whatsapp-cta-menu-avatar";
+    let avatarContenido: HTMLImageElement | HTMLSpanElement;
+    if (vendedor.foto) {
+      avatarContenido = document.createElement("img");
+      avatarContenido.className = "whatsapp-cta-menu-avatar-img";
+      avatarContenido.src = vendedor.foto;
+      avatarContenido.alt = "";
+    } else {
+      avatarContenido = document.createElement("span");
+      avatarContenido.className = "whatsapp-cta-menu-avatar-inicial";
+      avatarContenido.textContent = vendedor.nombre.charAt(0);
+    }
+    avatar.appendChild(avatarContenido);
+
+    const info = document.createElement("span");
+    info.className = "whatsapp-cta-menu-info";
+
+    const nombre = document.createElement("span");
+    nombre.className = "whatsapp-cta-menu-nombre";
+    nombre.textContent = vendedor.nombre;
+    info.appendChild(nombre);
+
+    const elementosOpcionales: HTMLElement[] = [];
+    if (vendedor.roles && vendedor.roles.length) {
+      const rol = document.createElement("span");
+      rol.className = "whatsapp-cta-menu-rol";
+      rol.textContent = vendedor.roles.join(", ");
+      info.appendChild(rol);
+      elementosOpcionales.push(rol);
+    }
+
+    // El endpoint solo devuelve vendedores EN HORARIO ahora mismo (ver
+    // listar_vendedores_por_pais_db() del lado de Núcleo) — todo lo que se
+    // renderiza acá está, por construcción, disponible ahora.
+    const online = document.createElement("span");
+    online.className = "whatsapp-cta-menu-online";
+    online.textContent = vendedor.en_linea_restante ? `ONLINE · ${vendedor.en_linea_restante}` : "ONLINE";
+    info.appendChild(online);
+
+    const numero = document.createElement("span");
+    numero.className = "whatsapp-cta-menu-numero";
+    const bandera = banderaDesdeIso(vendedor.pais_iso);
+    numero.textContent = bandera ? `${bandera} +${vendedor.whatsapp}` : `+${vendedor.whatsapp}`;
+    info.appendChild(numero);
+
+    link.appendChild(avatar);
+    link.appendChild(info);
+
+    if (atributoScope) {
+      [link, avatar, avatarContenido, info, nombre, online, numero, ...elementosOpcionales].forEach((el) => el.setAttribute(atributoScope, ""));
+    }
+
+    return link;
+  }
+
+  function inicializarWhatsAppCta(wrap: HTMLElement): void {
+    const boton = wrap.querySelector<HTMLButtonElement>("[data-whatsapp-cta-boton]");
+    const menu = wrap.querySelector<HTMLElement>("[data-whatsapp-cta-menu]");
+    const items = wrap.querySelector<HTMLElement>("[data-whatsapp-cta-menu-items]");
+    const vacio = wrap.querySelector<HTMLElement>("[data-whatsapp-cta-menu-vacio]");
+    const vendedoresApiUrl = wrap.dataset.vendedoresApiUrl;
+    const mensaje = wrap.dataset.mensaje ?? "";
+    if (!boton || !menu || !items || !vendedoresApiUrl) return;
+
+    const atributoScope = atributoScopeDe(wrap);
+    let cargado = false;
+
+    const cerrarMenu = () => {
+      menu.hidden = true;
+      boton.setAttribute("aria-expanded", "false");
+    };
+    const abrirMenu = () => {
+      // Cierra cualquier otro menú de WhatsAppCTA abierto en la página —
+      // puede haber varias instancias (ej. ModeloPage tiene hasta 4).
+      document.querySelectorAll<HTMLElement>("[data-whatsapp-cta-menu]").forEach((otro) => {
+        if (otro !== menu) otro.hidden = true;
+      });
+      menu.hidden = false;
+      boton.setAttribute("aria-expanded", "true");
+      if (!cargado) {
+        cargado = true;
+        cargarVendedores();
+      }
+    };
+
+    function cargarVendedores(): void {
+      fetch("/api/pais.json", { cache: "no-store" })
+        .then((res) => res.json())
+        .then((datosPais: { codigo_pais?: string | null }) => {
+          const paisIso = (datosPais.codigo_pais || "").toUpperCase();
+          if (!/^[A-Z]{2}$/.test(paisIso)) return null;
+          return fetch(`${vendedoresApiUrl}?pais_iso=${paisIso}`).then((res) => res.json());
+        })
+        .then((datosVendedores: { data?: VendedorPublico[] } | null) => {
+          const vendedores = datosVendedores?.data ?? [];
+          if (!vendedores.length) {
+            if (vacio) vacio.hidden = false;
+            return;
+          }
+          vendedores.forEach((vendedor) => {
+            if (!items) return;
+            items.appendChild(crearItemMenu(vendedor, mensaje, atributoScope, cerrarMenu));
+          });
+        })
+        .catch(() => {
+          if (vacio) vacio.hidden = false;
+        });
+    }
+
+    boton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (menu.hidden) abrirMenu();
+      else cerrarMenu();
+    });
+    document.addEventListener("click", (event) => {
+      if (!menu.hidden && !wrap.contains(event.target as Node)) cerrarMenu();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") cerrarMenu();
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-whatsapp-cta]").forEach(inicializarWhatsAppCta);
+</script>
 
 <style>
+  .whatsapp-cta-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
   .whatsapp-cta {
     display: inline-block;
     background: #25d366;
     color: #062f1a;
     font-weight: 600;
     padding: 0.75rem 1.25rem;
+    border: none;
     border-radius: 999px;
     text-decoration: none;
+    font: inherit;
+    cursor: pointer;
   }
   .whatsapp-cta:hover {
     background: #1fb958;
@@ -111,5 +312,128 @@ const href = buildWhatsAppLink(WHATSAPP_NUMBER, message);
     .whatsapp-cta-destacado {
       animation: none;
     }
+  }
+
+  /* Menú del botón: se abre DEBAJO (a diferencia del FAB flotante, que
+     siempre está pegado abajo de la pantalla y abre hacia arriba) — este
+     botón puede estar en cualquier parte de la página. */
+  .whatsapp-cta-menu[hidden] {
+    display: none;
+  }
+
+  .whatsapp-cta-menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 0.5rem);
+    z-index: 20;
+    display: grid;
+    gap: 0.4rem;
+    width: max-content;
+    min-width: 15rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-floating);
+    animation: whatsapp-cta-menu-in 0.15s ease-out;
+  }
+
+  @keyframes whatsapp-cta-menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.3rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .whatsapp-cta-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-bg-muted);
+  }
+
+  .whatsapp-cta-menu-item:hover {
+    background: var(--color-primary-light);
+  }
+
+  .whatsapp-cta-menu-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-primary-light);
+  }
+
+  .whatsapp-cta-menu-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .whatsapp-cta-menu-avatar-inicial {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-primary-dark);
+  }
+
+  .whatsapp-cta-menu-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .whatsapp-cta-menu-nombre {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .whatsapp-cta-menu-rol {
+    font-size: 0.72rem;
+    color: var(--color-text-subtle);
+  }
+
+  .whatsapp-cta-menu-online {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #1a9f4a;
+  }
+
+  .whatsapp-cta-menu-online::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: #22c55e;
+  }
+
+  .whatsapp-cta-menu-numero {
+    font-size: 0.8rem;
+    color: var(--color-text-subtle);
+  }
+
+  .whatsapp-cta-menu-vacio {
+    margin: 0;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.82rem;
+    color: var(--color-text-subtle);
+    text-align: center;
   }
 </style>
