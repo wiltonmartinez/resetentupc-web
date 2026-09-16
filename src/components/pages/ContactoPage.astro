@@ -300,10 +300,11 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     // El endpoint solo devuelve vendedores que están EN HORARIO ahora mismo
     // (ver listar_vendedores_por_pais_db() del lado de Núcleo) — por eso acá
     // siempre se marca ONLINE, nunca "desconectado": quien no está en
-    // horario directamente no llega a esta lista.
+    // horario directamente no llega a esta lista. en_linea_restante ya viene
+    // formateado ("24 horas" o "1h 30min") o vacío si no tiene horario cargado.
     var online = document.createElement("span");
     online.className = "contact-card-online";
-    online.textContent = "ONLINE";
+    online.textContent = vendedor.en_linea_restante ? "ONLINE · " + vendedor.en_linea_restante : "ONLINE";
 
     encabezado.appendChild(h3);
     encabezado.appendChild(online);

@@ -230,6 +230,27 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     whatsapp: string;
     foto?: string;
     roles?: string[];
+    pais_iso?: string;
+    en_linea_restante?: string;
+  }
+
+  /**
+   * Bandera emoji a partir de un ISO 3166-1 alpha-2 (ej. "MX" -> 🇲🇽),
+   * combinando dos "regional indicator symbols" de Unicode — String.fromCodePoint
+   * arma el par de sustitutos (surrogate pair) solo, a diferencia de PHP del
+   * lado de Núcleo, que no tiene mbstring y arma el UTF-8 a mano por bytes
+   * (ver bandera_pais_iso_vendedor() en vendedores/index.php). 'ZZ' (vendedor
+   * "Global") no es un país real, así que cae en 🌐 en vez de un glifo sin sentido.
+   */
+  function banderaDesdeIso(iso?: string): string {
+    if (!iso) return "";
+    if (iso.toUpperCase() === "ZZ") return "🌐";
+    if (!/^[A-Za-z]{2}$/.test(iso)) return "";
+    const codigos = iso
+      .toUpperCase()
+      .split("")
+      .map((letra) => 0x1f1e6 + (letra.charCodeAt(0) - 65));
+    return String.fromCodePoint(codigos[0], codigos[1]);
   }
 
   // Astro "scopea" el CSS de este componente agregando un atributo
@@ -277,10 +298,12 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     // El endpoint solo devuelve vendedores EN HORARIO ahora mismo (ver
     // listar_vendedores_por_pais_db() del lado de Núcleo) — quien no está en
     // horario directamente no llega a esta lista, así que todo lo que se
-    // renderiza acá está, por construcción, disponible ahora.
+    // renderiza acá está, por construcción, disponible ahora. en_linea_restante
+    // ya viene formateado ("24 horas" o "1h 30min") o vacío si el vendedor
+    // no tiene horario cargado (no hay "hasta" del cual calcularlo).
     const online = document.createElement("span");
     online.className = "contact-hub-menu-online";
-    online.textContent = "ONLINE";
+    online.textContent = vendedor.en_linea_restante ? `ONLINE · ${vendedor.en_linea_restante}` : "ONLINE";
 
     const elementosOpcionales: HTMLElement[] = [];
     let rol: HTMLElement | null = null;
@@ -293,7 +316,8 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
     const numero = document.createElement("span");
     numero.className = "contact-hub-menu-numero";
-    numero.textContent = `+${vendedor.whatsapp}`;
+    const bandera = banderaDesdeIso(vendedor.pais_iso);
+    numero.textContent = bandera ? `${bandera} +${vendedor.whatsapp}` : `+${vendedor.whatsapp}`;
 
     info.appendChild(nombre);
     if (rol) info.appendChild(rol);
