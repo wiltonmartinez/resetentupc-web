@@ -56,12 +56,23 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
     {label}
   </button>
 
-  <div class="whatsapp-cta-menu" data-whatsapp-cta-menu role="menu" hidden>
-    <div data-whatsapp-cta-menu-items></div>
-    <p class="whatsapp-cta-menu-vacio" data-whatsapp-cta-menu-vacio hidden>
+  <!--
+    TODO el contenido de acá adentro tiene que ser "phrasing content" (span,
+    a, button, img — nunca div/p): este componente entero puede terminar
+    dentro de un <p> en la página que lo usa (ej. ModeloPage.astro,
+    ".opcion-secundaria"), y un <div> ahí adentro hace que el navegador
+    cierre el <p> (y este mismo <span>) ANTES de insertarlo — el parser de
+    HTML5 no permite contenido de bloque dentro de <p>/<span>. El resultado
+    era el menú apareciendo como HERMANO del wrapper en vez de adentro, así
+    que wrap.querySelector(...) nunca lo encontraba. display:grid/flex por
+    CSS más abajo sigue funcionando igual, sin importar el tag.
+  -->
+  <span class="whatsapp-cta-menu" data-whatsapp-cta-menu role="menu" hidden>
+    <span data-whatsapp-cta-menu-items></span>
+    <span class="whatsapp-cta-menu-vacio" data-whatsapp-cta-menu-vacio hidden>
       En este momento no hay nadie disponible. Probá de nuevo en un rato.
-    </p>
-  </div>
+    </span>
+  </span>
 </span>
 
 <script>
