@@ -308,9 +308,12 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
     encabezado.appendChild(h3);
     encabezado.appendChild(online);
 
+    // Roles reales cargados en /vendedores/ (Núcleo) — si el vendedor
+    // todavía no tiene ninguno marcado, se usa el texto genérico como
+    // respaldo en vez de dejar la línea vacía.
     var rol = document.createElement("p");
     rol.className = "contact-card-rol";
-    rol.textContent = rolVendedorRegional;
+    rol.textContent = vendedor.roles && vendedor.roles.length ? vendedor.roles.join(", ") : rolVendedorRegional;
 
     var link = document.createElement("a");
     link.className = "contact-card-whatsapp";
