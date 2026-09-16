@@ -11,7 +11,7 @@
  */
 import { Image, getImage } from "astro:assets";
 import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../i18n/utils";
-import { WHATSAPP_NUMBER, NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../config/site";
+import { WHATSAPP_NUMBER, WHATSAPP_FOTO_WILTON, NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../config/site";
 import whatsappLogo from "../assets/whatsapp/1.png";
 import whatsappNotif from "../assets/whatsapp/2.png";
 
@@ -35,6 +35,7 @@ const mensajeWhatsapp = buildWhatsAppMessage({ locale, marca: marcaDefault, mode
 // después si detecta marca/modelo.
 const whatsappHrefWilton = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
 const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
+const inicialWilton = "Wilton Martínez".charAt(0);
 
 // En una página de modelo (marcaDefault+modeloDefault ya conocidos, ej.
 // /reset/epson/l3210/) la burbuja de notificación es específica al modelo
@@ -83,8 +84,17 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
         data-analytics-event="contact_hub_whatsapp_wilton"
         role="menuitem"
       >
-        <span class="contact-hub-menu-nombre">Wilton Martínez</span>
-        <span class="contact-hub-menu-numero">+{WHATSAPP_NUMBER}</span>
+        <span class="contact-hub-menu-avatar">
+          {WHATSAPP_FOTO_WILTON ? (
+            <img src={WHATSAPP_FOTO_WILTON} alt="" class="contact-hub-menu-avatar-img" />
+          ) : (
+            <span class="contact-hub-menu-avatar-inicial">{inicialWilton}</span>
+          )}
+        </span>
+        <span class="contact-hub-menu-info">
+          <span class="contact-hub-menu-nombre">Wilton Martínez</span>
+          <span class="contact-hub-menu-numero">+{WHATSAPP_NUMBER}</span>
+        </span>
       </a>
       <div data-whatsapp-menu-regionales></div>
     </div>
@@ -242,6 +252,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   interface VendedorPublico {
     nombre: string;
     whatsapp: string;
+    foto?: string;
   }
 
   // Astro "scopea" el CSS de este componente agregando un atributo
@@ -262,6 +273,24 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     link.setAttribute("role", "menuitem");
     link.addEventListener("click", () => menu && (menu.hidden = true));
 
+    const avatar = document.createElement("span");
+    avatar.className = "contact-hub-menu-avatar";
+    let avatarContenido: HTMLImageElement | HTMLSpanElement;
+    if (vendedor.foto) {
+      avatarContenido = document.createElement("img");
+      avatarContenido.className = "contact-hub-menu-avatar-img";
+      avatarContenido.src = vendedor.foto;
+      avatarContenido.alt = "";
+    } else {
+      avatarContenido = document.createElement("span");
+      avatarContenido.className = "contact-hub-menu-avatar-inicial";
+      avatarContenido.textContent = vendedor.nombre.charAt(0);
+    }
+    avatar.appendChild(avatarContenido);
+
+    const info = document.createElement("span");
+    info.className = "contact-hub-menu-info";
+
     const nombre = document.createElement("span");
     nombre.className = "contact-hub-menu-nombre";
     nombre.textContent = vendedor.nombre;
@@ -270,11 +299,13 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     numero.className = "contact-hub-menu-numero";
     numero.textContent = `+${vendedor.whatsapp}`;
 
-    link.appendChild(nombre);
-    link.appendChild(numero);
+    info.appendChild(nombre);
+    info.appendChild(numero);
+    link.appendChild(avatar);
+    link.appendChild(info);
 
     if (atributoScope) {
-      [link, nombre, numero].forEach((el) => el.setAttribute(atributoScope, ""));
+      [link, avatar, avatarContenido, info, nombre, numero].forEach((el) => el.setAttribute(atributoScope, ""));
     }
 
     return link;
@@ -641,8 +672,8 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
   .contact-hub-menu-item {
     display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
+    align-items: center;
+    gap: 0.6rem;
     padding: 0.5rem 0.7rem;
     border-radius: var(--radius-sm);
     text-decoration: none;
@@ -652,6 +683,40 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
   .contact-hub-menu-item:hover {
     background: var(--color-primary-light);
+  }
+
+  /* Avatar circular a la izquierda: foto real (vendedores regionales,
+     cargada desde Núcleo) o, sin foto (Wilton por defecto, o un vendedor
+     sin foto aún cargada), un círculo con su inicial — nunca un ícono roto. */
+  .contact-hub-menu-avatar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-primary-light);
+  }
+
+  .contact-hub-menu-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .contact-hub-menu-avatar-inicial {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-primary-dark);
+  }
+
+  .contact-hub-menu-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
   }
 
   .contact-hub-menu-nombre {

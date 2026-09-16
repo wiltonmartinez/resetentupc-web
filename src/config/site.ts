@@ -3,6 +3,16 @@ export const SITE_URL = "https://resetenlinea.com";
 export const WHATSAPP_NUMBER = "573016928346";
 
 /**
+ * Foto de Wilton para el avatar circular del menú del botón flotante de
+ * WhatsApp (ContactHub.astro) — a diferencia de los vendedores regionales
+ * (cuya foto viene de Núcleo, ver /vendedores/), Wilton está hardcodeado en
+ * el propio sitio, así que su foto también vive acá. URL de Imgur, ej.
+ * "https://i.imgur.com/XXXXXXX.jpg". Vacío = se muestra un avatar con su
+ * inicial en vez de romper el layout con una imagen rota.
+ */
+export const WHATSAPP_FOTO_WILTON = "";
+
+/**
  * Endpoint de envío de correo del formulario de contacto (AtajosWhatsApp/send-email.php,
  * en otro servidor). CONTACT_FORM_SECRET debe ser IDÉNTICO a $SECRET en ese archivo PHP.
  *
