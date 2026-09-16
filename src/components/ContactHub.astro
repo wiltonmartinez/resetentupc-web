@@ -156,6 +156,20 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 <script>
   import { trackEvent } from "../lib/analytics.js";
   import { playFeedback } from "../lib/sound-manager.js";
+  // Banderas como imagen real, no emoji: Windows/Chrome no renderiza los
+  // "regional indicator symbols" de Unicode como bandera — muestra el
+  // código ISO en texto plano (ej. "CO"), que es justo lo que se quería
+  // evitar. Los .png sí se ven igual en cualquier sistema. Import directo
+  // (no getImage(), que es para el componente <Image> del lado servidor):
+  // este <script> lo procesa Vite igual, y una imagen importada en JS/TS
+  // resuelve sola a la URL final.
+  import banderaCL from "../assets/flag/CHILE.png";
+  import banderaCO from "../assets/flag/COLOMBIA.png";
+  import banderaEC from "../assets/flag/ECUADOR.png";
+  import banderaGT from "../assets/flag/GUATEMALA.png";
+  import banderaMX from "../assets/flag/MEXICO.png";
+  import banderaPE from "../assets/flag/PERU.png";
+  import banderaGlobal from "../assets/flag/GLOBAL.png";
 
   document.querySelectorAll<HTMLElement>(".contact-hub [data-analytics-event]").forEach((el) => {
     el.addEventListener("click", () => {
@@ -234,23 +248,25 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     en_linea_restante?: string;
   }
 
+  const BANDERAS_POR_ISO: Record<string, ImageMetadata> = {
+    CL: banderaCL,
+    CO: banderaCO,
+    EC: banderaEC,
+    GT: banderaGT,
+    MX: banderaMX,
+    PE: banderaPE,
+    ZZ: banderaGlobal,
+  };
+
   /**
-   * Bandera emoji a partir de un ISO 3166-1 alpha-2 (ej. "MX" -> 🇲🇽),
-   * combinando dos "regional indicator symbols" de Unicode — String.fromCodePoint
-   * arma el par de sustitutos (surrogate pair) solo, a diferencia de PHP del
-   * lado de Núcleo, que no tiene mbstring y arma el UTF-8 a mano por bytes
-   * (ver bandera_pais_iso_vendedor() en vendedores/index.php). 'ZZ' (vendedor
-   * "Global") no es un país real, así que cae en 🌐 en vez de un glifo sin sentido.
+   * URL de la imagen de bandera para un ISO 3166-1 alpha-2 (o 'ZZ' para
+   * "Global") — null si no hay imagen para ese país (no todos los países
+   * del catálogo de vendedores tienen bandera cargada en src/assets/flag/),
+   * para que el llamador simplemente no muestre imagen en vez de romper.
    */
-  function banderaDesdeIso(iso?: string): string {
-    if (!iso) return "";
-    if (iso.toUpperCase() === "ZZ") return "🌐";
-    if (!/^[A-Za-z]{2}$/.test(iso)) return "";
-    const codigos = iso
-      .toUpperCase()
-      .split("")
-      .map((letra) => 0x1f1e6 + (letra.charCodeAt(0) - 65));
-    return String.fromCodePoint(codigos[0], codigos[1]);
+  function banderaUrlDesdeIso(iso?: string): string | null {
+    if (!iso) return null;
+    return BANDERAS_POR_ISO[iso.toUpperCase()]?.src ?? null;
   }
 
   // Astro "scopea" el CSS de este componente agregando un atributo
@@ -316,8 +332,17 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
     const numero = document.createElement("span");
     numero.className = "contact-hub-menu-numero";
-    const bandera = banderaDesdeIso(vendedor.pais_iso);
-    numero.textContent = bandera ? `${bandera} +${vendedor.whatsapp}` : `+${vendedor.whatsapp}`;
+    const banderaUrl = banderaUrlDesdeIso(vendedor.pais_iso);
+    let banderaImg: HTMLImageElement | null = null;
+    if (banderaUrl) {
+      banderaImg = document.createElement("img");
+      banderaImg.className = "contact-hub-menu-bandera";
+      banderaImg.src = banderaUrl;
+      banderaImg.alt = "";
+      numero.appendChild(banderaImg);
+      elementosOpcionales.push(banderaImg);
+    }
+    numero.appendChild(document.createTextNode(`+${vendedor.whatsapp}`));
 
     info.appendChild(nombre);
     if (rol) info.appendChild(rol);
@@ -778,8 +803,21 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   }
 
   .contact-hub-menu-numero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 0.8rem;
     color: var(--color-text-subtle);
+  }
+
+  /* Imagen real de bandera, no emoji — ver comentario en el <script> sobre
+     por qué (Windows/Chrome no renderiza los emoji de bandera). */
+  .contact-hub-menu-bandera {
+    width: 1rem;
+    height: 0.72rem;
+    object-fit: cover;
+    border-radius: 0.15rem;
+    flex-shrink: 0;
   }
 
   /* Punto verde + "ONLINE": el endpoint ya filtra por horario de atención
