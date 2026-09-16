@@ -878,13 +878,17 @@ const subpasosConexion = [
 
         // Burbuja de notificación del botón flotante (ContactHub.astro): si
         // este wrap trae plantillas de burbuja, la actualiza con la misma
-        // marca/modelo elegidos arriba — mismo criterio que el mensaje.
-        const bubble = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble]");
+        // marca/modelo elegidos arriba — mismo criterio que el mensaje. El
+        // texto va en un <span data-whatsapp-bubble-texto> propio, no
+        // directo en el <p data-whatsapp-bubble> — ese <p> también tiene el
+        // nombre fijo de Wilton, así que escribirle con .textContent lo
+        // borraría (ver ContactHub.astro).
+        const bubbleTexto = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble-texto]");
         const bubbleModeloTpl = wrap.dataset.bubbleModelo;
         const bubbleGenericoTpl = wrap.dataset.bubbleGenerico;
-        if (bubble && (bubbleModeloTpl || bubbleGenericoTpl)) {
+        if (bubbleTexto && (bubbleModeloTpl || bubbleGenericoTpl)) {
           const bubbleTemplate = marcaActivaLabel && modeloActivo ? (bubbleModeloTpl ?? "") : (bubbleGenericoTpl ?? "");
-          bubble.textContent = bubbleTemplate.replaceAll("{marca}", marcaActivaLabel).replaceAll("{modelo}", modeloActivo);
+          bubbleTexto.textContent = bubbleTemplate.replaceAll("{marca}", marcaActivaLabel).replaceAll("{modelo}", modeloActivo);
         }
       });
     };

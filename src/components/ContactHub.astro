@@ -63,7 +63,8 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     data-vendedores-api-url={vendedoresApiUrl}
   >
     <p class="contact-hub-bubble" data-whatsapp-bubble hidden>
-      {bubbleMensaje}
+      <strong class="contact-hub-bubble-autor">Wilton Martínez</strong>
+      <span data-whatsapp-bubble-texto>{bubbleMensaje}</span>
     </p>
 
     <div class="contact-hub-menu" data-whatsapp-menu role="menu" hidden>
@@ -228,6 +229,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     nombre: string;
     whatsapp: string;
     foto?: string;
+    roles?: string[];
   }
 
   // Astro "scopea" el CSS de este componente agregando un atributo
@@ -280,18 +282,28 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     online.className = "contact-hub-menu-online";
     online.textContent = "ONLINE";
 
+    const elementosOpcionales: HTMLElement[] = [];
+    let rol: HTMLElement | null = null;
+    if (vendedor.roles && vendedor.roles.length) {
+      rol = document.createElement("span");
+      rol.className = "contact-hub-menu-rol";
+      rol.textContent = vendedor.roles.join(", ");
+      elementosOpcionales.push(rol);
+    }
+
     const numero = document.createElement("span");
     numero.className = "contact-hub-menu-numero";
     numero.textContent = `+${vendedor.whatsapp}`;
 
     info.appendChild(nombre);
+    if (rol) info.appendChild(rol);
     info.appendChild(online);
     info.appendChild(numero);
     link.appendChild(avatar);
     link.appendChild(info);
 
     if (atributoScope) {
-      [link, avatar, avatarContenido, info, nombre, online, numero].forEach((el) => el.setAttribute(atributoScope, ""));
+      [link, avatar, avatarContenido, info, nombre, online, numero, ...elementosOpcionales].forEach((el) => el.setAttribute(atributoScope, ""));
     }
 
     return link;
@@ -414,12 +426,15 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
         link.href = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
       });
 
-      const bubbleEl = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble]");
+      // El texto va en un <span> propio, no directo en el <p> — el <p>
+      // también tiene el nombre fijo de Wilton (ver markup más arriba),
+      // así que escribirle el texto entero con .textContent lo borraría.
+      const bubbleTextoEl = wrap.querySelector<HTMLElement>("[data-whatsapp-bubble-texto]");
       const bubbleModeloTpl = wrap.dataset.bubbleModelo;
       const bubbleGenericoTpl = wrap.dataset.bubbleGenerico;
-      if (bubbleEl && (bubbleModeloTpl || bubbleGenericoTpl)) {
+      if (bubbleTextoEl && (bubbleModeloTpl || bubbleGenericoTpl)) {
         const bubbleTemplate = marcaLabel && datos.modelo ? (bubbleModeloTpl ?? "") : (bubbleGenericoTpl ?? "");
-        bubbleEl.textContent = bubbleTemplate.replaceAll("{marca}", marcaLabel).replaceAll("{modelo}", datos.modelo);
+        bubbleTextoEl.textContent = bubbleTemplate.replaceAll("{marca}", marcaLabel).replaceAll("{modelo}", datos.modelo);
       }
     });
   }
@@ -614,10 +629,12 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     position: absolute;
     right: 0;
     bottom: calc(100% + 0.65rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
     margin: 0;
     width: max-content;
     max-width: calc(100vw - 2 * var(--space-sm) - 1rem);
-    white-space: nowrap;
     padding: 0.65rem 0.9rem;
     border-radius: var(--radius-md);
     background: var(--color-bg-card);
@@ -627,6 +644,20 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     line-height: 1.3;
     box-shadow: var(--shadow-floating);
     animation: contact-hub-bubble-in 0.3s ease-out;
+  }
+
+  /* Fijo a propósito (no viene del menú dinámico de vendedores): esta
+     burbuja es el gancho de atención automático del sitio, y siempre debe
+     verse como si viniera de Wilton — sin importar quién esté disponible
+     ahora mismo en el menú real. */
+  .contact-hub-bubble-autor {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+  }
+
+  .contact-hub-bubble [data-whatsapp-bubble-texto] {
+    white-space: nowrap;
   }
 
   .contact-hub-bubble::after {
@@ -715,6 +746,11 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   .contact-hub-menu-nombre {
     font-weight: 700;
     font-size: 0.9rem;
+  }
+
+  .contact-hub-menu-rol {
+    font-size: 0.72rem;
+    color: var(--color-text-subtle);
   }
 
   .contact-hub-menu-numero {
