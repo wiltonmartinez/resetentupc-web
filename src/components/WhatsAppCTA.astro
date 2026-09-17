@@ -96,7 +96,7 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
   // que ContactHub.astro (duplicado a propósito, cada componente corre
   // independiente del otro). "Fire and forget": nunca debe demorar ni
   // romper la experiencia del visitante.
-  function registrarClicWhatsApp(boton: string): void {
+  function registrarClicWhatsApp(boton: string, vendedor: string = ""): void {
     fetch("/api/pais.json", { cache: "no-store" })
       .then((res) => res.json())
       .then((datosPais: { codigo_pais?: string | null }) => {
@@ -107,6 +107,7 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
             boton,
             pagina: location.pathname,
             pais_iso: (datosPais.codigo_pais || "").toUpperCase(),
+            vendedor,
           }),
         });
       })
@@ -155,14 +156,17 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
     return Array.from(el.attributes).find((atributo) => atributo.name.startsWith("data-astro-cid-"))?.name;
   }
 
-  function crearItemMenu(vendedor: VendedorPublico, mensaje: string, atributoScope: string | undefined, cerrar: () => void): HTMLAnchorElement {
+  function crearItemMenu(vendedor: VendedorPublico, mensaje: string, atributoScope: string | undefined, cerrar: () => void, boton: string): HTMLAnchorElement {
     const link = document.createElement("a");
     link.className = "whatsapp-cta-menu-item";
     link.target = "_blank";
     link.rel = "noopener noreferrer nofollow";
     link.setAttribute("role", "menuitem");
     link.href = `https://wa.me/${vendedor.whatsapp}?text=${encodeURIComponent(mensaje)}`;
-    link.addEventListener("click", cerrar);
+    link.addEventListener("click", () => {
+      registrarClicWhatsApp(boton, vendedor.nombre);
+      cerrar();
+    });
 
     const avatar = document.createElement("span");
     avatar.className = "whatsapp-cta-menu-avatar";
@@ -274,7 +278,7 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
           }
           vendedores.forEach((vendedor) => {
             if (!items) return;
-            items.appendChild(crearItemMenu(vendedor, mensaje, atributoScope, cerrarMenu));
+            items.appendChild(crearItemMenu(vendedor, mensaje, atributoScope, cerrarMenu, wrap.dataset.sourceId || "whatsapp-cta"));
           });
         })
         .catch(() => {
