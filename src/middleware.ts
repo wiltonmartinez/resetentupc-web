@@ -108,6 +108,10 @@ function resolverDesdeSlug(slug: string, prefijos: string[]): string | null {
 
 const STATIC_MAP: Record<string, string> = {
   contacto: "/contacto/",
+  tecnico: "/como-funciona/",
+  "asistente-tecnico": "/como-funciona/",
+  usb: "/como-funciona/",
+  modulo: "/como-funciona/",
   nosotros: "/",
   modalidad: "/",
   cupon: "/",
