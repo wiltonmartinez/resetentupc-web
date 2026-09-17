@@ -12,17 +12,42 @@
   "assets": {
     "binding": "ASSETS",
     "directory": "dist",
-    // true = el Worker corre SIEMPRE, para cualquier ruta, antes de que
-    // Cloudflare busque el archivo estático. Antes solo cubría /ru/*,/ko/*
-    // (para el redirect de idiomas retirados) — pero eso dejaba que
-    // CUALQUIER otra ruta sin archivo estático exacto (ej. "/reset/Epson/
-    // L3210/" en vez de "/reset/epson/l3210/", o URLs viejas de WordPress
-    // como "/tecnico/") cayera directo al 404 de Cloudflare SIN pasar por
-    // resolverRedireccion() de middleware.ts, aunque esa función ya sabía
-    // resolverlas — el middleware nunca llegaba a ejecutarse. El costo es
-    // mínimo: pathname.startsWith("/_") en middleware.ts ya corta gratis
-    // los assets de build (_astro/*, la mayoría del tráfico pesado) antes
-    // de cualquier lógica cara (geo-bloqueo, etc.).
-    "run_worker_first": true
+    // IMPORTANTE — probado y revertido: poner esto en `true` (Worker corre
+    // siempre) rompe en producción TODAS las páginas de modelo prerenderizadas
+    // (/reset/{marca}/{modelo}/, generadas via getStaticPaths), que empiezan
+    // a dar 404 — el fallback de `next()` hacia el asset estático no
+    // funciona igual para rutas dinámicas prerenderizadas que para archivos
+    // .astro de nivel superior. Confirmado en vivo: con `true`, "/" y
+    // "/como-funciona/" seguían en 200 pero "/reset/epson/l3210/" pasó a
+    // 404 (¡con minúsculas correctas, sin ningún typo!). No volver a poner
+    // `true` sin resolver antes ese problema.
+    //
+    // ru/ko están retirados (ver RETIRED_LOCALES en config/site.ts): el
+    // Worker debe correr SIEMPRE en estas rutas para que el redirect de
+    // middleware.ts se aplique, incluso si Cloudflare ya tiene el archivo
+    // estático viejo cacheado en el borde — sin esto, un hit de caché sirve
+    // el HTML directo y nunca pasa por el middleware.
+    //
+    // Los 4 patrones de abajo (tecnico/usb/modulo/asistente-tecnico) son
+    // URLs viejas de WordPress SIN archivo estático propio — el middleware
+    // SIEMPRE responde con un redirect 301 para ellas (nunca llama next()),
+    // así que agregarlas acá es seguro. NO agregar "/reset/*" ni un patrón
+    // amplio: se probó y rompe en producción las páginas de modelo
+    // prerenderizadas (/reset/{marca}/{modelo}/, via getStaticPaths) — el
+    // fallback de next() hacia el asset estático no las sirve bien cuando
+    // el Worker corre primero. El caso de /reset/Epson/L3210/ (mayúsculas)
+    // queda sin resolver hasta encontrar otra forma de arreglarlo.
+    "run_worker_first": [
+      "/ru/*",
+      "/ko/*",
+      "/tecnico",
+      "/tecnico/*",
+      "/asistente-tecnico",
+      "/asistente-tecnico/*",
+      "/usb",
+      "/usb/*",
+      "/modulo",
+      "/modulo/*"
+    ]
   }
 }
