@@ -156,6 +156,32 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 <script>
   import { trackEvent } from "../lib/analytics.js";
   import { playFeedback } from "../lib/sound-manager.js";
+  import { NUCLEO_API_BASE_URL } from "../config/site";
+
+  // Tracking propio de clics en botones de WhatsApp (independiente de GA4,
+  // que ni siquiera está configurado hoy — ver trackEvent()): un registro
+  // en Núcleo por clic, con botón/página/país/IP, visible en
+  // /clics-whatsapp/. "Fire and forget" — nunca debe demorar ni romper la
+  // experiencia del visitante si Núcleo está lento o inalcanzable.
+  function registrarClicWhatsApp(boton: string): void {
+    fetch("/api/pais.json", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((datosPais: { codigo_pais?: string | null }) => {
+        return fetch(`${NUCLEO_API_BASE_URL}/api/public/clics-whatsapp/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            boton,
+            pagina: location.pathname,
+            pais_iso: (datosPais.codigo_pais || "").toUpperCase(),
+          }),
+        });
+      })
+      .catch(() => {
+        // Sin país detectado o Núcleo inalcanzable: el clic real del
+        // visitante ya pasó, no se reintenta ni se le muestra nada.
+      });
+  }
   // Banderas como imagen real, no emoji: Windows/Chrome no renderiza los
   // "regional indicator symbols" de Unicode como bandera — muestra el
   // código ISO en texto plano (ej. "CO"), que es justo lo que se quería
@@ -173,7 +199,9 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
   document.querySelectorAll<HTMLElement>(".contact-hub [data-analytics-event]").forEach((el) => {
     el.addEventListener("click", () => {
-      trackEvent(el.dataset.analyticsEvent || "");
+      const boton = el.dataset.analyticsEvent || "";
+      trackEvent(boton);
+      registrarClicWhatsApp(boton);
     });
   });
 

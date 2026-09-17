@@ -89,6 +89,32 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
   import banderaMX from "../assets/flag/MEXICO.png";
   import banderaPE from "../assets/flag/PERU.png";
   import banderaGlobal from "../assets/flag/GLOBAL.png";
+  import { NUCLEO_API_BASE_URL } from "../config/site";
+
+  // Tracking propio de clics (independiente de GA4): un registro en Núcleo
+  // por clic en este botón, visible en /clics-whatsapp/ — mismo mecanismo
+  // que ContactHub.astro (duplicado a propósito, cada componente corre
+  // independiente del otro). "Fire and forget": nunca debe demorar ni
+  // romper la experiencia del visitante.
+  function registrarClicWhatsApp(boton: string): void {
+    fetch("/api/pais.json", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((datosPais: { codigo_pais?: string | null }) => {
+        return fetch(`${NUCLEO_API_BASE_URL}/api/public/clics-whatsapp/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            boton,
+            pagina: location.pathname,
+            pais_iso: (datosPais.codigo_pais || "").toUpperCase(),
+          }),
+        });
+      })
+      .catch(() => {
+        // Sin país detectado o Núcleo inalcanzable: el clic real del
+        // visitante ya pasó, no se reintenta ni se le muestra nada.
+      });
+  }
 
   interface VendedorPublico {
     nombre: string;
@@ -258,8 +284,12 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
 
     boton.addEventListener("click", (event) => {
       event.stopPropagation();
-      if (menu.hidden) abrirMenu();
-      else cerrarMenu();
+      if (menu.hidden) {
+        abrirMenu();
+        registrarClicWhatsApp(wrap.dataset.sourceId || "whatsapp-cta");
+      } else {
+        cerrarMenu();
+      }
     });
     document.addEventListener("click", (event) => {
       if (!menu.hidden && !wrap.contains(event.target as Node)) cerrarMenu();
