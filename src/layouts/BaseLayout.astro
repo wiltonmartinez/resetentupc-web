@@ -7,6 +7,7 @@ import LanguageBanner from "../components/LanguageBanner.astro";
 import ContactHub from "../components/ContactHub.astro";
 import PurchaseNotification from "../components/PurchaseNotification.astro";
 import ImageModal from "../components/ui/ImageModal.astro";
+import VisitaTracker from "../components/VisitaTracker.astro";
 
 interface Props {
   title: string;
@@ -21,6 +22,7 @@ interface Props {
   ocultarBotonContacto?: boolean;
   ocultarNotificacionCompra?: boolean;
   wide?: boolean;
+  es404?: boolean;
 }
 
 const {
@@ -36,6 +38,7 @@ const {
   ocultarBotonContacto = false,
   ocultarNotificacionCompra = false,
   wide = false,
+  es404 = false,
 } = Astro.props;
 
 // SEO: mientras un idioma no esté "activado" acá, todas sus páginas van
@@ -120,6 +123,7 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     )}
   </head>
   <body>
+    <VisitaTracker es404={es404} />
     <Header locale={locale} path={path} pageKey={pageKey} />
     <LanguageBanner locale={locale} path={path} pageKey={pageKey} />
     <div class="page-boxed-bg">

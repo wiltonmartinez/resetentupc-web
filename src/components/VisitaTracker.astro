@@ -1,0 +1,74 @@
+---
+// Registra una visita a la página actual en Núcleo (módulo /visitas/) —
+// se incluye UNA sola vez en BaseLayout.astro, así que corre en cada carga
+// de página del sitio. No renderiza nada visible, es puro tracking en
+// <script>. Independiente de GA4 (que ni siquiera está configurado hoy) y
+// del tracking de clics de WhatsApp (lib/clics_whatsapp_db.php en Núcleo) —
+// esto es "quién entró a qué página y de dónde vino", no "a qué le hizo clic".
+interface Props {
+  es404?: boolean;
+}
+
+const { es404 = false } = Astro.props;
+---
+<div data-visita-tracker data-es404={es404 ? "1" : ""} hidden></div>
+<script>
+  import { NUCLEO_API_BASE_URL } from "../config/site";
+
+  // Clasifica document.referrer en un origen legible — "youtube"/"google"/
+  // etc. si matchea un dominio conocido, "directo" si no hay referrer o es
+  // el propio sitio (navegación interna, no es tráfico "de afuera"), o el
+  // dominio crudo del referrer si no matchea nada (ej. "reddit.com") — se
+  // guarda tal cual en vez de agruparlo como "otro" para no perder el dato.
+  function clasificarOrigenVisita(referrer: string): string {
+    if (!referrer) return "directo";
+    let host: string;
+    try {
+      host = new URL(referrer).hostname.replace(/^www\./, "");
+    } catch {
+      return "directo";
+    }
+    if (host === location.hostname) return "directo";
+    if (/(^|\.)youtube\.com$/.test(host) || /(^|\.)youtu\.be$/.test(host)) return "youtube";
+    if (/(^|\.)google\.[a-z.]+$/.test(host)) return "google";
+    if (/(^|\.)facebook\.com$/.test(host) || /(^|\.)fb\.me$/.test(host)) return "facebook";
+    if (/(^|\.)instagram\.com$/.test(host)) return "instagram";
+    if (/(^|\.)tiktok\.com$/.test(host)) return "tiktok";
+    if (/(^|\.)bing\.com$/.test(host)) return "bing";
+    if (/(^|\.)whatsapp\.com$/.test(host) || host === "wa.me") return "whatsapp";
+
+    return host;
+  }
+
+  // Tracking propio (independiente de GA4): un registro en Núcleo por carga
+  // de página, visible en /visitas/. "Fire and forget" — nunca debe demorar
+  // ni romper la experiencia del visitante. es404 viene del marcador
+  // data-es404 (ver arriba) porque este <script> es un módulo de Vite, no
+  // define:vars — así conserva el import de NUCLEO_API_BASE_URL.
+  function registrarVisita(): void {
+    const origen = clasificarOrigenVisita(document.referrer);
+    const marcador = document.querySelector<HTMLElement>("[data-visita-tracker]");
+    const es404 = marcador?.dataset.es404 === "1";
+
+    fetch("/api/pais.json", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((datosPais: { codigo_pais?: string | null }) => {
+        return fetch(`${NUCLEO_API_BASE_URL}/api/public/visitas/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            pagina: location.pathname,
+            origen,
+            pais_iso: (datosPais.codigo_pais || "").toUpperCase(),
+            es_404: es404,
+          }),
+        });
+      })
+      .catch(() => {
+        // Sin país detectado o Núcleo inalcanzable: no se reintenta ni se
+        // le muestra nada al visitante.
+      });
+  }
+
+  registrarVisita();
+</script>

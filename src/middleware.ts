@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from "astro";
 import modelos from "./data/modelos-muestra.json";
-import { PAGE_SLUGS, RETIRED_LOCALES, type StaticPageKey } from "./config/site";
+import { NUCLEO_API_BASE_URL, PAGE_SLUGS, RETIRED_LOCALES, type StaticPageKey } from "./config/site";
 
 // slug retirado -> slug en español, por cada página estática con slug propio
 // por idioma (precios, como-funciona, etc.) — las páginas dinámicas (home,
@@ -280,6 +280,99 @@ const CSP = [
   "frame-ancestors 'self'",
 ].join("; ");
 
+/**
+ * Control de acceso por riesgo (país / IP puntual / datacenter conocido) —
+ * las reglas viven en Núcleo (tabla editable desde /seguridad-bloqueos/,
+ * NUNCA hardcodeadas acá), este middleware solo las lee y las aplica en el
+ * borde de Cloudflare, antes de renderizar cualquier página. País y
+ * organización del ASN vienen gratis en request.cf en cualquier plan de
+ * Cloudflare (sin llamada externa por visita) — ver api/pais.json.ts para
+ * el mismo patrón de lectura de request.cf. La detección de VPN/proxy
+ * comercial NO se hace acá (necesitaría una consulta geoip por visita, muy
+ * cara para el volumen de páginas vistas): esa capa vive solo del lado de
+ * Núcleo, en el envío de datos de pago (enviar-cotizacion), que es de bajo
+ * volumen y ya está limitado a 5 intentos/hora/IP.
+ */
+interface ReglasBloqueo {
+  paises: Set<string>;
+  ips: Set<string>;
+  datacenterPalabrasClave: string[];
+  bloqueoDatacenterActivo: boolean;
+}
+
+const REGLAS_BLOQUEO_TTL_MS = 5 * 60 * 1000; // 5 minutos
+let reglasBloqueoCache: { reglas: ReglasBloqueo; obtenidoEn: number } | null = null;
+
+async function obtenerReglasBloqueo(): Promise<ReglasBloqueo | null> {
+  if (reglasBloqueoCache && Date.now() - reglasBloqueoCache.obtenidoEn < REGLAS_BLOQUEO_TTL_MS) {
+    return reglasBloqueoCache.reglas;
+  }
+
+  try {
+    const opciones = {
+      // Cachea también a nivel del borde de Cloudflare (no solo en esta
+      // instancia del Worker) — así ni siquiera hace falta que el mismo
+      // isolate siga vivo entre una visita y la siguiente.
+      cf: { cacheTtl: 300, cacheEverything: true },
+    } as unknown as RequestInit;
+    const res = await fetch(`${NUCLEO_API_BASE_URL}/api/public/reglas-bloqueo/`, opciones);
+    if (!res.ok) return reglasBloqueoCache?.reglas ?? null;
+
+    const datos = (await res.json()) as {
+      paises?: string[];
+      ips?: string[];
+      datacenter_palabras_clave?: string[];
+      bloqueo_datacenter_activo?: boolean;
+    };
+    const reglas: ReglasBloqueo = {
+      paises: new Set((datos.paises ?? []).map((p) => p.toUpperCase())),
+      ips: new Set(datos.ips ?? []),
+      datacenterPalabrasClave: datos.datacenter_palabras_clave ?? [],
+      bloqueoDatacenterActivo: datos.bloqueo_datacenter_activo ?? false,
+    };
+    reglasBloqueoCache = { reglas, obtenidoEn: Date.now() };
+    return reglas;
+  } catch {
+    // Núcleo inalcanzable: falla ABIERTO (no bloquea a nadie) — que el
+    // sitio público nunca dependa de la disponibilidad de Núcleo para
+    // poder cargar. Si hay una cache vieja, mejor usarla que nada.
+    return reglasBloqueoCache?.reglas ?? null;
+  }
+}
+
+/**
+ * Manda el bloqueo al mismo log que ve /seguridad-bloqueos/ — "fire and
+ * forget" pero SÍ esperado (await) porque esto solo corre en el camino de
+ * una petición ya bloqueada (nunca en el camino normal de una visita real),
+ * así que la latencia extra no le pega a ningún visitante legítimo.
+ */
+async function registrarBloqueoRemoto(ip: string, paisIso: string, motivo: string, pagina: string): Promise<void> {
+  try {
+    await fetch(`${NUCLEO_API_BASE_URL}/api/public/registrar-bloqueo/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ip, pais_iso: paisIso, motivo, pagina }),
+    });
+  } catch {
+    // No hay nada más que hacer si ni el log se puede mandar — el visitante
+    // ya recibió el 403 igual.
+  }
+}
+
+function respuestaAccesoRestringido(): Response {
+  const headers = new Headers({ "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex" });
+  aplicarCabecerasSeguridad(headers);
+  return new Response(
+    "<!doctype html><html lang=\"es\"><head><meta charset=\"utf-8\"><title>Acceso restringido</title>" +
+      '<meta name="viewport" content="width=device-width, initial-scale=1"></head>' +
+      '<body style="font-family:system-ui,sans-serif;max-width:560px;margin:15vh auto;padding:0 20px;text-align:center;color:#222;">' +
+      "<h1>Acceso restringido</h1>" +
+      "<p>Por motivos de seguridad, no podemos ofrecer el servicio desde tu región o conexión actual.</p>" +
+      "</body></html>",
+    { status: 403, headers }
+  );
+}
+
 function aplicarCabecerasSeguridad(headers: Headers): void {
   headers.set("Content-Security-Policy", CSP);
   headers.set("X-Content-Type-Options", "nosniff");
@@ -292,6 +385,33 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const { pathname } = context.url;
 
   if (pathname.startsWith("/_") || pathname.startsWith("/wp-content")) return next();
+
+  const cf = (context.request as unknown as { cf?: { country?: string; asOrganization?: string } }).cf;
+  const paisVisitante = (cf?.country ?? "").toUpperCase();
+  const asOrganization = cf?.asOrganization ?? "";
+  const ipVisitante = context.request.headers.get("cf-connecting-ip") ?? "";
+
+  const reglasBloqueo = await obtenerReglasBloqueo();
+  if (reglasBloqueo) {
+    let motivoBloqueo: "ip_bloqueada" | "pais_restringido" | "datacenter_ip" | null = null;
+
+    if (ipVisitante && reglasBloqueo.ips.has(ipVisitante)) {
+      motivoBloqueo = "ip_bloqueada";
+    } else if (paisVisitante && reglasBloqueo.paises.has(paisVisitante)) {
+      motivoBloqueo = "pais_restringido";
+    } else if (
+      reglasBloqueo.bloqueoDatacenterActivo &&
+      asOrganization &&
+      reglasBloqueo.datacenterPalabrasClave.some((palabra) => asOrganization.toLowerCase().includes(palabra.toLowerCase()))
+    ) {
+      motivoBloqueo = "datacenter_ip";
+    }
+
+    if (motivoBloqueo) {
+      await registrarBloqueoRemoto(ipVisitante, paisVisitante, motivoBloqueo, pathname);
+      return respuestaAccesoRestringido();
+    }
+  }
 
   const destinoIdiomaRetirado = resolverRedireccionIdiomaRetirado(pathname);
   if (destinoIdiomaRetirado) {

@@ -21,6 +21,7 @@ const locale = detectLocaleFromPath(Astro.url.pathname);
   locale={locale}
   path="/404/"
   noindex
+  es404
 >
   <section class="not-found">
     <h1>{t(locale, "notFound.heading")}</h1>
