@@ -47,7 +47,9 @@
       "/usb",
       "/usb/*",
       "/modulo",
-      "/modulo/*"
+      "/modulo/*",
+      "/modulo-seguro",
+      "/modulo-seguro/*"
     ]
   }
 }

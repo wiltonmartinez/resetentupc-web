@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from "astro";
 import modelos from "./data/modelos-muestra.json";
-import { NUCLEO_API_BASE_URL, PAGE_SLUGS, RETIRED_LOCALES, type StaticPageKey } from "./config/site";
+import { NUCLEO_API_BASE_URL, PAGE_SLUGS, RETIRED_LOCALES, USB_REDIRECTOR_DOWNLOAD_URL, type StaticPageKey } from "./config/site";
 
 // slug retirado -> slug en español, por cada página estática con slug propio
 // por idioma (precios, como-funciona, etc.) — las páginas dinámicas (home,
@@ -112,6 +112,9 @@ const STATIC_MAP: Record<string, string> = {
   "asistente-tecnico": "/como-funciona/",
   usb: "/como-funciona/",
   modulo: "/como-funciona/",
+  // Redireccion permanente SEO: enlaza directo al instalador, no a una
+  // pagina interna. context.redirect() acepta URLs absolutas externas.
+  "modulo-seguro": USB_REDIRECTOR_DOWNLOAD_URL,
   nosotros: "/",
   modalidad: "/",
   cupon: "/",
