@@ -20,9 +20,13 @@
  * No lleva <h1> ni intro propios — el título de esta sección lo pone la
  * página que lo embebe (ej. "Paso 4: Cotización y Pago" en Cómo Funciona).
  */
+import { getImage } from "astro:assets";
 import { t, buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
 import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 import { paisesPrecioPublico, catalogoCascada, mapaErroresPublico, type PaisPrecioPublico } from "../../lib/precios";
+import iconoClasico from "../../assets/branding/clasico.png";
+import iconoPlus from "../../assets/branding/plus.png";
+import iconoElite from "../../assets/branding/elite.png";
 
 interface Props {
   locale: Locale;
@@ -37,24 +41,30 @@ const urlOrigen = `${SITE_URL}${urlPath}`;
 const catalogo = catalogoCascada();
 const erroresMapa = mapaErroresPublico(locale);
 
+const [iconoClasicoUrl, iconoPlusUrl, iconoEliteUrl] = await Promise.all([
+  getImage({ src: iconoClasico, width: 64, height: 64 }),
+  getImage({ src: iconoPlus, width: 64, height: 64 }),
+  getImage({ src: iconoElite, width: 64, height: 64 }),
+]).then((imgs) => imgs.map((img) => img.src));
+
 const PLANES = [
   {
-    key: "profesional" as const,
-    icono: "💼",
-    nombre: t(locale, "preciosPage.planProfesionalNombre"),
-    duracion: t(locale, "preciosPage.planProfesionalDuracion"),
+    key: "esencial" as const,
+    icono: iconoClasicoUrl,
+    nombre: t(locale, "preciosPage.planEsencialNombre"),
+    duracion: t(locale, "preciosPage.planEsencialDuracion"),
     destacado: false,
   },
   {
-    key: "esencial" as const,
-    icono: "🟢",
-    nombre: t(locale, "preciosPage.planEsencialNombre"),
-    duracion: t(locale, "preciosPage.planEsencialDuracion"),
+    key: "profesional" as const,
+    icono: iconoPlusUrl,
+    nombre: t(locale, "preciosPage.planProfesionalNombre"),
+    duracion: t(locale, "preciosPage.planProfesionalDuracion"),
     destacado: true,
   },
   {
     key: "elite" as const,
-    icono: "👑",
+    icono: iconoEliteUrl,
     nombre: t(locale, "preciosPage.planEliteNombre"),
     duracion: t(locale, "preciosPage.planEliteDuracion"),
     destacado: false,
@@ -90,12 +100,15 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
   data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
   data-descuento-badge-template={t(locale, "preciosPage.descuentoBadge")}
   data-descuento-countdown-template={t(locale, "preciosPage.descuentoCountdown")}
-  data-plan-profesional-nombre={PLANES[0].nombre}
-  data-plan-profesional-duracion={PLANES[0].duracion}
-  data-plan-esencial-nombre={PLANES[1].nombre}
-  data-plan-esencial-duracion={PLANES[1].duracion}
+  data-plan-esencial-nombre={PLANES[0].nombre}
+  data-plan-esencial-duracion={PLANES[0].duracion}
+  data-plan-esencial-icono={PLANES[0].icono}
+  data-plan-profesional-nombre={PLANES[1].nombre}
+  data-plan-profesional-duracion={PLANES[1].duracion}
+  data-plan-profesional-icono={PLANES[1].icono}
   data-plan-elite-nombre={PLANES[2].nombre}
   data-plan-elite-duracion={PLANES[2].duracion}
+  data-plan-elite-icono={PLANES[2].icono}
 >
   <div class="precios-box precios-panel">
     <label class="precios-campo">
@@ -356,9 +369,9 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     }
 
     const PLANES = [
-      { key: "profesional" as const, icono: "💼", nombre: root.dataset.planProfesionalNombre || "", duracion: root.dataset.planProfesionalDuracion || "", destacado: false },
-      { key: "esencial" as const, icono: "🟢", nombre: root.dataset.planEsencialNombre || "", duracion: root.dataset.planEsencialDuracion || "", destacado: true },
-      { key: "elite" as const, icono: "👑", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
+      { key: "esencial" as const, icono: root.dataset.planEsencialIcono || "", nombre: root.dataset.planEsencialNombre || "", duracion: root.dataset.planEsencialDuracion || "", destacado: false },
+      { key: "profesional" as const, icono: root.dataset.planProfesionalIcono || "", nombre: root.dataset.planProfesionalNombre || "", duracion: root.dataset.planProfesionalDuracion || "", destacado: true },
+      { key: "elite" as const, icono: root.dataset.planEliteIcono || "", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
     ];
 
     const estado = { marca: "", familia: "", modelo: "", errorId: "", errorOtro: "", monedaCodigo: "" };
@@ -639,10 +652,12 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
           article.appendChild(badge);
         }
 
-        const icono = document.createElement("p");
+        const icono = document.createElement("img");
         icono.className = "precios-plan-icono";
-        icono.setAttribute("aria-hidden", "true");
-        icono.textContent = plan.icono;
+        icono.src = plan.icono;
+        icono.alt = "";
+        icono.width = 64;
+        icono.height = 64;
 
         const nombre = document.createElement("h5");
         nombre.textContent = plan.nombre;
@@ -1098,8 +1113,10 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
   }
 
   .precios-cascada-widget .precios-plan-icono {
-    font-size: 1.8rem;
+    width: 2.75rem;
+    height: 2.75rem;
     margin: 0;
+    object-fit: contain;
   }
 
   .precios-cascada-widget .precios-plan h5 {
