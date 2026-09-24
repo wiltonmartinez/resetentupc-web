@@ -1,23 +1,18 @@
 ---
 /**
- * Prueba social: muestra un certificado de garantía real de ejemplo, elegido
- * al azar en el navegador en cada carga/recarga (F5) entre los que Núcleo
- * publica.
+ * Demostración real: muestra en un visor PDF embebido un certificado de
+ * garantía de ejemplo, elegido al azar en el navegador en cada carga/recarga
+ * (F5) entre los pedidos públicos CENSURADOS que publica Núcleo.
  *
- * Privacidad: NO se censura nada por código/CSS. Núcleo solo entrega copias
- * públicas ya censuradas (sin datos personales, correos reales, QR ni
- * licencias); este componente solo las muestra.
+ * Privacidad: NO se censura nada por código/CSS. Núcleo entrega solo copias
+ * públicas ya censuradas (nombre, correo, número de pedido y QR); este
+ * componente solo las muestra.
  *
- * Fuente: GET {NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/
- *   -> { "imagenes": [ { "url": "https://.../cert.pdf", "alt": "..." }, ... ] }
- * Cada "url" puede ser un PDF (se muestra en un visor embebido) o una imagen
- * (.webp/.png/.jpg, se muestra con <img>). Si la lista viene vacía o el fetch
- * falla, la sección permanece oculta: nunca queda un recuadro roto.
- *
- * Requisitos del lado de Núcleo para el PDF embebido: que permita ser
- * incrustado desde https://resetenlinea.com (sin X-Frame-Options: DENY; usar
- * Content-Security-Policy: frame-ancestors https://resetenlinea.com). El CSP de
- * este sitio ya permite frame-src y connect-src hacia Núcleo.
+ * Fuente: GET {NUCLEO_API_BASE_URL}/api/public/pedidos-publicos/?page=1&per_page=50
+ *   -> { data: [{ codigo, certificado_pdf_url, ... }], meta: {...} }
+ * El PDF solo se puede ENMARCAR desde resetenlinea.com (el CSP de este sitio
+ * ya permite frame-src hacia Núcleo; object-src es 'none', por eso <iframe>).
+ * Si no hay pedidos publicados o el fetch falla, la sección permanece oculta.
  */
 import { t } from "../../i18n/utils";
 import { NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
@@ -27,7 +22,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
+const API_URL = `${NUCLEO_API_BASE_URL}/api/public/pedidos-publicos/?page=1&per_page=50`;
 ---
 
 <section class="certificado-ejemplo" data-certificado-ejemplo data-api-url={API_URL} hidden>
@@ -37,6 +32,10 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
 </section>
 
 <script>
+  interface Pedido {
+    codigo?: string;
+    certificado_pdf_url?: string;
+  }
   interface ItemCertificado {
     url?: string;
     alt?: string;
@@ -50,10 +49,10 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
     try {
       const res = await fetch(apiUrl, { cache: "no-store" });
       if (!res.ok) return;
-      const data: { imagenes?: ItemCertificado[] } = await res.json();
-      const lista = (data.imagenes || []).filter(
-        (i) => typeof i.url === "string" && i.url.startsWith("https://")
-      );
+      const data: { data?: Pedido[] } = await res.json();
+      const lista: ItemCertificado[] = (data.data || [])
+        .map((p) => ({ url: p.certificado_pdf_url, alt: p.codigo }))
+        .filter((i) => typeof i.url === "string" && i.url.startsWith("https://"));
       if (lista.length === 0) return;
 
       // Azar que SIEMPRE cambia al recargar: con pocos certificados el azar
