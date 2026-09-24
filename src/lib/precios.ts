@@ -25,6 +25,7 @@ const ISO_A_SLUG: Record<string, string> = {
   PY: "paraguay",
   VE: "venezuela",
   AR: "argentina",
+  ES: "espana",
 };
 
 /** Inverso de ISO_A_SLUG, para dibujar la bandera de cada país en el selector. */
@@ -34,6 +35,7 @@ const SLUG_A_ISO: Record<string, string> = Object.fromEntries(
 
 const SLUG_FALLBACK = "colombia";
 const SLUG_OTRO = "otro";
+const SLUG_ESPANA = "espana";
 
 /** Los 3 medios "internacionales" que se suman a todo país que no sea Colombia
  *  (que solo admite medios locales). Se toman de la propia entrada "otro" de
@@ -238,7 +240,13 @@ export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
   const tasaUsdEur = await obtenerTasaUsdEur();
   const precioUsdInternacional = normalizarPrecios(otro.precios);
 
-  return pagosData.paises.map((pais) => {
+  // España no existe en pagos.json: se sintetiza a partir de "otro" (mismos
+  // medios internacionales, mismo precio base en USD) y se muestra solo en
+  // EUR con la tasa en vivo. Va justo antes de "otro" en el selector.
+  const espana = { ...otro, slug: SLUG_ESPANA, nombre: "España", moneda: "EUR" };
+  const paisesBase = [...pagosData.paises.filter((p) => p.slug !== SLUG_OTRO), espana, otro];
+
+  return paisesBase.map((pais) => {
     const propios = pais.metodosPago.map((m) => conLogo(m.nombre));
     const exclusiones = EXCLUIR_INTERNACIONAL_POR_PAIS[pais.slug] ?? [];
     const internacionalesParaEstePais = internacionales
@@ -258,6 +266,11 @@ export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
         { codigo: "COP", ambito: "internacional", precios: normalizarPrecios(colombia.precios) },
       ];
       presentacionMoneda = "toggle";
+    } else if (pais.slug === SLUG_ESPANA) {
+      monedas = [
+        { codigo: "EUR", ambito: "internacional", precios: convertirPrecios(precioUsdInternacional, tasaUsdEur) },
+      ];
+      presentacionMoneda = "unica";
     } else if (pais.slug === SLUG_OTRO) {
       monedas = [
         { codigo: "USD", ambito: "internacional", precios: precioUsdInternacional },
