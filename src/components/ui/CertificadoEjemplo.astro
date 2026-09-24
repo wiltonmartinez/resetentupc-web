@@ -1,0 +1,100 @@
+---
+/**
+ * Prueba social: muestra un certificado de garantía real de ejemplo, elegido
+ * al azar en el navegador entre las imágenes disponibles.
+ *
+ * Privacidad: NO se censura nada por código/CSS. Los .webp de
+ * public/img/ejemplos/ deben venir ya censurados manualmente (datos
+ * personales y QR) antes de subirlos.
+ *
+ * Desacoplado del Núcleo: hoy la lista es un array estático (RUTAS_ESTATICAS
+ * en el <script>). Para hacerla dinámica en el futuro, reemplazar ese array
+ * por un fetch a un endpoint público del Núcleo, p. ej.
+ *   GET {NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/
+ *   -> { "imagenes": ["https://.../cert-1.webp", ...] }
+ * y pasar la URL vía data-api-url (como hace ConsultaGarantiaPage.astro con
+ * data-api-url). Si el fetch falla, se usa el array estático como respaldo.
+ */
+import { t } from "../../i18n/utils";
+import type { Locale } from "../../config/site";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<section class="certificado-ejemplo" data-certificado-ejemplo hidden>
+  <h2>{t(locale, "consultaGarantiaPage.ejemploTitulo")}</h2>
+  <p>{t(locale, "consultaGarantiaPage.ejemploTexto")}</p>
+  <img
+    class="certificado-ejemplo-img"
+    data-certificado-img
+    alt={t(locale, "consultaGarantiaPage.ejemploAlt")}
+    loading="lazy"
+    decoding="async"
+  />
+</section>
+
+<script>
+  const RUTAS_ESTATICAS = [
+    "/img/ejemplos/cert-1.webp",
+    "/img/ejemplos/cert-2.webp",
+    "/img/ejemplos/cert-3.webp",
+    "/img/ejemplos/cert-4.webp",
+    "/img/ejemplos/cert-5.webp",
+  ];
+
+  document.querySelectorAll<HTMLElement>("[data-certificado-ejemplo]").forEach((seccion) => {
+    const img = seccion.querySelector<HTMLImageElement>("[data-certificado-img]");
+    if (!img) return;
+    // La sección solo se muestra si la imagen realmente carga: sin archivos
+    // subidos todavía, no queda un recuadro roto en la página.
+    img.addEventListener("load", () => {
+      seccion.hidden = false;
+    });
+    img.addEventListener("error", () => {
+      seccion.hidden = true;
+    });
+    img.src = RUTAS_ESTATICAS[Math.floor(Math.random() * RUTAS_ESTATICAS.length)];
+  });
+</script>
+
+<style>
+  .certificado-ejemplo {
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: center;
+    text-align: center;
+    padding: var(--space-md);
+    background: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+
+  .certificado-ejemplo[hidden] {
+    display: none;
+  }
+
+  .certificado-ejemplo h2 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .certificado-ejemplo p {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+  }
+
+  .certificado-ejemplo-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    filter: drop-shadow(0 6px 14px rgb(0 0 0 / 0.22));
+  }
+</style>
