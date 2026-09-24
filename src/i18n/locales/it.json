@@ -584,9 +584,7 @@
     "ctaTitulo": "Hai bisogno di un reset?",
     "ctaBoton": "Contatta su WhatsApp",
     "testimoniosTitulo": "Testimonianze Trustpilot",
-    "testimoniosTexto": "Screenshot reali di recensioni dei clienti su Trustpilot.",
-    "pedidosTitulo": "Ordini verificati",
-    "pedidosTexto": "Casi reali con dati protetti: piano, garanzia e certificato."
+    "testimoniosTexto": "Screenshot reali di recensioni dei clienti su Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Prove di Reset | ResetEnLinea.com",
@@ -821,41 +819,5 @@
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Offerta a tempo limitato: {tiempo}",
     "ctaGeneral": "Parla con un tecnico dei prezzi"
-  },
-  "pedidosVerificadosPage": {
-    "title": "Ordini verificati | ResetEnLinea.com",
-    "description": "Copie pubbliche di ordini reali con dati personali oscurati: piano, garanzia e certificato.",
-    "heading": "Ordini verificati",
-    "intro": "Questi sono ordini reali dei nostri clienti. Proteggiamo la loro identità: nome, e-mail, numero d'ordine, QR, link di download e licenze sono oscurati.",
-    "cargando": "Caricamento ordini…",
-    "vacioTitulo": "Ancora nessun certificato pubblicato",
-    "vacioTexto": "Torna presto: stiamo pubblicando casi reali con dati protetti.",
-    "errorTitulo": "Impossibile caricare gli ordini",
-    "errorTexto": "Controlla la connessione e riprova.",
-    "reintentar": "Riprova",
-    "cargarMas": "Carica altri",
-    "mostrando": "Mostrati {n} di {total}",
-    "errorLabel": "Errore",
-    "servicio": "Servizio",
-    "dias": "{n} giorni di garanzia",
-    "deporvida": "Garanzia a vita",
-    "vence": "Scade il {fecha}",
-    "bonos": "Bonus",
-    "unidadDias": "giorni",
-    "unidadMeses": "mesi",
-    "estadoVigente": "Valida",
-    "estadoPorVencerse": "In scadenza",
-    "estadoVencido": "Scaduta",
-    "estadoDeporvida": "A vita",
-    "protegido": "Protetto / Oscurato",
-    "campoQr": "QR",
-    "campoDescarga": "Download",
-    "campoLicencia": "Licenza",
-    "verCertificado": "Vedi certificato",
-    "cerrar": "Chiudi",
-    "abrirPdf": "Apri il PDF in una nuova scheda",
-    "ayudaMovil": "Su mobile il visualizzatore integrato non è affidabile: apri il certificato in una nuova scheda.",
-    "modalTitulo": "Certificato di garanzia",
-    "noEncontrado": "Ordine non trovato."
   }
 }

@@ -53,9 +53,7 @@
     "ctaTitulo": "Brauchst du einen Reset?",
     "ctaBoton": "Über WhatsApp kontaktieren",
     "testimoniosTitulo": "Trustpilot-Erfahrungen",
-    "testimoniosTexto": "Echte Screenshots von Kundenbewertungen auf Trustpilot.",
-    "pedidosTitulo": "Verifizierte Aufträge",
-    "pedidosTexto": "Echte Fälle mit geschützten Daten: Tarif, Garantie und Zertifikat."
+    "testimoniosTexto": "Echte Screenshots von Kundenbewertungen auf Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Reset-Beweise | ResetEnLinea.com",
@@ -821,41 +819,5 @@
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Zeitlich begrenztes Angebot: {tiempo}",
     "ctaGeneral": "Mit einem Techniker über Preise sprechen"
-  },
-  "pedidosVerificadosPage": {
-    "title": "Verifizierte Aufträge | ResetEnLinea.com",
-    "description": "Öffentliche Kopien echter Aufträge mit geschwärzten persönlichen Daten: Tarif, Garantie und Zertifikat.",
-    "heading": "Verifizierte Aufträge",
-    "intro": "Das sind echte Aufträge unserer Kunden. Wir schützen ihre Identität: Name, E-Mail, Auftragsnummer, QR-Codes, Download-Links und Lizenzen sind geschwärzt.",
-    "cargando": "Aufträge werden geladen…",
-    "vacioTitulo": "Noch keine Zertifikate veröffentlicht",
-    "vacioTexto": "Schauen Sie bald wieder vorbei: Wir veröffentlichen echte Fälle mit geschützten Daten.",
-    "errorTitulo": "Aufträge konnten nicht geladen werden",
-    "errorTexto": "Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-    "reintentar": "Erneut versuchen",
-    "cargarMas": "Mehr laden",
-    "mostrando": "{n} von {total} angezeigt",
-    "errorLabel": "Fehler",
-    "servicio": "Service",
-    "dias": "{n} Tage Garantie",
-    "deporvida": "Lebenslange Garantie",
-    "vence": "Läuft ab am {fecha}",
-    "bonos": "Boni",
-    "unidadDias": "Tage",
-    "unidadMeses": "Monate",
-    "estadoVigente": "Gültig",
-    "estadoPorVencerse": "Läuft bald ab",
-    "estadoVencido": "Abgelaufen",
-    "estadoDeporvida": "Lebenslang",
-    "protegido": "Geschützt / Geschwärzt",
-    "campoQr": "QR",
-    "campoDescarga": "Download",
-    "campoLicencia": "Lizenz",
-    "verCertificado": "Zertifikat ansehen",
-    "cerrar": "Schließen",
-    "abrirPdf": "PDF in neuem Tab öffnen",
-    "ayudaMovil": "Auf dem Handy ist der eingebettete Viewer unzuverlässig: Öffnen Sie das Zertifikat in einem neuen Tab.",
-    "modalTitulo": "Garantiezertifikat",
-    "noEncontrado": "Auftrag nicht gefunden."
   }
 }

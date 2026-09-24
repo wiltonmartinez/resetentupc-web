@@ -53,9 +53,7 @@
     "ctaTitulo": "¿Necesitas realizar un reset?",
     "ctaBoton": "Contactar por WhatsApp",
     "testimoniosTitulo": "Testimonios Trustpilot",
-    "testimoniosTexto": "Capturas reales de reseñas de clientes en Trustpilot.",
-    "pedidosTitulo": "Pedidos verificados",
-    "pedidosTexto": "Casos reales con datos protegidos: plan, garantía y certificado."
+    "testimoniosTexto": "Capturas reales de reseñas de clientes en Trustpilot."
   },
   "resetRealizadosPage": {
     "title": "Reset Evidencia | ResetEnLinea.com",
@@ -941,41 +939,5 @@
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Oferta por tiempo limitado: {tiempo}",
     "ctaGeneral": "Hablar con un técnico sobre precios"
-  },
-  "pedidosVerificadosPage": {
-    "title": "Pedidos verificados | ResetEnLinea.com",
-    "description": "Copias públicas de pedidos reales con datos personales censurados: plan, garantía y certificado.",
-    "heading": "Pedidos verificados",
-    "intro": "Estos son pedidos reales de nuestros clientes. Protegemos su identidad: nombre, correo, número de pedido, QR, enlaces de descarga y licencias están censurados.",
-    "cargando": "Cargando pedidos…",
-    "vacioTitulo": "Aún no hay certificados publicados",
-    "vacioTexto": "Vuelve pronto: estamos publicando casos reales con los datos protegidos.",
-    "errorTitulo": "No pudimos cargar los pedidos",
-    "errorTexto": "Revisa tu conexión e inténtalo de nuevo.",
-    "reintentar": "Reintentar",
-    "cargarMas": "Cargar más",
-    "mostrando": "Mostrando {n} de {total}",
-    "errorLabel": "Error",
-    "servicio": "Servicio",
-    "dias": "{n} días de garantía",
-    "deporvida": "Garantía de por vida",
-    "vence": "Vence el {fecha}",
-    "bonos": "Bonos",
-    "unidadDias": "días",
-    "unidadMeses": "meses",
-    "estadoVigente": "Vigente",
-    "estadoPorVencerse": "Por vencerse",
-    "estadoVencido": "Vencido",
-    "estadoDeporvida": "De por vida",
-    "protegido": "Protegido / Censurado",
-    "campoQr": "QR",
-    "campoDescarga": "Descarga",
-    "campoLicencia": "Licencia",
-    "verCertificado": "Ver certificado",
-    "cerrar": "Cerrar",
-    "abrirPdf": "Abrir PDF en nueva pestaña",
-    "ayudaMovil": "En el móvil el visor embebido no es fiable: abre el certificado en una pestaña nueva.",
-    "modalTitulo": "Certificado de garantía",
-    "noEncontrado": "No encontramos ese pedido."
   }
 }

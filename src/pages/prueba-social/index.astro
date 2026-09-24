@@ -11,7 +11,6 @@ const getIcon = (type: string): string => {
     magnifier: "🔍",
     play: "▶️",
     chat: "💬",
-    shield: "🛡️",
     roulette: "🎡",
   };
   return iconos[type] || "→";
@@ -45,13 +44,6 @@ const silos = [
     descripcion: "Capturas de WhatsApp de clientes que resolvieron su problema",
     href: "/prueba-social/cliente-satisfecho/",
     icono: "chat",
-  },
-  {
-    id: "pedidos-verificados",
-    titulo: t(locale, "pruebaSocialPage.pedidosTitulo"),
-    descripcion: t(locale, "pruebaSocialPage.pedidosTexto"),
-    href: "/prueba-social/pedidos-verificados/",
-    icono: "shield",
   },
   {
     id: "ruleta",
