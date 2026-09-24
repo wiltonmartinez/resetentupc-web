@@ -924,7 +924,7 @@
     "planEliteNombre": "Reset Elite",
     "planEliteDuracion": "365 días",
     "precioNoDisponible": "Consultar",
-    "ctaPlan": "Consultar por WhatsApp",
+    "ctaPlan": "🛒 Ver Formas de Pago",
     "notaWhatsapp": "Reset {marca} {modelo}\nError: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
     "notaWhatsappSinError": "Reset {marca} {modelo}\nPlan {plan} ({duracion}) · {pais} · {precio}",
     "modeloWidgetTitulo": "Elige tu plan",
