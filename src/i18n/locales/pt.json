@@ -584,7 +584,9 @@
     "ctaTitulo": "Precisa fazer um reset?",
     "ctaBoton": "Falar pelo WhatsApp",
     "testimoniosTitulo": "Depoimentos no Trustpilot",
-    "testimoniosTexto": "Capturas reais de avaliações de clientes no Trustpilot."
+    "testimoniosTexto": "Capturas reais de avaliações de clientes no Trustpilot.",
+    "pedidosTitulo": "Pedidos verificados",
+    "pedidosTexto": "Casos reais com dados protegidos: plano, garantia e certificado."
   },
   "resetRealizadosPage": {
     "title": "Evidência de Reset | ResetEnLinea.com",
@@ -819,5 +821,41 @@
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Oferta por tempo limitado: {tiempo}",
     "ctaGeneral": "Falar com um técnico sobre preços"
+  },
+  "pedidosVerificadosPage": {
+    "title": "Pedidos verificados | ResetEnLinea.com",
+    "description": "Cópias públicas de pedidos reais com dados pessoais censurados: plano, garantia e certificado.",
+    "heading": "Pedidos verificados",
+    "intro": "Estes são pedidos reais dos nossos clientes. Protegemos a identidade deles: nome, e-mail, número do pedido, QR, links de download e licenças estão censurados.",
+    "cargando": "Carregando pedidos…",
+    "vacioTitulo": "Ainda não há certificados publicados",
+    "vacioTexto": "Volte em breve: estamos publicando casos reais com dados protegidos.",
+    "errorTitulo": "Não foi possível carregar os pedidos",
+    "errorTexto": "Verifique sua conexão e tente novamente.",
+    "reintentar": "Tentar novamente",
+    "cargarMas": "Carregar mais",
+    "mostrando": "Mostrando {n} de {total}",
+    "errorLabel": "Erro",
+    "servicio": "Serviço",
+    "dias": "{n} dias de garantia",
+    "deporvida": "Garantia vitalícia",
+    "vence": "Vence em {fecha}",
+    "bonos": "Bônus",
+    "unidadDias": "dias",
+    "unidadMeses": "meses",
+    "estadoVigente": "Vigente",
+    "estadoPorVencerse": "A vencer",
+    "estadoVencido": "Vencido",
+    "estadoDeporvida": "Vitalícia",
+    "protegido": "Protegido / Censurado",
+    "campoQr": "QR",
+    "campoDescarga": "Download",
+    "campoLicencia": "Licença",
+    "verCertificado": "Ver certificado",
+    "cerrar": "Fechar",
+    "abrirPdf": "Abrir PDF em nova aba",
+    "ayudaMovil": "No celular o visualizador embutido não é confiável: abra o certificado em uma nova aba.",
+    "modalTitulo": "Certificado de garantia",
+    "noEncontrado": "Não encontramos esse pedido."
   }
 }

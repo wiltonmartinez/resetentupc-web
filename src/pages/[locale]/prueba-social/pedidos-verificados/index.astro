@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import PedidosVerificadosPage from "../../../../components/pages/PedidosVerificadosPage.astro";
+import { t } from "../../../../i18n/utils";
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from "../../../../config/site";
+
+export function getStaticPaths() {
+  return SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => ({
+    params: { locale },
+  }));
+}
+
+const locale = Astro.params.locale as Locale;
+---
+
+<BaseLayout
+  wide
+  title={t(locale, "pedidosVerificadosPage.title")}
+  description={t(locale, "pedidosVerificadosPage.description")}
+  locale={locale}
+  path="/prueba-social/pedidos-verificados/"
+>
+  <PedidosVerificadosPage locale={locale} />
+</BaseLayout>

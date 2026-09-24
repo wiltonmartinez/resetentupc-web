@@ -584,7 +584,9 @@
     "ctaTitulo": "Besoin d'une réinitialisation ?",
     "ctaBoton": "Contacter sur WhatsApp",
     "testimoniosTitulo": "Témoignages Trustpilot",
-    "testimoniosTexto": "Captures réelles d'avis clients sur Trustpilot."
+    "testimoniosTexto": "Captures réelles d'avis clients sur Trustpilot.",
+    "pedidosTitulo": "Commandes vérifiées",
+    "pedidosTexto": "Cas réels aux données protégées : forfait, garantie et certificat."
   },
   "resetRealizadosPage": {
     "title": "Preuves de Réinitialisation | ResetEnLinea.com",
@@ -819,5 +821,41 @@
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Offre à durée limitée : {tiempo}",
     "ctaGeneral": "Parler à un technicien des tarifs"
+  },
+  "pedidosVerificadosPage": {
+    "title": "Commandes vérifiées | ResetEnLinea.com",
+    "description": "Copies publiques de commandes réelles aux données personnelles masquées : forfait, garantie et certificat.",
+    "heading": "Commandes vérifiées",
+    "intro": "Ce sont de vraies commandes de nos clients. Nous protégeons leur identité : nom, e-mail, numéro de commande, QR, liens de téléchargement et licences sont masqués.",
+    "cargando": "Chargement des commandes…",
+    "vacioTitulo": "Aucun certificat publié pour le moment",
+    "vacioTexto": "Revenez bientôt : nous publions des cas réels aux données protégées.",
+    "errorTitulo": "Impossible de charger les commandes",
+    "errorTexto": "Vérifiez votre connexion et réessayez.",
+    "reintentar": "Réessayer",
+    "cargarMas": "Charger plus",
+    "mostrando": "Affichage de {n} sur {total}",
+    "errorLabel": "Erreur",
+    "servicio": "Service",
+    "dias": "{n} jours de garantie",
+    "deporvida": "Garantie à vie",
+    "vence": "Expire le {fecha}",
+    "bonos": "Bonus",
+    "unidadDias": "jours",
+    "unidadMeses": "mois",
+    "estadoVigente": "Valide",
+    "estadoPorVencerse": "Bientôt expirée",
+    "estadoVencido": "Expirée",
+    "estadoDeporvida": "À vie",
+    "protegido": "Protégé / Masqué",
+    "campoQr": "QR",
+    "campoDescarga": "Téléchargement",
+    "campoLicencia": "Licence",
+    "verCertificado": "Voir le certificat",
+    "cerrar": "Fermer",
+    "abrirPdf": "Ouvrir le PDF dans un nouvel onglet",
+    "ayudaMovil": "Sur mobile, la visionneuse intégrée n'est pas fiable : ouvrez le certificat dans un nouvel onglet.",
+    "modalTitulo": "Certificat de garantie",
+    "noEncontrado": "Commande introuvable."
   }
 }

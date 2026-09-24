@@ -584,7 +584,9 @@
     "ctaTitulo": "Need a reset?",
     "ctaBoton": "Contact us on WhatsApp",
     "testimoniosTitulo": "Trustpilot Testimonials",
-    "testimoniosTexto": "Real screenshots of customer reviews on Trustpilot."
+    "testimoniosTexto": "Real screenshots of customer reviews on Trustpilot.",
+    "pedidosTitulo": "Verified orders",
+    "pedidosTexto": "Real cases with protected data: plan, warranty and certificate."
   },
   "resetRealizadosPage": {
     "title": "Reset Evidence | ResetEnLinea.com",
@@ -819,5 +821,41 @@
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Limited-time offer: {tiempo}",
     "ctaGeneral": "Talk to a technician about pricing"
+  },
+  "pedidosVerificadosPage": {
+    "title": "Verified orders | ResetEnLinea.com",
+    "description": "Public copies of real orders with personal data censored: plan, warranty and certificate.",
+    "heading": "Verified orders",
+    "intro": "These are real orders from our customers. We protect their identity: name, email, order number, QR codes, download links and licenses are censored.",
+    "cargando": "Loading orders…",
+    "vacioTitulo": "No certificates published yet",
+    "vacioTexto": "Check back soon: we are publishing real cases with protected data.",
+    "errorTitulo": "We could not load the orders",
+    "errorTexto": "Check your connection and try again.",
+    "reintentar": "Retry",
+    "cargarMas": "Load more",
+    "mostrando": "Showing {n} of {total}",
+    "errorLabel": "Error",
+    "servicio": "Service",
+    "dias": "{n} days of warranty",
+    "deporvida": "Lifetime warranty",
+    "vence": "Expires on {fecha}",
+    "bonos": "Bonuses",
+    "unidadDias": "days",
+    "unidadMeses": "months",
+    "estadoVigente": "Active",
+    "estadoPorVencerse": "Expiring soon",
+    "estadoVencido": "Expired",
+    "estadoDeporvida": "Lifetime",
+    "protegido": "Protected / Censored",
+    "campoQr": "QR",
+    "campoDescarga": "Download",
+    "campoLicencia": "License",
+    "verCertificado": "View certificate",
+    "cerrar": "Close",
+    "abrirPdf": "Open PDF in a new tab",
+    "ayudaMovil": "The embedded viewer is unreliable on mobile: open the certificate in a new tab.",
+    "modalTitulo": "Warranty certificate",
+    "noEncontrado": "We could not find that order."
   }
 }

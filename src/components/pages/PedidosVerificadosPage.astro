@@ -1,0 +1,791 @@
+---
+/**
+ * Galería "Pedidos verificados": copias públicas y CENSURADAS de pedidos
+ * reales, servidas por la API pública de Núcleo. Todo se carga en el cliente
+ * (la página es estática, nunca necesita rebuild para reflejar un pedido
+ * nuevo).
+ *
+ * Privacidad: Núcleo ya censura todo. Este componente NO censura, NO intenta
+ * revertir la censura, NO toca la marca de agua y pinta cada texto de la API
+ * con textContent (nunca innerHTML). Nada de la API se guarda en
+ * localStorage ni se manda a analytics.
+ *
+ * API (solo lectura, sin auth):
+ *   GET {base}/api/public/pedidos-publicos/?page=1&per_page=12
+ *       -> { data: [Item], meta: { page, per_page, total, total_pages } }
+ *   GET {base}/api/public/pedidos-publicos/?slug=pub-xxxxxx -> Item
+ *   Item.certificado_pdf_url solo se puede ENMARCAR desde resetenlinea.com
+ *   (CSP frame-src ya incluye Núcleo; object-src 'none' => solo <iframe>).
+ */
+import { getImage } from "astro:assets";
+import { t } from "../../i18n/utils";
+import { NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
+import iconoClasico from "../../assets/branding/clasico.png";
+import iconoPlus from "../../assets/branding/plus.png";
+import iconoElite from "../../assets/branding/elite.png";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const API_URL = `${NUCLEO_API_BASE_URL}/api/public/pedidos-publicos/`;
+
+const [clasico, plus, elite] = await Promise.all([
+  getImage({ src: iconoClasico, width: 64, height: 64 }),
+  getImage({ src: iconoPlus, width: 64, height: 64 }),
+  getImage({ src: iconoElite, width: 64, height: 64 }),
+]).then((imgs) => imgs.map((img) => img.src));
+
+const p = (clave: string): string => t(locale, `pedidosVerificadosPage.${clave}`);
+const textos = {
+  cargando: p("cargando"),
+  vacioTitulo: p("vacioTitulo"),
+  vacioTexto: p("vacioTexto"),
+  errorTitulo: p("errorTitulo"),
+  errorTexto: p("errorTexto"),
+  reintentar: p("reintentar"),
+  cargarMas: p("cargarMas"),
+  mostrando: p("mostrando"),
+  errorLabel: p("errorLabel"),
+  servicio: p("servicio"),
+  dias: p("dias"),
+  deporvida: p("deporvida"),
+  vence: p("vence"),
+  bonos: p("bonos"),
+  unidadDias: p("unidadDias"),
+  unidadMeses: p("unidadMeses"),
+  estadoVigente: p("estadoVigente"),
+  estadoPorVencerse: p("estadoPorVencerse"),
+  estadoVencido: p("estadoVencido"),
+  estadoDeporvida: p("estadoDeporvida"),
+  protegido: p("protegido"),
+  campoQr: p("campoQr"),
+  campoDescarga: p("campoDescarga"),
+  campoLicencia: p("campoLicencia"),
+  verCertificado: p("verCertificado"),
+  cerrar: p("cerrar"),
+  abrirPdf: p("abrirPdf"),
+  ayudaMovil: p("ayudaMovil"),
+  modalTitulo: p("modalTitulo"),
+  noEncontrado: p("noEncontrado"),
+};
+---
+
+<section
+  class="pv-page"
+  data-pv
+  data-api-url={API_URL}
+  data-textos={JSON.stringify(textos)}
+  data-icono-clasico={clasico}
+  data-icono-plus={plus}
+  data-icono-elite={elite}
+>
+  <header class="pv-header">
+    <h1>{p("heading")}</h1>
+    <p>{p("intro")}</p>
+  </header>
+
+  <p class="pv-estado" data-pv-estado role="status" aria-live="polite" hidden></p>
+
+  <div class="pv-grid" data-pv-grid aria-busy="true">
+    {Array.from({ length: 3 }).map(() => (
+      <div class="pv-card pv-skeleton" aria-hidden="true">
+        <span class="pv-sk-linea pv-sk-corta"></span>
+        <span class="pv-sk-linea"></span>
+        <span class="pv-sk-linea"></span>
+        <span class="pv-sk-linea pv-sk-corta"></span>
+      </div>
+    ))}
+  </div>
+
+  <div class="pv-mas" data-pv-mas hidden>
+    <p data-pv-contador></p>
+    <button type="button" class="pv-boton" data-pv-cargar-mas>{p("cargarMas")}</button>
+  </div>
+
+  <dialog class="pv-modal" data-pv-modal aria-labelledby="pv-modal-titulo">
+    <div class="pv-modal-caja">
+      <div class="pv-modal-cabecera">
+        <h2 id="pv-modal-titulo" data-pv-modal-titulo>{p("modalTitulo")}</h2>
+        <button type="button" class="pv-modal-cerrar" data-pv-cerrar aria-label={p("cerrar")}>✕</button>
+      </div>
+      <div class="pv-modal-cuerpo" data-pv-modal-cuerpo></div>
+      <div class="pv-modal-pie">
+        <a class="pv-boton pv-boton-claro" data-pv-abrir-pdf target="_blank" rel="noopener noreferrer">{p("abrirPdf")}</a>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  interface Bono {
+    cantidad: number;
+    unidad: string;
+    concepto: string;
+  }
+  interface Garantia {
+    plan?: string;
+    dias?: number | null;
+    de_por_vida?: boolean;
+    vence?: string | null;
+    estado?: string | null;
+    bonos?: Bono[];
+  }
+  interface Pedido {
+    slug: string;
+    codigo: string;
+    cliente?: string;
+    correo?: string;
+    marca?: string;
+    modelo?: string;
+    error?: string;
+    pais?: string;
+    pais_iso?: string;
+    fecha_servicio?: string;
+    garantia?: Garantia;
+    protegido?: { marca_agua?: string; campos?: string[] };
+    certificado_pdf_url?: string;
+  }
+  interface Meta {
+    page: number;
+    per_page: number;
+    total: number;
+    total_pages: number;
+  }
+
+  const SLUG_VALIDO = /^pub-[a-z0-9]{3,20}$/i;
+  const POR_PAGINA = 12;
+
+  const root = document.querySelector<HTMLElement>("[data-pv]");
+  if (root) iniciar(root);
+
+  function iniciar(root: HTMLElement) {
+    const apiUrl = root.dataset.apiUrl || "";
+    const tx: Record<string, string> = JSON.parse(root.dataset.textos || "{}");
+    const iconos: Record<string, string> = {
+      clasico: root.dataset.iconoClasico || "",
+      plus: root.dataset.iconoPlus || "",
+      elite: root.dataset.iconoElite || "",
+    };
+    const grid = root.querySelector<HTMLElement>("[data-pv-grid]")!;
+    const estadoEl = root.querySelector<HTMLElement>("[data-pv-estado]")!;
+    const masEl = root.querySelector<HTMLElement>("[data-pv-mas]")!;
+    const contadorEl = root.querySelector<HTMLElement>("[data-pv-contador]")!;
+    const masBtn = root.querySelector<HTMLButtonElement>("[data-pv-cargar-mas]")!;
+    const modal = root.querySelector<HTMLDialogElement>("[data-pv-modal]")!;
+    const modalCuerpo = root.querySelector<HTMLElement>("[data-pv-modal-cuerpo]")!;
+    const modalTitulo = root.querySelector<HTMLElement>("[data-pv-modal-titulo]")!;
+    const abrirPdf = root.querySelector<HTMLAnchorElement>("[data-pv-abrir-pdf]")!;
+    const cerrarBtn = root.querySelector<HTMLButtonElement>("[data-pv-cerrar]")!;
+
+    const cargados = new Map<string, Pedido>();
+    let pagina = 0;
+    let totalPaginas = 1;
+    let total = 0;
+    let cargando = false;
+    let ultimoFoco: HTMLElement | null = null;
+
+    // En móvil/tablet táctil el visor PDF embebido es poco fiable (iOS sobre
+    // todo): se prioriza el enlace a una pestaña nueva.
+    const esTactil = window.matchMedia("(pointer: coarse)").matches || /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    const el = (tag: string, clase?: string, texto?: string): HTMLElement => {
+      const nodo = document.createElement(tag);
+      if (clase) nodo.className = clase;
+      if (texto !== undefined) nodo.textContent = texto;
+      return nodo;
+    };
+
+    const reemplazar = (plantilla: string, valores: Record<string, string | number>) =>
+      Object.entries(valores).reduce((acc, [k, v]) => acc.replaceAll(`{${k}}`, String(v)), plantilla);
+
+    // Regional Indicator Symbols (mismo cálculo que banderaEmoji en
+    // lib/precios.ts, sin arrastrar el catálogo de precios al bundle).
+    const bandera = (iso?: string): string => {
+      const c = (iso || "").toUpperCase();
+      if (!/^[A-Z]{2}$/.test(c)) return "🌎";
+      return String.fromCodePoint(...[...c].map((ch) => 0x1f1e6 + (ch.charCodeAt(0) - 65)));
+    };
+
+    const claveIcono = (plan?: string): string => {
+      const n = (plan || "").toLowerCase();
+      if (n.includes("elite") || n.includes("élite")) return "elite";
+      if (n.includes("plus")) return "plus";
+      if (n.includes("clásico") || n.includes("clasico")) return "clasico";
+      return "";
+    };
+
+    const etiquetaEstado = (estado?: string | null): { clase: string; texto: string } | null => {
+      switch (estado) {
+        case "vigente":
+          return { clase: "pv-chip-vigente", texto: tx.estadoVigente };
+        case "por_vencerse":
+          return { clase: "pv-chip-porvencer", texto: tx.estadoPorVencerse };
+        case "vencido":
+          return { clase: "pv-chip-vencido", texto: tx.estadoVencido };
+        case "de_por_vida":
+          return { clase: "pv-chip-deporvida", texto: tx.estadoDeporvida };
+        default:
+          return null;
+      }
+    };
+
+    const etiquetaCampo = (campo: string): string => {
+      if (campo === "qr") return tx.campoQr;
+      if (campo === "descarga") return tx.campoDescarga;
+      if (campo === "licencia") return tx.campoLicencia;
+      return campo;
+    };
+
+    const fila = (etiqueta: string, valor: string): HTMLElement => {
+      const f = el("div", "pv-fila");
+      f.append(el("dt", "pv-fila-et", etiqueta), el("dd", "pv-fila-val", valor));
+      return f;
+    };
+
+    function crearTarjeta(pedido: Pedido): HTMLElement {
+      const g = pedido.garantia || {};
+      const card = el("article", "pv-card");
+
+      const cab = el("div", "pv-card-cab");
+      cab.append(el("span", "pv-codigo", pedido.codigo));
+      const chip = etiquetaEstado(g.estado);
+      if (chip) cab.append(el("span", `pv-chip ${chip.clase}`, chip.texto));
+      card.append(cab);
+
+      const equipo = [pedido.marca, pedido.modelo].filter(Boolean).join(" ");
+      if (equipo) card.append(el("h3", "pv-equipo", equipo));
+
+      const lista = el("dl", "pv-datos");
+      if (pedido.cliente) lista.append(fila("👤", pedido.cliente));
+      if (pedido.correo) lista.append(fila("✉️", pedido.correo));
+      if (pedido.error) lista.append(fila(tx.errorLabel, pedido.error));
+      if (pedido.pais) lista.append(fila(bandera(pedido.pais_iso), pedido.pais));
+      if (pedido.fecha_servicio) lista.append(fila(tx.servicio, pedido.fecha_servicio));
+      card.append(lista);
+
+      const plan = el("div", "pv-plan");
+      const icono = iconos[claveIcono(g.plan)];
+      if (icono) {
+        const img = document.createElement("img");
+        img.src = icono;
+        img.alt = "";
+        img.width = 40;
+        img.height = 40;
+        img.className = "pv-plan-icono";
+        plan.append(img);
+      }
+      const planTxt = el("div", "pv-plan-txt");
+      if (g.plan) planTxt.append(el("strong", "", g.plan));
+      const duracion = g.de_por_vida ? tx.deporvida : typeof g.dias === "number" ? reemplazar(tx.dias, { n: g.dias }) : "";
+      if (duracion) planTxt.append(el("span", "", duracion));
+      if (g.vence) planTxt.append(el("span", "pv-vence", reemplazar(tx.vence, { fecha: g.vence })));
+      plan.append(planTxt);
+      card.append(plan);
+
+      const bonos = (g.bonos || []).filter((b) => b && typeof b.cantidad === "number");
+      if (bonos.length > 0) {
+        const ul = el("ul", "pv-bonos");
+        ul.setAttribute("aria-label", tx.bonos);
+        bonos.forEach((b) => {
+          const unidad = b.unidad === "meses" ? tx.unidadMeses : tx.unidadDias;
+          ul.append(el("li", "", `+${b.cantidad} ${unidad} · ${b.concepto}`));
+        });
+        card.append(ul);
+      }
+
+      const prot = el("div", "pv-protegido");
+      prot.append(el("strong", "", `🔒 ${pedido.protegido?.marca_agua || tx.protegido}`));
+      const campos = el("ul", "pv-campos");
+      (pedido.protegido?.campos || []).forEach((c) => {
+        campos.append(el("li", "", etiquetaCampo(c)));
+      });
+      prot.append(campos);
+      card.append(prot);
+
+      if (pedido.certificado_pdf_url) {
+        const btn = el("button", "pv-boton", tx.verCertificado) as HTMLButtonElement;
+        btn.type = "button";
+        btn.addEventListener("click", () => abrirModal(pedido, btn));
+        card.append(btn);
+      }
+      return card;
+    }
+
+    function mostrarEstado(titulo: string, texto: string, reintentar = false) {
+      estadoEl.replaceChildren();
+      estadoEl.append(el("strong", "", titulo));
+      if (texto) estadoEl.append(el("span", "", texto));
+      if (reintentar) {
+        const b = el("button", "pv-boton pv-boton-claro", tx.reintentar) as HTMLButtonElement;
+        b.type = "button";
+        b.addEventListener("click", () => {
+          estadoEl.hidden = true;
+          grid.replaceChildren();
+          pagina = 0;
+          void cargarPagina();
+        });
+        estadoEl.append(b);
+      }
+      estadoEl.hidden = false;
+    }
+
+    function actualizarPie() {
+      masEl.hidden = pagina >= totalPaginas;
+      contadorEl.textContent = reemplazar(tx.mostrando, { n: cargados.size, total });
+    }
+
+    async function cargarPagina() {
+      if (cargando) return;
+      cargando = true;
+      masBtn.disabled = true;
+      grid.setAttribute("aria-busy", "true");
+      try {
+        const res = await fetch(`${apiUrl}?page=${pagina + 1}&per_page=${POR_PAGINA}`, { headers: { Accept: "application/json" } });
+        if (!res.ok) throw new Error(String(res.status));
+        const json: { data?: Pedido[]; meta?: Meta } = await res.json();
+        const datos = Array.isArray(json.data) ? json.data : [];
+        pagina = json.meta?.page ?? pagina + 1;
+        totalPaginas = json.meta?.total_pages ?? 1;
+        total = json.meta?.total ?? datos.length;
+
+        grid.querySelectorAll(".pv-skeleton").forEach((n) => n.remove());
+        datos.forEach((pedido) => {
+          if (!pedido?.slug || cargados.has(pedido.slug)) return;
+          cargados.set(pedido.slug, pedido);
+          grid.append(crearTarjeta(pedido));
+        });
+
+        if (cargados.size === 0) {
+          mostrarEstado(tx.vacioTitulo, tx.vacioTexto);
+          masEl.hidden = true;
+        } else {
+          estadoEl.hidden = true;
+          actualizarPie();
+        }
+      } catch {
+        grid.querySelectorAll(".pv-skeleton").forEach((n) => n.remove());
+        if (cargados.size === 0) mostrarEstado(tx.errorTitulo, tx.errorTexto, true);
+        else masEl.hidden = false;
+      } finally {
+        cargando = false;
+        masBtn.disabled = false;
+        grid.setAttribute("aria-busy", "false");
+      }
+    }
+
+    function abrirModal(pedido: Pedido, disparador?: HTMLElement) {
+      if (!pedido.certificado_pdf_url) return;
+      ultimoFoco = disparador || null;
+      modalCuerpo.replaceChildren();
+      modalTitulo.textContent = `${tx.modalTitulo} · ${pedido.codigo}`;
+      abrirPdf.href = pedido.certificado_pdf_url;
+
+      if (esTactil) {
+        modalCuerpo.append(el("p", "pv-modal-ayuda", tx.ayudaMovil));
+      } else {
+        const marco = document.createElement("iframe");
+        marco.className = "pv-modal-pdf";
+        marco.title = `${tx.modalTitulo} ${pedido.codigo}`;
+        marco.src = `${pedido.certificado_pdf_url}#toolbar=0&navpanes=0&view=FitH`;
+        modalCuerpo.append(marco);
+      }
+      document.documentElement.style.overflow = "hidden";
+      if (!modal.open) modal.showModal();
+      const url = new URL(location.href);
+      url.searchParams.set("pedido", pedido.slug);
+      history.replaceState(null, "", url);
+    }
+
+    function cerrarModal() {
+      if (modal.open) modal.close();
+    }
+
+    modal.addEventListener("close", () => {
+      modalCuerpo.replaceChildren();
+      document.documentElement.style.overflow = "";
+      const url = new URL(location.href);
+      url.searchParams.delete("pedido");
+      history.replaceState(null, "", url);
+      ultimoFoco?.focus();
+    });
+    cerrarBtn.addEventListener("click", cerrarModal);
+    // Clic fuera de la caja (sobre el backdrop) cierra; ESC y el focus trap
+    // vienen de <dialog>.showModal().
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) cerrarModal();
+    });
+    masBtn.addEventListener("click", () => void cargarPagina());
+
+    async function abrirDesdeUrl() {
+      const slug = new URL(location.href).searchParams.get("pedido") || "";
+      if (!SLUG_VALIDO.test(slug)) return;
+      let pedido: Pedido | undefined = cargados.get(slug.toLowerCase());
+      if (!pedido) {
+        try {
+          const res = await fetch(`${apiUrl}?slug=${encodeURIComponent(slug.toLowerCase())}`, { headers: { Accept: "application/json" } });
+          if (res.ok) pedido = (await res.json()) as Pedido;
+        } catch {
+          /* sin red: el resto de la página sigue funcionando */
+        }
+      }
+      if (pedido?.certificado_pdf_url) abrirModal(pedido);
+      else mostrarEstado(tx.noEncontrado, "");
+    }
+
+    void cargarPagina().then(abrirDesdeUrl);
+  }
+</script>
+
+<style is:global>
+  /* is:global: tarjetas, chips y modal se construyen con createElement en el
+     cliente; esos nodos nunca reciben el atributo de scope de Astro. Todas las
+     clases llevan el prefijo pv- para no chocar con el resto del sitio. */
+  .pv-page {
+    display: grid;
+    gap: var(--space-md);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-md) 1rem var(--space-lg, 3rem);
+  }
+
+  .pv-header h1 {
+    margin: 0 0 var(--space-sm);
+  }
+
+  .pv-header p {
+    margin: 0;
+    max-width: 70ch;
+    color: var(--color-text-muted);
+  }
+
+  .pv-page [hidden] {
+    display: none !important;
+  }
+
+  .pv-estado {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    text-align: center;
+    padding: var(--space-md);
+    background: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .pv-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 700px) {
+    .pv-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1040px) {
+    .pv-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pv-card {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: var(--space-md);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+
+  .pv-card-cab {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .pv-codigo {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-size: 0.95rem;
+  }
+
+  .pv-chip {
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .pv-chip-vigente {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .pv-chip-porvencer {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .pv-chip-vencido {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .pv-chip-deporvida {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .pv-equipo {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .pv-datos {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .pv-fila {
+    display: flex;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .pv-fila-et {
+    flex: 0 0 auto;
+    color: var(--color-text-subtle);
+    font-weight: 600;
+  }
+
+  .pv-fila-val {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .pv-plan {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    background: var(--color-bg-muted);
+    border-radius: var(--radius-sm);
+  }
+
+  .pv-plan-icono {
+    flex: 0 0 auto;
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: contain;
+  }
+
+  .pv-plan-txt {
+    display: grid;
+    font-size: 0.9rem;
+  }
+
+  .pv-vence {
+    color: var(--color-text-subtle);
+    font-size: 0.8rem;
+  }
+
+  .pv-bonos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+  }
+
+  .pv-protegido {
+    display: grid;
+    gap: 0.4rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+  }
+
+  .pv-campos {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pv-campos li {
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    text-decoration: line-through;
+    letter-spacing: 0.02em;
+  }
+
+  .pv-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.2rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .pv-boton:hover {
+    background: var(--color-primary-dark);
+  }
+
+  .pv-boton:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .pv-boton-claro {
+    background: var(--color-bg-card);
+    color: var(--color-primary-dark);
+    border: 1px solid var(--color-border);
+  }
+
+  .pv-boton-claro:hover {
+    background: var(--color-bg-muted);
+  }
+
+  .pv-mas {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .pv-mas p {
+    margin: 0;
+  }
+
+  .pv-skeleton {
+    min-height: 15rem;
+  }
+
+  .pv-sk-linea {
+    display: block;
+    height: 0.9rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-bg-muted), var(--color-border), var(--color-bg-muted));
+    background-size: 200% 100%;
+    animation: pv-brillo 1.4s ease-in-out infinite;
+  }
+
+  .pv-sk-corta {
+    width: 55%;
+  }
+
+  @keyframes pv-brillo {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pv-sk-linea {
+      animation: none;
+    }
+  }
+
+  .pv-modal {
+    width: min(920px, 96vw);
+    max-height: 94vh;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    box-shadow: 0 20px 60px rgb(0 0 0 / 0.4);
+  }
+
+  .pv-modal::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  .pv-modal-caja {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .pv-modal-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .pv-modal-cabecera h2 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .pv-modal-cerrar {
+    flex: 0 0 auto;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-muted);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .pv-modal-pdf {
+    display: block;
+    width: 100%;
+    height: min(72vh, 1000px);
+    min-height: 360px;
+    border: 0;
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+  }
+
+  .pv-modal-ayuda {
+    margin: 0;
+    padding: var(--space-md);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  .pv-modal-pie {
+    display: flex;
+    justify-content: center;
+  }
+</style>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PedidosVerificadosPage from "../../../components/pages/PedidosVerificadosPage.astro";
+import { t } from "../../../i18n/utils";
+
+const locale = "es" as const;
+---
+
+<BaseLayout
+  wide
+  title={t(locale, "pedidosVerificadosPage.title")}
+  description={t(locale, "pedidosVerificadosPage.description")}
+  locale={locale}
+  path="/prueba-social/pedidos-verificados/"
+>
+  <PedidosVerificadosPage locale={locale} />
+</BaseLayout>
