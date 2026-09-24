@@ -56,7 +56,23 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
       );
       if (lista.length === 0) return;
 
-      const elegido = lista[Math.floor(Math.random() * lista.length)];
+      // Azar que SIEMPRE cambia al recargar: con pocos certificados el azar
+      // puro repite el mismo a menudo y parece que F5 no hace nada, así que se
+      // excluye el último mostrado en esta pestaña (si hay más de uno).
+      const CLAVE_ULTIMO = "certificado-ejemplo-ultimo";
+      let ultimo = "";
+      try {
+        ultimo = sessionStorage.getItem(CLAVE_ULTIMO) || "";
+      } catch {
+        /* sin sessionStorage: cae al azar puro */
+      }
+      const candidatos = lista.length > 1 ? lista.filter((i) => i.url !== ultimo) : lista;
+      const elegido = candidatos[Math.floor(Math.random() * candidatos.length)];
+      try {
+        sessionStorage.setItem(CLAVE_ULTIMO, elegido.url as string);
+      } catch {
+        /* idem */
+      }
       const url = elegido.url as string;
       const alt = elegido.alt || seccion.querySelector("h2")?.textContent || "";
       const esPdf = new URL(url).pathname.toLowerCase().endsWith(".pdf");
