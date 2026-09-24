@@ -38,7 +38,13 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
     alt?: string;
   }
 
+  // APAGADO DE EMERGENCIA (2026-09-24): Núcleo estaba sirviendo un certificado
+  // con datos reales de un cliente sin censurar. Volver a false solo cuando
+  // Núcleo confirme que TODO lo que publica está censurado.
+  const VISOR_DESACTIVADO = true;
+
   document.querySelectorAll<HTMLElement>("[data-certificado-ejemplo]").forEach(async (seccion) => {
+    if (VISOR_DESACTIVADO) return;
     const visor = seccion.querySelector<HTMLElement>("[data-certificado-visor]");
     const apiUrl = seccion.dataset.apiUrl;
     if (!visor || !apiUrl) return;
