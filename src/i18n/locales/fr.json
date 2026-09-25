@@ -759,13 +759,17 @@
     "bubbleMensaje": "Besoin d'aide avec votre imprimante ?",
     "bubbleMensajeModelo": "Besoin d'un Reset Assisté pour votre {marca} {modelo} ?"
   },
+  "selectorVendedores": {
+    "titulo": "Avec qui souhaitez-vous parler ?",
+    "cargando": "Recherche de conseillers disponibles…"
+  },
   "consultaGarantiaPage": {
     "title": "Vérifier ma Garantie | ResetEnLinea.com",
     "description": "Vérifiez l'état de votre garantie avec votre e-mail ou WhatsApp.",
     "heading": "Vérifier ma Garantie",
-    "intro": "Saisissez l'e-mail ou le numéro WhatsApp utilisé lors de votre achat pour voir l'état de votre garantie.",
-    "inputLabel": "E-mail ou WhatsApp",
-    "inputPlaceholder": "client@email.com ou +57 300 1234567",
+    "intro": "Saisissez l'e-mail, le numéro WhatsApp ou le numéro de commande (#) de votre achat pour voir l'état de votre garantie.",
+    "inputLabel": "E-mail, WhatsApp ou n° de commande",
+    "inputPlaceholder": "client@email.com, +57 300 1234567 ou #16583",
     "boton": "Vérifier",
     "botonConsultando": "Vérification...",
     "colPedido": "Numéro de commande",
@@ -773,8 +777,9 @@
     "colEstado": "Statut",
     "descargaBoton": "📄 Télécharger",
     "descargaNoDisponible": "Pas encore disponible",
+    "descargaConContacto": "Recherchez avec votre e-mail ou WhatsApp pour télécharger",
     "estadoVacio": "—",
-    "sinResultados": "Aucune commande trouvée avec cet e-mail ou ce WhatsApp.",
+    "sinResultados": "Aucune commande trouvée avec cet e-mail, ce WhatsApp ou ce numéro de commande.",
     "errorGenerico": "Une erreur est survenue. Réessayez dans quelques minutes."
   },
   "preciosPage": {

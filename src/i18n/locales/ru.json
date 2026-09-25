@@ -719,13 +719,17 @@
     "bubbleMensaje": "Нужна помощь с принтером?",
     "bubbleMensajeModelo": "Нужен ассистированный сброс для {marca} {modelo}?"
   },
+  "selectorVendedores": {
+    "titulo": "С кем вы хотите поговорить?",
+    "cargando": "Ищем доступных консультантов…"
+  },
   "consultaGarantiaPage": {
     "title": "Проверка гарантии | ResetEnLinea.com",
     "description": "Проверьте статус гарантии по email или WhatsApp.",
     "heading": "Проверка гарантии",
-    "intro": "Введите email или номер WhatsApp, которые вы использовали при покупке, чтобы проверить статус гарантии.",
-    "inputLabel": "Email или WhatsApp",
-    "inputPlaceholder": "client@email.com или +57 300 1234567",
+    "intro": "Введите email, номер WhatsApp или номер заказа (#), указанные при покупке, чтобы проверить статус гарантии.",
+    "inputLabel": "Email, WhatsApp или № заказа",
+    "inputPlaceholder": "client@email.com, +57 300 1234567 или #16583",
     "boton": "Проверить",
     "botonConsultando": "Проверяем...",
     "colPedido": "Номер заказа",
@@ -733,8 +737,9 @@
     "colEstado": "Статус",
     "descargaBoton": "📄 Скачать",
     "descargaNoDisponible": "Пока недоступно",
+    "descargaConContacto": "Для скачивания найдите по email или WhatsApp",
     "estadoVacio": "—",
-    "sinResultados": "Заказ с таким email или WhatsApp не найден.",
+    "sinResultados": "Заказ с таким email, WhatsApp или номером заказа не найден.",
     "errorGenerico": "Произошла ошибка. Попробуйте снова через несколько минут."
   },
   "preciosPage": {

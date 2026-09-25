@@ -11,23 +11,29 @@
  * Fuente: GET {NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/
  *   -> { "imagenes": [ { "url": "https://.../x.pdf|.webp", "alt": "..." } ] }
  * Núcleo agrega a esa lista, tras las imágenes activas, los PDF censurados de
- * las copias publicadas en Pedidos Públicos. Un PDF solo se puede ENMARCAR
- * desde resetenlinea.com (CSP frame-src ya permite Núcleo; object-src es
- * 'none', por eso <iframe>). Lista vacía o fetch fallido: sección oculta.
+ * las copias publicadas en Pedidos Públicos. Los PDF NO se enmarcan (Núcleo
+ * rechaza iframe/navegación directa): se bajan con fetch y se dibujan en
+ * <canvas> con pdf.js, para que no haya visor con "guardar como"/imprimir.
+ * Lista vacía o fetch fallido: sección oculta.
  */
 import { t } from "../../i18n/utils";
 import { NUCLEO_API_BASE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
+  /** Nivel del encabezado: 2 en la página propia de Consulta de Garantía; 4
+   *  cuando va DENTRO de un paso (Cómo funciona / páginas de modelo), cuyo
+   *  título ya es un h3 — así no se salta un nivel en el esquema del documento. */
+  nivelTitulo?: 2 | 4;
 }
 
-const { locale } = Astro.props;
+const { locale, nivelTitulo = 2 } = Astro.props;
+const Encabezado = nivelTitulo === 4 ? "h4" : "h2";
 const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
 ---
 
 <section class="certificado-ejemplo" data-certificado-ejemplo data-api-url={API_URL} hidden>
-  <h2>{t(locale, "consultaGarantiaPage.ejemploTitulo")}</h2>
+  <Encabezado class="certificado-ejemplo-titulo">{t(locale, "consultaGarantiaPage.ejemploTitulo")}</Encabezado>
   <p>{t(locale, "consultaGarantiaPage.ejemploTexto")}</p>
   <div class="certificado-ejemplo-visor" data-certificado-visor></div>
 </section>
@@ -38,16 +44,35 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
     alt?: string;
   }
 
-  // APAGADO DE EMERGENCIA (2026-09-24): Núcleo estaba sirviendo un certificado
-  // con datos reales de un cliente sin censurar. Volver a false solo cuando
-  // Núcleo confirme que TODO lo que publica está censurado.
-  const VISOR_DESACTIVADO = true;
+  // pdf.js (build 3.11 "min", servida desde /pdfjs/, mismo origen: cumple la CSP
+  // sin abrir script-src ni worker-src). Se carga solo si hay un PDF que mostrar.
+  let pdfjsPromesa: Promise<any> | null = null;
+  function cargarPdfJs(): Promise<any> {
+    pdfjsPromesa ??= new Promise((ok, fallo) => {
+      const w = window as any;
+      if (w.pdfjsLib) return ok(w.pdfjsLib);
+      const s = document.createElement("script");
+      s.src = "/pdfjs/pdf.min.js";
+      s.onload = () => {
+        w.pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.js";
+        ok(w.pdfjsLib);
+      };
+      s.onerror = () => fallo(new Error("pdf.js"));
+      document.head.appendChild(s);
+    });
+    return pdfjsPromesa;
+  }
 
   document.querySelectorAll<HTMLElement>("[data-certificado-ejemplo]").forEach(async (seccion) => {
-    if (VISOR_DESACTIVADO) return;
     const visor = seccion.querySelector<HTMLElement>("[data-certificado-visor]");
     const apiUrl = seccion.dataset.apiUrl;
     if (!visor || !apiUrl) return;
+
+    // Sin menú contextual (guardar imagen como…), sin arrastrar ni copiar.
+    // Freno de uso normal: una captura de pantalla no se puede impedir.
+    for (const evento of ["contextmenu", "dragstart", "selectstart", "copy", "cut"]) {
+      seccion.addEventListener(evento, (e) => e.preventDefault());
+    }
 
     try {
       const res = await fetch(apiUrl, { cache: "no-store" });
@@ -76,25 +101,43 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
         /* idem */
       }
       const url = elegido.url as string;
-      const alt = elegido.alt || seccion.querySelector("h2")?.textContent || "";
+      const alt = elegido.alt || seccion.querySelector(".certificado-ejemplo-titulo")?.textContent || "";
       const esPdf = new URL(url).pathname.toLowerCase().endsWith(".pdf");
 
       if (esPdf) {
-        const marco = document.createElement("iframe");
-        marco.className = "certificado-ejemplo-pdf";
-        marco.src = `${url}#toolbar=0&navpanes=0&view=FitH`;
-        marco.title = alt;
-        marco.loading = "lazy";
-        marco.addEventListener("load", () => {
+        // Se dibuja en <canvas> con pdf.js en vez de un <iframe>/<embed>: así
+        // no aparece el visor del navegador con sus botones de guardar,
+        // "guardar como" e imprimir. Si algo falla, la sección queda oculta.
+        try {
+          const pdfjs = await cargarPdfJs();
+          const respuesta = await fetch(url, { cache: "no-store" });
+          if (!respuesta.ok) return;
+          const pdf = await pdfjs.getDocument({ data: await respuesta.arrayBuffer(), isEvalSupported: false }).promise;
+          const ancho = Math.min(visor.clientWidth || 820, 820);
+          for (let n = 1; n <= pdf.numPages; n++) {
+            const pagina = await pdf.getPage(n);
+            const base = pagina.getViewport({ scale: 1 });
+            const nitidez = Math.min(window.devicePixelRatio || 1, 2) * (ancho / base.width);
+            const vista = pagina.getViewport({ scale: nitidez });
+            const lienzo = document.createElement("canvas");
+            lienzo.className = "certificado-ejemplo-pagina";
+            lienzo.width = Math.floor(vista.width);
+            lienzo.height = Math.floor(vista.height);
+            lienzo.setAttribute("role", "img");
+            lienzo.setAttribute("aria-label", alt);
+            await pagina.render({ canvasContext: lienzo.getContext("2d"), viewport: vista }).promise;
+            visor.appendChild(lienzo);
+          }
           seccion.hidden = false;
-        });
-        visor.appendChild(marco);
-        seccion.hidden = false;
+        } catch {
+          visor.replaceChildren();
+        }
       } else {
         const img = document.createElement("img");
         img.className = "certificado-ejemplo-img";
         img.alt = alt;
         img.decoding = "async";
+        img.draggable = false;
         img.addEventListener("load", () => {
           seccion.hidden = false;
         });
@@ -130,7 +173,7 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
     display: none;
   }
 
-  .certificado-ejemplo h2 {
+  .certificado-ejemplo-titulo {
     margin: 0;
     font-size: 1.15rem;
   }
@@ -156,14 +199,32 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/certificados-ejemplo/`;
     filter: drop-shadow(0 6px 14px rgb(0 0 0 / 0.22));
   }
 
-  .certificado-ejemplo-pdf {
+  .certificado-ejemplo-visor {
+    gap: var(--space-sm);
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .certificado-ejemplo-pagina {
+    display: block;
     width: 100%;
     max-width: 820px;
-    height: min(75vh, 1100px);
-    min-height: 420px;
-    border: 0;
+    height: auto;
     border-radius: var(--radius-sm);
     background: #ffffff;
     box-shadow: 0 6px 14px rgb(0 0 0 / 0.22);
+    -webkit-user-drag: none;
+  }
+
+  .certificado-ejemplo-img {
+    -webkit-user-drag: none;
+  }
+
+  /* Imprimir (o "guardar como PDF" desde imprimir) no incluye el certificado. */
+  @media print {
+    .certificado-ejemplo {
+      display: none !important;
+    }
   }
 </style>

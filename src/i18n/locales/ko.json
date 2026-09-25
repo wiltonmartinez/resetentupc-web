@@ -728,13 +728,17 @@
     "bubbleMensaje": "프린터 관련 도움이 필요하신가요?",
     "bubbleMensajeModelo": "{marca} {modelo} 지원 리셋이 필요하신가요?"
   },
+  "selectorVendedores": {
+    "titulo": "누구와 상담하시겠어요?",
+    "cargando": "상담 가능한 담당자를 찾는 중…"
+  },
   "consultaGarantiaPage": {
     "title": "보증 확인 | ResetEnLinea.com",
     "description": "이메일 또는 WhatsApp으로 보증 상태를 확인하세요.",
     "heading": "보증 확인",
-    "intro": "구매 시 사용한 이메일 또는 WhatsApp 번호를 입력하여 보증 상태를 확인하세요.",
-    "inputLabel": "이메일 또는 WhatsApp",
-    "inputPlaceholder": "customer@email.com 또는 +57 300 1234567",
+    "intro": "구매 시 사용한 이메일, WhatsApp 번호 또는 주문 번호(#)를 입력하여 보증 상태를 확인하세요.",
+    "inputLabel": "이메일, WhatsApp 또는 주문 번호",
+    "inputPlaceholder": "customer@email.com, +57 300 1234567 또는 #16583",
     "boton": "확인하기",
     "botonConsultando": "확인 중...",
     "colPedido": "주문 번호",
@@ -742,8 +746,9 @@
     "colEstado": "상태",
     "descargaBoton": "📄 다운로드",
     "descargaNoDisponible": "아직 이용 불가",
+    "descargaConContacto": "다운로드하려면 이메일 또는 WhatsApp으로 조회하세요",
     "estadoVacio": "—",
-    "sinResultados": "해당 이메일 또는 WhatsApp으로 등록된 주문이 없습니다.",
+    "sinResultados": "해당 이메일, WhatsApp 또는 주문 번호로 등록된 주문이 없습니다.",
     "errorGenerico": "오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
   },
   "preciosPage": {

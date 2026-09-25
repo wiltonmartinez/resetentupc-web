@@ -8,9 +8,13 @@ interface Props {
   /** false para embeber solo el formulario+resultado (ej. dentro de
    *  ProcedimientoImpresora, Paso 4) sin duplicar el <h1> de esta página. */
   mostrarTitulo?: boolean;
+  /** Muestra debajo el "Certificado de Garantía de Ejemplo" (visor de PDF).
+   *  Por defecto solo en la página propia (mostrarTitulo); dentro de un paso
+   *  se pide explícito para que buscador y ejemplo queden juntos. */
+  mostrarEjemplo?: boolean;
 }
 
-const { locale, mostrarTitulo = true } = Astro.props;
+const { locale, mostrarTitulo = true, mostrarEjemplo = mostrarTitulo } = Astro.props;
 
 const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
 ---
@@ -40,6 +44,7 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
         data-texto-consultando={t(locale, "consultaGarantiaPage.botonConsultando")}
         data-texto-descarga-boton={t(locale, "consultaGarantiaPage.descargaBoton")}
         data-texto-descarga-no-disponible={t(locale, "consultaGarantiaPage.descargaNoDisponible")}
+        data-texto-descarga-con-contacto={t(locale, "consultaGarantiaPage.descargaConContacto")}
         data-texto-estado-vacio={t(locale, "consultaGarantiaPage.estadoVacio")}
         data-texto-sin-resultados={t(locale, "consultaGarantiaPage.sinResultados")}
         data-texto-error-generico={t(locale, "consultaGarantiaPage.errorGenerico")}
@@ -67,7 +72,7 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
     </table>
   </div>
 
-  {mostrarTitulo && <CertificadoEjemplo locale={locale} />}
+  {mostrarEjemplo && <CertificadoEjemplo locale={locale} nivelTitulo={mostrarTitulo ? 2 : 4} />}
 </article>
 
 <script>
@@ -76,6 +81,7 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
     botonConsultando: "",
     descargaBoton: "",
     descargaNoDisponible: "",
+    descargaConContacto: "",
     estadoVacio: "",
     sinResultados: "",
     errorGenerico: "",
@@ -94,6 +100,7 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
     textos.botonConsultando = boton.dataset.textoConsultando || textos.botonDefault;
     textos.descargaBoton = boton.dataset.textoDescargaBoton || "";
     textos.descargaNoDisponible = boton.dataset.textoDescargaNoDisponible || "";
+    textos.descargaConContacto = boton.dataset.textoDescargaConContacto || textos.descargaNoDisponible;
     textos.estadoVacio = boton.dataset.textoEstadoVacio || "—";
     textos.sinResultados = boton.dataset.textoSinResultados || "";
     textos.errorGenerico = boton.dataset.textoErrorGenerico || "";
@@ -115,6 +122,9 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
       numero_pedido: number;
       estado: string | null;
       descarga_url: string | null;
+      // true cuando se buscó solo por # de pedido: el enlace de descarga no se
+      // entrega (el número es adivinable) y se pide consultar con correo/WhatsApp.
+      descarga_requiere_contacto?: boolean;
       // Opcionales: la API de Núcleo puede no traerlos todavía en pedidos
       // viejos o mientras se despliega ese cambio — se muestran vacíos
       // ("—") en vez de romper la fila.
@@ -165,7 +175,9 @@ const API_URL = `${NUCLEO_API_BASE_URL}/api/public/consulta-garantia/`;
         } else {
           const span = document.createElement("span");
           span.className = "garantia-descarga-no-disponible";
-          span.textContent = textos.descargaNoDisponible;
+          span.textContent = pedido.descarga_requiere_contacto
+            ? textos.descargaConContacto
+            : textos.descargaNoDisponible;
           tdDescarga.appendChild(span);
         }
         tr.appendChild(tdDescarga);

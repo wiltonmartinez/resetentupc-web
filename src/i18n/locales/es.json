@@ -528,11 +528,11 @@
   },
   "consultaGarantiaPage": {
     "title": "Consulta de Garantía | ResetEnLinea.com",
-    "description": "Consulta el estado de tu garantía con tu correo o WhatsApp.",
+    "description": "Consulta el estado de tu garantía con tu correo, WhatsApp o número de pedido.",
     "heading": "Consulta de Garantía",
-    "intro": "Escribe el correo o WhatsApp que usaste en tu compra para ver el estado de tu garantía.",
-    "inputLabel": "Correo o WhatsApp",
-    "inputPlaceholder": "cliente@correo.com o +57 300 1234567",
+    "intro": "Escribe el correo, el WhatsApp o el número de pedido (#) de tu compra para ver el estado de tu garantía.",
+    "inputLabel": "Por Correo o WhatsApp o # pedido",
+    "inputPlaceholder": "cliente@correo.com, +57 300 1234567 o #16583",
     "boton": "Consultar",
     "botonConsultando": "Consultando...",
     "colPedido": "Número de pedido",
@@ -546,8 +546,9 @@
     "colEstado": "Tiempo de Garantía",
     "descargaBoton": "📄 Descargar",
     "descargaNoDisponible": "Aún no disponible",
+    "descargaConContacto": "Búscalo con tu correo o WhatsApp para descargar",
     "estadoVacio": "—",
-    "sinResultados": "No existe ningún pedido con ese correo o WhatsApp.",
+    "sinResultados": "No existe ningún pedido con ese correo, WhatsApp o número de pedido.",
     "errorGenerico": "Ocurrió un error al consultar. Intenta de nuevo en unos minutos."
   },
   "whatsapp": {
@@ -881,6 +882,10 @@
     "bubbleMensaje": "¿Necesitas ayuda con tu impresora?",
     "bubbleMensajeModelo": "¿Necesitas Reset Asistido {marca} {modelo}?",
     "menuVacio": "En este momento no hay nadie disponible. Probá de nuevo en un rato."
+  },
+  "selectorVendedores": {
+    "titulo": "¿Con quién quieres hablar?",
+    "cargando": "Buscando asesores disponibles…"
   },
   "seleccionPopup": {
     "titulo": "Contanos qué equipo tenés",

@@ -759,13 +759,17 @@
     "bubbleMensaje": "Need help with your printer?",
     "bubbleMensajeModelo": "Need an Assisted Reset for your {marca} {modelo}?"
   },
+  "selectorVendedores": {
+    "titulo": "Who would you like to talk to?",
+    "cargando": "Looking for available advisors…"
+  },
   "consultaGarantiaPage": {
     "title": "Warranty Check | ResetEnLinea.com",
     "description": "Check your warranty status with your email or WhatsApp number.",
     "heading": "Warranty Check",
-    "intro": "Enter the email or WhatsApp number you used for your purchase to check your warranty status.",
-    "inputLabel": "Email or WhatsApp",
-    "inputPlaceholder": "customer@email.com or +57 300 1234567",
+    "intro": "Enter the email, WhatsApp number or order number (#) from your purchase to check your warranty status.",
+    "inputLabel": "Email, WhatsApp or order #",
+    "inputPlaceholder": "customer@email.com, +57 300 1234567 or #16583",
     "boton": "Check",
     "botonConsultando": "Checking...",
     "colPedido": "Order number",
@@ -773,8 +777,9 @@
     "colEstado": "Status",
     "descargaBoton": "📄 Download",
     "descargaNoDisponible": "Not available yet",
+    "descargaConContacto": "Search with your email or WhatsApp to download",
     "estadoVacio": "—",
-    "sinResultados": "No order found with that email or WhatsApp number.",
+    "sinResultados": "No order found with that email, WhatsApp number or order number.",
     "errorGenerico": "Something went wrong. Please try again in a few minutes."
   },
   "preciosPage": {

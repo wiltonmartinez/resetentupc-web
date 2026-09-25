@@ -759,13 +759,17 @@
     "bubbleMensaje": "Hulp nodig met je printer?",
     "bubbleMensajeModelo": "Heb je een geassisteerde reset nodig voor je {marca} {modelo}?"
   },
+  "selectorVendedores": {
+    "titulo": "Met wie wil je praten?",
+    "cargando": "Beschikbare adviseurs zoeken…"
+  },
   "consultaGarantiaPage": {
     "title": "Garantie controleren | ResetEnLinea.com",
     "description": "Controleer je garantiestatus met je e-mailadres of WhatsApp-nummer.",
     "heading": "Garantie controleren",
-    "intro": "Voer het e-mailadres of WhatsApp-nummer in dat je bij je aankoop hebt gebruikt om je garantiestatus te controleren.",
-    "inputLabel": "E-mail of WhatsApp",
-    "inputPlaceholder": "klant@email.com of +57 300 1234567",
+    "intro": "Voer het e-mailadres, WhatsApp-nummer of bestelnummer (#) van je aankoop in om je garantiestatus te controleren.",
+    "inputLabel": "E-mail, WhatsApp of bestelnr.",
+    "inputPlaceholder": "klant@email.com, +57 300 1234567 of #16583",
     "boton": "Controleren",
     "botonConsultando": "Controleren...",
     "colPedido": "Bestelnummer",
@@ -773,8 +777,9 @@
     "colEstado": "Status",
     "descargaBoton": "📄 Downloaden",
     "descargaNoDisponible": "Nog niet beschikbaar",
+    "descargaConContacto": "Zoek met je e-mail of WhatsApp om te downloaden",
     "estadoVacio": "—",
-    "sinResultados": "Geen bestelling gevonden met dat e-mailadres of WhatsApp-nummer.",
+    "sinResultados": "Geen bestelling gevonden met dat e-mailadres, WhatsApp-nummer of bestelnummer.",
     "errorGenerico": "Er is iets misgegaan. Probeer het over een paar minuten opnieuw."
   },
   "preciosPage": {

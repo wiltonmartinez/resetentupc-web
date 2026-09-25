@@ -19,6 +19,7 @@ import { t, buildLocalizedPath } from "../i18n/utils";
 import YouTubeFacade from "./ui/YouTubeFacade.astro";
 import ClienteSatisfechoEmbed from "./ui/ClienteSatisfechoEmbed.astro";
 import PreciosCascadaWidget from "./pages/PreciosCascadaWidget.astro";
+import ConsultaGarantiaPage from "./pages/ConsultaGarantiaPage.astro";
 import { fetchAllPages } from "../lib/fetch-paginated";
 import { listarTestimonios } from "../lib/nucleo-api";
 import { extractYoutubeId } from "../lib/youtube";
@@ -718,6 +719,9 @@ const subpasosConexion = [
         <h3>{t(locale, "procesoReutilizable.paso4Titulo")}</h3>
         <p>{t(locale, "comoFuncionaProceso.paso4Texto")}</p>
         <PreciosCascadaWidget locale={locale} urlPath={urlPath} />
+        <div class="detalle-consulta-garantia">
+          <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} mostrarEjemplo />
+        </div>
       </div>
     </div>
 
@@ -1714,6 +1718,12 @@ const subpasosConexion = [
   .detalle-contenido h3 {
     margin: 0.3rem 0 0.75rem;
     font-size: 1.2rem;
+  }
+
+  /* Paso 4: buscador de garantía + certificado de ejemplo, debajo del
+     widget de precios y antes del Paso 5. */
+  .detalle-consulta-garantia {
+    margin-top: 1.5rem;
   }
 
   /* Selector de diagnóstico anidado dentro del Paso 1: separación propia

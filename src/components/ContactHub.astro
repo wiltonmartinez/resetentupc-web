@@ -97,6 +97,17 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   </div>
 )}
 
+{/* Textos (ya traducidos) del selector de vendedores de src/lib/selector-vendedores.ts, que corre en TODAS las páginas. */}
+<div
+  data-selector-vendedores-textos
+  data-titulo={t(locale, "selectorVendedores.titulo")}
+  data-cargando={t(locale, "selectorVendedores.cargando")}
+  data-cerrar={t(locale, "contactHub.cerrarLabel")}
+  data-vacio={t(locale, "contactHub.menuVacio")}
+  data-general={t(locale, "contactHub.whatsapp")}
+  hidden
+></div>
+
 <!--
   Popup de marca/modelo/error del visitante: se abre solo (nunca en páginas
   de plotter donde ya viene marca+modelo por la URL — ahí solo pregunta el
@@ -154,6 +165,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 </dialog>
 
 <script>
+  import "../lib/selector-vendedores";
   import { trackEvent } from "../lib/analytics.js";
   import { playFeedback } from "../lib/sound-manager.js";
   import { NUCLEO_API_BASE_URL } from "../config/site";

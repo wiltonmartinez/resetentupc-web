@@ -318,6 +318,7 @@ const whatsappLogoOptimizado = await getImage({ src: whatsappLogo, width: 72, he
 
     var link = document.createElement("a");
     link.className = "contact-card-whatsapp";
+    link.setAttribute("data-selector-vendedores-omitir", "");
     link.target = "_blank";
     link.rel = "noopener noreferrer nofollow";
     link.href = "https://wa.me/" + vendedor.whatsapp + "?text=" + encodeURIComponent(mensaje);

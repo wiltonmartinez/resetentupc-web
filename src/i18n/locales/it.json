@@ -759,13 +759,17 @@
     "bubbleMensaje": "Hai bisogno di aiuto con la tua stampante?",
     "bubbleMensajeModelo": "Hai bisogno del Reset Assistito per la tua {marca} {modelo}?"
   },
+  "selectorVendedores": {
+    "titulo": "Con chi vuoi parlare?",
+    "cargando": "Ricerca di consulenti disponibili…"
+  },
   "consultaGarantiaPage": {
     "title": "Verifica Garanzia | ResetEnLinea.com",
     "description": "Verifica lo stato della tua garanzia con la tua email o WhatsApp.",
     "heading": "Verifica Garanzia",
-    "intro": "Inserisci l'email o il numero WhatsApp usato per il tuo acquisto per vedere lo stato della tua garanzia.",
-    "inputLabel": "Email o WhatsApp",
-    "inputPlaceholder": "cliente@email.com o +57 300 1234567",
+    "intro": "Inserisci l'email, il numero WhatsApp o il numero d'ordine (#) del tuo acquisto per vedere lo stato della tua garanzia.",
+    "inputLabel": "Email, WhatsApp o n. ordine",
+    "inputPlaceholder": "cliente@email.com, +57 300 1234567 o #16583",
     "boton": "Verifica",
     "botonConsultando": "Verifica in corso...",
     "colPedido": "Numero d'ordine",
@@ -773,8 +777,9 @@
     "colEstado": "Stato",
     "descargaBoton": "📄 Scarica",
     "descargaNoDisponible": "Non ancora disponibile",
+    "descargaConContacto": "Cerca con email o WhatsApp per scaricare",
     "estadoVacio": "—",
-    "sinResultados": "Nessun ordine trovato con questa email o WhatsApp.",
+    "sinResultados": "Nessun ordine trovato con questa email, questo WhatsApp o questo numero d'ordine.",
     "errorGenerico": "Si è verificato un errore. Riprova tra qualche minuto."
   },
   "preciosPage": {

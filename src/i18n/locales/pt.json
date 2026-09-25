@@ -759,13 +759,17 @@
     "bubbleMensaje": "Precisa de ajuda com sua impressora?",
     "bubbleMensajeModelo": "Precisa de Reset Assistido para sua {marca} {modelo}?"
   },
+  "selectorVendedores": {
+    "titulo": "Com quem você quer falar?",
+    "cargando": "Procurando assessores disponíveis…"
+  },
   "consultaGarantiaPage": {
     "title": "Consulta de Garantia | ResetEnLinea.com",
     "description": "Consulte o status da sua garantia com seu e-mail ou WhatsApp.",
     "heading": "Consulta de Garantia",
-    "intro": "Digite o e-mail ou WhatsApp que você usou na sua compra para ver o status da sua garantia.",
-    "inputLabel": "E-mail ou WhatsApp",
-    "inputPlaceholder": "cliente@email.com ou +57 300 1234567",
+    "intro": "Digite o e-mail, o WhatsApp ou o número do pedido (#) da sua compra para ver o status da sua garantia.",
+    "inputLabel": "E-mail, WhatsApp ou nº do pedido",
+    "inputPlaceholder": "cliente@email.com, +57 300 1234567 ou #16583",
     "boton": "Consultar",
     "botonConsultando": "Consultando...",
     "colPedido": "Número do pedido",
@@ -773,8 +777,9 @@
     "colEstado": "Status",
     "descargaBoton": "📄 Baixar",
     "descargaNoDisponible": "Ainda não disponível",
+    "descargaConContacto": "Busque com seu e-mail ou WhatsApp para baixar",
     "estadoVacio": "—",
-    "sinResultados": "Nenhum pedido encontrado com esse e-mail ou WhatsApp.",
+    "sinResultados": "Nenhum pedido encontrado com esse e-mail, WhatsApp ou número de pedido.",
     "errorGenerico": "Ocorreu um erro na consulta. Tente novamente em alguns minutos."
   },
   "preciosPage": {
