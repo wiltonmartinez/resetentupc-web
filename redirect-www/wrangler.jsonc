@@ -1,0 +1,7 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "resetentupc-www",
+  "main": "worker.js",
+  "compatibility_date": "2026-08-15",
+  "routes": [{ "pattern": "www.resetentupc.com", "custom_domain": true }]
+}

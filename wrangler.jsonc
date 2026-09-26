@@ -1,6 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "resetenlinea-site",
+  "name": "resetentupc",
+  // Dominios personalizados (la zona resetentupc.com está en esta misma cuenta de Cloudflare).
+  // No usar el nombre "resetenlinea-site": es el Worker del sitio anterior.
+  // www.resetentupc.com lo atiende el Worker "resetentupc-www" (carpeta redirect-www/), que redirige al dominio principal.
+  "routes": [{ "pattern": "resetentupc.com", "custom_domain": true }],
   "compatibility_date": "2026-08-15",
   "observability": {
     "enabled": true
