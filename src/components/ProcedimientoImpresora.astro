@@ -44,7 +44,7 @@
  */
 import { Image } from "astro:assets";
 import { t, buildLocalizedPath } from "../i18n/utils";
-import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, PRUEBA_SOCIAL_VISIBLE, TECHNICIAN_ID, INSTALADOR_DOWNLOAD_URL, type Locale } from "../config/site";
+import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, PRUEBA_SOCIAL_VISIBLE, TECHNICIAN_ID, INSTALADOR_DESCARGA_VISIBLE, INSTALADOR_DOWNLOAD_URL, type Locale } from "../config/site";
 // Paso 3 (instalación): capturas del instalador y de la carpeta con el reset (src/procesos/).
 import imgInstalador from "../procesos/instalador.png";
 import imgInstalacion from "../procesos/yUyPOI3ERD.png";
@@ -484,7 +484,7 @@ const subpasosConexion = [
               </button>
             </p>
           )}
-          {sub.enlace && (
+          {INSTALADOR_DESCARGA_VISIBLE && sub.enlace && (
             <>
               <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
                 {sub.enlace}

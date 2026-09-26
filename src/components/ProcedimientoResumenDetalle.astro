@@ -24,7 +24,7 @@ import { fetchAllPages } from "../lib/fetch-paginated";
 import { listarTestimonios } from "../lib/nucleo-api";
 import { extractYoutubeId } from "../lib/youtube";
 import { getPruebaSocialBannerVideo } from "../lib/prueba-social-banners";
-import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, PASO1_VIDEO_DIAGNOSTICO_VISIBLE, TECHNICIAN_ID, INSTALADOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../config/site";
+import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, PASO1_VIDEO_DIAGNOSTICO_VISIBLE, TECHNICIAN_ID, INSTALADOR_DESCARGA_VISIBLE, INSTALADOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../config/site";
 import modelosCompletos from "../data/modelos-muestra.json";
 import procEpson1 from "../assets/procedimiento/1.png";
 import procEpson2 from "../assets/procedimiento/2.png";
@@ -729,7 +729,7 @@ const subpasosConexion = [
                   </button>
                 </p>
               )}
-              {sub.enlace && (
+              {INSTALADOR_DESCARGA_VISIBLE && sub.enlace && (
                 <>
                   <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
                     {sub.enlace}

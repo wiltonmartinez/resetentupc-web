@@ -35,7 +35,7 @@ import { getErrorImage } from "../../lib/error-images.js";
 import { getModeloImage } from "../../lib/model-images.js";
 import modelosCompletos from "../../data/modelos-muestra.json";
 import erroresData from "../../data/errores.json";
-import { INSTALADOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
+import { INSTALADOR_DESCARGA_VISIBLE, INSTALADOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -221,11 +221,13 @@ const cascadaDefaults = {
         urlPath={homeUrlPath}
         elevar
       />
-      <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
-        ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
-      </a>
+      {INSTALADOR_DESCARGA_VISIBLE && (
+        <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
+          ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
+        </a>
+      )}
     </div>
-    <p class="aida-hero-descarga-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
+    {INSTALADOR_DESCARGA_VISIBLE && <p class="aida-hero-descarga-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>}
   </div>
 </section>
 
@@ -259,11 +261,13 @@ const cascadaDefaults = {
       error={cascadaDefaults.error}
       elevar
     />
-    <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
-      ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
-    </a>
+    {INSTALADOR_DESCARGA_VISIBLE && (
+      <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
+        ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
+      </a>
+    )}
   </div>
-  <p class="home-cta-final-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>
+  {INSTALADOR_DESCARGA_VISIBLE && <p class="home-cta-final-microtexto">{t(locale, "homeLanding.heroCtaDescargaMicrotexto")}</p>}
 </section>
 
 <div class="home-divisor" aria-hidden="true"></div>

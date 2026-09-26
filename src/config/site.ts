@@ -71,6 +71,14 @@ export const PRECIOS_API_URL = `${LOCAL_API_BASE_URL}/precios`;
 export const INSTALADOR_DOWNLOAD_URL = `${LOCAL_API_BASE_URL}/instalador`;
 
 /**
+ * Botón "Descargar Instalador" (Home, Cómo funciona y páginas de modelo) y la redirección de /modulo-seguro. En `false` no se
+ * muestra ningún enlace de descarga y /modulo-seguro lleva a /como-funciona/. Se ocultó por seguridad; nada se borró: poner
+ * `true` y republicar lo vuelve a mostrar. OJO: esto solo quita los enlaces del sitio; el archivo sigue disponible en
+ * ${LOCAL_API_BASE_URL}/instalador mientras el backend lo sirva.
+ */
+export const INSTALADOR_DESCARGA_VISIBLE = false;
+
+/**
  * Google Analytics 4 Measurement ID (ej. "G-XXXXXXXXXX"). Vacío = GA4 no se
  * carga en absoluto (BaseLayout omite el script por completo) — nunca se
  * envía telemetría a una propiedad inventada. Pon aquí el ID real cuando

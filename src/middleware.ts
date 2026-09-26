@@ -10,6 +10,7 @@ import {
   PRUEBA_SOCIAL_VISIBLE,
   RETIRED_LOCALES,
   SUPPORTED_LOCALES,
+  INSTALADOR_DESCARGA_VISIBLE,
   INSTALADOR_DOWNLOAD_URL,
   type StaticPageKey,
 } from "./config/site";
@@ -126,7 +127,8 @@ const STATIC_MAP: Record<string, string> = {
   modulo: "/como-funciona/",
   // Redireccion permanente SEO: enlaza directo al instalador, no a una
   // pagina interna. context.redirect() acepta URLs absolutas externas.
-  "modulo-seguro": INSTALADOR_DOWNLOAD_URL,
+  // Con INSTALADOR_DESCARGA_VISIBLE = false (config/site.ts) ya no se enlaza el instalador: lleva a Cómo funciona.
+  "modulo-seguro": INSTALADOR_DESCARGA_VISIBLE ? INSTALADOR_DOWNLOAD_URL : "/como-funciona/",
   nosotros: "/",
   modalidad: "/",
   cupon: "/",
