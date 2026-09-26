@@ -19,8 +19,11 @@ import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
 import iconoInstalaciones from "../../assets/beneficios/icono-instalaciones.png";
 import iconoSeguridad from "../../assets/beneficios/icono-seguridad.png";
 import iconoRespaldo from "../../assets/beneficios/icono-respaldo.png";
-import iconoReembolso from "../../assets/beneficios/icono-reembols.png";
-import iconoCertificado from "../../assets/beneficios/icono-certificado.png";
+import iconoPrueba from "../../assets/procedimiento-canon/6.png";
+import iconoSinVencimiento from "../../assets/procedimiento/3.png";
+import iconoCompatibilidad from "../../assets/procedimiento-canon/1.png";
+import iconoUsb from "../../assets/procedimiento-canon/2.png";
+import iconoReinstalar from "../../assets/branding/CHECK.png";
 import iconoSoporte from "../../assets/beneficios/icono-soporte.png";
 import iconoSorteos from "../../assets/beneficios/icono-sorteos.png";
 
@@ -77,9 +80,12 @@ const beneficios = [
   { icono: iconoInstalaciones, titulo: t(locale, "comoFuncionaProceso.beneficio3Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio3Texto") },
   { icono: iconoSeguridad, titulo: t(locale, "comoFuncionaProceso.beneficio4Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio4Texto") },
   { icono: iconoRespaldo, titulo: t(locale, "comoFuncionaProceso.beneficio5Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio5Texto") },
-  { icono: iconoReembolso, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
-  { icono: iconoCertificado, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
+  { icono: iconoPrueba, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
+  { icono: iconoSinVencimiento, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
   { icono: iconoSoporte, titulo: t(locale, "comoFuncionaProceso.beneficio8Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio8Texto") },
+  { icono: iconoCompatibilidad, titulo: t(locale, "comoFuncionaProceso.beneficio10Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio10Texto") },
+  { icono: iconoUsb, titulo: t(locale, "comoFuncionaProceso.beneficio11Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio11Texto") },
+  { icono: iconoReinstalar, titulo: t(locale, "comoFuncionaProceso.beneficio12Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio12Texto") },
   { id: "sorteos", icono: iconoSorteos, titulo: t(locale, "comoFuncionaProceso.beneficio9Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio9Texto") },
 ];
 ---
@@ -94,10 +100,15 @@ const beneficios = [
     <h2 class="intro-titulo">{t(locale, "proceso.titulo")}</h2>
     <div class="intro-texto">
       <h3>{t(locale, "comoFuncionaProceso.introTituloQueEs")}</h3>
-      <p>{t(locale, "comoFuncionaProceso.introParrafo1")}</p>
-      <p>{t(locale, "comoFuncionaProceso.introParrafo2")}</p>
-      <p class="intro-destacado">{t(locale, "comoFuncionaProceso.introDestacado")}</p>
-      <p class="intro-aclaracion">{t(locale, "comoFuncionaProceso.introAclaracion")}</p>
+      {/* Enfoque de la instalación (mismas frases que los Términos y Condiciones). Sustituye a los párrafos del
+          "Reset Asistido 100% Remoto" (comoFuncionaProceso.introParrafo1/2, introDestacado, introAclaracion: siguen
+          en i18n, sin uso). */}
+      <ol class="intro-lista">
+        <li>{t(locale, "procedimiento.paso2Requisito2")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito1")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito3")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito4")}</li>
+      </ol>
     </div>
   </section>
 
@@ -276,6 +287,22 @@ const beneficios = [
   .intro-texto .intro-destacado {
     font-weight: 700;
     color: var(--color-text);
+  }
+
+  /* Los 4 puntos del enfoque de la instalación (lista numerada). */
+  .intro-lista {
+    margin: 0;
+    padding-left: 1.4rem;
+    display: grid;
+    gap: 0.6rem;
+    color: var(--color-text);
+    line-height: 1.6;
+    font-weight: 600;
+  }
+
+  .intro-lista li::marker {
+    font-weight: 800;
+    color: var(--color-primary-dark);
   }
 
   .intro-aclaracion {

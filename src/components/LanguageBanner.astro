@@ -39,32 +39,65 @@ const dismissLabel = t(locale, "common.languageSuggestionDismiss");
 <script>
   const STORAGE_KEY = "resetenlinea_locale_preference";
 
+  // Idioma sugerido según el país de la IP (api/pais.json, leído del borde de
+  // Cloudflare). El español es el idioma por defecto: los países
+  // hispanohablantes y cualquier país que no figure acá (o un país
+  // desconocido, ej. en desarrollo local) no reciben sugerencia y se quedan
+  // en español.
+  const IDIOMA_POR_PAIS: Record<string, string> = {
+    US: "en", GB: "en", CA: "en", AU: "en", NZ: "en", IE: "en", ZA: "en", IN: "en", SG: "en", PH: "en",
+    BR: "pt", PT: "pt", AO: "pt", MZ: "pt",
+    FR: "fr", BE: "fr", LU: "fr", MC: "fr",
+    IT: "it", SM: "it", VA: "it",
+    DE: "de", AT: "de", LI: "de",
+    NL: "nl", SR: "nl",
+    PL: "pl",
+  };
+
+  async function obtenerPais(): Promise<string> {
+    try {
+      const res = await fetch("/api/pais.json", { cache: "no-store" });
+      if (!res.ok) return "";
+      const datos = await res.json();
+      return String(datos?.codigo_pais ?? "").toUpperCase();
+    } catch {
+      return "";
+    }
+  }
+
   const banner = document.getElementById("language-banner");
   if (banner) {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
       const currentLocale = banner.dataset.currentLocale;
       const alternates = JSON.parse(banner.dataset.alternates || "[]");
-      const browserLang = navigator.language.slice(0, 2).toLowerCase();
-      const match = alternates.find((alt) => alt.locale === browserLang);
 
-      if (match && browserLang !== currentLocale) {
-        const text = (banner.dataset.text || "").replace("{language}", match.label);
-        banner.innerHTML = `
-          <span>${text}</span>
-          <a href="${match.href}" id="language-banner-accept">${banner.dataset.accept}</a>
-          <button type="button" id="language-banner-dismiss">${banner.dataset.dismiss}</button>
-        `;
-        banner.hidden = false;
+      // Quien navega con el navegador en español nunca ve la sugerencia, aunque
+      // su IP sea de otro país (ej. hispanohablante en EE. UU.).
+      const navegadorEnEspanol = navigator.language.slice(0, 2).toLowerCase() === "es";
 
-        document.getElementById("language-banner-accept")?.addEventListener("click", () => {
-          localStorage.setItem(STORAGE_KEY, match.locale);
-        });
-        document.getElementById("language-banner-dismiss")?.addEventListener("click", () => {
-          localStorage.setItem(STORAGE_KEY, currentLocale || "");
-          banner.hidden = true;
-        });
-      }
+      obtenerPais().then((pais) => {
+        const idiomaSugerido = IDIOMA_POR_PAIS[pais];
+        const match = idiomaSugerido ? alternates.find((alt) => alt.locale === idiomaSugerido) : undefined;
+
+        if (match && !navegadorEnEspanol && idiomaSugerido !== currentLocale) {
+          const text = (banner.dataset.text || "").replace("{language}", match.label);
+          banner.innerHTML = `
+            <span>${text}</span>
+            <a href="${match.href}" id="language-banner-accept">${banner.dataset.accept}</a>
+            <button type="button" id="language-banner-dismiss">${banner.dataset.dismiss}</button>
+          `;
+          banner.hidden = false;
+
+          document.getElementById("language-banner-accept")?.addEventListener("click", () => {
+            localStorage.setItem(STORAGE_KEY, match.locale);
+          });
+          document.getElementById("language-banner-dismiss")?.addEventListener("click", () => {
+            localStorage.setItem(STORAGE_KEY, currentLocale || "");
+            banner.hidden = true;
+          });
+        }
+      });
     }
   }
 </script>

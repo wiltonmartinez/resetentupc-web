@@ -6,11 +6,17 @@
  * como "REVISIÓN LEGAL RECOMENDADA" sigue necesitando revisión de un abogado
  * por jurisdicción antes de tratarse como asesoría legal definitiva.
  */
-import { SITE_URL, WHATSAPP_NUMBER, type Locale } from "../../config/site";
+import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, RUT_VISIBLE, SITE_URL, TERMINOS_ANTERIORES_VISIBLES, WHATSAPP_NUMBER, type Locale } from "../../config/site";
 import { buildWhatsAppLink, buildStaticPagePath, t } from "../../i18n/utils";
 import InfoCard from "../ui/InfoCard.astro";
 import SharePageButtons from "../ui/SharePageButtons.astro";
 import ObfuscatedEmail from "../ui/ObfuscatedEmail.astro";
+import DocumentoLegalProtegido from "../ui/DocumentoLegalProtegido.astro";
+import ConsultaGarantiaPage from "./ConsultaGarantiaPage.astro";
+import PreciosCascadaWidget from "./PreciosCascadaWidget.astro";
+// RUT (DIAN) ya CENSURADO y con marca de agua — mismo archivo y mismo visor
+// sin descarga que en /contacto/ (ver DocumentoLegalProtegido.astro).
+import rutPdfUrl from "../../assets/legal/RUT.pdf?url";
 
 interface Props {
   locale: Locale;
@@ -22,12 +28,12 @@ const path = buildStaticPagePath(locale, "terminosCondiciones");
 const url = `${SITE_URL}${path}`;
 
 const mensajeWhatsapp = `${t(locale, "terminos.share.mensajeWhatsapp")}\n\n${url}`;
-const asuntoEmail = t(locale, "terminos.share.asuntoEmail");
-const cuerpoEmail = `${t(locale, "terminos.share.cuerpoEmailSaludo")}\n\n${t(locale, "terminos.share.cuerpoEmailIntro")}\n\n${url}\n\n${t(locale, "terminos.share.cuerpoEmailDespedida")}`;
 
 const whatsappConsultaHref = buildWhatsAppLink(WHATSAPP_NUMBER, t(locale, "terminos.cta.whatsappMensaje"));
 
-const secciones = [
+// Secciones visibles, en orden. TERMINOS_ANTERIORES_VISIBLES = false (config/site.ts): las 5 cláusulas de la
+// instalación + prestador + legislación. En true: el texto anterior completo (orden y numeración originales).
+const IDS_ANTERIORES = [
   "objeto",
   "naturaleza",
   "proceso",
@@ -38,9 +44,17 @@ const secciones = [
   "certificado",
   "evidencia",
   "privacidad",
-  "prestador",
-  "legislacion",
-].map((id) => ({ id, titulo: t(locale, `terminos.secciones.${id}.titulo`) }));
+];
+const IDS_NUEVOS = ["instalacion", "unicoPc", "funcion", "autonomo", "antivirus"];
+const idsVisibles = [...(TERMINOS_ANTERIORES_VISIBLES ? IDS_ANTERIORES : IDS_NUEVOS), "prestador", "legislacion"];
+
+// La numeración se calcula por posición (los textos antiguos traen su número incrustado: se reemplaza).
+function tituloSeccion(id: string): string {
+  const titulo = (t(locale, `terminos.secciones.${id}.titulo`) as string).replace(/^\d+\.\s*/, "");
+  return `${idsVisibles.indexOf(id) + 1}. ${titulo}`;
+}
+
+const secciones = idsVisibles.map((id) => ({ id, titulo: tituloSeccion(id) }));
 ---
 
 <article class="terminos-page">
@@ -51,14 +65,10 @@ const secciones = [
     url={url}
     tituloLabel={t(locale, "terminos.share.titulo")}
     mensajeWhatsapp={mensajeWhatsapp}
-    asuntoEmail={asuntoEmail}
-    cuerpoEmail={cuerpoEmail}
     labelWhatsapp={t(locale, "terminos.share.whatsapp")}
-    labelEmail={t(locale, "terminos.share.email")}
     labelCopiar={t(locale, "terminos.share.copiar")}
     labelCopiado={t(locale, "terminos.share.copiado")}
     labelImprimir={t(locale, "terminos.share.imprimir")}
-    labelCompartir={t(locale, "terminos.share.compartir")}
   />
 
   <nav class="terminos-toc" aria-label={t(locale, "terminos.tocTitulo")}>
@@ -70,6 +80,46 @@ const secciones = [
     </ol>
   </nav>
 
+  {!TERMINOS_ANTERIORES_VISIBLES && (
+    <>
+      <section id="instalacion">
+        <h2>{tituloSeccion("instalacion")}</h2>
+        <p>{t(locale, "terminos.secciones.instalacion.p1")}</p>
+      </section>
+
+      <section id="unicoPc">
+        <h2>{tituloSeccion("unicoPc")}</h2>
+        <p>{t(locale, "terminos.secciones.unicoPc.p1")}</p>
+      </section>
+
+      <section id="funcion">
+        <h2>{tituloSeccion("funcion")}</h2>
+        <p>{t(locale, "terminos.secciones.funcion.p1")}</p>
+        <ul>
+          {(t(locale, "terminos.secciones.funcion.items") as string[]).map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="autonomo">
+        <h2>{tituloSeccion("autonomo")}</h2>
+        <p>{t(locale, "terminos.secciones.autonomo.p1")}</p>
+        <p>{t(locale, "terminos.secciones.autonomo.nota")}</p>
+      </section>
+
+      <section id="antivirus">
+        <h2>{tituloSeccion("antivirus")}</h2>
+        <p>{t(locale, "terminos.secciones.antivirus.p1")}</p>
+      </section>
+
+      {locale !== "es" && <p class="terminos-revision-legal">ℹ️ {t(locale, "terminos.prevaleceEs")}</p>}
+    </>
+  )}
+
+  {/* Texto anterior ("Reset Asistido" remoto): oculto con TERMINOS_ANTERIORES_VISIBLES = false en config/site.ts. */}
+  {TERMINOS_ANTERIORES_VISIBLES && (
+  <>
   <section id="objeto">
     <h2>{t(locale, "terminos.secciones.objeto.titulo")}</h2>
     <p>
@@ -143,12 +193,20 @@ const secciones = [
       <li>{t(locale, "terminos.secciones.garantia.li5")}</li>
     </ul>
     <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.garantia.legal")}</p>
+    <div class="terminos-precios">
+      <PreciosCascadaWidget locale={locale} urlPath={path} />
+    </div>
   </section>
 
   <section id="certificado">
     <h2>{t(locale, "terminos.secciones.certificado.titulo")}</h2>
     <p>{t(locale, "terminos.secciones.certificado.p1")}</p>
     <p>{t(locale, "terminos.secciones.certificado.p2")}</p>
+    {CONSULTA_GARANTIA_INCRUSTADA_VISIBLE && (
+      <div class="terminos-consulta-garantia">
+        <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} mostrarEjemplo />
+      </div>
+    )}
   </section>
 
   <section id="evidencia">
@@ -161,27 +219,43 @@ const secciones = [
     <p>{t(locale, "terminos.secciones.privacidad.p1")}</p>
     <p>{t(locale, "terminos.secciones.privacidad.p2")}</p>
     <p>
-      {t(locale, "terminos.secciones.privacidad.p3Antes")} <ObfuscatedEmail user="info" domain="resetenlinea.com" />{t(locale, "terminos.secciones.privacidad.p3Despues")}
+      {t(locale, "terminos.secciones.privacidad.p3Antes")} <ObfuscatedEmail user="info" domain="resetentupc.com" />{t(locale, "terminos.secciones.privacidad.p3Despues")}
     </p>
     <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.privacidad.legal")}</p>
   </section>
+  </>
+  )}
 
   <section id="prestador">
-    <h2>{t(locale, "terminos.secciones.prestador.titulo")}</h2>
+    <h2>{tituloSeccion("prestador")}</h2>
     <ul class="terminos-datos-lista">
-      <li>ResetEnLinea</li>
+      <li>ResetEntuPC</li>
       <li>Wilton Martinez Escorcia</li>
       <li>Santa Marta, Colombia</li>
-      <li><ObfuscatedEmail user="info" domain="resetenlinea.com" /></li>
-      <li><a href="https://resetenlinea.com">resetenlinea.com</a></li>
+      <li><ObfuscatedEmail user="info" domain="resetentupc.com" /></li>
+      <li><a href="https://resetentupc.com">resetentupc.com</a></li>
     </ul>
   </section>
 
   <section id="legislacion">
-    <h2>{t(locale, "terminos.secciones.legislacion.titulo")}</h2>
+    <h2>{tituloSeccion("legislacion")}</h2>
     <p>{t(locale, "terminos.secciones.legislacion.p1")}</p>
     <p class="terminos-revision-legal">⚠️ {t(locale, "terminos.secciones.legislacion.legal")}</p>
   </section>
+
+  {/* "Negocio Formalizado y Verificado" + PDF del RUT: oculto con RUT_VISIBLE = false en config/site.ts. */}
+  {RUT_VISIBLE && (
+  <section id="verificado" class="terminos-confianza" aria-labelledby="terminos-verificado-titulo">
+    <hr class="terminos-confianza-linea" />
+    <h2 id="terminos-verificado-titulo">{t(locale, "contacto.confianzaTitulo")}</h2>
+    <p class="terminos-confianza-texto">{t(locale, "contacto.confianzaTexto")}</p>
+    <DocumentoLegalProtegido
+      src={rutPdfUrl}
+      alt={t(locale, "contacto.confianzaAlt")}
+      textoError={t(locale, "contacto.confianzaError")}
+    />
+  </section>
+  )}
 
   <InfoCard tone="muted">
     <p class="terminos-cta-texto">{t(locale, "terminos.cta.texto")}</p>
@@ -194,14 +268,10 @@ const secciones = [
     url={url}
     tituloLabel={t(locale, "terminos.share.titulo")}
     mensajeWhatsapp={mensajeWhatsapp}
-    asuntoEmail={asuntoEmail}
-    cuerpoEmail={cuerpoEmail}
     labelWhatsapp={t(locale, "terminos.share.whatsapp")}
-    labelEmail={t(locale, "terminos.share.email")}
     labelCopiar={t(locale, "terminos.share.copiar")}
     labelCopiado={t(locale, "terminos.share.copiado")}
     labelImprimir={t(locale, "terminos.share.imprimir")}
-    labelCompartir={t(locale, "terminos.share.compartir")}
   />
 </article>
 
@@ -209,6 +279,47 @@ const secciones = [
   .terminos-page {
     display: grid;
     gap: var(--space-md);
+  }
+
+  /* Sección 7: módulo de precios (elige marca/modelo/error y ve los planes)
+     justo debajo del texto de la garantía. */
+  .terminos-precios {
+    margin-top: var(--space-sm);
+  }
+
+  /* Sección 8: la consulta de garantía (buscador + certificado de ejemplo)
+     va debajo del texto, con algo de aire. */
+  .terminos-consulta-garantia {
+    margin-top: var(--space-sm);
+  }
+
+  /* Bloque de confianza tras la sección 12: línea NARANJA (el naranja solo en
+     líneas divisorias, igual que en /contacto/), título y RUT censurado. */
+  .terminos-confianza {
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .terminos-confianza-linea {
+    width: 100%;
+    height: 3px;
+    margin: var(--space-sm) 0 var(--space-xs);
+    border: 0;
+    border-radius: 2px;
+    background: #f97316;
+  }
+
+  .terminos-confianza h2 {
+    margin: 0;
+  }
+
+  .terminos-confianza-texto {
+    max-width: 62ch;
+    margin: 0 0 var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
   }
 
   .terminos-actualizacion {
@@ -231,7 +342,9 @@ const secciones = [
 
   .terminos-toc ol {
     margin: 0;
-    padding-left: 1.25rem;
+    /* Los títulos ya traen su número ("1. Vendemos…"): sin numeración automática de la lista, o saldría doble. */
+    list-style: none;
+    padding-left: 0;
     display: grid;
     gap: 0.3rem;
     columns: 1;

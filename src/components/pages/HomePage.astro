@@ -35,7 +35,7 @@ import { getErrorImage } from "../../lib/error-images.js";
 import { getModeloImage } from "../../lib/model-images.js";
 import modelosCompletos from "../../data/modelos-muestra.json";
 import erroresData from "../../data/errores.json";
-import { USB_REDIRECTOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
+import { INSTALADOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -221,7 +221,7 @@ const cascadaDefaults = {
         urlPath={homeUrlPath}
         elevar
       />
-      <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
+      <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
         ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
       </a>
     </div>
@@ -259,7 +259,7 @@ const cascadaDefaults = {
       error={cascadaDefaults.error}
       elevar
     />
-    <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
+    <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="aida-boton-descarga" data-sound="select">
       ⬇️ {t(locale, "homeLanding.heroCtaDescarga")}
     </a>
   </div>

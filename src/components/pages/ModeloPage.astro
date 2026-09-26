@@ -19,8 +19,11 @@ import iconoTraslados from "../../assets/beneficios/icono-traslados.png";
 import iconoInstalaciones from "../../assets/beneficios/icono-instalaciones.png";
 import iconoSeguridad from "../../assets/beneficios/icono-seguridad.png";
 import iconoRespaldo from "../../assets/beneficios/icono-respaldo.png";
-import iconoReembolso from "../../assets/beneficios/icono-reembols.png";
-import iconoCertificado from "../../assets/beneficios/icono-certificado.png";
+import iconoPrueba from "../../assets/procedimiento-canon/6.png";
+import iconoSinVencimiento from "../../assets/procedimiento/3.png";
+import iconoCompatibilidad from "../../assets/procedimiento-canon/1.png";
+import iconoUsb from "../../assets/procedimiento-canon/2.png";
+import iconoReinstalar from "../../assets/branding/CHECK.png";
 import iconoSoporte from "../../assets/beneficios/icono-soporte.png";
 import iconoSorteos from "../../assets/beneficios/icono-sorteos.png";
 
@@ -90,9 +93,12 @@ const beneficios = [
   { icono: iconoInstalaciones, titulo: t(locale, "comoFuncionaProceso.beneficio3Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio3Texto") },
   { icono: iconoSeguridad, titulo: t(locale, "comoFuncionaProceso.beneficio4Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio4Texto") },
   { icono: iconoRespaldo, titulo: t(locale, "comoFuncionaProceso.beneficio5Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio5Texto") },
-  { icono: iconoReembolso, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
-  { icono: iconoCertificado, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
+  { icono: iconoPrueba, titulo: t(locale, "comoFuncionaProceso.beneficio6Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio6Texto") },
+  { icono: iconoSinVencimiento, titulo: t(locale, "comoFuncionaProceso.beneficio7Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio7Texto") },
   { icono: iconoSoporte, titulo: t(locale, "comoFuncionaProceso.beneficio8Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio8Texto") },
+  { icono: iconoCompatibilidad, titulo: t(locale, "comoFuncionaProceso.beneficio10Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio10Texto") },
+  { icono: iconoUsb, titulo: t(locale, "comoFuncionaProceso.beneficio11Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio11Texto") },
+  { icono: iconoReinstalar, titulo: t(locale, "comoFuncionaProceso.beneficio12Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio12Texto") },
   { id: "sorteos", icono: iconoSorteos, titulo: t(locale, "comoFuncionaProceso.beneficio9Titulo"), texto: t(locale, "comoFuncionaProceso.beneficio9Texto") },
 ];
 
@@ -128,12 +134,12 @@ const homeUrl = buildCanonicalUrl(locale, "/");
 const serviceJsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  serviceType: "Reset asistido de impresora",
+  serviceType: "Instalación de reset de impresora",
   name: tituloConPrefijo,
   description: t(locale, "modelo.descriptionTemplate")
     .replaceAll("{marca}", nombreMarca)
     .replaceAll("{modelo}", nombreModelo),
-  provider: { "@type": "Organization", name: "ResetEnLinea.com", url: SITE_URL },
+  provider: { "@type": "Organization", name: "ResetEntuPC.com", url: SITE_URL },
   areaServed: "Worldwide",
   url: canonicalUrl,
 };

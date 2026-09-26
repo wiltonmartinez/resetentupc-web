@@ -24,7 +24,7 @@ import { fetchAllPages } from "../lib/fetch-paginated";
 import { listarTestimonios } from "../lib/nucleo-api";
 import { extractYoutubeId } from "../lib/youtube";
 import { getPruebaSocialBannerVideo } from "../lib/prueba-social-banners";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../config/site";
+import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, PASO1_VIDEO_DIAGNOSTICO_VISIBLE, TECHNICIAN_ID, INSTALADOR_DOWNLOAD_URL, NUCLEO_API_BASE_URL, type Locale } from "../config/site";
 import modelosCompletos from "../data/modelos-muestra.json";
 import procEpson1 from "../assets/procedimiento/1.png";
 import procEpson2 from "../assets/procedimiento/2.png";
@@ -48,6 +48,10 @@ import pasoModuloWebp from "../assets/proceso/paso1-descargar.webp";
 import pasoConectarWebp from "../assets/proceso/Paso2-Formulario.webp";
 import pasoCompartirWebp from "../assets/proceso/Paso3-ReconectarCableUSB.webp";
 import pasoWhatsappWebp from "../assets/proceso/Paso4-Contactarnos.webp";
+// Paso 3 (instalación): capturas del instalador y de la carpeta con el reset (src/procesos/).
+import imgInstalador from "../procesos/instalador.png";
+import imgInstalacion from "../procesos/yUyPOI3ERD.png";
+import imgCheck from "../assets/branding/CHECK.png";
 
 interface Props {
   locale: Locale;
@@ -61,7 +65,7 @@ const { locale, urlPath } = Astro.props;
 // vía el mismo helper que ya usan las páginas de Prueba Social. Si el
 // archivo no está disponible, simplemente no se renderiza el <video> — no
 // se rompe el Paso 1 por esto.
-const paso1VideoDiagnostico = getPruebaSocialBannerVideo("diagnostico");
+const paso1VideoDiagnostico = PASO1_VIDEO_DIAGNOSTICO_VISIBLE ? getPruebaSocialBannerVideo("diagnostico") : null;
 
 // Evidencia real embebida en los pasos 5 y 6 -- un caso al azar por cada
 // variante marca+error (elegido en build time, se renueva en cada deploy)
@@ -325,7 +329,7 @@ const cascadaDefaults: Record<CascadaToken, string> = {
   error: errorDefaultLabel,
 };
 const resumenPaso1TextoParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPasoTexto1"), cascadaDefaults);
-const resumenPaso5TextoParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPasoTexto5"), cascadaDefaults);
+const resumenPaso5TextoParts = renderTemplateParts(t(locale, "procesoAutonomo.resumenTexto"), cascadaDefaults);
 const paso1TituloParts = renderTemplateParts(t(locale, "comoFuncionaProceso.resumenPaso1"), cascadaDefaults);
 
 // Bullet "Impresora conectada..." del Paso 2: 4 variantes segun marca+error
@@ -340,17 +344,32 @@ const requisitosUsbVariantes = [
   { id: "epson-sc-0014bd", key: "paso2ReqUsbEpsonSc0014bd" },
 ];
 
+// Paso 3 = Excluir antivirus, Configuración y Descarga de la instalación (textos: procesoInstalacion.*).
+// Los subpasos anteriores (USB Redirector: módulo seguro, Technician ID, compartir USB, contactar) siguen en i18n
+// (proceso.paso1–4) y sus imágenes en src/assets/proceso/, sin uso.
 const subpasosConexion = [
   {
     numero: "3.1",
-    imagen: pasoModuloWebp,
-    titulo: t(locale, "proceso.paso1Titulo"),
-    texto: t(locale, "proceso.paso1Texto"),
+    imagen: undefined as ImageMetadata | undefined,
+    alt: "",
+    titulo: t(locale, "procesoInstalacion.sub1Titulo"),
+    texto: t(locale, "procesoInstalacion.sub1Texto"),
+  },
+  {
+    numero: "3.2",
+    imagen: imgInstalador as ImageMetadata | undefined,
+    alt: t(locale, "procesoInstalacion.sub2Alt"),
+    titulo: t(locale, "procesoInstalacion.sub2Titulo"),
+    texto: t(locale, "procesoInstalacion.sub2Texto"),
     enlace: t(locale, "comoFuncionaProceso.paso31BotonDescarga"),
   },
-  { numero: "3.2", imagen: pasoConectarWebp, titulo: t(locale, "proceso.paso2Titulo"), texto: t(locale, "proceso.paso2Texto") },
-  { numero: "3.3", imagen: pasoCompartirWebp, titulo: t(locale, "proceso.paso3Titulo"), texto: t(locale, "proceso.paso3Texto") },
-  { numero: "3.4", imagen: pasoWhatsappWebp, titulo: t(locale, "proceso.paso4Titulo"), texto: t(locale, "proceso.paso4Texto") },
+  {
+    numero: "3.3",
+    imagen: imgInstalacion as ImageMetadata | undefined,
+    alt: t(locale, "procesoInstalacion.sub3Alt"),
+    titulo: t(locale, "procesoInstalacion.sub3Titulo"),
+    texto: t(locale, "procesoInstalacion.sub3Texto"),
+  },
 ];
 ---
 
@@ -418,21 +437,27 @@ const subpasosConexion = [
           ))}
         </div>
         <h3>{t(locale, "comoFuncionaProceso.resumenPasoTitulo2")}</h3>
+        {/* Requisitos de la instalación: PC con Windows + las mismas frases que los Términos y Condiciones.
+            Sustituyen a "seguir los pasos del técnico", "cable USB conectado directamente al PC" y a la nota
+            "No resolvemos errores físicos… visitas a domicilio" (comoFuncionaProceso.resumenPasoBullet2a/2b/
+            resumenPasoNota2 siguen en i18n, sin uso). El último punto ya dice qué NO soluciona el programa. */}
         <ul class="resumen-checklist">
-          <li>
-            <svg class="resumen-check-icono" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M7.6 13.6 4.4 10.4l-1.4 1.4 4.6 4.6 9-9-1.4-1.4z" fill="currentColor" />
-            </svg>
-            {t(locale, "comoFuncionaProceso.resumenPasoBullet2a")}
-          </li>
-          <li>
-            <svg class="resumen-check-icono" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M7.6 13.6 4.4 10.4l-1.4 1.4 4.6 4.6 9-9-1.4-1.4z" fill="currentColor" />
-            </svg>
-            {t(locale, "comoFuncionaProceso.resumenPasoBullet2b")}
-          </li>
+          {[
+            "procedimiento.paso2ReqWindows",
+            "procedimiento.paso2Requisito1",
+            "procedimiento.paso2Requisito2",
+            "procedimiento.paso2Requisito3",
+            "procedimiento.paso2Requisito4",
+            "procedimiento.paso2Requisito5",
+          ].map((clave) => (
+            <li>
+              <svg class="resumen-check-icono" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M7.6 13.6 4.4 10.4l-1.4 1.4 4.6 4.6 9-9-1.4-1.4z" fill="currentColor" />
+              </svg>
+              {t(locale, clave)}
+            </li>
+          ))}
         </ul>
-        <p class="resumen-nota">{t(locale, "comoFuncionaProceso.resumenPasoNota2")}</p>
       </a>
 
       <a class="resumen-card" href="#paso-como-funciona-3">
@@ -450,8 +475,8 @@ const subpasosConexion = [
             />
           ))}
         </div>
-        <h3>{t(locale, "comoFuncionaProceso.resumenPasoTitulo3")}</h3>
-        <p>{t(locale, "comoFuncionaProceso.resumenPasoTexto3")}</p>
+        <h3>{t(locale, "procesoInstalacion.resumenTitulo")}</h3>
+        <p>{t(locale, "procesoInstalacion.resumenTexto")}</p>
       </a>
 
       <a class="resumen-card" href="#paso-como-funciona-4">
@@ -489,7 +514,7 @@ const subpasosConexion = [
             />
           ))}
         </div>
-        <h3>{t(locale, "comoFuncionaProceso.resumenPasoTitulo5")}</h3>
+        <h3>{t(locale, "procesoAutonomo.titulo")}</h3>
         <p>
           {resumenPaso5TextoParts.map((part) =>
             part.token ? <span {...{ [`data-cascada-${part.token}`]: true }}>{part.text}</span> : part.text
@@ -646,7 +671,13 @@ const subpasosConexion = [
           <li>{paso2ErrorPrefix}<span data-cascada-error>{errorDefaultLabel}</span>{paso2ErrorSuffix}</li>
           <li>{t(locale, "procedimiento.paso2ReqWindows")}</li>
           <li>{t(locale, "procedimiento.paso2ReqInternet")}</li>
-          <li>{t(locale, "procedimiento.paso2ReqAsistido")}</li>
+          {/* Requisitos de la instalación (mismas frases que los Términos y Condiciones). Sustituyen a
+              "Realizar los pasos Asistidos…" (procedimiento.paso2ReqAsistido, sin uso; sigue en i18n). */}
+          <li>{t(locale, "procedimiento.paso2Requisito1")}</li>
+          <li>{t(locale, "procedimiento.paso2Requisito2")}</li>
+          <li>{t(locale, "procedimiento.paso2Requisito3")}</li>
+          <li>{t(locale, "procedimiento.paso2Requisito4")}</li>
+          <li>{t(locale, "procedimiento.paso2Requisito5")}</li>
           <li hidden data-requisito-limpieza>{t(locale, "comoFuncionaProceso.paso2ReqLimpieza")}</li>
         </ul>
       </div>
@@ -658,20 +689,22 @@ const subpasosConexion = [
         <span class="detalle-linea" aria-hidden="true" />
       </div>
       <div class="detalle-contenido">
-        <h3>{t(locale, "procesoReutilizable.paso3Titulo")}</h3>
-        <p class="banner-exito">{t(locale, "procedimiento.paso3Resultado")}</p>
+        <h3>{t(locale, "procesoInstalacion.titulo")}</h3>
+        <p class="banner-exito">{t(locale, "procesoInstalacion.resultado")}</p>
 
-        <h4 class="subtitulo-modulo">{t(locale, "comoFuncionaProceso.tituloModuloSeguro")}</h4>
+        <h4 class="subtitulo-modulo">{t(locale, "procesoInstalacion.moduloTitulo")}</h4>
         <div class="subpasos-grid">
           {subpasosConexion.map((sub) => (
             <div class="subpaso-card">
-              <div class="subpaso-icono-wrap">
-                <Image src={sub.imagen} alt="" width={480} height={320} loading="lazy" />
-              </div>
+              {sub.imagen && (
+                <div class="subpaso-icono-wrap">
+                  <Image src={sub.imagen} alt={sub.alt} width={480} loading="lazy" />
+                </div>
+              )}
               <span class="subpaso-numero">{sub.numero}</span>
               <h5>{sub.titulo}</h5>
               <p>{sub.texto}</p>
-              {sub.numero === "3.2" && (
+              {false && (
                 <p class="subpaso-technician-id">
                   Technician ID:{" "}
                   <button
@@ -698,7 +731,7 @@ const subpasosConexion = [
               )}
               {sub.enlace && (
                 <>
-                  <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
+                  <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
                     {sub.enlace}
                   </a>
                   <p class="subpaso-enlace-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
@@ -719,9 +752,13 @@ const subpasosConexion = [
         <h3>{t(locale, "procesoReutilizable.paso4Titulo")}</h3>
         <p>{t(locale, "comoFuncionaProceso.paso4Texto")}</p>
         <PreciosCascadaWidget locale={locale} urlPath={urlPath} />
-        <div class="detalle-consulta-garantia">
-          <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} mostrarEjemplo />
-        </div>
+        {/* Consulta de garantía + certificado de ejemplo incrustados: ocultos con
+            CONSULTA_GARANTIA_INCRUSTADA_VISIBLE = false en config/site.ts. */}
+        {CONSULTA_GARANTIA_INCRUSTADA_VISIBLE && (
+          <div class="detalle-consulta-garantia">
+            <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} mostrarEjemplo />
+          </div>
+        )}
       </div>
     </div>
 
@@ -731,7 +768,7 @@ const subpasosConexion = [
         <span class="detalle-linea" aria-hidden="true" />
       </div>
       <div class="detalle-contenido">
-        <h3>{t(locale, "procesoReutilizable.paso5Titulo")}</h3>
+        <h3>{t(locale, "procesoAutonomo.titulo")}</h3>
         {Object.entries(videosPorVariante).map(([variante, video]) => (
           <div class="video-contenedor" data-video-marca={variante} hidden={variante !== "epson"}>
             {video ? (
@@ -758,7 +795,23 @@ const subpasosConexion = [
       </div>
       <div class="detalle-contenido">
         <h3>{t(locale, "procesoReutilizable.paso6Titulo")}</h3>
-        {["epson", "canon", "default"].map((variante) => {
+        {/* Paso 6: la impresora del modelo elegido con un CHECK (sigue la selección de marca/modelo del Paso 1;
+            ver aplicarFotoModelo en el script). Sustituye a la conversación de "cliente satisfecho" incrustada
+            (iframe del núcleo, bloqueado por su CSP en este dominio), que queda desactivada más abajo. */}
+        <div class="impresora-lista">
+          <div class="impresora-lista-foto">
+            <img
+              class="impresora-lista-img"
+              data-paso6-foto
+              src={paso1FotoDefault?.srcModelo ?? ""}
+              alt={t(locale, "procesoReutilizable.paso6Titulo")}
+              loading="lazy"
+              hidden={!paso1FotoDefault?.srcModelo}
+            />
+            <Image src={imgCheck} alt="" width={96} height={96} loading="lazy" class="impresora-lista-check" />
+          </div>
+        </div>
+        {false && ["epson", "canon", "default"].map((variante) => {
           const cliente = clientesPorVariante[variante];
           return (
             <div data-chat-marca={variante} hidden={variante !== "epson"}>
@@ -769,7 +822,7 @@ const subpasosConexion = [
                   <div class="chat-simulado">
                     <div class="chat-simulado-header">
                       <span class="chat-simulado-avatar">R</span>
-                      <span class="chat-simulado-nombre">ResetEnLinea</span>
+                      <span class="chat-simulado-nombre">ResetEntuPC</span>
                       <svg class="chat-simulado-icono" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
                         <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2Z" />
                       </svg>
@@ -811,6 +864,7 @@ const subpasosConexion = [
 </div>
 
 <script>
+  import { guardarSeleccionCompartida } from "../lib/seleccion-global";
   // Selector de diagnóstico: marca -> error -> modelo, en cascada. El texto
   // del error elegido se propaga a cada [data-cascada-error] de la página
   // (tarjeta 1 del resumen, título del Paso 1, bullet del Paso 2), la marca
@@ -977,6 +1031,17 @@ const subpasosConexion = [
       paso1ImgError.removeAttribute("srcset");
     };
     const aplicarFotoModelo = (src: string | null | undefined) => {
+      // Paso 6 ("Impresora desbloqueada"): mismo modelo que el Paso 1.
+      const paso6Foto = document.querySelector<HTMLImageElement>("[data-paso6-foto]");
+      if (paso6Foto) {
+        if (src) {
+          paso6Foto.src = src;
+          paso6Foto.removeAttribute("srcset");
+          paso6Foto.hidden = false;
+        } else {
+          paso6Foto.hidden = true;
+        }
+      }
       if (!paso1LinkModelo || !paso1ImgModelo) return;
       if (!src) {
         paso1LinkModelo.hidden = true;
@@ -1104,11 +1169,9 @@ const subpasosConexion = [
     // elija algo distinto, sin fecha de vencimiento.
     const SELECCION_LS_KEY = "resetenlinea_seleccion_global_v1";
     const guardarSeleccion = () => {
-      try {
-        localStorage.setItem(SELECCION_LS_KEY, JSON.stringify({ marca: marcaActivaId, error: errorActivo, modelo: modeloActivo }));
-      } catch {
-        /* localStorage no disponible: la selección simplemente no persiste entre visitas. */
-      }
+      // También avisa del cambio a los demás módulos (botón flotante, botones
+      // de WhatsApp, buscador de precios) — ver src/lib/seleccion-global.ts.
+      guardarSeleccionCompartida({ marca: marcaActivaId, error: errorActivo, modelo: modeloActivo });
     };
 
     const restaurarSeleccion = () => {
@@ -1947,6 +2010,42 @@ const subpasosConexion = [
 
   .video-placeholder-caption {
     font-size: 0.85rem;
+  }
+
+  /* Paso 6: impresora del modelo con el CHECK verde en la esquina. */
+  .impresora-lista {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+  }
+
+  .impresora-lista-foto {
+    position: relative;
+    width: min(100%, 22rem);
+    padding: 1.25rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .impresora-lista-foto :global(.impresora-lista-img) {
+    width: 100%;
+    height: auto;
+    max-height: 16rem;
+    object-fit: contain;
+    display: block;
+  }
+
+  .impresora-lista-foto :global(.impresora-lista-check) {
+    position: absolute;
+    right: -0.9rem;
+    bottom: -0.9rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.25));
   }
 
   .chat-simulado {

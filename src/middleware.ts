@@ -1,6 +1,18 @@
 import type { MiddlewareHandler } from "astro";
 import modelos from "./data/modelos-muestra.json";
-import { NUCLEO_API_BASE_URL, PAGE_SLUGS, RETIRED_LOCALES, USB_REDIRECTOR_DOWNLOAD_URL, type StaticPageKey } from "./config/site";
+import {
+  CONSULTA_GARANTIA_VISIBLE,
+  DEFAULT_LOCALE,
+  LOCALE_PATH_PREFIX,
+  LOCAL_API_BASE_URL,
+  NUCLEO_API_BASE_URL,
+  PAGE_SLUGS,
+  PRUEBA_SOCIAL_VISIBLE,
+  RETIRED_LOCALES,
+  SUPPORTED_LOCALES,
+  INSTALADOR_DOWNLOAD_URL,
+  type StaticPageKey,
+} from "./config/site";
 
 // slug retirado -> slug en español, por cada página estática con slug propio
 // por idioma (precios, como-funciona, etc.) — las páginas dinámicas (home,
@@ -114,7 +126,7 @@ const STATIC_MAP: Record<string, string> = {
   modulo: "/como-funciona/",
   // Redireccion permanente SEO: enlaza directo al instalador, no a una
   // pagina interna. context.redirect() acepta URLs absolutas externas.
-  "modulo-seguro": USB_REDIRECTOR_DOWNLOAD_URL,
+  "modulo-seguro": INSTALADOR_DOWNLOAD_URL,
   nosotros: "/",
   modalidad: "/",
   cupon: "/",
@@ -279,7 +291,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.crisp.chat",
   "img-src 'self' data: https:",
   "font-src 'self' data: https://cdn.jsdelivr.net https://*.crisp.chat",
-  "connect-src 'self' https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com https://cloudflareinsights.com https://*.crisp.chat https://*.relay.crisp.chat wss://*.crisp.chat wss://*.relay.crisp.chat https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
+  `connect-src 'self' ${LOCAL_API_BASE_URL} https://nucleo.resetalmohadillas.com https://atajos.resetalmohadillas.com https://*.trustpilot.com https://cloudflareinsights.com https://*.crisp.chat https://*.relay.crisp.chat wss://*.crisp.chat wss://*.relay.crisp.chat https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com`,
   "frame-src https://ruleta.resetalmohadillas.com https://nucleo.resetalmohadillas.com https://www.youtube-nocookie.com https://*.trustpilot.com https://*.crisp.chat",
   "object-src 'none'",
   "base-uri 'self'",
@@ -388,6 +400,37 @@ function aplicarCabecerasSeguridad(headers: Headers): void {
   headers.set("X-Frame-Options", "SAMEORIGIN");
 }
 
+// Prueba Social oculta (PRUEBA_SOCIAL_VISIBLE = false en config/site.ts): /prueba-social y todo lo que cuelga
+// de ella, en español (sin prefijo) y en cada idioma (/en/…, /pt/…), redirigen 302 (temporal, para no
+// dañar el SEO) a la portada de ese mismo idioma. Nada de Prueba Social se elimina: con `true` este
+// bloque no hace nada y las páginas vuelven a servirse.
+const PRUEBA_SOCIAL_RUTA = new RegExp(
+  `^(?:/(${SUPPORTED_LOCALES.filter((idioma) => idioma !== DEFAULT_LOCALE).join("|")}))?/prueba-social(?:/.*)?$`
+);
+
+function resolverRedireccionPruebaSocial(pathname: string): string | null {
+  if (PRUEBA_SOCIAL_VISIBLE) return null;
+  const coincidencia = pathname.match(PRUEBA_SOCIAL_RUTA);
+  if (!coincidencia) return null;
+  return coincidencia[1] ? `/${coincidencia[1]}/` : "/";
+}
+
+// "Consultar Garantía" oculta (CONSULTA_GARANTIA_VISIBLE = false en config/site.ts): la página de cada idioma
+// (slug por idioma en PAGE_SLUGS.consultaGarantia) redirige 302 a la portada de ese mismo idioma. Con
+// `true` este bloque no hace nada y las páginas vuelven a servirse.
+const RUTAS_CONSULTA_GARANTIA = new Map<string, string>(
+  SUPPORTED_LOCALES.map((idioma) => [
+    `${LOCALE_PATH_PREFIX[idioma]}/${PAGE_SLUGS.consultaGarantia[idioma]}`,
+    `${LOCALE_PATH_PREFIX[idioma]}/`,
+  ])
+);
+
+function resolverRedireccionConsultaGarantia(pathname: string): string | null {
+  if (CONSULTA_GARANTIA_VISIBLE) return null;
+  const sinBarraFinal = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  return RUTAS_CONSULTA_GARANTIA.get(sinBarraFinal) ?? null;
+}
+
 export const onRequest: MiddlewareHandler = async (context, next) => {
   const { pathname } = context.url;
 
@@ -418,6 +461,16 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       await registrarBloqueoRemoto(ipVisitante, paisVisitante, motivoBloqueo, pathname);
       return respuestaAccesoRestringido();
     }
+  }
+
+  const destinoPruebaSocial = resolverRedireccionPruebaSocial(pathname);
+  if (destinoPruebaSocial) {
+    return context.redirect(destinoPruebaSocial, 302);
+  }
+
+  const destinoConsultaGarantia = resolverRedireccionConsultaGarantia(pathname);
+  if (destinoConsultaGarantia) {
+    return context.redirect(destinoConsultaGarantia, 302);
   }
 
   const destinoIdiomaRetirado = resolverRedireccionIdiomaRetirado(pathname);

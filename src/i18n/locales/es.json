@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea.com"
+    "siteName": "ResetEntuPC.com"
   },
   "imageModal": {
     "ampliarLabel": "Ampliar imagen",
@@ -10,7 +10,7 @@
     "contadorTemplate": "{actual} de {total}"
   },
   "notFound": {
-    "title": "Página no encontrada | ResetEnLinea.com",
+    "title": "Página no encontrada | ResetEntuPC.com",
     "description": "La página que buscas no existe o fue movida.",
     "heading": "Página no encontrada",
     "texto": "La página que buscas no existe o fue movida.",
@@ -26,21 +26,21 @@
     "ruleta": "Ruleta",
     "consultaGarantia": "Consulta Garantía",
     "abrirMenu": "Abrir menú",
-    "eslogan": "Reset Seguro, Rápido y Reutilizable cualquier PC",
+    "eslogan": "Servicio de Instalación de Reset Epson & Canon",
     "catalogo": "Catálogo"
   },
   "ruletaPage": {
-    "title": "Ruleta | ResetEnLinea.com",
+    "title": "Ruleta | ResetEntuPC.com",
     "description": "Juega y obtén un cupón de descuento para tu servicio de reset.",
     "heading": "Gira la ruleta",
     "texto": "Juega y obtén tu cupón de descuento. Cuando termines, puedes escribirnos para usarlo."
   },
   "pruebaSocialPage": {
-    "title": "Prueba Social | ResetEnLinea.com",
+    "title": "Prueba Social | ResetEntuPC.com",
     "description": "Reseñas reales de clientes que ya usaron nuestro servicio de reset asistido.",
     "heading": "Prueba Social",
     "texto": "Reseñas reales verificadas en Trustpilot.",
-    "introTexto": "Aquí reunimos experiencias y evidencias reales de clientes y servicios realizados por ResetEnLinea.",
+    "introTexto": "Aquí reunimos experiencias y evidencias reales de clientes y servicios realizados por ResetEntuPC.",
     "tabConversaciones": "Conversaciones Reales",
     "tabResets": "Resets Realizados",
     "conversacionesTitulo": "Conversaciones Reales",
@@ -56,8 +56,8 @@
     "testimoniosTexto": "Capturas reales de reseñas de clientes en Trustpilot."
   },
   "resetRealizadosPage": {
-    "title": "Reset Evidencia | ResetEnLinea.com",
-    "description": "Evidencia en video de servicios de reset realizados remotamente por ResetEnLinea.",
+    "title": "Reset Evidencia | ResetEntuPC.com",
+    "description": "Evidencia en video de servicios de reset realizados remotamente por ResetEntuPC.",
     "heading": "Reset Evidencia",
     "marca": "Marca",
     "modelo": "Modelo",
@@ -71,15 +71,15 @@
     "resumenContenidoSinDuracion": "Video real del reset de una impresora {marca} {modelo} — {error} — en {pais}."
   },
   "clienteSatisfechoPage": {
-    "title": "Cliente Satisfecho | ResetEnLinea.com",
+    "title": "Cliente Satisfecho | ResetEntuPC.com",
     "description": "Conversaciones reales con clientes que ya usaron nuestro servicio de reset asistido.",
     "heading": "Cliente Satisfecho",
     "volverLink": "← Volver a Cliente Satisfecho",
     "sinRegistros": "Todavía no hay conversaciones publicadas."
   },
   "catalogoPage": {
-    "title": "Catálogo de impresoras compatibles | ResetEnLinea.com",
-    "description": "Busca tu marca y modelo exacto de impresora Epson, Canon o Plotter Epson-SC y accede directo a la guía de reset asistido.",
+    "title": "Catálogo de impresoras compatibles | ResetEntuPC.com",
+    "description": "Busca tu marca y modelo exacto de impresora Epson, Canon o Plotter Epson-SC y accede directo a la guía de instalación del reset.",
     "heading": "Catálogo completo de impresoras",
     "intro": "Busca tu marca y modelo, o filtra por el error que muestra tu impresora."
   },
@@ -89,8 +89,8 @@
     "heroBuscadorPlaceholder": "Busca tu marca o modelo (ej. Epson L3250)",
     "heroBuscadorBoton": "Buscar",
     "heroCtaWhatsapp": "Desbloquear por WhatsApp Ahora",
-    "heroCtaDescarga": "Descargar Módulo Seguro",
-    "heroCtaDescargaMicrotexto": "Búscanos como resetenlinea.com · 100% libre de virus",
+    "heroCtaDescarga": "Descargar Instalador",
+    "heroCtaDescargaMicrotexto": "Búscanos como resetentupc.com · 100% Autónomo y Se requiere excluir antivirus",
     "interesTitulo": "Elige tu error y te mostramos la solución",
     "interesSubtitulo": "Toca cualquier error para ver los modelos compatibles en el catálogo",
     "interesFaqTitulo": "Preguntas rápidas sobre nuestro sistema asistido",
@@ -117,7 +117,7 @@
     "pasoUsuario1Titulo": "Apaga/desconecta según tu marca",
     "pasoUsuario1Texto": "Seguimos la indicación específica para Epson, Canon o Plotter que te compartimos por WhatsApp antes de conectar.",
     "pasoUsuario2Titulo": "Búscanos en Google",
-    "pasoUsuario2Texto": "Escribe \"resetenlinea.com\" en tu navegador para volver siempre a la fuente oficial.",
+    "pasoUsuario2Texto": "Escribe \"resetentupc.com\" en tu navegador para volver siempre a la fuente oficial.",
     "pasoUsuario3Titulo": "Descarga el ejecutable",
     "pasoUsuario3Texto": "Descarga el módulo seguro de conexión — 100% libre de virus, no requiere desactivar tu antivirus.",
     "pasoUsuario4Titulo": "Conecta el cable USB",
@@ -150,8 +150,8 @@
     "paginaSiguiente": "Siguiente →"
   },
   "home": {
-    "title": "Reset de impresoras asistido y profesional | ResetEnLinea.com",
-    "description": "Reset de almohadillas y contadores de tinta para impresoras Epson y Canon, con asistencia remota profesional. Diagnóstico claro antes de cualquier procedimiento.",
+    "title": "Instalación de Reset para impresoras Epson y Canon | ResetEntuPC.com",
+    "description": "Instalación del reset de almohadillas para impresoras Epson y Canon por conexión USB. Proceso 100% autónomo en tu propio PC, con Key Trial para probar antes de comprar.",
     "heroTagline": "Reset profesional, seguro y rápido, con garantía reutilizable desde cualquier PC.",
     "heroCta": "¡Desbloquea tu Impresora Ahora!",
     "heroDescargaTexto": "¿El técnico te indicó descargar? Haz clic aquí",
@@ -185,11 +185,11 @@
     "verModelo": "Ver modelo"
   },
   "modelo": {
-    "titleTemplate": "Reset {marca} {modelo} — Servicio Asistido | ResetEnLinea.com",
-    "descriptionTemplate": "Servicio de reset asistido y remoto para tu {marca} {modelo}. No es una descarga ni autoservicio: un técnico real te guía por WhatsApp, de forma segura.",
+    "titleTemplate": "Reset {marca} {modelo} — Instalación por USB | ResetEntuPC.com",
+    "descriptionTemplate": "Instalación del reset para tu {marca} {modelo} por conexión USB. Proceso 100% autónomo: lo haces tú mismo en tu PC con Windows, siguiendo nuestros videos.",
     "intro": "Te ayudamos a resolver el reset de tu {marca} {modelo} de forma segura, con acompañamiento profesional en cada paso.",
     "errorSectionTitle": "¿Qué error presenta tu impresora?",
-    "errorSectionText": "Cuéntanos el mensaje o código de error que ves en tu {marca} {modelo} para darte un diagnóstico más preciso.",
+    "errorSectionText": "Cuéntanos el mensaje o código de error que ves en tu {marca} {modelo} para confirmarte si el reset lo cubre.",
     "ctaHero": "Consultar por mi {marca} {modelo}",
     "ctaError": "Ya tengo el código de error",
     "faqTitle": "Preguntas frecuentes sobre este modelo",
@@ -198,22 +198,22 @@
     "errorRequiereRevisionTitle": "Este modelo también puede presentar un problema que requiere revisión adicional",
     "seleccionaError": "Selecciona el código que ves en tu impresora",
     "reconocimiento": "¿Tu {marca} {modelo} presenta un problema de reset o un mensaje de error?",
-    "atencionExplicacionConError": "El error {errorLargo} bloquea la impresión de tu {marca} {modelo}, pero no significa que tengas que comprar una impresora nueva: lo desbloqueamos al 0% en menos de 1 minuto, sin mover tu equipo de tu casa u oficina.",
-    "atencionExplicacionGenerica": "Este tipo de error bloquea la impresión de tu {marca} {modelo}, pero no significa que tengas que comprar una impresora nueva: lo desbloqueamos al 0% en menos de 1 minuto, sin mover tu equipo de tu casa u oficina.",
-    "interesTitulo": "Por qué elegir nuestro Reset Asistido para tu {marca} {modelo}",
-    "videoResumenTitulo": "Así se resuelve en menos de 1 minuto",
+    "atencionExplicacionConError": "El error {errorLargo} bloquea la impresión de tu {marca} {modelo}, pero no significa que tengas que comprar una impresora nueva: puedes desbloquearla tú mismo, sin mover tu equipo de tu casa u oficina.",
+    "atencionExplicacionGenerica": "Este tipo de error bloquea la impresión de tu {marca} {modelo}, pero no significa que tengas que comprar una impresora nueva: puedes desbloquearla tú mismo, sin mover tu equipo de tu casa u oficina.",
+    "interesTitulo": "Por qué elegir nuestro Reset Autónomo para tu {marca} {modelo}",
+    "videoResumenTitulo": "Así se ve un reset en acción",
     "videoResumenTexto": "Mirá un caso real de {marca} {modelo} resuelto por nuestro equipo.",
     "videoResumenPlaceholder": "Muy pronto vas a poder ver acá un caso real de {marca} {modelo}.",
-    "accionIntro": "Ya viste cómo funciona el Reset Asistido para tu {marca} {modelo}. Cuando quieras, escríbenos por WhatsApp y arrancamos.",
+    "accionIntro": "Ya viste cómo funciona el Reset Autónomo para tu {marca} {modelo}. Cuando quieras, escríbenos por WhatsApp con el ID de tu PC para obtener tu Key.",
     "ctaBeneficios": "¡Desbloquea tu {marca} {modelo} Ya!",
-    "ctaBeneficiosSubtexto": "Diagnóstico gratis y sin compromiso",
+    "ctaBeneficiosSubtexto": "Key Trial (de prueba) por única vez",
     "ctaIndiceProcesos": "Consultar Solución para {marca} {modelo}",
     "ctaPaso1": "Verificar Mi Error en {marca} {modelo}",
     "ctaPaso2": "Confirmar Requisitos de {marca} {modelo}",
-    "ctaPaso3": "Iniciar Diagnóstico Gratis - {marca} {modelo}",
+    "ctaPaso3": "Escribir por WhatsApp - {marca} {modelo}",
     "ctaPaso4": "Ver Precios para {marca} {modelo}",
     "ctaPaso5": "Ver Reset en Vivo de {marca} {modelo}",
-    "ctaPaso5Nota": "Este video no es un instructivo para que lo hagas tú mismo: es la evidencia real de cómo nuestro técnico ejecuta el reset de forma remota desde nuestro servidor, mientras te acompaña paso a paso por WhatsApp.",
+    "ctaPaso5Nota": "Video de referencia de un reset ya realizado en un equipo como el tuyo. En tu caso, el reset lo ejecutas tú mismo en tu PC, siguiendo los pasos de nuestros videos.",
     "ctaPaso6": "¡Resucita Mi {marca} {modelo} Ahora!",
     "prefijoTitulo": "Reset",
     "cierreTitulo": "¿Listo para resolverlo?",
@@ -252,12 +252,12 @@
     "paso2Titulo": "Requisitos y conexión USB",
     "paso3Titulo": "Revisión Asistida de compatibilidad USB y Reset Disponible",
     "paso3TituloEpson": "Revisión Asistida de compatibilidad USB y Reset Disponible",
-    "paso4Titulo": "Cotización y Pago o Garantía Vigente",
-    "paso4TituloEpson": "Cotización y Pago o Garantía Vigente",
+    "paso4Titulo": "Precio de la Instalación y Compra de tu Key",
+    "paso4TituloEpson": "Precio de la Instalación y Compra de tu Key",
     "paso5Titulo": "Reset Asistido en 1 minuto",
     "paso5TituloEpson": "Reset Asistido en 1 minuto",
-    "paso5TituloEpsonSc": "Modo Reparación y Reset en 1 minuto (Ejecución del módulo y ID)",
-    "paso5TituloEpsonSc0014bd": "Cambiar Almohadillas nueva, Limpieza Sensor y superficie de plástico al 100%, Modo Inspección y Reset en 1 minuto",
+    "paso5TituloEpsonSc": "Modo Reparación y Reset Autónomo (Ejecución del programa y ID)",
+    "paso5TituloEpsonSc0014bd": "Cambiar Almohadillas nueva, Limpieza Sensor y superficie de plástico al 100%, Modo Inspección y Reset Autónomo",
     "paso6Titulo": "Impresora desbloqueada y lista para imprimir",
     "paso1TituloGenerico": "Identificación del error de tu impresora",
     "paso3TituloGenerico": "Revisión Asistida de compatibilidad"
@@ -279,7 +279,7 @@
     "paso2Punto4": "No resolvemos errores físicos, ni de calidad de impresión ni cartuchos, ni de caja de mantenimiento.",
     "paso3Titulo": "Revisión Asistida de compatibilidad USB y Reset Disponible",
     "paso3Resultado": "Resultado Revisión: Compatible, Conexión USB reconocida, Lectura al 100% y Servicio Disponible",
-    "paso4Titulo": "Cotización y Pago o Garantía Vigente",
+    "paso4Titulo": "Precio de la Instalación y Compra de tu Key",
     "paso5Titulo": "Reset Asistido en 1 minuto | {marca} {modelo}",
     "paso5TituloCorto": "Reset Asistido en 1 minuto",
     "paso5AnchorConVideo": "Ver la evidencia completa: {titulo}",
@@ -290,7 +290,12 @@
     "paso6ResenaTrustpilot": "Reseña real en Trustpilot",
     "paso6AltTrustpilot": "Testimonio de cliente en Trustpilot",
     "paso6VerMasClientes": "Ver más clientes satisfechos",
-    "paso6VerTestimoniosTrustpilot": "Ver testimonios en Trustpilot"
+    "paso6VerTestimoniosTrustpilot": "Ver testimonios en Trustpilot",
+    "paso2Requisito1": "Permanencia en un Único PC",
+    "paso2Requisito2": "Vendemos una Instalación, NO una Reparación",
+    "paso2Requisito3": "Proceso 100% Autónomo y Conexión",
+    "paso2Requisito4": "Es REQUISITO OBLIGATORIO usar únicamente Windows Defender.",
+    "paso2Requisito5": "NO soluciona problemas físicos, calidad de impresión, limpieza de cabezales, caja de mantenimiento ni fallos de cartuchos."
   },
   "pruebaSocial": {
     "titulo": "Diagnósticos Gratuitos — Prueba Social",
@@ -326,11 +331,11 @@
     "mensajeWhatsapp": "Hola, mi impresora {marca} {modelo} está lista. Quiero el plan {plan} ({precio}) pagando con {metodo}. Solicito los datos de pago."
   },
   "proceso": {
-    "titulo": "Reset Asistido 100% Remoto por conexión USB",
+    "titulo": "Instalación de Reset por conexión USB",
     "introTexto": "Así funciona la conexión antes de escribirnos por WhatsApp:",
     "paso1Titulo": "Descargar y abrir el módulo seguro",
     "paso1Texto": "Necesitas un PC con Windows 11, 10 u 8. Descarga el módulo seguro de conexión y ábrelo en tu equipo.",
-    "paso1Enlace": "Descargar módulo seguro",
+    "paso1Enlace": "Descargar instalador",
     "paso2Titulo": "Conectarte",
     "paso2Texto": "Abre el programa e introduce el ID de técnico que ves aquí abajo. En \"Additional information\" escribe tu nombre.",
     "paso3Titulo": "Compartir la conexión USB",
@@ -350,8 +355,8 @@
     "paso4ImagenAlt": "Pantalla de USB Redirector esperando al técnico, con el aviso para escribir por WhatsApp"
   },
   "comoFunciona": {
-    "title": "Cómo funciona el servicio | ResetEnLinea.com",
-    "description": "Conoce el proceso de diagnóstico, evaluación de compatibilidad y asistencia remota para el reset de tu impresora.",
+    "title": "Cómo funciona el servicio | ResetEntuPC.com",
+    "description": "Conoce el proceso de instalación del reset por conexión USB: requisitos, descarga del instalador, compra de tu Key y reset autónomo en tu PC.",
     "heading": "Cómo funciona",
     "tabServicio": "Nuestro servicio",
     "tabProceso": "Conexión técnica",
@@ -383,7 +388,7 @@
     "paso2ReqLimpieza": "Realizar limpieza 100% impecable a Sensor de tinta, Plásticos y la Almohadilla debe ser nueva antes del reset.",
     "paso2ReqErrorVerificado": "Error \"{error}\" verificado.",
     "tituloModuloSeguro": "Cómo funciona la conexión con el técnico",
-    "paso4Texto": "El pago se realiza solo después de validar la compatibilidad de tu equipo. Si ya cuentas con garantía vigente, no pagas de nuevo: se aplica directamente.",
+    "paso4Texto": "Copia el ID de tu PC y escríbenos por WhatsApp: te indicamos el valor según tu país y medios de pago, y generamos tu Key para activar la instalación en ese PC. Antes puedes solicitar una Key Trial (de prueba) por única vez.",
     "paso5VideoPlaceholder": "Video de evidencia del reset en vivo — próximamente",
     "paso6ChatPlaceholder": "Testimonio real de cliente — próximamente",
     "introTituloQueEs": "¿Qué es exactamente?",
@@ -392,21 +397,21 @@
     "introDestacado": "Tú solo conectas el cable, ¡nosotros hacemos el trabajo técnico!",
     "introAclaracion": "Aclaración importante: no vendemos programas de autoservicio. Entregamos una solución directa a la placa de tu impresora.",
     "beneficiosTitulo": "Beneficios de nuestro servicio",
-    "beneficiosSubtitulo": "Rapidez, respaldo comprobado y cero riesgos: así trabajamos para que tu impresora vuelva a funcionar hoy mismo.",
-    "beneficio1Titulo": "Reset en 1 Minuto",
-    "beneficio1Texto": "La ejecución de la solución es ultrarrápida. Tu impresora lista en 60 segundos o menos tras la conexión.",
+    "beneficiosSubtitulo": "Autonomía, transparencia y respaldo comprobado: así te damos el control para que tu impresora vuelva a funcionar.",
+    "beneficio1Titulo": "Reset Autónomo 100%",
+    "beneficio1Texto": "Hazlo tú mismo siguiendo nuestros videos, a tu ritmo y sin depender de técnicos ni de agendas.",
     "beneficio2Titulo": "Cero Traslados ni Esperas",
-    "beneficio2Texto": "No requiere llevar la impresora a ningún lado ni agendar técnicos. Olvídate de esperar días; la solución es inmediata.",
-    "beneficio3Titulo": "Cero Instalaciones",
-    "beneficio3Texto": "Privacidad absoluta. No requiere instalar programas pesados ni ingresar por control remoto a tu PC.",
-    "beneficio4Titulo": "100% Seguro",
-    "beneficio4Texto": "Proceso limpio y libre de virus. ¡No necesitas desactivar tu antivirus en ningún momento!",
+    "beneficio2Texto": "No requiere llevar la impresora a ningún lado ni agendar técnicos. Lo haces tú mismo, en tu casa u oficina, cuando quieras.",
+    "beneficio3Titulo": "Instalación en tu Propio PC",
+    "beneficio3Texto": "Descargas el instalador y lo configuras para el modelo de tu impresora. Todo se hace desde tu PC con Windows.",
+    "beneficio4Titulo": "Privacidad Total",
+    "beneficio4Texto": "No hacemos asistencia remota ni ingresamos a tu PC. Tú ejecutas el proceso y mantienes el control de tu equipo.",
     "beneficio5Titulo": "Respaldo Comprobado",
     "beneficio5Texto": "Confianza total. Contamos con más de 920 calificaciones de 5 estrellas de clientes reales satisfechos.",
-    "beneficio6Titulo": "Reembolso Asegurado",
-    "beneficio6Texto": "Cero riesgos. Si después de intentar por todos los medios técnicos no logramos solucionar el error, te devolvemos tu dinero.",
-    "beneficio7Titulo": "Certificado Reutilizable en PDF",
-    "beneficio7Texto": "Recibes cobertura por 12 meses (ampliable a 15). Licencia reutilizable: aplica desde cualquier PC para impresoras del mismo modelo.",
+    "beneficio6Titulo": "Pruébalo Antes de Comprar",
+    "beneficio6Texto": "¿Tienes dudas? Solicita por WhatsApp una Key Trial (de prueba), por una única vez, y compruébalo tú mismo.",
+    "beneficio7Titulo": "Sin Vencimiento",
+    "beneficio7Texto": "Tu instalación dura lo que tú decidas: 1 día o 20 años. Queda vinculada a tu PC, para uso en un único equipo.",
     "beneficio8Titulo": "Atención 24/7",
     "beneficio8Texto": "Soporte técnico profesional, humano y siempre disponible para cuando tu negocio más lo necesite.",
     "beneficio9Titulo": "Sorteos y Premios Diarios",
@@ -420,14 +425,14 @@
     "resumenPasoTexto1": "Modelo: {marca} {modelo} | Error: {error}. Tras el contacto, solicitamos esta información para verificar de forma inmediata la disponibilidad del reset compatible y asegurar que el error se pueda solucionar antes de continuar.",
     "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Requisitos Previos y Conexión USB",
-    "resumenPasoBullet2a": "Tener la disposición y el tiempo necesario de seguir los pasos del técnico (requisito vital).",
+    "resumenPasoBullet2a": "Tener la disposición y el tiempo necesario de seguir los pasos de nuestros videos (requisito vital).",
     "resumenPasoBullet2b": "Contar con cable USB conectado directamente al PC.",
     "resumenPasoNota2": "No resolvemos errores físicos, problemas de calidad de impresión, fallas de cartuchos, cajas de mantenimiento ni realizamos visitas a domicilio.",
     "resumenPasoTitulo3": "Revisión de Compatibilidad y Reset Disponible",
     "resumenPasoTexto3": "Pasos de diagnóstico gratuito para comprobar si cumples con los requisitos técnicos, validar que el reset de tu modelo esté disponible y entregarte un diagnóstico certero antes de realizar cualquier pago.",
-    "resumenPasoTitulo4": "Cotización, Método de Pago y Garantía",
+    "resumenPasoTitulo4": "Precio, Método de Pago y Compra de tu Key",
     "resumenPasoTexto4": "Capturamos tu país para mostrarte los precios y métodos de pago locales.",
-    "resumenPasoNota4": "El costo cubre el servicio actual; los planes de garantía opcionales sirven únicamente para recibir soporte sin costo adicional si el error llegara a repetirse dentro del período vigente.",
+    "resumenPasoNota4": "El costo corresponde a la instalación en un único PC. Una vez entregada la Key no hay reembolsos; por eso puedes solicitar antes, por única vez, una Key Trial (de prueba).",
     "resumenPasoTitulo5": "Reset Asistido en 1 Minuto",
     "resumenPasoTexto5": "Con la asistencia en vivo para tu equipo {marca} {modelo}, ejecutamos el procedimiento de forma remota y segura para dejar el contador en cero.",
     "resumenPasoTitulo6": "Impresora Desbloqueada y Lista",
@@ -440,60 +445,74 @@
     "otroModeloOption": "Otro: ____",
     "testimonioTrustpilotAlt": "Reseña real de cliente en Trustpilot",
     "resenasTitulo": "Más de 920 clientes ya recuperaron sus impresoras",
-    "resenasSubtitulo": "Lo que dicen quienes ya confiaron en nuestro servicio de reset asistido",
+    "resenasSubtitulo": "Lo que dicen quienes ya confiaron en nuestro servicio de reset",
     "whatsappFlotanteLabel": "Iniciar Diagnóstico Gratuito por WhatsApp",
-    "whatsappBannerCta": "Hablar con un Técnico Real Ahora",
-    "whatsappBannerSubtitulo": "Evaluamos tu caso sin costo y te confirmamos disponibilidad al instante. Sin compromisos.",
+    "whatsappBannerCta": "Escribir por WhatsApp Ahora",
+    "whatsappBannerSubtitulo": "Te confirmamos si tu modelo y error son compatibles y te indicamos cómo obtener tu Key. Sin compromisos.",
     "ctaFinalLabel": "Consultar si mi impresora tiene solución",
-    "paso31BotonDescarga": "Descargar Módulo Seguro de Conexión",
-    "paso31MicroTexto": "Seguro 100% libre de virus y no requiere desactivar el antivirus"
+    "paso31BotonDescarga": "Descargar Instalador",
+    "paso31MicroTexto": "El proceso es 100% Autónomo y Se requiere Excluir el antivirus",
+    "beneficio10Titulo": "Compatibilidad Clara",
+    "beneficio10Texto": "Sabes exactamente qué errores cubre antes de comprar: Epson, Canon y plotters Epson SC.",
+    "beneficio11Titulo": "Solo Cable USB",
+    "beneficio11Texto": "Solo necesitas tu PC con Windows y la impresora conectada por cable USB. Todo ocurre en tu equipo.",
+    "beneficio12Titulo": "Reinstala sin Perder tu Activación",
+    "beneficio12Texto": "Si el antivirus borra el programa por error, el botón «Reinstalar» lo recupera sin perder tu activación (si no formateaste el PC)."
   },
   "faq": {
-    "title": "Preguntas frecuentes | ResetEnLinea.com",
-    "description": "Resolvemos las dudas más comunes sobre el reset de impresoras y nuestro proceso de asistencia.",
+    "title": "Preguntas frecuentes | ResetEntuPC.com",
+    "description": "Resolvemos las dudas más comunes sobre la instalación del reset, qué cubre y cómo funciona el proceso.",
     "heading": "Preguntas frecuentes",
     "items": [
       {
-        "pregunta": "¿Este sitio ofrece un programa gratuito para resetear mi impresora yo mismo?",
-        "respuesta": "No. No distribuimos programas de reset gratuitos ni herramientas de autoservicio. Es un servicio 100% asistido: un técnico real te acompaña por WhatsApp durante todo el proceso."
+        "pregunta": "¿Qué estoy comprando exactamente?",
+        "respuesta": "Una Instalación: el derecho a instalar el software de reset en un único PC. La llave de activación (Key) es solo el medio que habilita el programa; lo que ofrecemos es la instalación."
       },
       {
-        "pregunta": "¿Es seguro hacer el reset de mi impresora?",
-        "respuesta": "Sí. Trabajamos con un diagnóstico previo y acompañamiento profesional en cada procedimiento."
+        "pregunta": "¿Puedo probarlo antes de comprar?",
+        "respuesta": "Sí. Si prefieres estar seguro antes de comprar, solicita por WhatsApp una Key Trial (de prueba). Se entrega una única vez."
       },
       {
-        "pregunta": "¿Es seguro compartir la conexión USB de mi impresora?",
-        "respuesta": "Sí. Solo compartimos la conexión USB de tu impresora: nunca vemos tu pantalla, no accedemos a tus archivos ni controlamos tu computador. Tú mantienes el control en todo momento."
+        "pregunta": "¿Hay reembolso si el programa no soluciona mi problema?",
+        "respuesta": "Como lo que se vende es una instalación, una vez entregada la Key no hay reembolsos, tanto si el programa soluciona el problema de tu impresora como si no. Por eso, antes de comprar, revisa qué errores cubre y, si lo deseas, prueba con la Key Trial."
       },
       {
-        "pregunta": "¿Necesito desactivar el antivirus?",
-        "respuesta": "No. No solicitamos desactivar el antivirus ni ningún sistema de seguridad de tu equipo."
+        "pregunta": "¿En cuántos computadores puedo usarlo y cuánto dura?",
+        "respuesta": "La instalación queda vinculada al PC donde se activa y dura lo que tú decidas: puede ser 1 día o 20 años. Si formateas el PC, cambias el disco duro o lo pasas a otro equipo, la instalación se pierde y necesitarías adquirir una nueva."
       },
       {
-        "pregunta": "¿Qué necesito para la asistencia remota?",
-        "respuesta": "Una conexión a internet estable y tu impresora conectada por USB a tu computador."
+        "pregunta": "¿Qué errores resuelve y cuáles no?",
+        "respuesta": "Solo restablece los contadores de almohadillas. Epson: error de almohadillas, E11 y error de tapón. Canon: 5B00, 1700, P07 y E08. Plotters Epson SC: 00000008, 00080000, 00040000, 00000004, 00010000, 00000001, 0014BD. No soluciona problemas físicos, calidad de impresión, limpieza de cabezales, caja de mantenimiento ni fallos de cartuchos."
       },
       {
-        "pregunta": "¿Cuándo se realiza el pago del servicio?",
-        "respuesta": "Primero evaluamos tu caso y confirmamos que tu modelo y error son compatibles. Solo después de esa confirmación te indicamos el valor y coordinamos el pago."
+        "pregunta": "¿Tengo que hacerlo yo o ustedes entran a mi PC?",
+        "respuesta": "Es un servicio «hazlo tú mismo»: ejecutas el proceso siguiendo nuestros videos y mantienes el control total de tu equipo. No hacemos asistencia remota ni ingresamos a tu PC. Solo necesitas conectar la impresora por cable USB."
       },
       {
-        "pregunta": "¿Recibo algún comprobante del servicio?",
-        "respuesta": "Sí. Al finalizar el reset recibes un certificado de garantía del servicio realizado."
+        "pregunta": "¿Qué antivirus necesito usar?",
+        "respuesta": "Únicamente Windows Defender. Si tienes otro antivirus, debes desinstalarlo por completo (no basta con pausarlo). Además, debes excluir la carpeta C:\\ResetEntuPc.com en Windows Defender."
       },
       {
-        "pregunta": "¿Qué pasa si mi equipo no cumple los requisitos?",
-        "respuesta": "Evaluamos alternativas, incluyendo un procedimiento local guiado por conexión USB."
+        "pregunta": "¿Qué pasa si el antivirus me borra el programa?",
+        "respuesta": "El gestor de instalación incluye un botón «Reinstalar». Si el antivirus elimina el programa por error, lo recuperas con ese botón sin perder tu activación, siempre y cuando no hayas formateado el PC."
+      },
+      {
+        "pregunta": "¿Cómo obtengo mi Key?",
+        "respuesta": "Descargas el instalador, instalas el reset para el modelo de tu impresora y copias el ID de tu PC. Luego nos escribes por WhatsApp con ese ID y generamos tu Key para activarlo."
       }
     ]
   },
   "contacto": {
-    "title": "Contacto | ResetEnLinea.com",
+    "title": "Contacto | ResetEntuPC.com",
     "description": "Cuéntanos qué necesitas y recibe orientación rápida sobre el servicio adecuado para tu impresora.",
-    "heading": "Contáctanos para Reset Asistido en 1 minuto",
+    "heading": "Contáctanos para obtener tu Key",
     "text": "Cuéntanos qué necesitas y recibe orientación rápida sobre el servicio adecuado.",
     "cta": "Obtén ayuda",
     "equipoTitulo": "Nuestro equipo",
+    "confianzaTitulo": "Negocio Formalizado y Verificado",
+    "confianzaTexto": "Estamos legalmente constituidos ante la DIAN. Consulta nuestro Registro Único Tributario (RUT). Por seguridad, los datos personales, la identificación, la dirección y los códigos QR están censurados y el documento lleva marca de agua.",
+    "confianzaAlt": "Registro Único Tributario (RUT) de ResetEntuPC.com con datos personales censurados",
+    "confianzaError": "No se pudo cargar el documento. Recarga la página.",
     "enviarMensaje": "Enviar mensaje",
     "rolWilton": "Admin - Técnico Reset Online - Asesor",
     "rolDiana": "Asesora",
@@ -527,7 +546,7 @@
     "exito": "¡Listo! Recibimos tu consulta, te contactaremos muy pronto."
   },
   "consultaGarantiaPage": {
-    "title": "Consulta de Garantía | ResetEnLinea.com",
+    "title": "Consulta de Garantía | ResetEntuPC.com",
     "description": "Consulta el estado de tu garantía con tu correo, WhatsApp o número de pedido.",
     "heading": "Consulta de Garantía",
     "intro": "Escribe el correo, el WhatsApp o el número de pedido (#) de tu compra para ver el estado de tu garantía.",
@@ -552,10 +571,10 @@
     "errorGenerico": "Ocurrió un error al consultar. Intenta de nuevo en unos minutos."
   },
   "whatsapp": {
-    "greetingWithError": "Hola, mi impresora {marca} {modelo} está bloqueada y no puedo imprimir. Necesito el reset urgente, ¿me confirman disponibilidad ahora?\n\nError: {error}\n\nVengo desde:\n{url}",
-    "greetingWithoutError": "Hola, necesito resetear mi {marca} {modelo}, está bloqueada y no puedo seguir trabajando. ¿Me confirman disponibilidad ahora? Vengo desde: {url}",
-    "greetingGeneric": "Hola, mi impresora quedó bloqueada y necesito un reset urgente.\nMarca y modelo: \nError o mensaje que muestra: \n\nVengo desde:\n{url}",
-    "greetingConPlan": "Hola, quiero contratar el servicio de reset asistido.\n\n{nota}\n\nVengo desde:\n{url}"
+    "greetingWithError": "Hola, quiero comprar la Key del reset para mi impresora {marca} {modelo}. Está bloqueada y no puedo imprimir.\n\nError: {error}\n\nID de mi PC: \n\nVengo desde:\n{url}",
+    "greetingWithoutError": "Hola, quiero comprar la Key del reset para mi {marca} {modelo}.\n\nID de mi PC: \n\nVengo desde:\n{url}",
+    "greetingGeneric": "Hola, quiero comprar la Key del reset para mi impresora.\n\nMarca y modelo: \nError o mensaje que muestra: \nID de mi PC: \n\nVengo desde:\n{url}",
+    "greetingConPlan": "Hola, quiero comprar la Key del reset.\n\n{nota}\n\nVengo desde:\n{url}"
   },
   "contactForm": {
     "botonFlotante": "Contáctanos",
@@ -703,7 +722,7 @@
     "conexionPaso1Whatsapp": "Abra WhatsApp Web en el mismo PC donde realizará el proceso.",
     "conexionPaso1Usb": "Conecte la impresora al PC mediante cable USB.",
     "conexionPaso1Descarga": "Descargue el módulo seguro:",
-    "conexionDescargarBoton": "Descargar módulo",
+    "conexionDescargarBoton": "Descargar instalador",
     "conexionPaso2Titulo": "Conectarse",
     "conexionPaso2Intro": "Abra el programa y escriba:",
     "conexionPaso2TechnicianIdLabel": "Technician ID:",
@@ -718,12 +737,12 @@
   },
   "footer": {
     "rights": "Todos los derechos reservados.",
-    "disclaimer": "ResetEnLinea.com ofrece asistencia profesional independiente para el reset de impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios.",
+    "disclaimer": "ResetEntuPC.com es un proveedor independiente de software de reset para impresoras. Las marcas mencionadas pertenecen a sus respectivos propietarios.",
     "legalInfoTitulo": "Información legal",
     "terminosLink": "Términos y Condiciones"
   },
   "testimoniosTruspilotPage": {
-    "title": "Testimonios Trustpilot | ResetEnLinea.com",
+    "title": "Testimonios Trustpilot | ResetEntuPC.com",
     "description": "Galería de reseñas y capturas reales de clientes en Trustpilot.",
     "heading": "Testimonios Trustpilot",
     "texto": "Capturas reales de reseñas y calificaciones de nuestros clientes en Trustpilot.",
@@ -732,11 +751,11 @@
   },
   "terminos": {
     "meta": {
-      "title": "Términos y Condiciones | ResetEnLinea.com",
-      "description": "Términos y Condiciones del servicio de Reset Asistido 100% remoto mediante conexión USB de ResetEnLinea."
+      "title": "Términos y Condiciones | ResetEntuPC.com",
+      "description": "Términos y Condiciones de la instalación de software de ResetEntuPC: licencia para un único PC, proceso autónomo y sin reembolsos una vez entregada la Key."
     },
     "title": "Términos y Condiciones",
-    "actualizacion": "Última actualización: 21 de agosto de 2026.",
+    "actualizacion": "Última actualización: 25 de septiembre de 2026.",
     "tocTitulo": "Índice",
     "share": {
       "titulo": "Compartir estos Términos y Condiciones",
@@ -746,27 +765,27 @@
       "copiado": "Enlace copiado",
       "imprimir": "Imprimir / Guardar PDF",
       "compartir": "Compartir",
-      "mensajeWhatsapp": "Te comparto los Términos y Condiciones oficiales de ResetEnLinea:",
-      "asuntoEmail": "Términos y Condiciones de ResetEnLinea",
+      "mensajeWhatsapp": "Te comparto los Términos y Condiciones oficiales de ResetEntuPC:",
+      "asuntoEmail": "Términos y Condiciones de ResetEntuPC",
       "cuerpoEmailSaludo": "Hola,",
-      "cuerpoEmailIntro": "Te comparto los Términos y Condiciones oficiales de ResetEnLinea:",
-      "cuerpoEmailDespedida": "Saludos,\nResetEnLinea"
+      "cuerpoEmailIntro": "Te comparto los Términos y Condiciones oficiales de ResetEntuPC:",
+      "cuerpoEmailDespedida": "Saludos,\nResetEntuPC"
     },
     "cta": {
       "texto": "¿Tienes una duda sobre estos Términos y Condiciones?",
       "whatsappLabel": "Escríbenos por WhatsApp",
-      "whatsappMensaje": "Hola, tengo una consulta sobre los Términos y Condiciones de ResetEnLinea."
+      "whatsappMensaje": "Hola, tengo una consulta sobre los Términos y Condiciones de ResetEntuPC."
     },
     "secciones": {
       "objeto": {
         "titulo": "1. Objeto del servicio",
-        "p1Antes": "ResetEnLinea presta un servicio denominado",
+        "p1Antes": "ResetEntuPC presta un servicio denominado",
         "p1Fuerte": "Reset Asistido 100% remoto mediante conexión USB",
-        "p1Despues": ". ResetEnLinea no vende software, no vende licencias ni vende programas de reset. Las herramientas técnicas utilizadas durante la prestación del servicio son únicamente medios para prestarlo, no el producto que se contrata."
+        "p1Despues": ". ResetEntuPC no vende software, no vende licencias ni vende programas de reset. Las herramientas técnicas utilizadas durante la prestación del servicio son únicamente medios para prestarlo, no el producto que se contrata."
       },
       "naturaleza": {
         "titulo": "2. Naturaleza del servicio",
-        "p1": "El técnico de ResetEnLinea no ingresa al computador del cliente. El cliente únicamente comparte, de forma temporal, el puerto USB de su impresora mediante la herramienta de conexión correspondiente.",
+        "p1": "El técnico de ResetEntuPC no ingresa al computador del cliente. El cliente únicamente comparte, de forma temporal, el puerto USB de su impresora mediante la herramienta de conexión correspondiente.",
         "p2Antes": "USB Redirector",
         "p2Fuerte": "no es el reseteador",
         "p2Despues": ". Esta herramienta únicamente permite establecer la comunicación entre la impresora del cliente y el servidor donde trabaja el técnico. El reset en sí lo realiza el técnico de forma remota, sin acceder al equipo del cliente más allá de esa conexión de la impresora."
@@ -825,7 +844,7 @@
       "garantia": {
         "titulo": "7. Garantía",
         "p1": "La garantía del servicio puede tener una duración de 3 a 12 meses. La duración exacta aplicable a cada servicio queda establecida en el certificado correspondiente.",
-        "p2": "De forma promocional, ResetEnLinea puede ofrecer una ampliación de garantía de 1 mes adicional, hasta un máximo de 2 meses adicionales.",
+        "p2": "De forma promocional, ResetEntuPC puede ofrecer una ampliación de garantía de 1 mes adicional, hasta un máximo de 2 meses adicionales.",
         "p3": "La garantía corresponde específicamente al reset del modelo contratado y no constituye una garantía integral de la impresora ni de sus demás componentes.",
         "p4": "Durante la vigencia de la garantía, el cliente puede solicitar el servicio para otra impresora del mismo modelo, siempre que se trate de:",
         "li1": "la misma persona,",
@@ -842,7 +861,7 @@
       },
       "evidencia": {
         "titulo": "9. Evidencia del servicio y prueba social",
-        "p1": "Después de un reset exitoso, ResetEnLinea puede generar evidencia en video del servicio realizado. Esta evidencia puede utilizarse como prueba social y publicarse en los canales de ResetEnLinea, incluyendo este sitio web."
+        "p1": "Después de un reset exitoso, ResetEntuPC puede generar evidencia en video del servicio realizado. Esta evidencia puede utilizarse como prueba social y publicarse en los canales de ResetEntuPC, incluyendo este sitio web."
       },
       "privacidad": {
         "titulo": "10. Privacidad de las conversaciones",
@@ -859,15 +878,41 @@
         "titulo": "12. Legislación aplicable",
         "p1": "El servicio se presta desde Colombia y se rige por la legislación colombiana aplicable.",
         "legal": "REVISIÓN LEGAL RECOMENDADA — ley aplicable y resolución de controversias."
+      },
+      "instalacion": {
+        "titulo": "Vendemos una Instalación, NO una Reparación",
+        "p1": "Usted está adquiriendo el derecho de INSTALACIÓN del software en UN ÚNICO PC. La llave de activación (Key) es solo el medio para habilitar el programa, pero nuestro servicio es la instalación. Por lo tanto, NO HAY REEMBOLSOS una vez entregada la Key, independientemente de si el programa soluciona o no el problema de su impresora."
+      },
+      "unicoPc": {
+        "titulo": "Permanencia en un Único PC",
+        "p1": "La instalación está vinculada exclusivamente a la máquina donde se activa. Su duración dependerá de usted (puede durar 1 día o 20 años). Si usted formatea su PC, cambia de disco duro o intenta pasarlo a otro equipo, perderá la instalación inmediatamente y deberá adquirir una nueva."
+      },
+      "funcion": {
+        "titulo": "Función Estricta del Software",
+        "p1": "El programa SOLO restablece contadores de almohadillas. NO soluciona problemas físicos, calidad de impresión, limpieza de cabezales, caja de mantenimiento ni fallos de cartuchos.",
+        "items": [
+          "Epson: Solo Error Almohadillas, E11 y error de tapón.",
+          "Canon: Solo 5B00, 1700, P07, E08.",
+          "Plotters Epson SC: Solo 00000008, 00080000, 00040000, 00000004, 00010000, 00000001, 0014BD"
+        ]
+      },
+      "autonomo": {
+        "titulo": "Proceso 100% Autónomo y Conexión",
+        "p1": "Este servicio es 'Hazlo tú mismo'. Usted ejecuta el proceso siguiendo nuestros videos. NO hacemos asistencia remota ni ingresamos a su PC. Es indispensable conectar la impresora por CABLE USB.",
+        "nota": "Nota: Si tiene desconfianza antes de comprar, puede solicitar por WhatsApp una Key Trial (de prueba) por una única vez."
+      },
+      "antivirus": {
+        "titulo": "Antivirus y Reinstalación",
+        "p1": "Es REQUISITO OBLIGATORIO usar únicamente Windows Defender. Si tiene cualquier otro antivirus, debe DESINSTALARLO por completo (no basta con pausarlo). Este gestor de instalación cuenta con un botón de 'Reinstalar'; si el antivirus le borra el programa por error, puede reinstalarlo con ese botón para recuperarlo sin perder su activación (siempre y cuando no haya formateado)."
       }
     }
   },
   "purchaseNotification": {
     "alguienDe": "Alguien de {pais} acaba de comprar:",
     "codigoError": "Código Error",
-    "servicio": "Reset Asistido 100% Remoto por conexión USB",
-    "ctaLabel": "Necesito Reset Asistido 100% Remoto",
-    "ctaLabelModelo": "Ver Reset Asistido de este modelo",
+    "servicio": "Reset Autónomo 100% por conexión USB",
+    "ctaLabel": "Necesito Reset Autónomo 100%",
+    "ctaLabelModelo": "Ver Reset Autónomo de este modelo",
     "whatsappSaludo": "Hola, vi la notificación de la web y necesito",
     "cerrarLabel": "Cerrar notificación"
   },
@@ -880,7 +925,7 @@
     "ruleta": "Jugar a la Ruleta",
     "whatsapp": "Escribir por WhatsApp",
     "bubbleMensaje": "¿Necesitas ayuda con tu impresora?",
-    "bubbleMensajeModelo": "¿Necesitas Reset Asistido {marca} {modelo}?",
+    "bubbleMensajeModelo": "¿Necesitas Reset Autónomo {marca} {modelo}?",
     "menuVacio": "En este momento no hay nadie disponible. Probá de nuevo en un rato."
   },
   "selectorVendedores": {
@@ -903,10 +948,10 @@
     "introSoloError": "Lo encontrás en la pantalla del equipo o en el mensaje de error del software."
   },
   "preciosPage": {
-    "title": "Precios del Reset Asistido | ResetEnLinea.com",
-    "description": "Precios geolocalizados de nuestro servicio de reset asistido, con los medios de pago disponibles en tu país.",
-    "heading": "Precios del Reset Asistido",
-    "intro": "Elige tu país para ver el precio exacto en tu moneda local y los medios de pago disponibles. Ningún dato de cuenta se publica aquí — al confirmar tu plan, te compartimos los datos exactos por WhatsApp.",
+    "title": "Precio de la Instalación del Reset | ResetEntuPC.com",
+    "description": "Precio de la instalación del reset según tu país y moneda, con los medios de pago disponibles.",
+    "heading": "Precio de la Instalación del Reset",
+    "intro": "Elige tu país para ver el precio exacto en tu moneda local y los medios de pago disponibles. Ningún dato de cuenta se publica aquí — al confirmar tu pedido, te compartimos los datos exactos por WhatsApp.",
     "paisLabel": "Tu país",
     "monedaLabel": "Moneda",
     "masPopular": "Más Popular",
@@ -923,7 +968,7 @@
     "familiaPlaceholder": "Selecciona una familia",
     "modeloPlaceholder": "Selecciona tu modelo exacto",
     "pendienteTitulo": "Completa los pasos anteriores",
-    "pendienteTexto": "Elige tu marca, modelo y error para ver el precio exacto de tu plan.",
+    "pendienteTexto": "Elige tu marca, modelo y error para ver el precio exacto de la instalación.",
     "cambiarSeleccion": "Cambiar selección",
     "planEsencialNombre": "Reset Clásico",
     "planEsencialDuracion": "90 días",
@@ -933,16 +978,38 @@
     "planEliteDuracion": "365 días",
     "precioNoDisponible": "Consultar",
     "ctaPlan": "🛒 Ver Formas de Pago",
-    "notaWhatsapp": "Reset {marca} {modelo}\nError: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
-    "notaWhatsappSinError": "Reset {marca} {modelo}\nPlan {plan} ({duracion}) · {pais} · {precio}",
-    "modeloWidgetTitulo": "Elige tu plan",
+    "notaWhatsapp": "Reset {marca} {modelo}\nError: {error}\n{plan} ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "Reset {marca} {modelo}\n{plan} ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "Precio de la instalación",
     "metodosPagoTitulo": "Medios de pago disponibles en {pais}",
-    "metodosPagoNota": "Solo mostramos los bancos e instituciones aceptadas. Los datos exactos de la cuenta te los compartimos por WhatsApp al confirmar tu plan.",
+    "metodosPagoNota": "Solo mostramos los bancos e instituciones aceptadas. Los datos exactos de la cuenta te los compartimos por WhatsApp al confirmar tu pedido.",
     "metodosInternacionalesSubtitulo": "Medios internacionales",
     "bloqueLocalTitulo": "Precio en tu moneda local · Agente en {pais}",
     "bloqueInternacionalTitulo": "Precio en Dólares · Medio Internacional",
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Oferta por tiempo limitado: {tiempo}",
-    "ctaGeneral": "Hablar con un técnico sobre precios"
+    "ctaGeneral": "Consultar precios por WhatsApp",
+    "planInstalacionNombre": "Instalación de Reset",
+    "planInstalacionDuracion": "Para 1 PC"
+  },
+  "procesoInstalacion": {
+    "resumenTitulo": "Excluir Antivirus, Configuración y Descarga de la Instalación",
+    "resumenTexto": "Excluye la carpeta C:\\ResetEntuPc.com en Windows Defender, abre el instalador, elige tu modelo y descarga la instalación de tu reset.",
+    "titulo": "Excluir Antivirus, Configuración y Descarga de la Instalación",
+    "resultado": "Resultado: ¡Instalación completada! El reset de tu modelo queda listo en C:\\ResetEntuPc.com.",
+    "moduloTitulo": "Cómo hacerlo, paso a paso",
+    "sub1Titulo": "Excluir el antivirus",
+    "sub1Texto": "Crea la carpeta C:\\ResetEntuPc.com y agrégala como exclusión en Windows Defender: Seguridad de Windows › Protección antivirus y contra amenazas › Administrar la configuración › Exclusiones › Agregar una exclusión › Carpeta.",
+    "sub2Titulo": "Configuración",
+    "sub2Texto": "Descarga y abre el instalador. Escribe tu modelo, acepta las condiciones (instalación para 1 solo PC, sin reembolsos) y pulsa «Instalar».",
+    "sub2Alt": "Ventana del instalador ResetEntuPC: buscador de modelo, condiciones aceptadas y botón Instalar",
+    "sub3Titulo": "Descarga de la instalación",
+    "sub3Texto": "El instalador descarga el reset de tu modelo en C:\\ResetEntuPc.com. Ábrelo, copia el Hardware ID que muestra y escríbenos por WhatsApp para comprar tu KEY.",
+    "sub3Alt": "Carpeta C:\\ResetEntuPc.com con el programa de reset de tu modelo y su ventana con el Hardware ID"
+  },
+  "procesoAutonomo": {
+    "titulo": "Reset Autónomo 100% instalado en tu PC siguiendo los pasos",
+    "tituloModelo": "Reset Autónomo 100% instalado en tu PC siguiendo los pasos | {marca} {modelo}",
+    "resumenTexto": "Con el reset ya instalado en tu PC, sigues los pasos del programa para dejar el contador de tu equipo {marca} {modelo} en cero."
   }
 }

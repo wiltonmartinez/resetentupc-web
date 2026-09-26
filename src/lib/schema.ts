@@ -30,8 +30,8 @@ export function buildReviewSchema({ marca, modelo, pais, fechaPublicacion, revie
     "@type": "Review",
     itemReviewed: {
       "@type": "Service",
-      name: `Reset asistido de impresoras ${marca} ${modelo}`.trim(),
-      brand: { "@type": "Organization", name: "ResetEnLinea.com", url: SITE_URL },
+      name: `Reset autónomo de impresoras ${marca} ${modelo}`.trim(),
+      brand: { "@type": "Organization", name: "ResetEntuPC.com", url: SITE_URL },
       areaServed: pais || undefined,
     },
     author: { "@type": "Person", name: "Cliente verificado" },

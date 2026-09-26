@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { PAGE_SLUGS, type Locale, type StaticPageKey } from "../config/site";
+import { CONSULTA_GARANTIA_VISIBLE, PAGE_SLUGS, PRUEBA_SOCIAL_VISIBLE, type Locale, type StaticPageKey } from "../config/site";
 import { buildLocalizedPath, buildStaticPagePath, t } from "../i18n/utils";
 import LanguageSelector from "./LanguageSelector.astro";
 import { getLogo } from "../lib/branding.js";
@@ -42,13 +42,16 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
 <header class="site-header">
   <div class="site-header-inner">
     <a class="site-logo" href={buildLocalizedPath(locale, "/")}>
-      {logo ? (
-        <Image src={logo} alt="ResetEnLinea.com" width={34} height={34} class="site-logo-imagen" />
+      {/* GIF animado: <img> directo (el optimizador de Astro lo convertiría a una imagen fija). */}
+      {logo && logo.format === "gif" ? (
+        <img src={logo.src} alt="ResetEntuPC.com" width={34} height={34} class="site-logo-imagen" />
+      ) : logo ? (
+        <Image src={logo} alt="ResetEntuPC.com" width={34} height={34} class="site-logo-imagen" />
       ) : (
         <span class="site-logo-mark" aria-hidden="true">R</span>
       )}
       <span class="site-logo-texto">
-        ResetEnLinea.com
+        ResetEntuPC.com
         <span class="site-logo-eslogan">{t(locale, "nav.eslogan")}</span>
       </span>
     </a>
@@ -97,6 +100,7 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
           </svg>
           <span>{t(locale, "nav.comoFunciona")}</span>
         </a>
+        {PRUEBA_SOCIAL_VISIBLE && (
         <div class="site-nav-item-dropdown">
           <a
             href={buildLocalizedPath(locale, "/prueba-social/")}
@@ -131,18 +135,6 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             </li>
             <li>
               <a
-                href={buildLocalizedPath(locale, "/prueba-social/diagnostico-gratis/")}
-                class:list={{ "is-active": path === diagnosticoGratisPath }}
-              >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
-                  <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.6" />
-                  <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                </svg>
-                <span>Diagnóstico Gratis</span>
-              </a>
-            </li>
-            <li>
-              <a
                 href={buildLocalizedPath(locale, "/prueba-social/reset-evidencia/")}
                 class:list={{ "is-active": path === resetEvidenciaPath }}
               >
@@ -172,6 +164,7 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
             </li>
           </ul>
         </div>
+        )}
         <a
           href={buildStaticPagePath(locale, "precios")}
           class:list={{ "is-active": path === preciosPath }}
@@ -207,6 +200,7 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
           <span>{t(locale, "nav.preguntasFrecuentes")}</span>
         </a> */
         }
+        {CONSULTA_GARANTIA_VISIBLE && (
         <a
           href={buildStaticPagePath(locale, "consultaGarantia")}
           class:list={{ "is-active": path === consultaGarantiaPath }}
@@ -222,6 +216,7 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
           </svg>
           <span>{t(locale, "nav.consultaGarantia")}</span>
         </a>
+        )}
         <a
           href={buildStaticPagePath(locale, "contacto")}
           class:list={{ "is-active": path === contactoPath }}
@@ -284,7 +279,9 @@ const pruebaSocialActivo = [pruebaSocialPath, diagnosticoGratisPath, testimonios
     gap: 0.5rem;
     font-weight: 800;
     text-decoration: none;
-    font-size: 1.1rem;
+    /* 150% del tamaño original (1.1rem); en pantallas angostas se reduce para
+       que el botón del menú no quede empujado fuera de la barra. */
+    font-size: clamp(1.15rem, 6vw, 1.65rem);
     color: #ffffff;
   }
   /* Mismo alto que el bloque de texto de al lado (título + eslogan en 2

@@ -17,8 +17,8 @@
  * sola, y cada una guarda su propio estado (abierta/cerrada) sin IDs.
  */
 import { Image } from "astro:assets";
-import { buildWhatsAppMessage } from "../i18n/utils";
-import { NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../config/site";
+import { buildWhatsAppMessage, t } from "../i18n/utils";
+import { NUCLEO_API_BASE_URL, SITE_URL, VENDEDORES_API_URL, type Locale } from "../config/site";
 import whatsappLogo from "../assets/whatsapp/3.png";
 
 interface Props {
@@ -40,10 +40,19 @@ const { marca, modelo, error, sourceId, urlPath, locale, label, destacado = fals
 
 const urlOrigen = `${SITE_URL}${urlPath}`;
 const mensaje = buildWhatsAppMessage({ locale, marca, modelo, error, urlOrigen });
-const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
+const vendedoresApiUrl = VENDEDORES_API_URL;
 ---
 
-<span class="whatsapp-cta-wrap" data-whatsapp-cta data-vendedores-api-url={vendedoresApiUrl} data-mensaje={mensaje} data-source-id={sourceId}>
+<span
+  class="whatsapp-cta-wrap"
+  data-whatsapp-cta
+  data-vendedores-api-url={vendedoresApiUrl}
+  data-mensaje={mensaje}
+  data-source-id={sourceId}
+  data-url-origen={urlOrigen}
+  data-msg-sin-error={t(locale, "whatsapp.greetingWithoutError")}
+  data-msg-generico={t(locale, "whatsapp.greetingGeneric")}
+>
   <button
     type="button"
     class:list={["whatsapp-cta", { "whatsapp-cta-destacado": destacado, "whatsapp-cta-elevar": elevar }]}
@@ -82,6 +91,7 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
   // evitar. Import directo (no getImage(), que es para el componente
   // <Image> del lado servidor): este <script> lo procesa Vite igual, y una
   // imagen importada en JS/TS resuelve sola a la URL final.
+  import { leerSeleccionGlobal, alCambiarSeleccionGlobal, construirMensajeWhatsApp } from "../lib/seleccion-global";
   import banderaCL from "../assets/flag/CHILE.png";
   import banderaCO from "../assets/flag/COLOMBIA.png";
   import banderaEC from "../assets/flag/ECUADOR.png";
@@ -238,8 +248,32 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
     const items = wrap.querySelector<HTMLElement>("[data-whatsapp-cta-menu-items]");
     const vacio = wrap.querySelector<HTMLElement>("[data-whatsapp-cta-menu-vacio]");
     const vendedoresApiUrl = wrap.dataset.vendedoresApiUrl;
-    const mensaje = wrap.dataset.mensaje ?? "";
     if (!boton || !menu || !items || !vendedoresApiUrl) return;
+
+    // Mensaje vigente: en una PÁGINA DE MODELO manda el modelo de la página
+    // (las props de este componente); en cualquier otra página manda la
+    // selección global del visitante (ej. si llegó de Epson L1250, todos los
+    // botones —y el flotante— hablan de la L1250), y solo sin selección se usa
+    // el mensaje que trae el componente por defecto. Se recalcula al abrir el
+    // menú y cuando la selección cambia, no una sola vez al cargar.
+    function mensajeActual(): string {
+      const porDefecto = wrap.dataset.mensaje ?? "";
+      if (document.querySelector("[data-procedimiento]")) return porDefecto;
+      const seleccion = leerSeleccionGlobal();
+      if (!seleccion) return porDefecto;
+      return construirMensajeWhatsApp(seleccion, { sinError: wrap.dataset.msgSinError ?? "", generico: wrap.dataset.msgGenerico ?? "" }, wrap.dataset.urlOrigen ?? "");
+    }
+
+    // Reescribe el texto de los enlaces del menú ya creados (los vendedores se
+    // cargan una sola vez; el mensaje, en cambio, puede cambiar).
+    function refrescarEnlaces(): void {
+      const texto = encodeURIComponent(mensajeActual());
+      items!.querySelectorAll<HTMLAnchorElement>("a.whatsapp-cta-menu-item").forEach((enlace) => {
+        const numero = enlace.href.match(/^https:\/\/wa\.me\/(\d+)/)?.[1];
+        if (numero) enlace.href = `https://wa.me/${numero}?text=${texto}`;
+      });
+    }
+    alCambiarSeleccionGlobal(refrescarEnlaces);
 
     const atributoScope = atributoScopeDe(wrap);
     let cargado = false;
@@ -256,6 +290,7 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
       });
       menu.hidden = false;
       boton.setAttribute("aria-expanded", "true");
+      refrescarEnlaces();
       if (!cargado) {
         cargado = true;
         cargarVendedores();
@@ -278,7 +313,7 @@ const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
           }
           vendedores.forEach((vendedor) => {
             if (!items) return;
-            items.appendChild(crearItemMenu(vendedor, mensaje, atributoScope, cerrarMenu, wrap.dataset.sourceId || "whatsapp-cta"));
+            items.appendChild(crearItemMenu(vendedor, mensajeActual(), atributoScope, cerrarMenu, wrap.dataset.sourceId || "whatsapp-cta"));
           });
         })
         .catch(() => {

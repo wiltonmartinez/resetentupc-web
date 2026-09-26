@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { SUPPORTED_LOCALES, type StaticPageKey } from "../config/site";
+import { CONSULTA_GARANTIA_VISIBLE, PRUEBA_SOCIAL_VISIBLE, SUPPORTED_LOCALES, type StaticPageKey } from "../config/site";
 import {
   buildCanonicalUrl,
   buildHreflangLinks,
@@ -15,7 +15,10 @@ const STATIC_PAGE_KEYS: StaticPageKey[] = [
   "terminosCondiciones",
   "consultaGarantia",
   "precios",
-];
+].filter(
+  // "Consultar Garantía" oculta (CONSULTA_GARANTIA_VISIBLE = false en config/site.ts): redirige a la portada.
+  (clave) => clave !== "consultaGarantia" || CONSULTA_GARANTIA_VISIBLE
+) as StaticPageKey[];
 const MODEL_PATHS = modelos.map((modelo) => `/reset/${modelo.marcaSlug}/${modelo.modeloSlug}/`);
 // Los listados de Prueba Social (a diferencia de ruleta/404) sí son indexables:
 // contienen evidencia real (conversaciones, videos, reseñas) que ayuda a SEO y
@@ -23,12 +26,16 @@ const MODEL_PATHS = modelos.map((modelo) => `/reset/${modelo.marcaSlug}/${modelo
 // porque su contenido viene de una API externa en tiempo real, no de un dataset
 // estático como modelos-muestra.json — siguen siendo rastreables por enlace
 // interno, solo no se declaran de antemano en el sitemap.
-const PRUEBA_SOCIAL_PATHS = [
-  "/prueba-social/",
-  "/prueba-social/cliente-satisfecho/",
-  "/prueba-social/reset-evidencia/",
-  "/prueba-social/testimonios-truspilot/",
-];
+// Prueba Social oculta (PRUEBA_SOCIAL_VISIBLE = false en config/site.ts): sus URLs redirigen a la portada,
+// así que no se declaran en el sitemap. Con `true` vuelven a listarse.
+const PRUEBA_SOCIAL_PATHS = PRUEBA_SOCIAL_VISIBLE
+  ? [
+      "/prueba-social/",
+      "/prueba-social/cliente-satisfecho/",
+      "/prueba-social/reset-evidencia/",
+      "/prueba-social/testimonios-truspilot/",
+    ]
+  : [];
 
 function alternatesXml(alternates: HreflangLink[]): string {
   return alternates

@@ -3,7 +3,7 @@ import modelosData from "../data/modelos-muestra.json";
 import erroresData from "../data/errores.json";
 import { resolveErroresParaModelo } from "../i18n/utils";
 import { resolverUrlsLogosMediosPago } from "./medios-pago-logos";
-import type { Locale } from "../config/site";
+import { PRECIOS_API_URL, type Locale } from "../config/site";
 
 /**
  * Mapa ISO 3166-1 alfa-2 (lo que entrega el header `cf-ipcountry` de Cloudflare)
@@ -88,15 +88,78 @@ export interface MetodoPagoPublico {
   internacional: boolean;
 }
 
-export interface PreciosPorPlan {
-  esencial: number | null;
-  profesional: number | null;
-  elite: number | null;
+/**
+ * Se vende UNA instalación (ya no hay planes de 90/180/365 días): un precio para impresoras Epson/Canon y otro
+ * para plotters Epson SC, en cada moneda. Vienen de `GET /precios` del backend (ver PRECIOS_API_URL) y se
+ * editan en su panel (Precios / Monedas).
+ */
+export interface PreciosPorGrupo {
+  impresora: number | null;
+  plotter: number | null;
 }
 
-export interface PreciosPorGrupo {
-  impresora: PreciosPorPlan | null;
-  plotter: PreciosPorPlan | null;
+interface RespuestaPreciosApi {
+  monedas?: { codigo?: string; precios?: { impresora?: number; plotter?: number } }[];
+}
+
+/**
+ * Respaldo SOLO para cuando el backend no responde a tiempo: los mismos valores con que arrancó el panel
+ * (15 USD impresoras / 79 USD plotters, tasas de referencia del 2026-09-25). Se envejece: la fuente de verdad
+ * es el backend; actualizar esta tabla a mano solo si el backend va a estar caído mucho tiempo.
+ */
+const PRECIOS_RESPALDO: Record<string, PreciosPorGrupo> = {
+  USD: { impresora: 15, plotter: 79 },
+  COP: { impresora: 49000, plotter: 258000 },
+  CLP: { impresora: 14400, plotter: 76000 },
+  BRL: { impresora: 78, plotter: 409 },
+  GTQ: { impresora: 115, plotter: 603 },
+  HNL: { impresora: 405, plotter: 2120 },
+  MXN: { impresora: 265, plotter: 1395 },
+  NIO: { impresora: 550, plotter: 2910 },
+  PEN: { impresora: 51, plotter: 268 },
+  PYG: { impresora: 89000, plotter: 469000 },
+  EUR: { impresora: 13, plotter: 69 },
+};
+
+const PRECIOS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min: los cambios del panel se ven casi al instante y no se golpea el backend en cada visita.
+const PRECIOS_FETCH_TIMEOUT_MS = 1500; // nunca debe hacer esperar el render de forma perceptible.
+
+let cacheTablaPrecios: { tabla: Promise<Record<string, PreciosPorGrupo>>; obtenidaEn: number } | null = null;
+
+async function pedirTablaPrecios(): Promise<Record<string, PreciosPorGrupo>> {
+  try {
+    const controlador = new AbortController();
+    const timeoutId = setTimeout(() => controlador.abort(), PRECIOS_FETCH_TIMEOUT_MS);
+    const res = await fetch(PRECIOS_API_URL, { signal: controlador.signal });
+    clearTimeout(timeoutId);
+    if (!res.ok) throw new Error(`precios respondió ${res.status}`);
+    const datos = (await res.json()) as RespuestaPreciosApi;
+    const tabla: Record<string, PreciosPorGrupo> = {};
+    for (const m of datos.monedas ?? []) {
+      const { impresora, plotter } = m.precios ?? {};
+      if (m.codigo && Number.isFinite(impresora) && Number.isFinite(plotter)) {
+        tabla[m.codigo] = { impresora: impresora as number, plotter: plotter as number };
+      }
+    }
+    if (Object.keys(tabla).length === 0) throw new Error("respuesta de precios vacía");
+    return tabla;
+  } catch {
+    return PRECIOS_RESPALDO;
+  }
+}
+
+/**
+ * Tabla {codigo de moneda -> precios} del backend, con caché de 5 min (también cuando falla, para no repetir
+ * el timeout en cada una de las páginas de un build) y respaldo local. En `astro dev` no se cachea.
+ */
+export async function obtenerTablaPrecios(): Promise<Record<string, PreciosPorGrupo>> {
+  const ahora = Date.now();
+  if (!import.meta.env.DEV && cacheTablaPrecios && ahora - cacheTablaPrecios.obtenidaEn < PRECIOS_CACHE_TTL_MS) {
+    return cacheTablaPrecios.tabla;
+  }
+  const tabla = pedirTablaPrecios();
+  cacheTablaPrecios = { tabla, obtenidaEn: ahora };
+  return tabla;
 }
 
 export interface OpcionMoneda {
@@ -133,25 +196,6 @@ export interface PaisPrecioPublico {
  *  Ecuador/El Salvador/Panamá (su moneda local YA es USD, un "USD
  *  internacional" adicional sería redundante). */
 const SLUGS_LOCAL_MAS_USD = ["paraguay", "peru", "nicaragua", "mexico", "honduras", "guatemala", "brasil", "chile"];
-
-function normalizarPrecios(precios: { impresora?: PreciosPorPlan | null; plotter?: PreciosPorPlan | null }): PreciosPorGrupo {
-  return {
-    impresora: precios.impresora ?? null,
-    plotter: precios.plotter ?? null,
-  };
-}
-
-function convertirPrecios(precios: PreciosPorGrupo, tasa: number): PreciosPorGrupo {
-  const convertirPlan = (p: PreciosPorPlan | null): PreciosPorPlan | null =>
-    p == null
-      ? null
-      : {
-          esencial: p.esencial == null ? null : Math.round(p.esencial * tasa),
-          profesional: p.profesional == null ? null : Math.round(p.profesional * tasa),
-          elite: p.elite == null ? null : Math.round(p.elite * tasa),
-        };
-  return { impresora: convertirPlan(precios.impresora), plotter: convertirPlan(precios.plotter) };
-}
 
 /** Códigos ISO de países donde por defecto conviene mostrar EUR en vez de USD
  *  a un visitante sin infraestructura bancaria local propia (España, Italia,
@@ -236,9 +280,9 @@ export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
     NOMBRES_INTERNACIONALES.some((n) => m.nombre.toLowerCase().includes(n))
   );
   const otro = pagosData.paises.find((p) => p.slug === SLUG_OTRO)!;
-  const colombia = pagosData.paises.find((p) => p.slug === SLUG_FALLBACK)!;
-  const tasaUsdEur = await obtenerTasaUsdEur();
-  const precioUsdInternacional = normalizarPrecios(otro.precios);
+  // Un solo precio (instalación) por moneda y tipo de equipo, del backend (Precios / Monedas) o su respaldo.
+  const tablaPrecios = await obtenerTablaPrecios();
+  const preciosEn = (codigo: string): PreciosPorGrupo => tablaPrecios[codigo] ?? { impresora: null, plotter: null };
 
   // España no existe en pagos.json: se sintetiza a partir de "otro" (mismos
   // medios internacionales, mismo precio base en USD) y se muestra solo en
@@ -262,29 +306,28 @@ export async function paisesPrecioPublico(): Promise<PaisPrecioPublico[]> {
 
     if (pais.slug === "venezuela" || pais.slug === "argentina") {
       monedas = [
-        { codigo: "USD", ambito: "internacional", precios: precioUsdInternacional },
-        { codigo: "COP", ambito: "internacional", precios: normalizarPrecios(colombia.precios) },
+        { codigo: "USD", ambito: "internacional", precios: preciosEn("USD") },
+        { codigo: "COP", ambito: "internacional", precios: preciosEn("COP") },
       ];
       presentacionMoneda = "toggle";
     } else if (pais.slug === SLUG_ESPANA) {
-      monedas = [
-        { codigo: "EUR", ambito: "internacional", precios: convertirPrecios(precioUsdInternacional, tasaUsdEur) },
-      ];
+      monedas = [{ codigo: "EUR", ambito: "internacional", precios: preciosEn("EUR") }];
       presentacionMoneda = "unica";
     } else if (pais.slug === SLUG_OTRO) {
       monedas = [
-        { codigo: "USD", ambito: "internacional", precios: precioUsdInternacional },
-        { codigo: "EUR", ambito: "internacional", precios: convertirPrecios(precioUsdInternacional, tasaUsdEur) },
+        { codigo: "USD", ambito: "internacional", precios: preciosEn("USD") },
+        { codigo: "EUR", ambito: "internacional", precios: preciosEn("EUR") },
       ];
       presentacionMoneda = "toggle";
     } else if (SLUGS_LOCAL_MAS_USD.includes(pais.slug)) {
       monedas = [
-        { codigo: pais.moneda, ambito: "local", precios: normalizarPrecios(pais.precios) },
-        { codigo: "USD", ambito: "internacional", descontable: true, precios: precioUsdInternacional },
+        { codigo: pais.moneda, ambito: "local", precios: preciosEn(pais.moneda) },
+        // Sin descuento en USD (ya no se usa `descontable`): un solo precio por moneda.
+        { codigo: "USD", ambito: "internacional", precios: preciosEn("USD") },
       ];
       presentacionMoneda = "apilado";
     } else {
-      monedas = [{ codigo: pais.moneda, ambito: "local", precios: normalizarPrecios(pais.precios) }];
+      monedas = [{ codigo: pais.moneda, ambito: "local", precios: preciosEn(pais.moneda) }];
       presentacionMoneda = "unica";
     }
 

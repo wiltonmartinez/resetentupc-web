@@ -44,7 +44,12 @@
  */
 import { Image } from "astro:assets";
 import { t, buildLocalizedPath } from "../i18n/utils";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, type Locale } from "../config/site";
+import { CONSULTA_GARANTIA_INCRUSTADA_VISIBLE, PRUEBA_SOCIAL_VISIBLE, TECHNICIAN_ID, INSTALADOR_DOWNLOAD_URL, type Locale } from "../config/site";
+// Paso 3 (instalación): capturas del instalador y de la carpeta con el reset (src/procesos/).
+import imgInstalador from "../procesos/instalador.png";
+import imgInstalacion from "../procesos/yUyPOI3ERD.png";
+import imgCheck from "../assets/branding/CHECK.png";
+import { getModeloImage } from "../lib/model-images.js";
 import ErrorSelector from "./ErrorSelector.astro";
 import EvidenceCard from "./ui/EvidenceCard.astro";
 import VideoModal from "./ui/VideoModal.astro";
@@ -264,6 +269,8 @@ if (evidenciaDirecta) {
 }
 
 const testimonioLocalEmbed = candidatosLocal[0] ?? null;
+// Paso 6: foto de ESTA impresora (con CHECK) en lugar del iframe de "cliente satisfecho".
+const imagenImpresora = getModeloImage(modeloSlug);
 
 const hrefClienteSatisfecho = buildLocalizedPath(locale, "/prueba-social/cliente-satisfecho/");
 const hrefClienteSatisfechoDetalle = testimonioLocalEmbed?.slug
@@ -295,17 +302,31 @@ const imgProceso4 = getProcesoImage("paso4-contactarnos");
 // acá para que ambas páginas se vean identicas en este bloque — antes esta
 // sección usaba ProcessSteps.astro (lista vertical numerada), inconsistente
 // con la version en grid ya validada en Como Funciona.
+// Paso 3 = Excluir antivirus, Configuración y Descarga de la instalación (textos: procesoInstalacion.*).
+// Los subpasos anteriores (USB Redirector, proceso.paso1–4 e imgProceso1–4 de arriba) quedan sin uso.
 const subpasosConexion = [
   {
     numero: "3.1",
-    imagen: imgProceso1,
-    titulo: t(locale, "proceso.paso1Titulo"),
-    texto: t(locale, "proceso.paso1Texto"),
+    imagen: undefined as ImageMetadata | undefined,
+    alt: "",
+    titulo: t(locale, "procesoInstalacion.sub1Titulo"),
+    texto: t(locale, "procesoInstalacion.sub1Texto"),
+  },
+  {
+    numero: "3.2",
+    imagen: imgInstalador as ImageMetadata | undefined,
+    alt: t(locale, "procesoInstalacion.sub2Alt"),
+    titulo: t(locale, "procesoInstalacion.sub2Titulo"),
+    texto: t(locale, "procesoInstalacion.sub2Texto"),
     enlace: t(locale, "comoFuncionaProceso.paso31BotonDescarga"),
   },
-  { numero: "3.2", imagen: imgProceso2a, titulo: t(locale, "proceso.paso2Titulo"), texto: t(locale, "proceso.paso2Texto") },
-  { numero: "3.3", imagen: imgProceso3, titulo: t(locale, "proceso.paso3Titulo"), texto: t(locale, "proceso.paso3Texto") },
-  { numero: "3.4", imagen: imgProceso4, titulo: t(locale, "proceso.paso4Titulo"), texto: t(locale, "proceso.paso4Texto") },
+  {
+    numero: "3.3",
+    imagen: imgInstalacion as ImageMetadata | undefined,
+    alt: t(locale, "procesoInstalacion.sub3Alt"),
+    titulo: t(locale, "procesoInstalacion.sub3Titulo"),
+    texto: t(locale, "procesoInstalacion.sub3Texto"),
+  },
 ];
 ---
 
@@ -397,13 +418,15 @@ const subpasosConexion = [
         </a>
       </h3>
       <ul>
-        <li>
-          {t(locale, "procedimiento.paso2Punto1")}
-          {paso2ModalidadTexto && <> {paso2ModalidadTexto}</>}
-        </li>
-        <li>{t(locale, "procedimiento.paso2Punto2")}</li>
-        <li>{t(locale, "procedimiento.paso2Punto3")}</li>
-        <li>{t(locale, "procedimiento.paso2Punto4")}</li>
+        {/* Requisitos de la instalación (mismas frases que los Términos y Condiciones). Los 4 puntos anteriores
+            ("Reset Asistido 100% remoto", "No recibe Software, ni licencia, ni Key"…) siguen en i18n
+            (procedimiento.paso2Punto1–4), sin uso. */}
+        <li>{t(locale, "procedimiento.paso2Requisito1")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito2")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito3")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito4")}</li>
+        <li>{t(locale, "procedimiento.paso2Requisito5")}</li>
+        {paso2ModalidadTexto && <li>{paso2ModalidadTexto}</li>}
         <li data-procedimiento-requisito-sensor hidden={!esSensorInicial}>
           {t(locale, "procedimiento.paso2ReqSensor")}
         </li>
@@ -413,10 +436,10 @@ const subpasosConexion = [
     <li>
       <h3 id={`paso-${sourceIdBase}-3`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-3`}>
-          3) {t(locale, "procedimiento.paso3Titulo")}
+          3) {t(locale, "procesoInstalacion.titulo")}
         </a>
       </h3>
-      <p class="procedimiento-respuesta-destacada">{t(locale, "procedimiento.paso3Resultado")}</p>
+      <p class="procedimiento-respuesta-destacada">{t(locale, "procesoInstalacion.resultado")}</p>
     </li>
   </ol>
 
@@ -424,19 +447,19 @@ const subpasosConexion = [
        después del Paso 3 (resultado de la revisión), antes del Paso 4
        (Consulta de Garantía). -->
   <InfoCard tone="muted">
-    <h4 class="subtitulo-modulo">{t(locale, "comoFuncionaProceso.tituloModuloSeguro")}</h4>
+    <h4 class="subtitulo-modulo">{t(locale, "procesoInstalacion.moduloTitulo")}</h4>
     <div class="subpasos-grid">
       {subpasosConexion.map((sub) => (
         <div class="subpaso-card">
           {sub.imagen && (
             <div class="subpaso-icono-wrap">
-              <Image src={sub.imagen} alt="" width={480} height={320} loading="lazy" />
+              <Image src={sub.imagen} alt={sub.alt} width={480} loading="lazy" />
             </div>
           )}
           <span class="subpaso-numero">{sub.numero}</span>
           <h5>{sub.titulo}</h5>
           <p>{sub.texto}</p>
-          {sub.numero === "3.2" && (
+          {false && (
             <p class="subpaso-technician-id">
               Technician ID:{" "}
               <button
@@ -463,7 +486,7 @@ const subpasosConexion = [
           )}
           {sub.enlace && (
             <>
-              <a href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
+              <a href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" class="subpaso-enlace">
                 {sub.enlace}
               </a>
               <p class="subpaso-enlace-microtexto">{t(locale, "comoFuncionaProceso.paso31MicroTexto")}</p>
@@ -505,15 +528,19 @@ const subpasosConexion = [
           urlPath={localizedPath}
         />
       </InfoCard>
-      <InfoCard>
-        <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} mostrarEjemplo />
-      </InfoCard>
+      {/* Consulta de garantía + certificado de ejemplo incrustados: ocultos con
+          CONSULTA_GARANTIA_INCRUSTADA_VISIBLE = false en config/site.ts. */}
+      {CONSULTA_GARANTIA_INCRUSTADA_VISIBLE && (
+        <InfoCard>
+          <ConsultaGarantiaPage locale={locale} mostrarTitulo={false} mostrarEjemplo />
+        </InfoCard>
+      )}
     </li>
 
     <li>
       <h3 id={`paso-${sourceIdBase}-5`}>
         <a class="procedimiento-paso-link" href={`#tarjeta-proceso-${sourceIdBase}-5`}>
-          5) {t(locale, "procedimiento.paso5Titulo").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo)}
+          5) {t(locale, "procesoAutonomo.tituloModelo").replaceAll("{marca}", marca).replaceAll("{modelo}", modelo)}
         </a>
       </h3>
       <p class="procedimiento-video-aclaracion">{ctaPaso5Nota}</p>
@@ -529,9 +556,11 @@ const subpasosConexion = [
             titulo={videoResetRealizado.titulo}
             reproducirLabel={t(locale, "pruebaSocialPage.reproducirVideo")}
           />
-          <a class="procedimiento-enlace-seo" href={`${hrefResetEvidencia}${videoResetRealizado.slug}/`}>
-            {anchorResetEvidencia} →
-          </a>
+          {PRUEBA_SOCIAL_VISIBLE && (
+            <a class="procedimiento-enlace-seo" href={`${hrefResetEvidencia}${videoResetRealizado.slug}/`}>
+              {anchorResetEvidencia} →
+            </a>
+          )}
         </div>
       ) : (
         <div class="procedimiento-video-placeholder">
@@ -539,9 +568,9 @@ const subpasosConexion = [
             <rect x="2.5" y="4.5" width="19" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
             <path d="M10.5 9.2v5.6l4.8-2.8-4.8-2.8Z" fill="currentColor" />
           </svg>
-          <span class="procedimiento-video-label">{t(locale, "procedimiento.paso5TituloCorto")}</span>
+          <span class="procedimiento-video-label">{t(locale, "procesoAutonomo.titulo")}</span>
           <span class="procedimiento-video-nota">{t(locale, "procedimiento.paso5PlaceholderNota")}</span>
-          <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>
+          {PRUEBA_SOCIAL_VISIBLE && <a class="procedimiento-enlace-seo" href={hrefResetEvidencia}>{anchorResetEvidencia} →</a>}
         </div>
       )}
     </li>
@@ -553,7 +582,17 @@ const subpasosConexion = [
         </a>
       </h3>
       <div class="procedimiento-prueba-social">
-          {testimonioLocalEmbed && (
+          {/* La impresora de este modelo con un CHECK. Sustituye al iframe de "cliente satisfecho" del núcleo (su
+              CSP bloquea la incrustación en este dominio). El bloque anterior sigue abajo, desactivado. */}
+          <div class="impresora-lista">
+            <div class="impresora-lista-foto">
+              {imagenImpresora && (
+                <Image src={imagenImpresora} alt={`${marca} ${modelo}`} width={320} loading="lazy" class="impresora-lista-img" />
+              )}
+              <Image src={imgCheck} alt="" width={96} height={96} loading="lazy" class="impresora-lista-check" />
+            </div>
+          </div>
+          {false && testimonioLocalEmbed && (
             <div
               class="procedimiento-testimonio-item"
               data-procedimiento-testimonio-local
@@ -584,10 +623,12 @@ const subpasosConexion = [
             </section>
           )}
           <TrustpilotWidget locale={locale} />
-          <div class="procedimiento-prueba-social-enlaces">
-            <a href={hrefClienteSatisfecho}>{t(locale, "procedimiento.paso6VerMasClientes")} →</a>
-            <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
-          </div>
+          {PRUEBA_SOCIAL_VISIBLE && (
+            <div class="procedimiento-prueba-social-enlaces">
+              <a href={hrefClienteSatisfecho}>{t(locale, "procedimiento.paso6VerMasClientes")} →</a>
+              <a href={hrefTestimoniosTrustpilot}>{t(locale, "procedimiento.paso6VerTestimoniosTrustpilot")} →</a>
+            </div>
+          )}
       </div>
     </li>
   </ol>
@@ -598,6 +639,8 @@ const subpasosConexion = [
 </div>
 
 <script>
+  import { guardarSeleccionCompartida } from "../lib/seleccion-global";
+
   // Reactividad: escucha el mismo <select> de ErrorSelector.astro (por
   // sourceIdBase) y actualiza el código y la descripción larga mostrados en
   // el Paso 1 y el Paso 2, y —solo para Epson-SC— la visibilidad de la
@@ -616,13 +659,10 @@ const subpasosConexion = [
   // la URL de esta página (nunca de un selector), así que se guardan tal
   // cual apenas carga; el error si se puede actualizar en vivo si esta
   // página tiene el <select> de ErrorSelector.astro.
-  const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
+  // (guardarSeleccionCompartida también avisa del cambio a los demás módulos
+  // de la página — botón flotante, botones de WhatsApp, buscador de precios.)
   function guardarSeleccionGlobal(marcaSlug: string, modelo: string, error: string) {
-    try {
-      localStorage.setItem(SELECCION_GLOBAL_KEY, JSON.stringify({ marca: marcaSlug, modelo, error }));
-    } catch {
-      /* localStorage no disponible: no rompe la página. */
-    }
+    guardarSeleccionCompartida({ marca: marcaSlug, modelo, error });
   }
 
   document.querySelectorAll<HTMLElement>("[data-procedimiento]").forEach((raiz) => {
@@ -870,6 +910,42 @@ const subpasosConexion = [
     font-weight: 600;
     color: var(--color-primary-dark);
     text-decoration: underline;
+  }
+
+  /* Paso 6: impresora del modelo con el CHECK verde en la esquina. */
+  .impresora-lista {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+  }
+
+  .impresora-lista-foto {
+    position: relative;
+    width: min(100%, 22rem);
+    padding: 1.25rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .impresora-lista-foto :global(.impresora-lista-img) {
+    width: 100%;
+    height: auto;
+    max-height: 16rem;
+    object-fit: contain;
+    display: block;
+  }
+
+  .impresora-lista-foto :global(.impresora-lista-check) {
+    position: absolute;
+    right: -0.9rem;
+    bottom: -0.9rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.25));
   }
 
   .procedimiento-prueba-social {

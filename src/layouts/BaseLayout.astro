@@ -90,15 +90,16 @@ const hreflangLinks = noindex ? [] : pageKey ? buildStaticPageHreflangLinks(page
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={new URL(ogImage, SITE_URL).toString()} />
     <meta property="og:locale" content={HREFLANG_BY_LOCALE[locale]} />
-    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-    <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+    <link rel="icon" href="/favicon-32.png?v=2" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-192.png?v=2" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "ResetEnLinea.com",
+      "name": "ResetEntuPC.com",
       "url": SITE_URL,
-      "description": "Servicio de reset asistido y remoto para impresoras Epson, Canon y Epson SC, con acompañamiento profesional de principio a fin.",
+      "description": "Instalación de reset para impresoras Epson, Canon y Epson SC por conexión USB, con proceso 100% autónomo en el PC del cliente.",
       "areaServed": "Worldwide",
       "availableLanguage": ["es", "en", "pt", "fr", "it", "de", "ru", "ko", "pl", "nl"],
     })} />

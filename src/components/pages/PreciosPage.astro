@@ -44,27 +44,14 @@ const [iconoClasicoUrl, iconoPlusUrl, iconoEliteUrl] = await Promise.all([
   getImage({ src: iconoElite, width: 64, height: 64 }),
 ]).then((imgs) => imgs.map((img) => img.src));
 
-// Orden de negocio: Reset Clásico/Esencial (izquierda) · Reset Plus/Profesional (centro, destacado) · Reset Elite (derecha).
+// Se vende UNA instalación (ya no hay planes de 90/180/365 días): una sola tarjeta por moneda.
+// Los textos de los planes anteriores siguen en i18n (preciosPage.planEsencial…), sin uso.
 const PLANES = [
   {
-    key: "esencial" as const,
-    icono: iconoClasicoUrl,
-    nombre: t(locale, "preciosPage.planEsencialNombre"),
-    duracion: t(locale, "preciosPage.planEsencialDuracion"),
-    destacado: false,
-  },
-  {
-    key: "profesional" as const,
+    key: "instalacion" as const,
     icono: iconoPlusUrl,
-    nombre: t(locale, "preciosPage.planProfesionalNombre"),
-    duracion: t(locale, "preciosPage.planProfesionalDuracion"),
-    destacado: true,
-  },
-  {
-    key: "elite" as const,
-    icono: iconoEliteUrl,
-    nombre: t(locale, "preciosPage.planEliteNombre"),
-    duracion: t(locale, "preciosPage.planEliteDuracion"),
+    nombre: t(locale, "preciosPage.planInstalacionNombre"),
+    duracion: t(locale, "preciosPage.planInstalacionDuracion"),
     destacado: false,
   },
 ];
@@ -112,15 +99,9 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
   data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
   data-descuento-badge-template={t(locale, "preciosPage.descuentoBadge")}
   data-descuento-countdown-template={t(locale, "preciosPage.descuentoCountdown")}
-  data-plan-esencial-nombre={PLANES[0].nombre}
-  data-plan-esencial-duracion={PLANES[0].duracion}
-  data-plan-esencial-icono={PLANES[0].icono}
-  data-plan-profesional-nombre={PLANES[1].nombre}
-  data-plan-profesional-duracion={PLANES[1].duracion}
-  data-plan-profesional-icono={PLANES[1].icono}
-  data-plan-elite-nombre={PLANES[2].nombre}
-  data-plan-elite-duracion={PLANES[2].duracion}
-  data-plan-elite-icono={PLANES[2].icono}
+  data-plan-nombre={PLANES[0].nombre}
+  data-plan-duracion={PLANES[0].duracion}
+  data-plan-icono={PLANES[0].icono}
 >
   <h1>{t(locale, "preciosPage.heading")}</h1>
 
@@ -241,6 +222,7 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 </article>
 
 <script>
+  import { guardarSeleccionCompartida } from "../../lib/seleccion-global";
   interface ModeloCascada {
     slug: string;
     nombre: string;
@@ -262,16 +244,11 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
     nombre: string;
     estado: string;
   }
-  interface PreciosPorPlan {
-    esencial: number | null;
-    profesional: number | null;
-    elite: number | null;
-  }
   interface OpcionMoneda {
     codigo: string;
     ambito: "local" | "internacional";
     descontable?: boolean;
-    precios: { impresora: PreciosPorPlan | null; plotter: PreciosPorPlan | null };
+    precios: { impresora: number | null; plotter: number | null };
   }
   interface PaisPrecioPublico {
     slug: string;
@@ -381,10 +358,13 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       }
       return datos;
     }
-    const estadoDescuento = cargarEstadoDescuento();
+    // Descuento en USD DESACTIVADO (un solo precio por moneda). Con `false` no se lee ni se escribe la cookie y
+    // ninguna tarjeta muestra descuento; el resto del código queda por si se reactiva.
+    const DESCUENTO_ACTIVO = false;
+    const estadoDescuento = DESCUENTO_ACTIVO ? cargarEstadoDescuento() : { pct: 0, expiraEn: 0, visitas: 0 };
 
     function descuentoActivo(): boolean {
-      return Date.now() < estadoDescuento.expiraEn;
+      return DESCUENTO_ACTIVO && Date.now() < estadoDescuento.expiraEn;
     }
 
     function formatoCuentaRegresiva(ms: number): string {
@@ -413,10 +393,9 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       }, 1000);
     }
 
+    // Una sola tarjeta: la instalación (sin planes ni "Más popular").
     const PLANES = [
-      { key: "esencial" as const, icono: root.dataset.planEsencialIcono || "", nombre: root.dataset.planEsencialNombre || "", duracion: root.dataset.planEsencialDuracion || "", destacado: false },
-      { key: "profesional" as const, icono: root.dataset.planProfesionalIcono || "", nombre: root.dataset.planProfesionalNombre || "", duracion: root.dataset.planProfesionalDuracion || "", destacado: true },
-      { key: "elite" as const, icono: root.dataset.planEliteIcono || "", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
+      { key: "instalacion" as const, icono: root.dataset.planIcono || "", nombre: root.dataset.planNombre || "", duracion: root.dataset.planDuracion || "", destacado: false },
     ];
 
     // Última selección GLOBAL del sitio (compartida con /como-funciona/, las
@@ -436,11 +415,9 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
       }
     }
     function guardarSeleccionGlobal() {
-      try {
-        localStorage.setItem(SELECCION_GLOBAL_KEY, JSON.stringify({ marca: estado.marca, modelo: modeloNombre(), error: errorNombre() }));
-      } catch {
-        /* localStorage no disponible: no rompe la página. */
-      }
+      // También avisa del cambio a los demás módulos (botón flotante, botones
+      // de WhatsApp) — ver src/lib/seleccion-global.ts.
+      guardarSeleccionCompartida({ marca: estado.marca, modelo: modeloNombre(), error: errorNombre() });
     }
 
     const estado = {
@@ -693,11 +670,10 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 
     function construirTarjetas(contenedorEl: HTMLElement, opcion: OpcionMoneda, pais: PaisPrecioPublico, marca: MarcaCascada) {
       const aplicarDescuento = Boolean(opcion.descontable) && descuentoActivo();
-      const precios = opcion.precios[marca.grupo];
 
       contenedorEl.innerHTML = "";
       PLANES.forEach((plan) => {
-        const montoBase = precios ? precios[plan.key] : null;
+        const montoBase = opcion.precios[marca.grupo]; // precio único de la instalación para este tipo de equipo
         const descuentaEstaTarjeta = aplicarDescuento && montoBase != null;
         const montoFinal = descuentaEstaTarjeta ? Math.round(montoBase! * (1 - estadoDescuento.pct / 100)) : montoBase;
         const precioTexto = formatoPrecio(montoFinal, opcion.codigo);
@@ -1173,7 +1149,9 @@ const hrefGeneral = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeGeneral);
 
   .precios-planes {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* Una sola tarjeta (la instalación), centrada. */
+    grid-template-columns: minmax(0, 24rem);
+    justify-content: center;
     gap: var(--space-sm);
     align-items: end;
     margin-bottom: var(--space-md);

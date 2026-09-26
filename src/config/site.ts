@@ -1,4 +1,4 @@
-export const SITE_URL = "https://resetenlinea.com";
+export const SITE_URL = "https://resetentupc.com";
 
 export const WHATSAPP_NUMBER = "573016928346";
 
@@ -16,7 +16,11 @@ export const WHATSAPP_NUMBER = "573016928346";
 export const CONTACT_FORM_EMAIL_ENDPOINT = "https://atajos.resetalmohadillas.com/send-email.php";
 export const CONTACT_FORM_SECRET = "CAMBIA-ESTA-CLAVE-2026";
 
-export const USB_REDIRECTOR_DOWNLOAD_URL =
+/**
+ * URL ANTERIOR de descarga (módulo externo de USB Redirector). Ya NO se usa: los botones "Descargar Instalador"
+ * usan INSTALADOR_DOWNLOAD_URL (más abajo). Se conserva solo como referencia.
+ */
+export const USB_REDIRECTOR_DOWNLOAD_URL_ANTERIOR =
   "https://www.incentivespro.com/downloads/usb-redirector-customer-module.exe";
 
 export const TECHNICIAN_ID = "1017 4278 1017";
@@ -34,12 +38,94 @@ export const RULETA_URL = "https://ruleta.resetalmohadillas.com";
 export const NUCLEO_API_BASE_URL = "https://nucleo.resetalmohadillas.com";
 
 /**
+ * Backend propio (local.resetalmohadillas.com). En desarrollo (`astro dev`) apunta al servidor local
+ * (PUBLIC_API_URL del .env, o http://localhost:8080); en la build de producción es SIEMPRE el dominio
+ * real, para que nunca quede "localhost" en el sitio publicado.
+ */
+export const LOCAL_API_BASE_URL: string = import.meta.env.DEV
+  ? import.meta.env.PUBLIC_API_URL || "http://localhost:8080"
+  : "https://local.resetalmohadillas.com";
+
+/**
+ * Vendedores EN HORARIO ahora mismo (`?pais_iso=XX`): alimenta el botón flotante (ContactHub),
+ * WhatsAppCTA, "Nuestro equipo" (ContactoPage) y el selector global de cualquier enlace wa.me
+ * (lib/selector-vendedores.ts). Respuesta: { data: [{ nombre, whatsapp (solo dígitos), foto, roles,
+ * pais_iso ("ZZ" = Global), en_linea_restante }] }.
+ */
+export const VENDEDORES_API_URL = `${LOCAL_API_BASE_URL}/vendedores`;
+
+/**
+ * Precio de la instalación convertido a cada moneda (`GET /precios`). Se edita en el panel del backend
+ * (Precios / Monedas): precio base en USD (impresoras 15, plotters 79), tasa y redondeo de cada moneda.
+ * Respuesta: { base_usd: { impresora, plotter }, monedas: [{ codigo, nombre, simbolo, posicion, decimales,
+ * precios: { impresora, plotter } }] }.
+ */
+export const PRECIOS_API_URL = `${LOCAL_API_BASE_URL}/precios`;
+
+/**
+ * Descarga del instalador (Instalador-ResetEntuPC-v<versión>.exe), servido por el backend: siempre la versión más
+ * alta de su carpeta `instalador/`, con límite de descargas por IP. `${INSTALADOR_DOWNLOAD_URL}/info` devuelve
+ * versión, tamaño y SHA-256. Tanto los botones "Descargar Instalador" como las URLs antiguas (/modulo-seguro…)
+ * apuntan aquí. El backend debe estar desplegado ANTES que el frontend, o el botón dará 404.
+ */
+export const INSTALADOR_DOWNLOAD_URL = `${LOCAL_API_BASE_URL}/instalador`;
+
+/**
  * Google Analytics 4 Measurement ID (ej. "G-XXXXXXXXXX"). Vacío = GA4 no se
  * carga en absoluto (BaseLayout omite el script por completo) — nunca se
  * envía telemetría a una propiedad inventada. Pon aquí el ID real cuando
  * lo tengas.
  */
 export const GA_MEASUREMENT_ID = "";
+
+/**
+ * Interruptor de "Prueba Social" (ocultar, no eliminar). En `false`: sin enlace ni submenú en el menú,
+ * sus URLs (/prueba-social/… y /{idioma}/prueba-social/…) redirigen 302 a la portada del idioma
+ * (middleware.ts) y salen del sitemap. Nada se borra: poner `true` lo restaura. Si se vuelve a `true`,
+ * quitar también las entradas "prueba-social" de `run_worker_first` en wrangler.jsonc.
+ */
+export const PRUEBA_SOCIAL_VISIBLE = false;
+
+/**
+ * Interruptor de la página "Consultar Garantía" (ocultar, no eliminar). En `false`: sin enlace en el menú,
+ * sus URLs por idioma (PAGE_SLUGS.consultaGarantia: /consulta-garantia/, /en/warranty-check/, …) redirigen
+ * 302 a la portada del idioma (middleware.ts) y salen del sitemap. El widget de consulta que se incrusta
+ * en /terminos-y-condiciones/ y en las páginas de procedimiento NO se toca. Si se vuelve a `true`, quitar
+ * también las entradas de estas URLs en `run_worker_first` de wrangler.jsonc.
+ */
+export const CONSULTA_GARANTIA_VISIBLE = false;
+
+/**
+ * Interruptor de la consulta de garantía INCRUSTADA (buscador por correo/WhatsApp/# pedido + "Certificado de
+ * Garantía de Ejemplo") dentro de otras páginas: el Paso 4 de /como-funciona/, el de cada página de modelo
+ * (/reset/{marca}/{modelo}/) y el texto antiguo de los Términos. En `false` no se renderiza en ninguna. Es
+ * independiente de CONSULTA_GARANTIA_VISIBLE (la página propia y su enlace del menú). Nada se borró: el
+ * componente ConsultaGarantiaPage.astro y CertificadoEjemplo.astro siguen en el proyecto.
+ */
+export const CONSULTA_GARANTIA_INCRUSTADA_VISIBLE = false;
+
+/**
+ * Video en bucle "Visual diagnostic process" (src/assets/prueba-social/diagnostico/banner-video.mp4)
+ * que abre el bloque de pasos en el Home y en /como-funciona/. En `false` no se
+ * renderiza. Nada se borró: el archivo y la página de Diagnóstico Gratis siguen en el proyecto.
+ */
+export const PASO1_VIDEO_DIAGNOSTICO_VISIBLE = false;
+
+/**
+ * Interruptor del contenido de /terminos-y-condiciones/. En `false` (actual) la página muestra las 5
+ * cláusulas de la instalación (instalación vs. reparación, un único PC, función del software, proceso
+ * autónomo, antivirus) + Datos del prestador + Legislación aplicable. En `true` vuelve el texto anterior
+ * completo ("Reset Asistido" remoto: objeto, naturaleza, proceso, reembolsos, exclusiones, errores, garantía,
+ * certificado, evidencia y privacidad). Nada se borró: los textos anteriores siguen en src/i18n/locales/.
+ */
+export const TERMINOS_ANTERIORES_VISIBLES = false;
+
+/**
+ * Interruptor del bloque "Negocio Formalizado y Verificado" con el visor del PDF del RUT (en /contacto/ y
+ * en /terminos-y-condiciones/). En `false` el bloque no se renderiza; nada se borra (el archivo
+ * src/assets/legal/RUT.pdf, el componente y los textos siguen ahí). Poner `true` lo restaura.
+ */
+export const RUT_VISIBLE = false;
 
 export const DEFAULT_LOCALE = "es";
 

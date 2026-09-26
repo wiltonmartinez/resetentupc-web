@@ -167,7 +167,7 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
 
   const MARCA_LABEL: Record<string, string> = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
   const SELECCION_GLOBAL_KEY = "resetenlinea_seleccion_global_v1";
-  const DESTINATARIO = { email: "info@resetenlinea.com", nombre: "Wilton Martínez Escorcia" };
+  const DESTINATARIO = { email: "info@resetentupc.com", nombre: "Wilton Martínez Escorcia" };
   // Debe ser EXACTO "resetenlinea-site-contacto" — send-email.php lo
   // compara con === contra ese único string fijo para decidir si aplica
   // las protecciones del formulario de contacto (rate-limit, anti-saboteo,
@@ -370,7 +370,7 @@ const ERRORES_POR_MARCA: Record<string, string[]> = {
       }
 
       const datos = armarDatos();
-      const asunto = construirAsunto("Contacto rápido — ResetEnLinea.com", datos);
+      const asunto = construirAsunto("Contacto rápido — ResetEntuPC.com", datos);
       const mensaje = construirCuerpoMensaje(datos, LABELS);
 
       const textoOriginal = botonEnviar.textContent;

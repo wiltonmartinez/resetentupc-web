@@ -1,7 +1,7 @@
 ---
 /**
- * Botones "compartir esta página" — WhatsApp, Email, Copiar enlace,
- * Imprimir/Guardar PDF, y (si el navegador lo soporta) Compartir nativo.
+ * Botones "compartir esta página" — WhatsApp, Copiar enlace e
+ * Imprimir/Guardar PDF (sin Email ni Compartir nativo: se quitaron a pedido).
  * Sin backend, sin guardar nada del usuario: todo ocurre en el dispositivo
  * del propio usuario, quien decide si comparte o no.
  *
@@ -16,32 +16,23 @@ interface Props {
   url: string;
   tituloLabel: string;
   mensajeWhatsapp: string;
-  asuntoEmail: string;
-  cuerpoEmail: string;
   labelWhatsapp: string;
-  labelEmail: string;
   labelCopiar: string;
   labelCopiado: string;
   labelImprimir: string;
-  labelCompartir: string;
 }
 
 const {
   url,
   tituloLabel,
   mensajeWhatsapp,
-  asuntoEmail,
-  cuerpoEmail,
   labelWhatsapp,
-  labelEmail,
   labelCopiar,
   labelCopiado,
   labelImprimir,
-  labelCompartir,
 } = Astro.props;
 
 const whatsappHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsapp);
-const mailtoHref = `mailto:?subject=${encodeURIComponent(asuntoEmail)}&body=${encodeURIComponent(cuerpoEmail)}`;
 ---
 
 <div class="share-page" data-share-url={url} data-copiado-label={labelCopiado}>
@@ -50,17 +41,11 @@ const mailtoHref = `mailto:?subject=${encodeURIComponent(asuntoEmail)}&body=${en
     <a class="share-page-btn" href={whatsappHref} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
       {labelWhatsapp}
     </a>
-    <a class="share-page-btn" href={mailtoHref} data-sound="select">
-      {labelEmail}
-    </a>
     <button type="button" class="share-page-btn" data-copiar-enlace data-sound="select">
       {labelCopiar}
     </button>
     <button type="button" class="share-page-btn" data-imprimir data-sound="select">
       {labelImprimir}
-    </button>
-    <button type="button" class="share-page-btn" data-compartir-nativo hidden data-sound="select">
-      {labelCompartir}
     </button>
   </div>
   <p class="share-page-confirmacion" data-confirmacion hidden aria-live="polite"></p>
@@ -96,16 +81,6 @@ const mailtoHref = `mailto:?subject=${encodeURIComponent(asuntoEmail)}&body=${en
     contenedor.querySelector("[data-imprimir]")?.addEventListener("click", () => {
       window.print();
     });
-
-    const botonNativo = contenedor.querySelector<HTMLButtonElement>("[data-compartir-nativo]");
-    if (botonNativo && typeof navigator.share === "function") {
-      botonNativo.hidden = false;
-      botonNativo.addEventListener("click", () => {
-        navigator.share({ url }).catch(() => {
-          // Usuario canceló el share nativo — no es un error a mostrar.
-        });
-      });
-    }
   });
 </script>
 

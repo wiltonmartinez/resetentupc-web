@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea.com"
+    "siteName": "ResetEntuPC.com"
   },
   "imageModal": {
     "ampliarLabel": "Enlarge image",
@@ -10,7 +10,7 @@
     "contadorTemplate": "{actual} of {total}"
   },
   "notFound": {
-    "title": "Page not found | ResetEnLinea.com",
+    "title": "Page not found | ResetEntuPC.com",
     "description": "The page you're looking for doesn't exist or was moved.",
     "heading": "Page not found",
     "texto": "The page you're looking for doesn't exist or was moved.",
@@ -41,8 +41,8 @@
     "paginaSiguiente": "Next →"
   },
   "home": {
-    "title": "Professional assisted printer reset | ResetEnLinea.com",
-    "description": "Reset pad and ink counter service for Epson and Canon printers, with professional remote assistance. Clear diagnosis before any procedure.",
+    "title": "Reset Installation for Epson and Canon Printers | ResetEntuPC.com",
+    "description": "Installation of the ink pad reset for Epson and Canon printers over a USB connection. 100% autonomous process on your own PC, with a Trial Key to test before you buy.",
     "heroTitle": "Professional printer reset, without the risk",
     "heroSubtitle": "Clear diagnosis, remote assistance, and real support for your brand and model.",
     "heroCta": "Unlock Your Printer Now!",
@@ -78,11 +78,11 @@
     "heroTagline": "Professional, safe and fast reset, with a reusable warranty from any PC."
   },
   "modelo": {
-    "titleTemplate": "{marca} {modelo} Reset — Assisted Service | ResetEnLinea.com",
-    "descriptionTemplate": "Assisted, remote reset service for your {marca} {modelo}. Not a download or self-service tool: a real technician guides you securely via WhatsApp.",
+    "titleTemplate": "{marca} {modelo} Reset — USB Installation | ResetEntuPC.com",
+    "descriptionTemplate": "Reset installation for your {marca} {modelo} over a USB connection. 100% autonomous process: you do it yourself on your Windows PC, following our videos.",
     "intro": "We'll help you resolve the reset of your {marca} {modelo} safely, with professional guidance at every step.",
     "errorSectionTitle": "What error is your printer showing?",
-    "errorSectionText": "Tell us the message or error code you see on your {marca} {modelo} so we can give you a more accurate diagnosis.",
+    "errorSectionText": "Tell us the error message or code you see on your {marca} {modelo} so we can confirm whether the reset covers it.",
     "ctaHero": "Ask about my {marca} {modelo}",
     "ctaError": "I already have the error code",
     "faqTitle": "Frequently asked questions about this model",
@@ -91,22 +91,22 @@
     "errorRequiereRevisionTitle": "This model may also show an issue that requires additional review",
     "seleccionaError": "Select the code shown on your printer",
     "reconocimiento": "Is your {marca} {modelo} showing a reset problem or error message?",
-    "atencionExplicacionConError": "The {errorLargo} error blocks printing on your {marca} {modelo}, but it doesn't mean you need to buy a new printer: we unlock it back to 0% in under 1 minute, without moving your device.",
-    "atencionExplicacionGenerica": "This type of error blocks printing on your {marca} {modelo}, but it doesn't mean you need to buy a new printer: we unlock it back to 0% in under 1 minute, without moving your device.",
-    "interesTitulo": "Why choose our Assisted Reset for your {marca} {modelo}",
-    "videoResumenTitulo": "Here's how it's solved in under 1 minute",
+    "atencionExplicacionConError": "The {errorLargo} error blocks printing on your {marca} {modelo}, but it doesn't mean you have to buy a new printer: you can unlock it yourself, without moving your equipment from your home or office.",
+    "atencionExplicacionGenerica": "This type of error blocks printing on your {marca} {modelo}, but it doesn't mean you have to buy a new printer: you can unlock it yourself, without moving your equipment from your home or office.",
+    "interesTitulo": "Why choose our Autonomous Reset for your {marca} {modelo}",
+    "videoResumenTitulo": "See a reset in action",
     "videoResumenTexto": "Watch a real {marca} {modelo} case resolved by our team.",
     "videoResumenPlaceholder": "Coming soon: a real {marca} {modelo} case right here.",
-    "accionIntro": "You've seen how Assisted Reset works for your {marca} {modelo}. Whenever you're ready, message us on WhatsApp and we'll get started.",
+    "accionIntro": "You've seen how the Autonomous Reset works for your {marca} {modelo}. Whenever you're ready, message us on WhatsApp with your PC ID to get your Key.",
     "ctaBeneficios": "Unlock Your {marca} {modelo} Now!",
-    "ctaBeneficiosSubtexto": "Free diagnosis, no commitment",
+    "ctaBeneficiosSubtexto": "Trial Key (for testing), once only",
     "ctaIndiceProcesos": "Get a Solution for {marca} {modelo}",
     "ctaPaso1": "Check My Error on {marca} {modelo}",
     "ctaPaso2": "Confirm Requirements for {marca} {modelo}",
-    "ctaPaso3": "Start Free Diagnosis - {marca} {modelo}",
+    "ctaPaso3": "Message us on WhatsApp - {marca} {modelo}",
     "ctaPaso4": "See Prices for {marca} {modelo}",
     "ctaPaso5": "Watch a Live {marca} {modelo} Reset",
-    "ctaPaso5Nota": "This video isn't a step-by-step for you to follow: it's real evidence of how our technician runs the reset remotely from our server, guiding you the whole time over WhatsApp.",
+    "ctaPaso5Nota": "Reference video of a reset already done on a device like yours. In your case, you run the reset yourself on your PC, following the steps in our videos.",
     "ctaPaso6": "Bring My {marca} {modelo} Back to Life Now!",
     "prefijoTitulo": "Reset",
     "cierreTitulo": "Ready to fix it?",
@@ -145,12 +145,12 @@
     "paso2Titulo": "Requirements and USB connection",
     "paso3Titulo": "Assisted USB compatibility review and reset availability",
     "paso3TituloEpson": "Assisted USB compatibility review and reset availability",
-    "paso4Titulo": "Quote and payment or active warranty",
-    "paso4TituloEpson": "Quote and payment or active warranty",
+    "paso4Titulo": "Installation Price and Buying Your Key",
+    "paso4TituloEpson": "Installation Price and Buying Your Key",
     "paso5Titulo": "Assisted reset in 1 minute",
     "paso5TituloEpson": "Assisted reset in 1 minute",
-    "paso5TituloEpsonSc": "Repair mode and reset in 1 minute (module and ID execution)",
-    "paso5TituloEpsonSc0014bd": "Replace with a new ink pad, clean the sensor and plastic surface 100%, Inspection mode and reset in 1 minute",
+    "paso5TituloEpsonSc": "Repair Mode and Autonomous Reset (Running the Program and ID)",
+    "paso5TituloEpsonSc0014bd": "Fit a New Ink Pad, 100% Sensor and Plastic Surface Cleaning, Inspection Mode and Autonomous Reset",
     "paso6Titulo": "Printer unlocked and ready to print",
     "paso1TituloGenerico": "Identifying your printer's error",
     "paso3TituloGenerico": "Assisted compatibility review"
@@ -172,7 +172,7 @@
     "paso2Punto4": "We do not fix physical errors, print quality issues, cartridges, or the maintenance box.",
     "paso3Titulo": "Assisted USB compatibility review and reset availability",
     "paso3Resultado": "Review result: Compatible, USB connection recognized, 100% reading, and service available",
-    "paso4Titulo": "Quote and Payment or Active Warranty",
+    "paso4Titulo": "Installation Price and Buying Your Key",
     "paso5Titulo": "Assisted reset in 1 minute | {marca} {modelo}",
     "paso5TituloCorto": "Assisted reset in 1 minute",
     "paso5AnchorConVideo": "See the full evidence: {titulo}",
@@ -183,14 +183,19 @@
     "paso6ResenaTrustpilot": "Real review on Trustpilot",
     "paso6AltTrustpilot": "Customer testimonial on Trustpilot",
     "paso6VerMasClientes": "See more satisfied customers",
-    "paso6VerTestimoniosTrustpilot": "See testimonials on Trustpilot"
+    "paso6VerTestimoniosTrustpilot": "See testimonials on Trustpilot",
+    "paso2Requisito1": "Tied to a Single PC",
+    "paso2Requisito2": "We sell an Installation, NOT a Repair",
+    "paso2Requisito3": "100% Self-Service Process and Connection",
+    "paso2Requisito4": "Using Windows Defender ONLY is a MANDATORY REQUIREMENT.",
+    "paso2Requisito5": "The program does NOT fix physical problems, print quality, printhead cleaning, the maintenance box or cartridge failures."
   },
   "proceso": {
-    "titulo": "100% Remote Assisted Reset via USB connection",
+    "titulo": "Reset Installation via USB connection",
     "introTexto": "Here's how the connection works before you message us on WhatsApp:",
     "paso1Titulo": "Prepare your computer",
     "paso1Texto": "You need a PC with Windows 11, 10, or 8. Open WhatsApp Web on that same computer and connect your printer with a USB cable. You'll also need to download the secure connection module.",
-    "paso1Enlace": "Download secure module",
+    "paso1Enlace": "Download installer",
     "paso2Titulo": "Connect",
     "paso2Texto": "Open the program and enter the technician ID shown below. In \"Additional information\", type your name.",
     "paso3Titulo": "Share the USB connection",
@@ -208,8 +213,8 @@
     "paso4ImagenAlt": "USB Redirector screen waiting for the technician, with the prompt to message on WhatsApp"
   },
   "comoFunciona": {
-    "title": "How the service works | ResetEnLinea.com",
-    "description": "Learn about our diagnosis process, compatibility check, and remote assistance for resetting your printer.",
+    "title": "How the service works | ResetEntuPC.com",
+    "description": "Learn the reset installation process over USB: requirements, installer download, buying your Key and the autonomous reset on your PC.",
     "heading": "How it works",
     "tabServicio": "Our service",
     "tabProceso": "Technical connection",
@@ -239,7 +244,7 @@
     "paso2ReqLimpieza": "Perform a 100% spotless cleaning of the ink sensor and plastic parts, and the ink pad must be new before the reset.",
     "paso2ReqErrorVerificado": "Error \"{error}\" verified.",
     "tituloModuloSeguro": "How the connection with the technician works",
-    "paso4Texto": "Payment is only made after confirming your device's compatibility. If you already have an active warranty, you don't pay again — it's applied automatically.",
+    "paso4Texto": "Copy your PC ID and message us on WhatsApp: we tell you the price for your country and payment methods, and generate your Key to activate the installation on that PC. Beforehand you can request a Trial Key (for testing), once only.",
     "paso5VideoPlaceholder": "Live reset evidence video — coming soon",
     "paso6ChatPlaceholder": "Real customer testimonial — coming soon",
     "introTituloQueEs": "What exactly is it?",
@@ -248,21 +253,21 @@
     "introDestacado": "You just plug in the cable — we handle the technical work!",
     "introAclaracion": "Important note: we don't sell self-service programs. We deliver a direct solution to your printer's board.",
     "beneficiosTitulo": "Benefits of our service",
-    "beneficiosSubtitulo": "Speed, proven track record, and zero risk — that's how we get your printer working again today.",
-    "beneficio1Titulo": "1-Minute Reset",
-    "beneficio1Texto": "The fix runs ultra-fast. Your printer ready in 60 seconds or less once connected.",
-    "beneficio2Titulo": "Zero Travel or Waiting",
-    "beneficio2Texto": "No need to take your printer anywhere or schedule a technician visit. Forget waiting days — the fix is immediate.",
-    "beneficio3Titulo": "Zero Installations",
-    "beneficio3Texto": "Total privacy. No heavy programs to install, and no one remotely controlling your PC.",
-    "beneficio4Titulo": "100% Safe",
-    "beneficio4Texto": "A clean, virus-free process. You never need to disable your antivirus.",
+    "beneficiosSubtitulo": "Autonomy, transparency and proven backing: we give you control so your printer works again.",
+    "beneficio1Titulo": "100% Autonomous Reset",
+    "beneficio1Texto": "Do it yourself by following our videos, at your own pace and without depending on technicians or schedules.",
+    "beneficio2Titulo": "No Trips, No Waiting",
+    "beneficio2Texto": "You don't need to take the printer anywhere or book a technician. You do it yourself, at home or at the office, whenever you want.",
+    "beneficio3Titulo": "Installed on Your Own PC",
+    "beneficio3Texto": "You download the installer and set it up for your printer model. Everything is done from your Windows PC.",
+    "beneficio4Titulo": "Total Privacy",
+    "beneficio4Texto": "We do not provide remote assistance or access your PC. You run the process and stay in control of your computer.",
     "beneficio5Titulo": "Proven Track Record",
     "beneficio5Texto": "Total confidence. We have over 920 five-star ratings from real, satisfied customers.",
-    "beneficio6Titulo": "Money-Back Guarantee",
-    "beneficio6Texto": "Zero risk. If after trying every technical means we can't fix the error, we refund your money.",
-    "beneficio7Titulo": "Reusable PDF Certificate",
-    "beneficio7Texto": "Get 12 months of coverage (extendable to 15). Reusable license: applies from any PC for printers of the same model.",
+    "beneficio6Titulo": "Try It Before You Buy",
+    "beneficio6Texto": "Have doubts? Request a Trial Key over WhatsApp, once only, and check it for yourself.",
+    "beneficio7Titulo": "No Expiry",
+    "beneficio7Texto": "Your installation lasts as long as you decide: 1 day or 20 years. It is tied to your PC, for use on a single computer.",
     "beneficio8Titulo": "24/7 Support",
     "beneficio8Texto": "Professional, human technical support, always available whenever your business needs it most.",
     "beneficio9Titulo": "Daily Giveaways and Prizes",
@@ -276,14 +281,14 @@
     "resumenPasoTexto1": "Model: {marca} {modelo} | Error: {error}. After you contact us, we ask for this information to immediately verify that a compatible reset is available and make sure the error can be fixed before moving forward.",
     "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Requirements and USB Connection",
-    "resumenPasoBullet2a": "Have the availability and time needed to follow the technician's steps (a vital requirement).",
+    "resumenPasoBullet2a": "Be willing and have the time needed to follow the steps in our videos (vital requirement).",
     "resumenPasoBullet2b": "Have a USB cable connected directly to your PC.",
     "resumenPasoNota2": "We don't fix physical damage, print quality issues, cartridge failures, or maintenance box errors, and we don't offer on-site visits.",
     "resumenPasoTitulo3": "Compatibility Review and Reset Availability",
     "resumenPasoTexto3": "A free diagnostic to check whether you meet the technical requirements, confirm that a reset is available for your model, and give you an accurate diagnosis before any payment is made.",
-    "resumenPasoTitulo4": "Quote, Payment Method, and Warranty",
+    "resumenPasoTitulo4": "Price, Payment Method and Buying Your Key",
     "resumenPasoTexto4": "We capture your country to show you local prices and payment methods.",
-    "resumenPasoNota4": "The cost covers the current service; optional warranty plans are only for getting support at no extra cost if the error happens again within the coverage period.",
+    "resumenPasoNota4": "The cost covers the installation on a single PC. Once the Key is delivered there are no refunds; that is why you can first request a Trial Key (for testing), once only.",
     "resumenPasoTitulo5": "Assisted Reset in 1 Minute",
     "resumenPasoTexto5": "With live assistance for your {marca} {modelo}, we run the procedure remotely and securely to reset the counter to zero.",
     "resumenPasoTitulo6": "Printer Unlocked and Ready",
@@ -296,70 +301,84 @@
     "otroModeloOption": "Other: ____",
     "testimonioTrustpilotAlt": "Real customer review on Trustpilot",
     "resenasTitulo": "Over 920 customers already got their printers back",
-    "resenasSubtitulo": "What people who already trusted our assisted reset service have to say",
+    "resenasSubtitulo": "What people say who already trusted our reset service",
     "whatsappFlotanteLabel": "Start Free Diagnosis via WhatsApp",
-    "whatsappBannerCta": "Talk to a Real Technician Now",
-    "whatsappBannerSubtitulo": "We evaluate your case at no cost and confirm availability instantly. No commitment.",
+    "whatsappBannerCta": "Message Us on WhatsApp Now",
+    "whatsappBannerSubtitulo": "We confirm whether your model and error are compatible and tell you how to get your Key. No commitment.",
     "ctaFinalLabel": "Check if my printer has a fix",
-    "paso31BotonDescarga": "Download Secure Connection Module",
-    "paso31MicroTexto": "Safe, 100% virus-free, and doesn't require disabling your antivirus"
+    "paso31BotonDescarga": "Download Installer",
+    "paso31MicroTexto": "The process is 100% Autonomous and an antivirus exclusion is required",
+    "beneficio10Titulo": "Clear Compatibility",
+    "beneficio10Texto": "You know exactly which errors it covers before buying: Epson, Canon and Epson SC plotters.",
+    "beneficio11Titulo": "USB Cable Only",
+    "beneficio11Texto": "You only need your Windows PC and the printer connected by USB cable. Everything happens on your own computer.",
+    "beneficio12Titulo": "Reinstall Without Losing Your Activation",
+    "beneficio12Texto": "If the antivirus deletes the program by mistake, the \"Reinstall\" button recovers it without losing your activation (if you haven't formatted the PC)."
   },
   "faq": {
-    "title": "Frequently asked questions | ResetEnLinea.com",
-    "description": "We answer the most common questions about printer resets and our assistance process.",
+    "title": "Frequently asked questions | ResetEntuPC.com",
+    "description": "We answer the most common questions about the reset installation, what it covers and how the process works.",
     "heading": "Frequently asked questions",
     "items": [
       {
-        "pregunta": "Does this site offer a free program to reset my printer myself?",
-        "respuesta": "No. We don't distribute free reset programs or self-service tools. This is a 100% assisted service: a real technician guides you over WhatsApp through the whole process."
+        "pregunta": "What exactly am I buying?",
+        "respuesta": "An Installation: the right to install the reset software on a single PC. The activation key (Key) is only the means to enable the program; what we provide is the installation."
       },
       {
-        "pregunta": "Is it safe to reset my printer?",
-        "respuesta": "Yes. We work with a prior diagnosis and professional guidance throughout the procedure."
+        "pregunta": "Can I try it before buying?",
+        "respuesta": "Yes. If you want to be sure before buying, request a Trial Key over WhatsApp. It is provided only once."
       },
       {
-        "pregunta": "Is it safe to share my printer's USB connection?",
-        "respuesta": "Yes. We only share your printer's USB connection: we never see your screen, access your files, or control your computer. You stay in control at all times."
+        "pregunta": "Is there a refund if the program doesn't fix my problem?",
+        "respuesta": "Since what we sell is an installation, there are no refunds once the Key has been delivered, whether or not the program fixes your printer's problem. That's why, before buying, check which errors it covers and, if you wish, test it with the Trial Key."
       },
       {
-        "pregunta": "Do I need to disable my antivirus?",
-        "respuesta": "No. We never ask you to disable your antivirus or any security system on your device."
+        "pregunta": "On how many computers can I use it, and how long does it last?",
+        "respuesta": "The installation is tied to the PC where it is activated and lasts as long as you decide: it can be 1 day or 20 years. If you format the PC, change the hard drive or move it to another computer, the installation is lost and you would need to buy a new one."
       },
       {
-        "pregunta": "What do I need for remote assistance?",
-        "respuesta": "A stable internet connection and your printer connected to your computer via USB."
+        "pregunta": "Which errors does it fix, and which not?",
+        "respuesta": "It only resets the ink pad counters. Epson: ink pad error, E11 and cap error. Canon: 5B00, 1700, P07 and E08. Epson SC plotters: 00000008, 00080000, 00040000, 00000004, 00010000, 00000001, 0014BD. It does not fix physical problems, print quality, printhead cleaning, the maintenance box or cartridge failures."
       },
       {
-        "pregunta": "When is the service paid?",
-        "respuesta": "We first evaluate your case and confirm that your model and error are compatible. Only after that confirmation do we quote the price and arrange payment."
+        "pregunta": "Do I have to do it myself, or do you access my PC?",
+        "respuesta": "It is a \"do it yourself\" service: you run the process by following our videos and stay in full control of your computer. We do not provide remote assistance or access your PC. You only need to connect the printer with a USB cable."
       },
       {
-        "pregunta": "Do I get any proof of the service?",
-        "respuesta": "Yes. Once the reset is done, you receive a warranty certificate for the service performed."
+        "pregunta": "Which antivirus do I need to use?",
+        "respuesta": "Only Windows Defender. If you have any other antivirus, you must uninstall it completely (pausing it is not enough). You also need to exclude the folder C:\\ResetEntuPc.com in Windows Defender."
       },
       {
-        "pregunta": "What if my device doesn't meet the requirements?",
-        "respuesta": "We evaluate alternatives, including a local procedure guided over a USB connection."
+        "pregunta": "What if the antivirus deletes the program?",
+        "respuesta": "The installation manager includes a \"Reinstall\" button. If the antivirus removes the program by mistake, you can recover it with that button without losing your activation, as long as you have not formatted the PC."
+      },
+      {
+        "pregunta": "How do I get my Key?",
+        "respuesta": "You download the installer, install the reset for your printer model and copy your PC ID. Then you message us on WhatsApp with that ID and we generate your Key to activate it."
       }
     ]
   },
   "contacto": {
-    "title": "Contact | ResetEnLinea.com",
+    "title": "Contact | ResetEntuPC.com",
     "description": "Tell us what you need and get quick guidance on the right service for your printer.",
-    "heading": "Contact us for a 1-Minute Assisted Reset",
+    "heading": "Contact us to get your Key",
     "text": "Tell us what you need and get quick guidance on the right service.",
     "cta": "Get help",
     "equipoTitulo": "Our team",
+    "confianzaTitulo": "Registered and Verified Business",
+    "confianzaTexto": "We are legally registered with the DIAN (Colombia's tax authority). See our Registro Único Tributario (RUT). For security, personal data, ID numbers, the address and QR codes are censored and the document carries a watermark.",
+    "confianzaAlt": "ResetEntuPC.com Registro Único Tributario (RUT) with personal data censored",
+    "confianzaError": "The document could not be loaded. Please reload the page.",
     "enviarMensaje": "Send message",
     "rolWilton": "Admin - Remote Reset Technician - Advisor",
     "rolDiana": "Advisor",
     "ubicacion": "Santa Marta, Colombia"
   },
   "whatsapp": {
-    "greetingWithError": "Hi, I need help resetting my {marca} {modelo}.\n\nError: {error}\n\nI'm coming from:\n{url}",
-    "greetingWithoutError": "Hi, I need help resetting my {marca} {modelo}.\n\nI'm coming from:\n{url}",
-    "greetingGeneric": "Hi, I need help resetting my printer.\n\nI'm coming from:\n{url}",
-    "greetingConPlan": "Hi, I'd like to hire the assisted reset service.\n\n{nota}\n\nComing from:\n{url}"
+    "greetingWithError": "Hi, I'd like to buy the reset Key for my {marca} {modelo}. It is blocked and I can't print.\n\nError: {error}\n\nMy PC ID: \n\nI'm coming from:\n{url}",
+    "greetingWithoutError": "Hi, I'd like to buy the reset Key for my {marca} {modelo}.\n\nMy PC ID: \n\nI'm coming from:\n{url}",
+    "greetingGeneric": "Hi, I'd like to buy the reset Key for my printer.\n\nBrand and model: \nError or message shown: \nMy PC ID: \n\nI'm coming from:\n{url}",
+    "greetingConPlan": "Hi, I'd like to buy the reset Key.\n\n{nota}\n\nI'm coming from:\n{url}"
   },
   "contactForm": {
     "botonFlotante": "Contact us",
@@ -488,7 +507,7 @@
     "conexionPaso1Whatsapp": "Open WhatsApp Web on the same PC you'll use for the process.",
     "conexionPaso1Usb": "Connect the printer to the PC with a USB cable.",
     "conexionPaso1Descarga": "Download the secure module:",
-    "conexionDescargarBoton": "Download module",
+    "conexionDescargarBoton": "Download installer",
     "conexionPaso2Titulo": "Connect",
     "conexionPaso2Intro": "Open the program and enter:",
     "conexionPaso2TechnicianIdLabel": "Technician ID:",
@@ -556,22 +575,22 @@
   },
   "footer": {
     "rights": "All rights reserved.",
-    "disclaimer": "ResetEnLinea.com provides independent professional assistance for printer resets. Mentioned brands belong to their respective owners.",
+    "disclaimer": "ResetEntuPC.com is an independent provider of printer reset software. The brands mentioned belong to their respective owners.",
     "legalInfoTitulo": "Legal information",
     "terminosLink": "Terms and Conditions"
   },
   "ruletaPage": {
-    "title": "Roulette | ResetEnLinea.com",
+    "title": "Roulette | ResetEntuPC.com",
     "description": "Play and get a discount coupon for your reset service.",
     "heading": "Spin the wheel",
     "texto": "Play and get your discount coupon. When you're done, you can write to us to use it."
   },
   "pruebaSocialPage": {
-    "title": "Social Proof | ResetEnLinea.com",
+    "title": "Social Proof | ResetEntuPC.com",
     "description": "Real reviews from customers who have already used our assisted reset service.",
     "heading": "Social Proof",
     "texto": "Real, verified reviews on Trustpilot.",
-    "introTexto": "Here we gather real experiences and evidence from customers and services performed by ResetEnLinea.",
+    "introTexto": "Here we gather real experiences and evidence from customers and services performed by ResetEntuPC.",
     "tabConversaciones": "Real Conversations",
     "tabResets": "Completed Resets",
     "conversacionesTitulo": "Real Conversations",
@@ -587,8 +606,8 @@
     "testimoniosTexto": "Real screenshots of customer reviews on Trustpilot."
   },
   "resetRealizadosPage": {
-    "title": "Reset Evidence | ResetEnLinea.com",
-    "description": "Video evidence of reset services performed remotely by ResetEnLinea.",
+    "title": "Reset Evidence | ResetEntuPC.com",
+    "description": "Video evidence of reset services performed remotely by ResetEntuPC.",
     "heading": "Reset Evidence",
     "marca": "Brand",
     "modelo": "Model",
@@ -602,14 +621,14 @@
     "resumenContenidoSinDuracion": "Real video of a {marca} {modelo} printer reset — {error} — in {pais}."
   },
   "clienteSatisfechoPage": {
-    "title": "Happy Customer | ResetEnLinea.com",
+    "title": "Happy Customer | ResetEntuPC.com",
     "description": "Real conversations with customers who have already used our assisted reset service.",
     "heading": "Happy Customer",
     "volverLink": "← Back to Happy Customer",
     "sinRegistros": "There are no published conversations yet."
   },
   "testimoniosTruspilotPage": {
-    "title": "Trustpilot Testimonials | ResetEnLinea.com",
+    "title": "Trustpilot Testimonials | ResetEntuPC.com",
     "description": "Gallery of real customer reviews and screenshots on Trustpilot.",
     "heading": "Trustpilot Testimonials",
     "texto": "Real screenshots of reviews and ratings from our customers on Trustpilot.",
@@ -618,11 +637,11 @@
   },
   "terminos": {
     "meta": {
-      "title": "Terms and Conditions | ResetEnLinea.com",
-      "description": "Terms and Conditions for ResetEnLinea's 100% Remote Assisted Reset service via USB connection."
+      "title": "Terms and Conditions | ResetEntuPC.com",
+      "description": "Terms and Conditions for ResetEntuPC's software installation: license for a single PC, self-service process and no refunds once the Key is delivered."
     },
     "title": "Terms and Conditions",
-    "actualizacion": "Last updated: August 21, 2026.",
+    "actualizacion": "Last updated: September 25, 2026.",
     "tocTitulo": "Table of Contents",
     "share": {
       "titulo": "Share these Terms and Conditions",
@@ -632,27 +651,27 @@
       "copiado": "Link copied",
       "imprimir": "Print / Save as PDF",
       "compartir": "Share",
-      "mensajeWhatsapp": "I'm sharing ResetEnLinea's official Terms and Conditions with you:",
-      "asuntoEmail": "ResetEnLinea Terms and Conditions",
+      "mensajeWhatsapp": "I'm sharing ResetEntuPC's official Terms and Conditions with you:",
+      "asuntoEmail": "ResetEntuPC Terms and Conditions",
       "cuerpoEmailSaludo": "Hello,",
-      "cuerpoEmailIntro": "I'm sharing ResetEnLinea's official Terms and Conditions with you:",
-      "cuerpoEmailDespedida": "Best regards,\nResetEnLinea"
+      "cuerpoEmailIntro": "I'm sharing ResetEntuPC's official Terms and Conditions with you:",
+      "cuerpoEmailDespedida": "Best regards,\nResetEntuPC"
     },
     "cta": {
       "texto": "Have a question about these Terms and Conditions?",
       "whatsappLabel": "Message us on WhatsApp",
-      "whatsappMensaje": "Hello, I have a question about ResetEnLinea's Terms and Conditions."
+      "whatsappMensaje": "Hello, I have a question about ResetEntuPC's Terms and Conditions."
     },
     "secciones": {
       "objeto": {
         "titulo": "1. Purpose of the service",
-        "p1Antes": "ResetEnLinea provides a service called",
+        "p1Antes": "ResetEntuPC provides a service called",
         "p1Fuerte": "100% Remote Assisted Reset via USB Connection",
-        "p1Despues": ". ResetEnLinea does not sell software, licenses, or reset programs. The technical tools used while providing the service are merely a means of delivering it, not the product being contracted."
+        "p1Despues": ". ResetEntuPC does not sell software, licenses, or reset programs. The technical tools used while providing the service are merely a means of delivering it, not the product being contracted."
       },
       "naturaleza": {
         "titulo": "2. Nature of the service",
-        "p1": "ResetEnLinea's technician does not access the client's computer. The client only temporarily shares their printer's USB port through the corresponding connection tool.",
+        "p1": "ResetEntuPC's technician does not access the client's computer. The client only temporarily shares their printer's USB port through the corresponding connection tool.",
         "p2Antes": "USB Redirector",
         "p2Fuerte": "is not the reset tool",
         "p2Despues": ". This tool only establishes communication between the client's printer and the server where the technician works. The reset itself is performed remotely by the technician, without accessing the client's equipment beyond that printer connection."
@@ -711,7 +730,7 @@
       "garantia": {
         "titulo": "7. Warranty",
         "p1": "The service warranty may run from 3 to 12 months. The exact duration applicable to each service is set out in the corresponding certificate.",
-        "p2": "As a promotional offer, ResetEnLinea may extend the warranty by an additional 1 month, up to a maximum of 2 additional months.",
+        "p2": "As a promotional offer, ResetEntuPC may extend the warranty by an additional 1 month, up to a maximum of 2 additional months.",
         "p3": "The warranty applies specifically to the reset of the contracted model and does not constitute a comprehensive warranty covering the printer or its other components.",
         "p4": "While the warranty remains valid, the client may request the service for another printer of the same model, provided that it involves:",
         "li1": "the same person,",
@@ -728,7 +747,7 @@
       },
       "evidencia": {
         "titulo": "9. Service evidence and social proof",
-        "p1": "After a successful reset, ResetEnLinea may generate video evidence of the service performed. This evidence may be used as social proof and published on ResetEnLinea's channels, including this website."
+        "p1": "After a successful reset, ResetEntuPC may generate video evidence of the service performed. This evidence may be used as social proof and published on ResetEntuPC's channels, including this website."
       },
       "privacidad": {
         "titulo": "10. Privacy of conversations",
@@ -745,8 +764,35 @@
         "titulo": "12. Governing law",
         "p1": "The service is provided from Colombia and is governed by applicable Colombian law.",
         "legal": "RECOMMENDED LEGAL REVIEW — governing law and dispute resolution."
+      },
+      "instalacion": {
+        "titulo": "We sell an Installation, NOT a Repair",
+        "p1": "You are purchasing the right to INSTALL the software on ONE SINGLE PC. The activation key (Key) is only the means of enabling the program, but our service is the installation. Therefore, THERE ARE NO REFUNDS once the Key has been delivered, regardless of whether or not the program solves your printer's problem."
+      },
+      "unicoPc": {
+        "titulo": "Tied to a Single PC",
+        "p1": "The installation is linked exclusively to the machine where it is activated. How long it lasts depends on you (it may last 1 day or 20 years). If you format your PC, change your hard drive or try to move it to another computer, you will lose the installation immediately and will have to purchase a new one."
+      },
+      "funcion": {
+        "titulo": "Strict Scope of the Software",
+        "p1": "The program ONLY resets the waste ink pad counters. It does NOT fix physical problems, print quality, printhead cleaning, the maintenance box or cartridge failures.",
+        "items": [
+          "Epson: Only the Ink Pad error, E11 and the cap error.",
+          "Canon: Only 5B00, 1700, P07, E08.",
+          "Epson SC plotters: Only 00000008, 00080000, 00040000, 00000004, 00010000, 00000001, 0014BD"
+        ]
+      },
+      "autonomo": {
+        "titulo": "100% Self-Service Process and Connection",
+        "p1": "This is a 'Do it yourself' service. You carry out the process by following our videos. We do NOT provide remote assistance and we do not access your PC. Connecting the printer by USB CABLE is essential.",
+        "nota": "Note: If you are hesitant before buying, you can request a Trial Key (a test key) by WhatsApp, one time only."
+      },
+      "antivirus": {
+        "titulo": "Antivirus and Reinstallation",
+        "p1": "Using Windows Defender ONLY is a MANDATORY REQUIREMENT. If you have any other antivirus, you must UNINSTALL it completely (pausing it is not enough). This installation manager has a 'Reinstall' button; if your antivirus deletes the program by mistake, you can reinstall it with that button to recover it without losing your activation (as long as you have not formatted)."
       }
-    }
+    },
+    "prevaleceEs": "Informational translation. In case of any discrepancy, the Spanish text prevails."
   },
   "contactHub": {
     "abrirLabel": "Open contact options",
@@ -757,14 +803,14 @@
     "ruleta": "Play the Wheel",
     "whatsapp": "Message us on WhatsApp",
     "bubbleMensaje": "Need help with your printer?",
-    "bubbleMensajeModelo": "Need an Assisted Reset for your {marca} {modelo}?"
+    "bubbleMensajeModelo": "Need the Autonomous Reset for {marca} {modelo}?"
   },
   "selectorVendedores": {
     "titulo": "Who would you like to talk to?",
     "cargando": "Looking for available advisors…"
   },
   "consultaGarantiaPage": {
-    "title": "Warranty Check | ResetEnLinea.com",
+    "title": "Warranty Check | ResetEntuPC.com",
     "description": "Check your warranty status with your email or WhatsApp number.",
     "heading": "Warranty Check",
     "intro": "Enter the email, WhatsApp number or order number (#) from your purchase to check your warranty status.",
@@ -783,10 +829,10 @@
     "errorGenerico": "Something went wrong. Please try again in a few minutes."
   },
   "preciosPage": {
-    "title": "Assisted Printer Reset Pricing | ResetEnLinea.com",
-    "description": "Geolocated pricing for our assisted printer reset service, with the payment methods available in your country.",
-    "heading": "Assisted Reset Pricing",
-    "intro": "Choose your country to see the exact price in your local currency and the available payment methods. No account details are published here — once you confirm your plan, we share the exact payment details over WhatsApp.",
+    "title": "Reset Installation Price | ResetEntuPC.com",
+    "description": "Price of the reset installation for your country and currency, with the payment methods available.",
+    "heading": "Reset Installation Price",
+    "intro": "Choose your country to see the exact price in your local currency and the available payment methods. No account details are published here — once you confirm your order, we share the exact payment details over WhatsApp.",
     "paisLabel": "Your country",
     "monedaLabel": "Currency",
     "masPopular": "Most Popular",
@@ -803,7 +849,7 @@
     "familiaPlaceholder": "Select a family",
     "modeloPlaceholder": "Select your exact model",
     "pendienteTitulo": "Complete the steps above",
-    "pendienteTexto": "Choose your brand, model, and error to see the exact price for your plan.",
+    "pendienteTexto": "Choose your brand, model, and error to see the exact installation price.",
     "cambiarSeleccion": "Change selection",
     "planEsencialNombre": "Essential",
     "planEsencialDuracion": "3 months",
@@ -813,16 +859,38 @@
     "planEliteDuracion": "12 months",
     "precioNoDisponible": "Ask us",
     "ctaPlan": "Choose Plan",
-    "notaWhatsapp": "{marca} {modelo} Reset\nError: {error}\n{plan} Plan ({duracion}) · {pais} · {precio}",
-    "notaWhatsappSinError": "{marca} {modelo} Reset\n{plan} Plan ({duracion}) · {pais} · {precio}",
-    "modeloWidgetTitulo": "Choose your plan",
+    "notaWhatsapp": "{marca} {modelo} Reset\nError: {error}\n{plan} ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "{marca} {modelo} Reset\n{plan} ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "Installation price",
     "metodosPagoTitulo": "Payment methods available in {pais}",
-    "metodosPagoNota": "We only show the accepted banks and institutions. We share the exact account details over WhatsApp once you confirm your plan.",
+    "metodosPagoNota": "We only show the accepted banks and institutions. We share the exact account details over WhatsApp once you confirm your order.",
     "metodosInternacionalesSubtitulo": "International methods",
     "bloqueLocalTitulo": "Price in your local currency · Local agent in {pais}",
     "bloqueInternacionalTitulo": "Price in US Dollars · International Payment",
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Limited-time offer: {tiempo}",
-    "ctaGeneral": "Talk to a technician about pricing"
+    "ctaGeneral": "Ask about prices on WhatsApp",
+    "planInstalacionNombre": "Reset Installation",
+    "planInstalacionDuracion": "For 1 PC"
+  },
+  "procesoInstalacion": {
+    "resumenTitulo": "Exclude the Antivirus, Configure and Download the Installation",
+    "resumenTexto": "Exclude the C:\\ResetEntuPc.com folder in Windows Defender, open the installer, choose your model and download your reset installation.",
+    "titulo": "Exclude the Antivirus, Configure and Download the Installation",
+    "resultado": "Result: Installation complete! Your model's reset is ready in C:\\ResetEntuPc.com.",
+    "moduloTitulo": "How to do it, step by step",
+    "sub1Titulo": "Exclude the antivirus",
+    "sub1Texto": "Create the C:\\ResetEntuPc.com folder and add it as an exclusion in Windows Defender: Windows Security › Virus & threat protection › Manage settings › Exclusions › Add an exclusion › Folder.",
+    "sub2Titulo": "Configuration",
+    "sub2Texto": "Download and open the installer. Type your model, accept the conditions (installation for 1 PC only, no refunds) and click “Install”.",
+    "sub2Alt": "ResetEntuPC installer window: model search, accepted conditions and Install button",
+    "sub3Titulo": "Download the installation",
+    "sub3Texto": "The installer downloads your model's reset into C:\\ResetEntuPc.com. Open it, copy the Hardware ID it shows and message us on WhatsApp to buy your KEY.",
+    "sub3Alt": "The C:\\ResetEntuPc.com folder with your model's reset program and its window showing the Hardware ID"
+  },
+  "procesoAutonomo": {
+    "titulo": "100% Autonomous Reset installed on your PC by following the steps",
+    "tituloModelo": "100% Autonomous Reset installed on your PC by following the steps | {marca} {modelo}",
+    "resumenTexto": "With the reset already installed on your PC, you follow the program's steps to set the counter of your {marca} {modelo} back to zero."
   }
 }

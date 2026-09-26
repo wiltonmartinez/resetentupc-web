@@ -12,7 +12,7 @@
  */
 import { Image, getImage } from "astro:assets";
 import { t } from "../i18n/utils";
-import { NUCLEO_API_BASE_URL, SITE_URL, type Locale } from "../config/site";
+import { NUCLEO_API_BASE_URL, SITE_URL, VENDEDORES_API_URL, type Locale } from "../config/site";
 import whatsappLogo from "../assets/whatsapp/1.png";
 import whatsappNotif from "../assets/whatsapp/2.png";
 
@@ -31,7 +31,7 @@ const mostrarWhatsapp = !LOCALES_SIN_WHATSAPP.includes(locale);
 // completar el "{url}" del mensaje de CUALQUIER vendedor del menú, no solo
 // de uno en particular — por eso vive en el wrapper y no en cada link.
 const urlOrigen = `${SITE_URL}${path}`;
-const vendedoresApiUrl = `${NUCLEO_API_BASE_URL}/api/public/vendedores/`;
+const vendedoresApiUrl = VENDEDORES_API_URL;
 
 // En una página de modelo (marcaDefault+modeloDefault ya conocidos, ej.
 // /reset/epson/l3210/) la burbuja de notificación es específica al modelo
@@ -167,6 +167,14 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 <script>
   import "../lib/selector-vendedores";
   import { trackEvent } from "../lib/analytics.js";
+  import {
+    type SeleccionGlobal,
+    LABEL_POR_MARCA,
+    leerSeleccionGlobal,
+    guardarSeleccionCompartida,
+    alCambiarSeleccionGlobal,
+    construirMensajeWhatsApp,
+  } from "../lib/seleccion-global";
   import { playFeedback } from "../lib/sound-manager.js";
   import { NUCLEO_API_BASE_URL } from "../config/site";
 
@@ -446,32 +454,11 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
   // bloque corre en TODAS las páginas (ContactHub va en BaseLayout) — es el
   // único punto que aplica esa selección al botón flotante de WhatsApp
   // incluso en páginas que no traen el selector de Home/Cómo Funciona.
-  interface SeleccionGlobal {
-    marca: string;
-    modelo: string;
-    error: string;
-  }
-
-  const SELECCION_LS_KEY = "resetenlinea_seleccion_global_v1";
-
-  function leerSeleccionGlobal(): SeleccionGlobal | null {
-    try {
-      const datos = JSON.parse(localStorage.getItem(SELECCION_LS_KEY) || "null");
-      return datos && datos.marca ? datos : null;
-    } catch {
-      return null;
-    }
-  }
-
-  function guardarSeleccionGlobal(datos: SeleccionGlobal): void {
-    try {
-      localStorage.setItem(SELECCION_LS_KEY, JSON.stringify(datos));
-    } catch {
-      /* localStorage no disponible: la selección simplemente no persiste entre visitas. */
-    }
-  }
-
-  const LABEL_POR_MARCA: Record<string, string> = { epson: "Epson", canon: "Canon", "epson-sc": "Epson-SC" };
+  // La selección (marca/modelo/error) vive en src/lib/seleccion-global.ts: una
+  // sola fuente de verdad para todo el sitio. Este botón flotante se
+  // actualiza SOLO cuando cualquier otro módulo (página de modelo, buscador
+  // de precios, "Cómo funciona"…) cambia la selección — ver el suscriptor de
+  // más abajo — sin depender del orden en que corren los scripts.
   // Epson-SC es la única "plotter" del catálogo — mismo criterio que
   // GRUPO_POR_MARCA en src/lib/precios.ts y metodos_pago.php del lado PHP.
   const GRUPO_POR_MARCA: Record<string, "impresora" | "plotter"> = { epson: "impresora", canon: "impresora", "epson-sc": "plotter" };
@@ -503,16 +490,13 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
     const marcaLabel = LABEL_POR_MARCA[datos.marca] ?? "";
     document.querySelectorAll<HTMLElement>("[data-whatsapp-dinamico]").forEach((wrap) => {
       const links = wrap.querySelectorAll<HTMLAnchorElement>("a[data-source-id], a[data-whatsapp-menu-link]");
-      if (!links.length) return;
-      const urlOrigen = wrap.dataset.urlOrigen ?? "";
-      const plantilla = marcaLabel ? (wrap.dataset.msgWithoutError ?? "") : (wrap.dataset.msgGeneric ?? "");
-      const mensaje = plantilla
-        .replaceAll("{marca}", marcaLabel)
-        .replaceAll("{modelo}", datos.modelo)
-        .replaceAll("{error}", datos.error)
-        .replaceAll("{url}", urlOrigen)
-        .replace(/[ \t]{2,}/g, " ")
-        .replace(/[ \t]+([,.;:])/g, "$1");
+      // (sin return anticipado: la burbuja debe actualizarse aunque los
+      // vendedores del menú todavía no hayan cargado)
+      const mensaje = construirMensajeWhatsApp(
+        datos,
+        { sinError: wrap.dataset.msgWithoutError ?? "", generico: wrap.dataset.msgGeneric ?? "" },
+        wrap.dataset.urlOrigen ?? ""
+      );
       links.forEach((link) => {
         const numero = link.dataset.numero || wrap.dataset.whatsappNumber || "";
         if (!numero) return;
@@ -531,6 +515,12 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       }
     });
   }
+
+  // Cambio de selección desde cualquier otro módulo (o pestaña): el botón
+  // flotante, su menú y la burbuja se ponen al día al instante.
+  alCambiarSeleccionGlobal((seleccion) => {
+    if (seleccion) aplicarSeleccionAWhatsApp(seleccion);
+  });
 
   const popup = document.querySelector<HTMLDialogElement>("[data-seleccion-popup]");
   const popupForm = document.querySelector<HTMLFormElement>("[data-seleccion-popup-form]");
@@ -614,7 +604,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
 
       if (modoSoloError) {
         const datos: SeleccionGlobal = { marca: marcaFijaSlug, modelo: modeloFijo, error };
-        guardarSeleccionGlobal(datos);
+        guardarSeleccionCompartida(datos);
         aplicarSeleccionAWhatsApp(datos);
         popup.close();
         return;
@@ -623,7 +613,7 @@ const whatsappNotifOptimizada = await getImage({ src: whatsappNotif, width: 112 
       const marca = popupMarcaSelect.value;
       const modelo = popupModeloInput.value.trim();
       if (!marca || !modelo) return;
-      guardarSeleccionGlobal({ marca, modelo, error });
+      guardarSeleccionCompartida({ marca, modelo, error });
       popup.close();
       // Recarga para que el resto de módulos de la página (selector de "Cómo
       // Funciona", widget de precios, etc., cuando estén presentes) también

@@ -37,7 +37,49 @@
     // fallback de next() hacia el asset estático no las sirve bien cuando
     // el Worker corre primero. El caso de /reset/Epson/L3210/ (mayúsculas)
     // queda sin resolver hasta encontrar otra forma de arreglarlo.
+    // Prueba Social OCULTA (PRUEBA_SOCIAL_VISIBLE = false en src/config/site.ts): las páginas principales
+    // /prueba-social/ y /{idioma}/prueba-social son estáticas (prerenderizadas), así que sin estas
+    // entradas Cloudflare las serviría directo y el redirect 302 de middleware.ts nunca correría. Mientras
+    // esté oculta, el middleware SIEMPRE redirige (nunca llama next()), igual que los patrones de
+    // WordPress de abajo. SI SE VUELVE A MOSTRAR (PRUEBA_SOCIAL_VISIBLE = true), QUITAR estas entradas
+    // "prueba-social" (ru/ko ya están cubiertos por /ru/* y /ko/*), o el Worker correría primero en
+    // rutas prerenderizadas y podrían dar 404 (ver advertencia de arriba).
     "run_worker_first": [
+      "/prueba-social",
+      "/prueba-social/*",
+      "/en/prueba-social",
+      "/en/prueba-social/*",
+      "/pt/prueba-social",
+      "/pt/prueba-social/*",
+      "/fr/prueba-social",
+      "/fr/prueba-social/*",
+      "/it/prueba-social",
+      "/it/prueba-social/*",
+      "/de/prueba-social",
+      "/de/prueba-social/*",
+      "/pl/prueba-social",
+      "/pl/prueba-social/*",
+      "/nl/prueba-social",
+      "/nl/prueba-social/*",
+      // Consultar Garantía OCULTA (CONSULTA_GARANTIA_VISIBLE = false): mismas razones que Prueba Social; son
+      // páginas estáticas, así que el Worker debe correr primero para que el redirect 302 se aplique. Quitar
+      // estas entradas si se vuelve a `true`. (ru/ko ya están cubiertos por /ru/* y /ko/*.)
+      "/consulta-garantia",
+      "/consulta-garantia/*",
+      "/en/warranty-check",
+      "/en/warranty-check/*",
+      "/pt/consulta-garantia",
+      "/pt/consulta-garantia/*",
+      "/fr/verifier-garantie",
+      "/fr/verifier-garantie/*",
+      "/it/verifica-garanzia",
+      "/it/verifica-garanzia/*",
+      "/de/garantie-abfrage",
+      "/de/garantie-abfrage/*",
+      "/pl/sprawdz-gwarancje",
+      "/pl/sprawdz-gwarancje/*",
+      "/nl/garantie-controleren",
+      "/nl/garantie-controleren/*",
       "/ru/*",
       "/ko/*",
       "/tecnico",

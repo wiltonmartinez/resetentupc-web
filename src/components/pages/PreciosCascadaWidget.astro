@@ -22,7 +22,7 @@
  */
 import { getImage } from "astro:assets";
 import { t, buildWhatsAppMessage, buildWhatsAppLink } from "../../i18n/utils";
-import { WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
+import { PRECIOS_API_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 import { paisesPrecioPublico, catalogoCascada, mapaErroresPublico, type PaisPrecioPublico } from "../../lib/precios";
 import iconoClasico from "../../assets/branding/clasico.png";
 import iconoPlus from "../../assets/branding/plus.png";
@@ -47,26 +47,14 @@ const [iconoClasicoUrl, iconoPlusUrl, iconoEliteUrl] = await Promise.all([
   getImage({ src: iconoElite, width: 64, height: 64 }),
 ]).then((imgs) => imgs.map((img) => img.src));
 
+// Se vende UNA instalación (ya no hay planes de 90/180/365 días): una sola tarjeta por moneda.
+// Los textos de los planes anteriores siguen en i18n (preciosPage.planEsencial…), sin uso.
 const PLANES = [
   {
-    key: "esencial" as const,
-    icono: iconoClasicoUrl,
-    nombre: t(locale, "preciosPage.planEsencialNombre"),
-    duracion: t(locale, "preciosPage.planEsencialDuracion"),
-    destacado: false,
-  },
-  {
-    key: "profesional" as const,
+    key: "instalacion" as const,
     icono: iconoPlusUrl,
-    nombre: t(locale, "preciosPage.planProfesionalNombre"),
-    duracion: t(locale, "preciosPage.planProfesionalDuracion"),
-    destacado: true,
-  },
-  {
-    key: "elite" as const,
-    icono: iconoEliteUrl,
-    nombre: t(locale, "preciosPage.planEliteNombre"),
-    duracion: t(locale, "preciosPage.planEliteDuracion"),
+    nombre: t(locale, "preciosPage.planInstalacionNombre"),
+    duracion: t(locale, "preciosPage.planInstalacionDuracion"),
     destacado: false,
   },
 ];
@@ -100,15 +88,10 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
   data-bloque-internacional-titulo={t(locale, "preciosPage.bloqueInternacionalTitulo")}
   data-descuento-badge-template={t(locale, "preciosPage.descuentoBadge")}
   data-descuento-countdown-template={t(locale, "preciosPage.descuentoCountdown")}
-  data-plan-esencial-nombre={PLANES[0].nombre}
-  data-plan-esencial-duracion={PLANES[0].duracion}
-  data-plan-esencial-icono={PLANES[0].icono}
-  data-plan-profesional-nombre={PLANES[1].nombre}
-  data-plan-profesional-duracion={PLANES[1].duracion}
-  data-plan-profesional-icono={PLANES[1].icono}
-  data-plan-elite-nombre={PLANES[2].nombre}
-  data-plan-elite-duracion={PLANES[2].duracion}
-  data-plan-elite-icono={PLANES[2].icono}
+  data-plan-nombre={PLANES[0].nombre}
+  data-plan-duracion={PLANES[0].duracion}
+  data-plan-icono={PLANES[0].icono}
+  data-precios-api-url={PRECIOS_API_URL}
 >
   <div class="precios-box precios-panel">
     <label class="precios-campo">
@@ -194,6 +177,7 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
 </div>
 
 <script>
+  import { leerSeleccionGlobal, guardarSeleccionCompartida, alCambiarSeleccionGlobal } from "../../lib/seleccion-global";
   interface ModeloCascada {
     slug: string;
     nombre: string;
@@ -215,16 +199,11 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
     nombre: string;
     estado: string;
   }
-  interface PreciosPorPlan {
-    esencial: number | null;
-    profesional: number | null;
-    elite: number | null;
-  }
   interface OpcionMoneda {
     codigo: string;
     ambito: "local" | "internacional";
     descontable?: boolean;
-    precios: { impresora: PreciosPorPlan | null; plotter: PreciosPorPlan | null };
+    precios: { impresora: number | null; plotter: number | null };
   }
   interface PaisPrecioPublico {
     slug: string;
@@ -336,10 +315,13 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       }
       return datos;
     }
-    const estadoDescuento = cargarEstadoDescuento();
+    // Descuento en USD DESACTIVADO (un solo precio por moneda). Con `false` no se lee ni se escribe la cookie y
+    // ninguna tarjeta muestra descuento; el resto del código queda por si se reactiva.
+    const DESCUENTO_ACTIVO = false;
+    const estadoDescuento = DESCUENTO_ACTIVO ? cargarEstadoDescuento() : { pct: 0, expiraEn: 0, visitas: 0 };
 
     function descuentoActivo(): boolean {
-      return Date.now() < estadoDescuento.expiraEn;
+      return DESCUENTO_ACTIVO && Date.now() < estadoDescuento.expiraEn;
     }
 
     function formatoCuentaRegresiva(ms: number): string {
@@ -368,16 +350,50 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       }, 1000);
     }
 
+    // Una sola tarjeta: la instalación (sin planes ni "Más popular").
     const PLANES = [
-      { key: "esencial" as const, icono: root.dataset.planEsencialIcono || "", nombre: root.dataset.planEsencialNombre || "", duracion: root.dataset.planEsencialDuracion || "", destacado: false },
-      { key: "profesional" as const, icono: root.dataset.planProfesionalIcono || "", nombre: root.dataset.planProfesionalNombre || "", duracion: root.dataset.planProfesionalDuracion || "", destacado: true },
-      { key: "elite" as const, icono: root.dataset.planEliteIcono || "", nombre: root.dataset.planEliteNombre || "", duracion: root.dataset.planEliteDuracion || "", destacado: false },
+      { key: "instalacion" as const, icono: root.dataset.planIcono || "", nombre: root.dataset.planNombre || "", duracion: root.dataset.planDuracion || "", destacado: false },
     ];
 
     const estado = { marca: "", familia: "", modelo: "", errorId: "", errorOtro: "", monedaCodigo: "" };
 
     function marcaActual(): MarcaCascada | null {
       return catalogoPorSlug[estado.marca] || null;
+    }
+
+    // Selección GLOBAL del sitio (src/lib/seleccion-global.ts): si el
+    // visitante ya eligió marca/modelo/error en otra página (ej. llegó de
+    // /reset/epson/l1250/) este buscador arranca ya con eso, en CUALQUIER
+    // página donde se use (Términos, Cómo funciona…), y lo que se elija acá
+    // vuelve a la selección global para el botón flotante y los demás botones.
+    function aplicarSeleccionGlobal(cache: { marca: string; modelo: string; error: string } | null): boolean {
+      if (!cache?.marca || !catalogoPorSlug[cache.marca]) return false;
+      const marcaCache = catalogoPorSlug[cache.marca];
+      const todosLosModelos = marcaCache.familias ? marcaCache.familias.flatMap((f) => f.modelos) : marcaCache.modelos || [];
+      const modeloMatch = cache.modelo ? todosLosModelos.find((m) => m.nombre.toLowerCase() === cache.modelo.toLowerCase()) : undefined;
+      const nuevo = { marca: cache.marca, familia: "", modelo: "", errorId: "", errorOtro: "" };
+      if (modeloMatch) {
+        nuevo.modelo = modeloMatch.slug;
+        if (marcaCache.familias) {
+          nuevo.familia = marcaCache.familias.find((f) => f.modelos.some((m) => m.slug === modeloMatch.slug))?.slug || "";
+        }
+        if (cache.error) {
+          const opciones = erroresMapa[cache.marca]?.[modeloMatch.slug] || [];
+          const bajo = cache.error.toLowerCase();
+          const match = opciones.find((e) => e.nombre.toLowerCase().includes(bajo) || bajo.includes(e.nombre.toLowerCase()));
+          if (match) nuevo.errorId = match.id;
+          else nuevo.errorOtro = cache.error;
+        }
+      }
+      // Sin cambios reales: no se toca nada (evita repintar y ping-pong).
+      if (nuevo.marca === estado.marca && nuevo.modelo === estado.modelo && (nuevo.errorId || nuevo.errorOtro) === (estado.errorId || estado.errorOtro)) return false;
+      Object.assign(estado, nuevo);
+      return true;
+    }
+
+    function guardarSeleccionGlobal() {
+      if (!estado.marca) return;
+      guardarSeleccionCompartida({ marca: estado.marca, modelo: modeloNombre(), error: errorNombre() });
     }
 
     function modelosDisponibles(): ModeloCascada[] {
@@ -625,11 +641,10 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
 
     function construirTarjetas(contenedorEl: HTMLElement, opcion: OpcionMoneda, pais: PaisPrecioPublico, marca: MarcaCascada) {
       const aplicarDescuento = Boolean(opcion.descontable) && descuentoActivo();
-      const precios = opcion.precios[marca.grupo];
 
       contenedorEl.innerHTML = "";
       PLANES.forEach((plan) => {
-        const montoBase = precios ? precios[plan.key] : null;
+        const montoBase = opcion.precios[marca.grupo]; // precio único de la instalación para este tipo de equipo
         const descuentaEstaTarjeta = aplicarDescuento && montoBase != null;
         const montoFinal = descuentaEstaTarjeta ? Math.round(montoBase! * (1 - estadoDescuento.pct / 100)) : montoBase;
         const precioTexto = formatoPrecio(montoFinal, opcion.codigo);
@@ -780,9 +795,14 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       if (metodosInternacionalesBloqueEl) metodosInternacionalesBloqueEl.hidden = !huboInternacionales;
     }
 
+    // Solo se guarda tras una elección del visitante, no en el primer pintado
+    // (para no pisar con formatos distintos la selección que ya trajo otra página).
+    let arrancando = true;
+
     function actualizar() {
       actualizarPasos();
       renderPrecios();
+      if (!arrancando && seleccionCompleta()) guardarSeleccionGlobal();
     }
 
     marcaBotones.forEach((btn) => {
@@ -841,7 +861,22 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       actualizar();
     });
 
+    aplicarSeleccionGlobal(leerSeleccionGlobal());
+    if (estado.errorOtro) errorOtroInput!.value = estado.errorOtro;
     actualizar();
+    arrancando = false;
+
+    // Si otro módulo cambia la selección con la página ya abierta (botón
+    // flotante, otra pestaña…), este buscador se pone al día sin volver a
+    // guardarla (evita ida y vuelta).
+    alCambiarSeleccionGlobal((seleccion) => {
+      arrancando = true;
+      if (aplicarSeleccionGlobal(seleccion)) {
+        errorOtroInput!.value = estado.errorOtro;
+        actualizar();
+      }
+      arrancando = false;
+    });
 
     // Corrige el país apenas se conoce el real (esta página es estática,
     // no puede leer cf-ipcountry al servir el HTML) — mismo endpoint SSR
@@ -859,6 +894,29 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
       .catch(() => {
         /* se queda en el país de respaldo (Colombia) */
       });
+
+    // Precios en vivo: esta página es estática (los precios del HTML quedan fijos al hacer el build). Se piden
+    // de nuevo al backend al cargar, para que cualquier cambio del panel (Precios / Monedas) se vea sin
+    // reconstruir el sitio. Si falla, se quedan los del render inicial.
+    const preciosApiUrl = root.dataset.preciosApiUrl || "";
+    if (preciosApiUrl) {
+      fetch(preciosApiUrl)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((datos: { monedas?: { codigo: string; precios: { impresora: number; plotter: number } }[] } | null) => {
+          const porCodigo = new Map((datos?.monedas ?? []).map((m) => [m.codigo, m.precios]));
+          if (porCodigo.size === 0) return;
+          paises.forEach((p) =>
+            p.monedas.forEach((m) => {
+              const nuevos = porCodigo.get(m.codigo);
+              if (nuevos) m.precios = { impresora: nuevos.impresora, plotter: nuevos.plotter };
+            })
+          );
+          renderPrecios();
+        })
+        .catch(() => {
+          /* se quedan los precios del render inicial */
+        });
+    }
   });
 </script>
 
@@ -1070,7 +1128,9 @@ const mensajeTemplate: string = t(locale, "whatsapp.greetingConPlan");
 
   .precios-cascada-widget .precios-planes {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* Una sola tarjeta (la instalación), centrada. */
+    grid-template-columns: minmax(0, 24rem);
+    justify-content: center;
     gap: var(--space-sm);
     align-items: end;
     margin-bottom: var(--space-md);

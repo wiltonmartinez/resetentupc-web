@@ -1,0 +1,35 @@
+﻿---
+import { apiFetch } from '../lib/api';
+
+let estadoBackend = null;
+let errorConexion = null;
+
+try {
+  estadoBackend = await apiFetch('/health');
+} catch (e) {
+  errorConexion = e.message;
+}
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prueba de Conexión - Reset en tu PC</title>
+  </head>
+  <body style="font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f9f9f9;">
+    <h1>Prueba de Conexión con el Motor Local</h1>
+
+    {errorConexion ? (
+      <div style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border: 1px solid #ef9a9a;">
+        <h3>¡Error de conexión!</h3>
+        <p>{errorConexion}</p>
+      </div>
+    ) : (
+      <div style="background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 5px; border: 1px solid #c8e6c9;">
+        <h3>¡Conexión y Respuesta Recibida con Éxito!</h3>
+        <p><strong>Estado:</strong> {estadoBackend?.status} · <strong>BD:</strong> {estadoBackend?.db}</p>
+        <pre style="background: #fff; padding: 10px; border-radius: 4px;">{JSON.stringify(estadoBackend, null, 2)}</pre>
+      </div>
+    )}
+  </body>
+</html>

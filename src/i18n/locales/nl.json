@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "ResetEnLinea.com"
+    "siteName": "ResetEntuPC.com"
   },
   "imageModal": {
     "ampliarLabel": "Afbeelding vergroten",
@@ -10,7 +10,7 @@
     "contadorTemplate": "{actual} van {total}"
   },
   "notFound": {
-    "title": "Pagina niet gevonden | ResetEnLinea.com",
+    "title": "Pagina niet gevonden | ResetEntuPC.com",
     "description": "De pagina die je zoekt bestaat niet of is verplaatst.",
     "heading": "Pagina niet gevonden",
     "texto": "De pagina die je zoekt bestaat niet of is verplaatst.",
@@ -41,8 +41,8 @@
     "paginaSiguiente": "Volgende →"
   },
   "home": {
-    "title": "Professionele geassisteerde printerreset | ResetEnLinea.com",
-    "description": "Reset van inktkussen en inkttellers voor Epson- en Canon-printers, met professionele hulp op afstand. Duidelijke diagnose vóór elke procedure.",
+    "title": "Reset-installatie voor Epson- en Canon-printers | ResetEntuPC.com",
+    "description": "Installatie van de inktkussen-reset voor Epson- en Canon-printers via USB-verbinding. 100% zelfstandig proces op je eigen pc, met een Key Trial om te testen voordat je koopt.",
     "heroTitle": "Professionele printerreset, zonder risico",
     "heroSubtitle": "Duidelijke diagnose, hulp op afstand en echte ondersteuning voor jouw merk en model.",
     "heroCta": "Ontgrendel je printer nu!",
@@ -78,11 +78,11 @@
     "heroTagline": "Professioneel, veilig en snel resetten, met een herbruikbare garantie vanaf elke pc."
   },
   "modelo": {
-    "titleTemplate": "{marca} {modelo} resetten — Geassisteerde service | ResetEnLinea.com",
-    "descriptionTemplate": "Geassisteerde reset op afstand voor jouw {marca} {modelo}. Geen download of zelfstandige tool: een echte technicus begeleidt je veilig via WhatsApp.",
+    "titleTemplate": "{marca} {modelo} Reset — installatie via USB | ResetEntuPC.com",
+    "descriptionTemplate": "Reset-installatie voor je {marca} {modelo} via USB-verbinding. 100% zelfstandig proces: je doet het zelf op je Windows-pc, aan de hand van onze video's.",
     "intro": "We helpen je de reset van je {marca} {modelo} veilig op te lossen, met professionele begeleiding bij elke stap.",
     "errorSectionTitle": "Welke fout toont je printer?",
-    "errorSectionText": "Vertel ons de melding of foutcode die je op je {marca} {modelo} ziet, zodat we een nauwkeurigere diagnose kunnen stellen.",
+    "errorSectionText": "Vertel ons welke foutmelding of -code je op je {marca} {modelo} ziet, zodat we kunnen bevestigen of de reset die dekt.",
     "ctaHero": "Vraag naar mijn {marca} {modelo}",
     "ctaError": "Ik heb al de foutcode",
     "faqTitle": "Veelgestelde vragen over dit model",
@@ -91,22 +91,22 @@
     "errorRequiereRevisionTitle": "Dit model kan ook een probleem tonen dat extra controle vereist",
     "seleccionaError": "Selecteer de code die op je printer wordt getoond",
     "reconocimiento": "Toont je {marca} {modelo} een resetprobleem of foutmelding?",
-    "atencionExplicacionConError": "De fout {errorLargo} blokkeert het afdrukken op je {marca} {modelo}, maar dat betekent niet dat je een nieuwe printer moet kopen: we ontgrendelen hem terug naar 0% in minder dan 1 minuut, zonder je apparaat te verplaatsen.",
-    "atencionExplicacionGenerica": "Dit type fout blokkeert het afdrukken op je {marca} {modelo}, maar dat betekent niet dat je een nieuwe printer moet kopen: we ontgrendelen hem terug naar 0% in minder dan 1 minuut, zonder je apparaat te verplaatsen.",
-    "interesTitulo": "Waarom kiezen voor onze geassisteerde reset voor jouw {marca} {modelo}",
-    "videoResumenTitulo": "Zo wordt het in minder dan 1 minuut opgelost",
+    "atencionExplicacionConError": "De fout {errorLargo} blokkeert het printen van je {marca} {modelo}, maar dat betekent niet dat je een nieuwe printer moet kopen: je kunt hem zelf ontgrendelen, zonder je apparaat van je huis of kantoor te verplaatsen.",
+    "atencionExplicacionGenerica": "Dit type fout blokkeert het printen van je {marca} {modelo}, maar dat betekent niet dat je een nieuwe printer moet kopen: je kunt hem zelf ontgrendelen, zonder je apparaat van je huis of kantoor te verplaatsen.",
+    "interesTitulo": "Waarom onze Zelfstandige Reset kiezen voor je {marca} {modelo}",
+    "videoResumenTitulo": "Een reset in actie",
     "videoResumenTexto": "Bekijk een echt {marca} {modelo}-geval, opgelost door ons team.",
     "videoResumenPlaceholder": "Binnenkort: een echt {marca} {modelo}-geval, hier.",
-    "accionIntro": "Je hebt gezien hoe de geassisteerde reset werkt voor jouw {marca} {modelo}. Wanneer je klaar bent, stuur ons een bericht via WhatsApp en we beginnen.",
+    "accionIntro": "Je hebt gezien hoe de Zelfstandige Reset voor je {marca} {modelo} werkt. Stuur ons wanneer je wilt een bericht via WhatsApp met het ID van je pc om je Key te krijgen.",
     "ctaBeneficios": "Ontgrendel je {marca} {modelo} nu!",
-    "ctaBeneficiosSubtexto": "Gratis diagnose, vrijblijvend",
+    "ctaBeneficiosSubtexto": "Key Trial (proefsleutel), slechts één keer",
     "ctaIndiceProcesos": "Krijg een oplossing voor {marca} {modelo}",
     "ctaPaso1": "Controleer mijn fout op {marca} {modelo}",
     "ctaPaso2": "Bevestig de vereisten voor {marca} {modelo}",
-    "ctaPaso3": "Start gratis diagnose - {marca} {modelo}",
+    "ctaPaso3": "Stuur ons een bericht via WhatsApp - {marca} {modelo}",
     "ctaPaso4": "Bekijk prijzen voor {marca} {modelo}",
     "ctaPaso5": "Bekijk een live reset van {marca} {modelo}",
-    "ctaPaso5Nota": "Deze video is geen stappenplan om zelf te volgen: het is echt bewijs van hoe onze technicus de reset op afstand vanaf onze server uitvoert, terwijl hij je de hele tijd via WhatsApp begeleidt.",
+    "ctaPaso5Nota": "Referentievideo van een reset die al is uitgevoerd op een apparaat zoals dat van jou. In jouw geval voer je de reset zelf uit op je pc, aan de hand van de stappen in onze video's.",
     "ctaPaso6": "Breng mijn {marca} {modelo} nu weer tot leven!",
     "prefijoTitulo": "Reset",
     "cierreTitulo": "Klaar om het op te lossen?",
@@ -145,12 +145,12 @@
     "paso2Titulo": "Vereisten en USB-verbinding",
     "paso3Titulo": "Geassisteerde controle van USB-compatibiliteit en resetbeschikbaarheid",
     "paso3TituloEpson": "Geassisteerde controle van USB-compatibiliteit en resetbeschikbaarheid",
-    "paso4Titulo": "Offerte en betaling of actieve garantie",
-    "paso4TituloEpson": "Offerte en betaling of actieve garantie",
+    "paso4Titulo": "Prijs van de Installatie en Aankoop van je Key",
+    "paso4TituloEpson": "Prijs van de Installatie en Aankoop van je Key",
     "paso5Titulo": "Geassisteerde reset in 1 minuut",
     "paso5TituloEpson": "Geassisteerde reset in 1 minuut",
-    "paso5TituloEpsonSc": "Reparatiemodus en reset in 1 minuut (module en ID-uitvoering)",
-    "paso5TituloEpsonSc0014bd": "Vervang door een nieuw inktkussen, reinig de sensor en het plastic oppervlak 100%, inspectiemodus en reset in 1 minuut",
+    "paso5TituloEpsonSc": "Reparatiemodus en Zelfstandige Reset (Uitvoeren van het programma en ID)",
+    "paso5TituloEpsonSc0014bd": "Nieuw inktkussen plaatsen, sensor en kunststof oppervlak 100% reinigen, inspectiemodus en Zelfstandige Reset",
     "paso6Titulo": "Printer ontgrendeld en klaar om af te drukken",
     "paso1TituloGenerico": "Identificatie van de fout van je printer",
     "paso3TituloGenerico": "Geassisteerde compatibiliteitscontrole"
@@ -172,7 +172,7 @@
     "paso2Punto4": "We repareren geen fysieke fouten, afdrukkwaliteitsproblemen, cartridges of de onderhoudscassette.",
     "paso3Titulo": "Geassisteerde controle van USB-compatibiliteit en resetbeschikbaarheid",
     "paso3Resultado": "Resultaat van de controle: Compatibel, USB-verbinding herkend, 100% uitlezing en service beschikbaar",
-    "paso4Titulo": "Offerte en betaling of actieve garantie",
+    "paso4Titulo": "Prijs van de Installatie en Aankoop van je Key",
     "paso5Titulo": "Geassisteerde reset in 1 minuut | {marca} {modelo}",
     "paso5TituloCorto": "Geassisteerde reset in 1 minuut",
     "paso5AnchorConVideo": "Bekijk het volledige bewijs: {titulo}",
@@ -183,14 +183,19 @@
     "paso6ResenaTrustpilot": "Echte beoordeling op Trustpilot",
     "paso6AltTrustpilot": "Klantbeoordeling op Trustpilot",
     "paso6VerMasClientes": "Bekijk meer tevreden klanten",
-    "paso6VerTestimoniosTrustpilot": "Bekijk beoordelingen op Trustpilot"
+    "paso6VerTestimoniosTrustpilot": "Bekijk beoordelingen op Trustpilot",
+    "paso2Requisito1": "Gebonden aan één enkele PC",
+    "paso2Requisito2": "Wij verkopen een Installatie, GEEN Reparatie",
+    "paso2Requisito3": "100% zelfstandig proces en verbinding",
+    "paso2Requisito4": "Het is een VERPLICHTE VOORWAARDE om uitsluitend Windows Defender te gebruiken.",
+    "paso2Requisito5": "Het programma lost GEEN fysieke problemen, printkwaliteit, reiniging van printkoppen, onderhoudsbox of cartridgestoringen op."
   },
   "proceso": {
-    "titulo": "100% geassisteerde reset op afstand via USB-verbinding",
+    "titulo": "Reset-installatie via USB-verbinding",
     "introTexto": "Zo werkt de verbinding voordat je ons een bericht stuurt via WhatsApp:",
     "paso1Titulo": "Bereid je computer voor",
     "paso1Texto": "Je hebt een pc met Windows 11, 10 of 8 nodig. Open WhatsApp Web op diezelfde computer en sluit je printer aan met een USB-kabel. Je moet ook de veilige verbindingsmodule downloaden.",
-    "paso1Enlace": "Download veilige module",
+    "paso1Enlace": "Installer downloaden",
     "paso2Titulo": "Verbinden",
     "paso2Texto": "Open het programma en voer het hieronder getoonde technicus-ID in. Typ bij \"Aanvullende informatie\" je naam.",
     "paso3Titulo": "Deel de USB-verbinding",
@@ -208,8 +213,8 @@
     "paso4ImagenAlt": "USB Redirector-scherm dat wacht op de technicus, met de melding om via WhatsApp te schrijven"
   },
   "comoFunciona": {
-    "title": "Hoe de service werkt | ResetEnLinea.com",
-    "description": "Ontdek ons diagnoseproces, compatibiliteitscontrole en hulp op afstand bij het resetten van je printer.",
+    "title": "Hoe de service werkt | ResetEntuPC.com",
+    "description": "Leer het installatieproces van de reset via USB kennen: vereisten, download van het installatieprogramma, aankoop van je Key en zelfstandige reset op je pc.",
     "heading": "Hoe het werkt",
     "tabServicio": "Onze service",
     "tabProceso": "Technische verbinding",
@@ -239,7 +244,7 @@
     "paso2ReqLimpieza": "Reinig de inktsensor en de plastic onderdelen 100% grondig, en het inktkussen moet nieuw zijn vóór de reset.",
     "paso2ReqErrorVerificado": "Fout \"{error}\" bevestigd.",
     "tituloModuloSeguro": "Zo werkt de verbinding met de technicus",
-    "paso4Texto": "De betaling gebeurt pas nadat de compatibiliteit van je apparaat is bevestigd. Als je al een actieve garantie hebt, betaal je niet opnieuw — deze wordt automatisch toegepast.",
+    "paso4Texto": "Kopieer het ID van je pc en stuur ons een bericht via WhatsApp: we geven je de prijs voor je land en de betaalmethoden, en genereren je Key om de installatie op die pc te activeren. Vooraf kun je eenmalig een Key Trial (proefsleutel) aanvragen.",
     "paso5VideoPlaceholder": "Live resetbewijsvideo — binnenkort beschikbaar",
     "paso6ChatPlaceholder": "Echte klantbeoordeling — binnenkort beschikbaar",
     "introTituloQueEs": "Wat is het precies?",
@@ -248,21 +253,21 @@
     "introDestacado": "Jij sluit alleen de kabel aan — wij doen het technische werk!",
     "introAclaracion": "Belangrijke opmerking: we verkopen geen zelfstandige programma's. We leveren een directe oplossing voor de printplaat van je printer.",
     "beneficiosTitulo": "Voordelen van onze service",
-    "beneficiosSubtitulo": "Snelheid, bewezen resultaten en nul risico — zo krijgen we je printer vandaag weer aan het werk.",
-    "beneficio1Titulo": "Reset in 1 minuut",
-    "beneficio1Texto": "De oplossing verloopt razendsnel. Je printer is klaar binnen 60 seconden of minder nadat de verbinding tot stand is gebracht.",
-    "beneficio2Titulo": "Geen verplaatsing of wachttijd",
-    "beneficio2Texto": "Je hoeft je printer nergens naartoe te brengen of een technicus in te plannen. Vergeet dagenlang wachten — de oplossing is direct.",
-    "beneficio3Titulo": "Geen installaties",
-    "beneficio3Texto": "Volledige privacy. Geen zware programma's om te installeren en niemand bedient op afstand je pc.",
-    "beneficio4Titulo": "100% veilig",
-    "beneficio4Texto": "Een schoon, viruvsrij proces. Je hoeft nooit je antivirus uit te schakelen.",
+    "beneficiosSubtitulo": "Zelfstandigheid, transparantie en bewezen back-up: wij geven je de controle zodat je printer weer werkt.",
+    "beneficio1Titulo": "100% Zelfstandige Reset",
+    "beneficio1Texto": "Doe het zelf aan de hand van onze video's, in je eigen tempo en zonder afhankelijk te zijn van technici of afspraken.",
+    "beneficio2Titulo": "Geen Ritjes, Geen Wachttijd",
+    "beneficio2Texto": "Je hoeft de printer nergens naartoe te brengen of een technicus in te plannen. Je doet het zelf, thuis of op kantoor, wanneer je wilt.",
+    "beneficio3Titulo": "Installatie op Je Eigen Pc",
+    "beneficio3Texto": "Je downloadt het installatieprogramma en stelt het in voor jouw printermodel. Alles gebeurt vanaf je Windows-pc.",
+    "beneficio4Titulo": "Volledige Privacy",
+    "beneficio4Texto": "Wij bieden geen hulp op afstand en loggen niet in op je pc. Jij voert het proces uit en houdt de controle over je computer.",
     "beneficio5Titulo": "Bewezen resultaten",
     "beneficio5Texto": "Volledig vertrouwen. We hebben meer dan 920 vijfsterrenbeoordelingen van echte, tevreden klanten.",
-    "beneficio6Titulo": "Geld-terug-garantie",
-    "beneficio6Texto": "Nul risico. Als we na alle technische middelen te hebben geprobeerd de fout niet kunnen oplossen, krijg je je geld terug.",
-    "beneficio7Titulo": "Herbruikbaar pdf-certificaat",
-    "beneficio7Texto": "Je krijgt 12 maanden dekking (uitbreidbaar tot 15). Herbruikbare licentie: geldig vanaf elke pc voor printers van hetzelfde model.",
+    "beneficio6Titulo": "Probeer Voordat Je Koopt",
+    "beneficio6Texto": "Twijfels? Vraag via WhatsApp eenmalig een Key Trial (proefsleutel) aan en controleer het zelf.",
+    "beneficio7Titulo": "Geen Vervaldatum",
+    "beneficio7Texto": "Je installatie duurt zo lang als jij besluit: 1 dag of 20 jaar. Ze is gekoppeld aan je pc, voor gebruik op één computer.",
     "beneficio8Titulo": "24/7 ondersteuning",
     "beneficio8Texto": "Professionele, menselijke technische ondersteuning, altijd beschikbaar wanneer jouw bedrijf het het meest nodig heeft.",
     "beneficio9Titulo": "Dagelijkse prijzen en cadeaus",
@@ -276,14 +281,14 @@
     "resumenPasoTexto1": "Model: {marca} {modelo} | Fout: {error}. Nadat je contact met ons opneemt, vragen we deze informatie om onmiddellijk te controleren of een compatibele reset beschikbaar is en of de fout kan worden opgelost voordat we verdergaan.",
     "resumenModeloEjemplo": "",
     "resumenPasoTitulo2": "Vereisten en USB-verbinding",
-    "resumenPasoBullet2a": "Heb de beschikbaarheid en tijd om de stappen van de technicus te volgen (een essentiële vereiste).",
+    "resumenPasoBullet2a": "De bereidheid en de tijd hebben om de stappen in onze video's te volgen (essentiële vereiste).",
     "resumenPasoBullet2b": "Heb een USB-kabel rechtstreeks op je pc aangesloten.",
     "resumenPasoNota2": "We repareren geen fysieke schade, afdrukkwaliteitsproblemen, defecte cartridges of fouten in de onderhoudscassette, en we bieden geen huisbezoeken aan.",
     "resumenPasoTitulo3": "Compatibiliteitscontrole en resetbeschikbaarheid",
     "resumenPasoTexto3": "Een gratis diagnose om te controleren of je aan de technische vereisten voldoet, te bevestigen dat een reset beschikbaar is voor jouw model, en je een nauwkeurige diagnose te geven vóór enige betaling.",
-    "resumenPasoTitulo4": "Offerte, betaalmethode en garantie",
+    "resumenPasoTitulo4": "Prijs, Betaalmethode en Aankoop van je Key",
     "resumenPasoTexto4": "We bepalen jouw land om je lokale prijzen en betaalmethoden te tonen.",
-    "resumenPasoNota4": "De kosten dekken de huidige service; optionele garantieplannen zijn alleen bedoeld om zonder extra kosten ondersteuning te krijgen als de fout zich opnieuw voordoet binnen de dekkingsperiode.",
+    "resumenPasoNota4": "De kosten gelden voor de installatie op één pc. Na levering van de Key is er geen terugbetaling; daarom kun je vooraf eenmalig een Key Trial (proefsleutel) aanvragen.",
     "resumenPasoTitulo5": "Geassisteerde reset in 1 minuut",
     "resumenPasoTexto5": "Met live hulp voor jouw {marca} {modelo} voeren we de procedure op afstand en veilig uit om de teller op nul te zetten.",
     "resumenPasoTitulo6": "Printer ontgrendeld en klaar",
@@ -296,70 +301,84 @@
     "otroModeloOption": "Anders: ____",
     "testimonioTrustpilotAlt": "Echte klantbeoordeling op Trustpilot",
     "resenasTitulo": "Meer dan 920 klanten hebben hun printer al terug",
-    "resenasSubtitulo": "Wat mensen zeggen die al vertrouwden op onze geassisteerde resetservice",
+    "resenasSubtitulo": "Wat mensen zeggen die onze reset-dienst al vertrouwden",
     "whatsappFlotanteLabel": "Start gratis diagnose via WhatsApp",
-    "whatsappBannerCta": "Praat nu met een echte technicus",
-    "whatsappBannerSubtitulo": "We beoordelen je situatie gratis en bevestigen direct de beschikbaarheid. Vrijblijvend.",
+    "whatsappBannerCta": "Stuur nu een bericht via WhatsApp",
+    "whatsappBannerSubtitulo": "We bevestigen of je model en fout compatibel zijn en leggen uit hoe je je Key krijgt. Vrijblijvend.",
     "ctaFinalLabel": "Controleer of mijn printer te repareren is",
-    "paso31BotonDescarga": "Download veilige verbindingsmodule",
-    "paso31MicroTexto": "Veilig, 100% virusvrij en vereist niet dat je je antivirus uitschakelt"
+    "paso31BotonDescarga": "Download installer",
+    "paso31MicroTexto": "Het proces is 100% zelfstandig en vereist een uitzondering in je antivirus",
+    "beneficio10Titulo": "Duidelijke Compatibiliteit",
+    "beneficio10Texto": "Je weet vóór aankoop precies welke fouten het dekt: Epson, Canon en Epson SC-plotters.",
+    "beneficio11Titulo": "Alleen USB-kabel",
+    "beneficio11Texto": "Je hebt alleen je Windows-pc en de printer via USB-kabel nodig. Alles gebeurt op je eigen computer.",
+    "beneficio12Titulo": "Opnieuw Installeren zonder Activering te Verliezen",
+    "beneficio12Texto": "Als het antivirusprogramma het programma per ongeluk verwijdert, herstelt de knop 'Opnieuw installeren' het zonder je activering te verliezen (mits je de pc niet hebt geformatteerd)."
   },
   "faq": {
-    "title": "Veelgestelde vragen | ResetEnLinea.com",
-    "description": "We beantwoorden de meest gestelde vragen over printerresets en ons ondersteuningsproces.",
+    "title": "Veelgestelde vragen | ResetEntuPC.com",
+    "description": "We beantwoorden de meest gestelde vragen over de reset-installatie, wat die dekt en hoe het proces werkt.",
     "heading": "Veelgestelde vragen",
     "items": [
       {
-        "pregunta": "Biedt deze site een gratis programma om mijn printer zelf te resetten?",
-        "respuesta": "Nee. We verspreiden geen gratis resetprogramma's of zelfstandige tools. Dit is een 100% geassisteerde service: een echte technicus begeleidt je via WhatsApp door het hele proces."
+        "pregunta": "Wat koop ik precies?",
+        "respuesta": "Een Installatie: het recht om de resetsoftware op één pc te installeren. De activeringssleutel (Key) is slechts het middel waarmee het programma wordt ingeschakeld; wat wij leveren, is de installatie."
       },
       {
-        "pregunta": "Is het veilig om mijn printer te resetten?",
-        "respuesta": "Ja. We werken met een voorafgaande diagnose en professionele begeleiding tijdens de hele procedure."
+        "pregunta": "Kan ik het uitproberen voordat ik koop?",
+        "respuesta": "Ja. Wil je zeker zijn voordat je koopt, vraag dan via WhatsApp een Key Trial (proefsleutel) aan. Die wordt slechts één keer verstrekt."
       },
       {
-        "pregunta": "Is het veilig om de USB-verbinding van mijn printer te delen?",
-        "respuesta": "Ja. We delen alleen de USB-verbinding van je printer: we zien nooit je scherm, hebben geen toegang tot je bestanden en bedienen je computer niet. Jij houdt altijd de controle."
+        "pregunta": "Is er terugbetaling als het programma mijn probleem niet oplost?",
+        "respuesta": "Omdat wij een installatie verkopen, is er na levering van de Key geen terugbetaling, ongeacht of het programma het probleem van je printer oplost. Controleer daarom vóór aankoop welke fouten het dekt en test desgewenst eerst met de Key Trial."
       },
       {
-        "pregunta": "Moet ik mijn antivirus uitschakelen?",
-        "respuesta": "Nee. We vragen je nooit om je antivirus of enig beveiligingssysteem op je apparaat uit te schakelen."
+        "pregunta": "Op hoeveel computers kan ik het gebruiken en hoe lang duurt het?",
+        "respuesta": "De installatie is gekoppeld aan de pc waarop ze wordt geactiveerd en duurt zo lang als jij besluit: 1 dag of 20 jaar. Als je de pc formatteert, de harde schijf vervangt of naar een andere computer overzet, gaat de installatie verloren en moet je een nieuwe aanschaffen."
       },
       {
-        "pregunta": "Wat heb ik nodig voor hulp op afstand?",
-        "respuesta": "Een stabiele internetverbinding en je printer aangesloten op je computer via USB."
+        "pregunta": "Welke fouten lost het op en welke niet?",
+        "respuesta": "Het reset alleen de tellers van de inktkussens. Epson: inktkussenfout, E11 en dopfout. Canon: 5B00, 1700, P07 en E08. Epson SC-plotters: 00000008, 00080000, 00040000, 00000004, 00010000, 00000001, 0014BD. Het lost geen fysieke problemen, printkwaliteit, printkopreiniging, onderhoudsbox of cartridgestoringen op."
       },
       {
-        "pregunta": "Wanneer wordt de service betaald?",
-        "respuesta": "We beoordelen eerst je situatie en bevestigen dat je model en fout compatibel zijn. Pas na die bevestiging maken we een prijsopgave en regelen we de betaling."
+        "pregunta": "Moet ik het zelf doen, of krijgen jullie toegang tot mijn pc?",
+        "respuesta": "Het is een 'doe-het-zelf'-dienst: je voert het proces uit aan de hand van onze video's en houdt volledige controle over je computer. Wij bieden geen hulp op afstand en loggen niet in op je pc. Je hoeft alleen de printer met een USB-kabel aan te sluiten."
       },
       {
-        "pregunta": "Krijg ik een bewijs van de service?",
-        "respuesta": "Ja. Zodra de reset is voltooid, ontvang je een garantiecertificaat voor de uitgevoerde service."
+        "pregunta": "Welk antivirusprogramma moet ik gebruiken?",
+        "respuesta": "Uitsluitend Windows Defender. Heb je een ander antivirusprogramma, dan moet je dat volledig verwijderen (pauzeren is niet genoeg). Daarnaast moet je de map C:\\ResetEntuPc.com uitsluiten in Windows Defender."
       },
       {
-        "pregunta": "Wat als mijn apparaat niet aan de vereisten voldoet?",
-        "respuesta": "We beoordelen alternatieven, waaronder een lokale procedure begeleid via een USB-verbinding."
+        "pregunta": "Wat als het antivirusprogramma het programma verwijdert?",
+        "respuesta": "De installatiebeheerder heeft een knop 'Opnieuw installeren'. Verwijdert het antivirusprogramma het programma per ongeluk, dan herstel je het met die knop zonder je activering te verliezen, zolang je de pc niet hebt geformatteerd."
+      },
+      {
+        "pregunta": "Hoe krijg ik mijn Key?",
+        "respuesta": "Je downloadt het installatieprogramma, installeert de reset voor jouw printermodel en kopieert het ID van je pc. Daarna stuur je ons via WhatsApp dat ID en genereren wij je Key om het te activeren."
       }
     ]
   },
   "contacto": {
-    "title": "Contact | ResetEnLinea.com",
+    "title": "Contact | ResetEntuPC.com",
     "description": "Vertel ons wat je nodig hebt en krijg snel advies over de juiste service voor je printer.",
-    "heading": "Neem contact met ons op voor een geassisteerde reset in 1 minuut",
+    "heading": "Neem contact op om je Key te krijgen",
     "text": "Vertel ons wat je nodig hebt en krijg snel advies over de juiste service.",
     "cta": "Vraag hulp",
     "equipoTitulo": "Ons team",
+    "confianzaTitulo": "Geregistreerd en geverifieerd bedrijf",
+    "confianzaTexto": "We zijn wettelijk geregistreerd bij de DIAN (Colombiaanse belastingdienst). Bekijk ons Registro Único Tributario (RUT). Om veiligheidsredenen zijn persoonsgegevens, identificatie, adres en QR-codes afgeschermd en bevat het document een watermerk.",
+    "confianzaAlt": "Registro Único Tributario (RUT) van ResetEntuPC.com met afgeschermde persoonsgegevens",
+    "confianzaError": "Het document kon niet worden geladen. Laad de pagina opnieuw.",
     "enviarMensaje": "Bericht versturen",
     "rolWilton": "Beheerder - Technicus reset op afstand - Adviseur",
     "rolDiana": "Adviseur",
     "ubicacion": "Santa Marta, Colombia"
   },
   "whatsapp": {
-    "greetingWithError": "Hallo, ik heb hulp nodig bij het resetten van mijn {marca} {modelo}.\n\nFout: {error}\n\nIk kom van:\n{url}",
-    "greetingWithoutError": "Hallo, ik heb hulp nodig bij het resetten van mijn {marca} {modelo}.\n\nIk kom van:\n{url}",
-    "greetingGeneric": "Hallo, ik heb hulp nodig bij het resetten van mijn printer.\n\nIk kom van:\n{url}",
-    "greetingConPlan": "Hallo, ik wil graag de geassisteerde resetservice afnemen.\n\n{nota}\n\nIk kom van:\n{url}"
+    "greetingWithError": "Hallo, ik wil de reset-Key kopen voor mijn {marca} {modelo}. Hij is geblokkeerd en ik kan niet printen.\n\nFout: {error}\n\nID van mijn pc: \n\nIk kom van:\n{url}",
+    "greetingWithoutError": "Hallo, ik wil de reset-Key kopen voor mijn {marca} {modelo}.\n\nID van mijn pc: \n\nIk kom van:\n{url}",
+    "greetingGeneric": "Hallo, ik wil de reset-Key kopen voor mijn printer.\n\nMerk en model: \nFout of getoonde melding: \nID van mijn pc: \n\nIk kom van:\n{url}",
+    "greetingConPlan": "Hallo, ik wil de reset-Key kopen.\n\n{nota}\n\nIk kom van:\n{url}"
   },
   "contactForm": {
     "botonFlotante": "Neem contact op",
@@ -488,7 +507,7 @@
     "conexionPaso1Whatsapp": "Open WhatsApp Web op dezelfde pc die je voor het proces gebruikt.",
     "conexionPaso1Usb": "Sluit de printer met een USB-kabel aan op de pc.",
     "conexionPaso1Descarga": "Download de veilige module:",
-    "conexionDescargarBoton": "Module downloaden",
+    "conexionDescargarBoton": "Installer downloaden",
     "conexionPaso2Titulo": "Verbinden",
     "conexionPaso2Intro": "Open het programma en voer in:",
     "conexionPaso2TechnicianIdLabel": "Technicus-ID:",
@@ -556,22 +575,22 @@
   },
   "footer": {
     "rights": "Alle rechten voorbehouden.",
-    "disclaimer": "ResetEnLinea.com biedt onafhankelijke professionele hulp bij het resetten van printers. Genoemde merken behoren toe aan hun respectievelijke eigenaars.",
+    "disclaimer": "ResetEntuPC.com is een onafhankelijke aanbieder van resetsoftware voor printers. De genoemde merken zijn eigendom van hun respectieve eigenaren.",
     "legalInfoTitulo": "Juridische informatie",
     "terminosLink": "Algemene voorwaarden"
   },
   "ruletaPage": {
-    "title": "Rad van fortuin | ResetEnLinea.com",
+    "title": "Rad van fortuin | ResetEntuPC.com",
     "description": "Speel en krijg een kortingsbon voor je resetservice.",
     "heading": "Draai aan het rad",
     "texto": "Speel en krijg je kortingsbon. Zodra je klaar bent, kun je ons schrijven om hem te gebruiken."
   },
   "pruebaSocialPage": {
-    "title": "Klantervaringen | ResetEnLinea.com",
+    "title": "Klantervaringen | ResetEntuPC.com",
     "description": "Echte beoordelingen van klanten die al gebruik hebben gemaakt van onze geassisteerde resetservice.",
     "heading": "Klantervaringen",
     "texto": "Echte, geverifieerde beoordelingen op Trustpilot.",
-    "introTexto": "Hier verzamelen we echte ervaringen en bewijs van klanten en diensten uitgevoerd door ResetEnLinea.",
+    "introTexto": "Hier verzamelen we echte ervaringen en bewijs van klanten en diensten uitgevoerd door ResetEntuPC.",
     "tabConversaciones": "Echte gesprekken",
     "tabResets": "Voltooide resets",
     "conversacionesTitulo": "Echte gesprekken",
@@ -587,8 +606,8 @@
     "testimoniosTexto": "Echte screenshots van klantbeoordelingen op Trustpilot."
   },
   "resetRealizadosPage": {
-    "title": "Resetbewijs | ResetEnLinea.com",
-    "description": "Videobewijs van resetservices, op afstand uitgevoerd door ResetEnLinea.",
+    "title": "Resetbewijs | ResetEntuPC.com",
+    "description": "Videobewijs van resetservices, op afstand uitgevoerd door ResetEntuPC.",
     "heading": "Resetbewijs",
     "marca": "Merk",
     "modelo": "Model",
@@ -602,14 +621,14 @@
     "resumenContenidoSinDuracion": "Echte video van een reset van een {marca} {modelo}-printer — {error} — in {pais}."
   },
   "clienteSatisfechoPage": {
-    "title": "Tevreden klant | ResetEnLinea.com",
+    "title": "Tevreden klant | ResetEntuPC.com",
     "description": "Echte gesprekken met klanten die al gebruik hebben gemaakt van onze geassisteerde resetservice.",
     "heading": "Tevreden klant",
     "volverLink": "← Terug naar tevreden klant",
     "sinRegistros": "Er zijn nog geen gepubliceerde gesprekken."
   },
   "testimoniosTruspilotPage": {
-    "title": "Beoordelingen op Trustpilot | ResetEnLinea.com",
+    "title": "Beoordelingen op Trustpilot | ResetEntuPC.com",
     "description": "Galerij van echte klantbeoordelingen en screenshots op Trustpilot.",
     "heading": "Beoordelingen op Trustpilot",
     "texto": "Echte screenshots van beoordelingen en waarderingen van onze klanten op Trustpilot.",
@@ -618,11 +637,11 @@
   },
   "terminos": {
     "meta": {
-      "title": "Algemene voorwaarden | ResetEnLinea.com",
-      "description": "Algemene voorwaarden voor de 100% geassisteerde reset op afstand van ResetEnLinea via USB-verbinding."
+      "title": "Algemene voorwaarden | ResetEntuPC.com",
+      "description": "Algemene voorwaarden voor de software-installatie van ResetEntuPC: één pc, zelfstandig proces en geen terugbetaling zodra de Key is geleverd."
     },
     "title": "Algemene voorwaarden",
-    "actualizacion": "Laatst bijgewerkt: 21 augustus 2026.",
+    "actualizacion": "Laatst bijgewerkt: 25 september 2026.",
     "tocTitulo": "Inhoudsopgave",
     "share": {
       "titulo": "Deel deze algemene voorwaarden",
@@ -632,27 +651,27 @@
       "copiado": "Link gekopieerd",
       "imprimir": "Afdrukken / Opslaan als pdf",
       "compartir": "Delen",
-      "mensajeWhatsapp": "Ik deel de officiële algemene voorwaarden van ResetEnLinea met je:",
-      "asuntoEmail": "Algemene voorwaarden ResetEnLinea",
+      "mensajeWhatsapp": "Ik deel de officiële algemene voorwaarden van ResetEntuPC met je:",
+      "asuntoEmail": "Algemene voorwaarden ResetEntuPC",
       "cuerpoEmailSaludo": "Hallo,",
-      "cuerpoEmailIntro": "Ik deel de officiële algemene voorwaarden van ResetEnLinea met je:",
-      "cuerpoEmailDespedida": "Met vriendelijke groet,\nResetEnLinea"
+      "cuerpoEmailIntro": "Ik deel de officiële algemene voorwaarden van ResetEntuPC met je:",
+      "cuerpoEmailDespedida": "Met vriendelijke groet,\nResetEntuPC"
     },
     "cta": {
       "texto": "Heb je een vraag over deze algemene voorwaarden?",
       "whatsappLabel": "Stuur ons een bericht via WhatsApp",
-      "whatsappMensaje": "Hallo, ik heb een vraag over de algemene voorwaarden van ResetEnLinea."
+      "whatsappMensaje": "Hallo, ik heb een vraag over de algemene voorwaarden van ResetEntuPC."
     },
     "secciones": {
       "objeto": {
         "titulo": "1. Doel van de service",
-        "p1Antes": "ResetEnLinea biedt een service genaamd",
+        "p1Antes": "ResetEntuPC biedt een service genaamd",
         "p1Fuerte": "100% geassisteerde reset op afstand via USB-verbinding",
-        "p1Despues": ". ResetEnLinea verkoopt geen software, licenties of resetprogramma's. De technische hulpmiddelen die tijdens de service worden gebruikt, zijn slechts een middel om deze te leveren, niet het bestelde product."
+        "p1Despues": ". ResetEntuPC verkoopt geen software, licenties of resetprogramma's. De technische hulpmiddelen die tijdens de service worden gebruikt, zijn slechts een middel om deze te leveren, niet het bestelde product."
       },
       "naturaleza": {
         "titulo": "2. Aard van de service",
-        "p1": "De technicus van ResetEnLinea heeft geen toegang tot de computer van de klant. De klant deelt alleen tijdelijk de USB-poort van zijn printer via het bijbehorende verbindingshulpmiddel.",
+        "p1": "De technicus van ResetEntuPC heeft geen toegang tot de computer van de klant. De klant deelt alleen tijdelijk de USB-poort van zijn printer via het bijbehorende verbindingshulpmiddel.",
         "p2Antes": "USB Redirector",
         "p2Fuerte": "is niet het resethulpmiddel",
         "p2Despues": ". Dit hulpmiddel brengt alleen communicatie tot stand tussen de printer van de klant en de server waarop de technicus werkt. De reset zelf wordt op afstand uitgevoerd door de technicus, zonder toegang tot de apparatuur van de klant buiten deze printerverbinding."
@@ -711,7 +730,7 @@
       "garantia": {
         "titulo": "7. Garantie",
         "p1": "De garantie op de service kan variëren van 3 tot 12 maanden. De exacte duur die op elke service van toepassing is, staat vermeld in het bijbehorende certificaat.",
-        "p2": "Als promotionele actie kan ResetEnLinea de garantie met nog 1 maand verlengen, tot maximaal 2 extra maanden.",
+        "p2": "Als promotionele actie kan ResetEntuPC de garantie met nog 1 maand verlengen, tot maximaal 2 extra maanden.",
         "p3": "De garantie geldt specifiek voor de reset van het bestelde model en vormt geen uitgebreide garantie die de printer of de andere onderdelen ervan dekt.",
         "p4": "Zolang de garantie geldig is, kan de klant de service aanvragen voor een andere printer van hetzelfde model, mits het gaat om:",
         "li1": "dezelfde persoon,",
@@ -728,7 +747,7 @@
       },
       "evidencia": {
         "titulo": "9. Bewijs van de service en klantervaringen",
-        "p1": "Na een geslaagde reset kan ResetEnLinea videobewijs genereren van de uitgevoerde service. Dit bewijs kan worden gebruikt als klantervaring en gepubliceerd op de kanalen van ResetEnLinea, inclusief deze website."
+        "p1": "Na een geslaagde reset kan ResetEntuPC videobewijs genereren van de uitgevoerde service. Dit bewijs kan worden gebruikt als klantervaring en gepubliceerd op de kanalen van ResetEntuPC, inclusief deze website."
       },
       "privacidad": {
         "titulo": "10. Privacy van gesprekken",
@@ -745,8 +764,35 @@
         "titulo": "12. Toepasselijk recht",
         "p1": "De service wordt geleverd vanuit Colombia en valt onder het toepasselijke Colombiaanse recht.",
         "legal": "AANBEVOLEN JURIDISCHE CONTROLE — toepasselijk recht en geschillenbeslechting."
+      },
+      "instalacion": {
+        "titulo": "Wij verkopen een Installatie, GEEN Reparatie",
+        "p1": "U koopt het recht op INSTALLATIE van de software op ÉÉN ENKELE PC. De activeringssleutel (Key) is slechts het middel om het programma in te schakelen, maar onze dienst is de installatie. Er is daarom GEEN TERUGBETALING mogelijk zodra de Key is geleverd, ongeacht of het programma het probleem van uw printer oplost of niet."
+      },
+      "unicoPc": {
+        "titulo": "Gebonden aan één enkele PC",
+        "p1": "De installatie is uitsluitend gekoppeld aan de machine waarop ze wordt geactiveerd. De duur hangt van u af (ze kan 1 dag of 20 jaar meegaan). Als u uw pc formatteert, van harde schijf wisselt of de installatie naar een andere computer probeert over te zetten, verliest u de installatie onmiddellijk en moet u een nieuwe aanschaffen."
+      },
+      "funcion": {
+        "titulo": "Strikte werking van de software",
+        "p1": "Het programma zet ALLEEN de tellers van de opvangkussens terug. Het lost GEEN fysieke problemen, printkwaliteit, reiniging van printkoppen, onderhoudsbox of cartridgestoringen op.",
+        "items": [
+          "Epson: alleen de fout Opvangkussens, E11 en dopfout.",
+          "Canon: alleen 5B00, 1700, P07, E08.",
+          "Epson SC-plotters: alleen 00000008, 00080000, 00040000, 00000004, 00010000, 00000001, 0014BD"
+        ]
+      },
+      "autonomo": {
+        "titulo": "100% zelfstandig proces en verbinding",
+        "p1": "Deze dienst is 'doe-het-zelf'. U voert het proces zelf uit aan de hand van onze video's. Wij bieden GEEN hulp op afstand en krijgen geen toegang tot uw pc. Het is noodzakelijk de printer met een USB-KABEL aan te sluiten.",
+        "nota": "Let op: als u twijfelt voor de aankoop, kunt u via WhatsApp eenmalig een Trial Key (proefsleutel) aanvragen."
+      },
+      "antivirus": {
+        "titulo": "Antivirus en herinstallatie",
+        "p1": "Het is een VERPLICHTE VOORWAARDE om uitsluitend Windows Defender te gebruiken. Als u een ander antivirusprogramma heeft, moet u dat volledig VERWIJDEREN (pauzeren is niet genoeg). Deze installatiebeheerder heeft een knop 'Opnieuw installeren'; als uw antivirus het programma per ongeluk verwijdert, kunt u het met die knop herstellen zonder uw activering te verliezen (mits u niet heeft geformatteerd)."
       }
-    }
+    },
+    "prevaleceEs": "Informatieve vertaling. Bij afwijkingen prevaleert de Spaanse tekst."
   },
   "contactHub": {
     "abrirLabel": "Contactopties openen",
@@ -757,14 +803,14 @@
     "ruleta": "Speel aan het rad",
     "whatsapp": "Stuur ons een bericht via WhatsApp",
     "bubbleMensaje": "Hulp nodig met je printer?",
-    "bubbleMensajeModelo": "Heb je een geassisteerde reset nodig voor je {marca} {modelo}?"
+    "bubbleMensajeModelo": "Zelfstandige Reset nodig voor {marca} {modelo}?"
   },
   "selectorVendedores": {
     "titulo": "Met wie wil je praten?",
     "cargando": "Beschikbare adviseurs zoeken…"
   },
   "consultaGarantiaPage": {
-    "title": "Garantie controleren | ResetEnLinea.com",
+    "title": "Garantie controleren | ResetEntuPC.com",
     "description": "Controleer je garantiestatus met je e-mailadres of WhatsApp-nummer.",
     "heading": "Garantie controleren",
     "intro": "Voer het e-mailadres, WhatsApp-nummer of bestelnummer (#) van je aankoop in om je garantiestatus te controleren.",
@@ -783,10 +829,10 @@
     "errorGenerico": "Er is iets misgegaan. Probeer het over een paar minuten opnieuw."
   },
   "preciosPage": {
-    "title": "Prijzen geassisteerde printerreset | ResetEnLinea.com",
-    "description": "Geolokaliseerde prijzen voor onze geassisteerde printerresetservice, met de beschikbare betaalmethoden in jouw land.",
-    "heading": "Prijzen geassisteerde reset",
-    "intro": "Kies je land om de exacte prijs in je lokale valuta en de beschikbare betaalmethoden te zien. Er worden hier geen accountgegevens gepubliceerd — zodra je je plan bevestigt, delen we de exacte betaalgegevens via WhatsApp.",
+    "title": "Prijs van de reset-installatie | ResetEntuPC.com",
+    "description": "Prijs van de reset-installatie per land en valuta, met de beschikbare betaalmethoden.",
+    "heading": "Prijs van de reset-installatie",
+    "intro": "Kies je land om de exacte prijs in je lokale valuta en de beschikbare betaalmethoden te zien. Er worden hier geen accountgegevens gepubliceerd — zodra je je bestelling bevestigt, delen we de exacte betaalgegevens via WhatsApp.",
     "paisLabel": "Jouw land",
     "monedaLabel": "Valuta",
     "masPopular": "Meest gekozen",
@@ -803,7 +849,7 @@
     "familiaPlaceholder": "Selecteer een familie",
     "modeloPlaceholder": "Selecteer je exacte model",
     "pendienteTitulo": "Voltooi de bovenstaande stappen",
-    "pendienteTexto": "Kies je merk, model en fout om de exacte prijs voor je plan te zien.",
+    "pendienteTexto": "Kies je merk, model en fout om de exacte prijs van de installatie te zien.",
     "cambiarSeleccion": "Selectie wijzigen",
     "planEsencialNombre": "Essentieel",
     "planEsencialDuracion": "3 maanden",
@@ -813,16 +859,38 @@
     "planEliteDuracion": "12 maanden",
     "precioNoDisponible": "Vraag ons",
     "ctaPlan": "Kies plan",
-    "notaWhatsapp": "Reset {marca} {modelo}\nFout: {error}\nPlan {plan} ({duracion}) · {pais} · {precio}",
-    "notaWhatsappSinError": "Reset {marca} {modelo}\nPlan {plan} ({duracion}) · {pais} · {precio}",
-    "modeloWidgetTitulo": "Kies je plan",
+    "notaWhatsapp": "Reset {marca} {modelo}\nFout: {error}\n{plan} ({duracion}) · {pais} · {precio}",
+    "notaWhatsappSinError": "Reset {marca} {modelo}\n{plan} ({duracion}) · {pais} · {precio}",
+    "modeloWidgetTitulo": "Prijs van de installatie",
     "metodosPagoTitulo": "Beschikbare betaalmethoden in {pais}",
-    "metodosPagoNota": "We tonen alleen de geaccepteerde banken en instellingen. We delen de exacte accountgegevens via WhatsApp zodra je je plan bevestigt.",
+    "metodosPagoNota": "We tonen alleen de geaccepteerde banken en instellingen. We delen de exacte accountgegevens via WhatsApp zodra je je bestelling bevestigt.",
     "metodosInternacionalesSubtitulo": "Internationale methoden",
     "bloqueLocalTitulo": "Prijs in je lokale valuta · Lokale agent in {pais}",
     "bloqueInternacionalTitulo": "Prijs in Amerikaanse dollars · Internationale betaling",
     "descuentoBadge": "-{pct}%",
     "descuentoCountdown": "⏳ Tijdelijke aanbieding: {tiempo}",
-    "ctaGeneral": "Praat met een technicus over de prijzen"
+    "ctaGeneral": "Vraag naar prijzen via WhatsApp",
+    "planInstalacionNombre": "Reset-installatie",
+    "planInstalacionDuracion": "Voor 1 pc"
+  },
+  "procesoInstalacion": {
+    "resumenTitulo": "Antivirus uitsluiten, configuratie en download van de installatie",
+    "resumenTexto": "Sluit de map C:\\ResetEntuPc.com uit in Windows Defender, open de installer, kies je model en download de installatie van je reset.",
+    "titulo": "Antivirus uitsluiten, configuratie en download van de installatie",
+    "resultado": "Resultaat: installatie voltooid! De reset voor je model staat klaar in C:\\ResetEntuPc.com.",
+    "moduloTitulo": "Zo doe je het, stap voor stap",
+    "sub1Titulo": "De antivirus uitsluiten",
+    "sub1Texto": "Maak de map C:\\ResetEntuPc.com aan en voeg die toe als uitsluiting in Windows Defender: Windows-beveiliging › Virus- en bedreigingsbeveiliging › Instellingen beheren › Uitsluitingen › Een uitsluiting toevoegen › Map.",
+    "sub2Titulo": "Configuratie",
+    "sub2Texto": "Download en open de installer. Typ je model, accepteer de voorwaarden (installatie voor slechts 1 pc, geen terugbetaling) en klik op “Installeren”.",
+    "sub2Alt": "Venster van de ResetEntuPC-installer: model zoeken, geaccepteerde voorwaarden en knop Installeren",
+    "sub3Titulo": "Download van de installatie",
+    "sub3Texto": "De installer downloadt de reset voor je model naar C:\\ResetEntuPc.com. Open hem, kopieer de getoonde Hardware ID en stuur ons een bericht via WhatsApp om je KEY te kopen.",
+    "sub3Alt": "De map C:\\ResetEntuPc.com met het resetprogramma voor je model en het venster met de Hardware ID"
+  },
+  "procesoAutonomo": {
+    "titulo": "100% zelfstandige reset, op je pc geïnstalleerd — volg de stappen",
+    "tituloModelo": "100% zelfstandige reset, op je pc geïnstalleerd — volg de stappen | {marca} {modelo}",
+    "resumenTexto": "Met de reset al op je pc geïnstalleerd volg je de stappen van het programma om de teller van je {marca} {modelo} op nul te zetten."
   }
 }

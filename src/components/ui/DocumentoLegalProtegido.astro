@@ -1,0 +1,152 @@
+---
+/**
+ * Visor de un documento legal (PDF) ya CENSURADO y con marca de agua (ver el
+ * "Censurador de Documentos" de Núcleo). Se dibuja en <canvas> con pdf.js, sin
+ * el visor del navegador: no hay botón de guardar/"guardar como"/imprimir, ni
+ * menú contextual, ni selección. Es un freno de uso normal (una captura de
+ * pantalla no se puede impedir), así que el PDF que se sube aquí DEBE venir ya
+ * sin datos sensibles: el visor no censura nada por su cuenta.
+ *
+ * pdf.js sale de /pdfjs/ (mismo origen: cumple la CSP sin abrir script-src ni
+ * worker-src) y solo se carga cuando el visor está cerca de la pantalla.
+ */
+interface Props {
+  /** URL final del PDF (mismo origen, ej. import x from "…/RUT.pdf?url"). */
+  src: string;
+  /** Descripción accesible del documento. */
+  alt: string;
+  /** Texto si el documento no puede cargarse. */
+  textoError: string;
+}
+
+const { src, alt, textoError } = Astro.props;
+---
+
+<div class="documento-legal" data-documento-legal data-src={src} data-alt={alt} data-texto-error={textoError}>
+  <div class="documento-legal-paginas" data-documento-paginas></div>
+  <p class="documento-legal-error" data-documento-error hidden></p>
+</div>
+
+<script>
+  let pdfjsPromesa: Promise<any> | null = null;
+  function cargarPdfJs(): Promise<any> {
+    pdfjsPromesa ??= new Promise((ok, fallo) => {
+      const w = window as any;
+      if (w.pdfjsLib) return ok(w.pdfjsLib);
+      const s = document.createElement("script");
+      s.src = "/pdfjs/pdf.min.js";
+      s.onload = () => {
+        w.pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.js";
+        ok(w.pdfjsLib);
+      };
+      s.onerror = () => fallo(new Error("pdf.js"));
+      document.head.appendChild(s);
+    });
+    return pdfjsPromesa;
+  }
+
+  async function dibujar(visor: HTMLElement): Promise<void> {
+    const src = visor.dataset.src;
+    const paginas = visor.querySelector<HTMLElement>("[data-documento-paginas]");
+    const error = visor.querySelector<HTMLElement>("[data-documento-error]");
+    if (!src || !paginas) return;
+    try {
+      const pdfjs = await cargarPdfJs();
+      const respuesta = await fetch(src);
+      if (!respuesta.ok) throw new Error(String(respuesta.status));
+      const pdf = await pdfjs.getDocument({ data: await respuesta.arrayBuffer(), isEvalSupported: false }).promise;
+      const ancho = Math.min(paginas.clientWidth || 900, 900);
+      for (let n = 1; n <= pdf.numPages; n++) {
+        const pagina = await pdf.getPage(n);
+        const base = pagina.getViewport({ scale: 1 });
+        const vista = pagina.getViewport({ scale: Math.min(window.devicePixelRatio || 1, 2) * (ancho / base.width) });
+        const lienzo = document.createElement("canvas");
+        lienzo.className = "documento-legal-pagina";
+        lienzo.width = Math.floor(vista.width);
+        lienzo.height = Math.floor(vista.height);
+        lienzo.setAttribute("role", "img");
+        lienzo.setAttribute("aria-label", visor.dataset.alt || "");
+        await pagina.render({ canvasContext: lienzo.getContext("2d"), viewport: vista }).promise;
+        paginas.appendChild(lienzo);
+      }
+    } catch {
+      paginas.replaceChildren();
+      if (error) {
+        error.textContent = visor.dataset.textoError || "";
+        error.hidden = false;
+      }
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-documento-legal]").forEach((visor) => {
+    // Sin menú contextual (guardar imagen como…), sin arrastrar, seleccionar ni copiar.
+    for (const evento of ["contextmenu", "dragstart", "selectstart", "copy", "cut"]) {
+      visor.addEventListener(evento, (e) => e.preventDefault());
+    }
+
+    // Carga diferida: pdf.js y el PDF (~750 KB) solo cuando el visor se acerca.
+    if ("IntersectionObserver" in window) {
+      const observador = new IntersectionObserver(
+        (entradas) => {
+          if (entradas.some((e) => e.isIntersecting)) {
+            observador.disconnect();
+            void dibujar(visor);
+          }
+        },
+        { rootMargin: "400px" }
+      );
+      observador.observe(visor);
+    } else {
+      void dibujar(visor);
+    }
+  });
+</script>
+
+<style is:global>
+  /* is:global: las páginas se crean con createElement en el cliente y nunca
+     reciben el atributo de scope de Astro. Clases propias de este componente. */
+  .documento-legal {
+    display: grid;
+    justify-items: center;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .documento-legal-paginas {
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: center;
+    width: 100%;
+    max-width: 900px;
+    min-height: 320px;
+  }
+
+  .documento-legal-pagina {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    -webkit-user-drag: none;
+  }
+
+  .documento-legal-error {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+  }
+
+  .documento-legal-error[hidden] {
+    display: none;
+  }
+
+  /* Imprimir (o "guardar como PDF" desde imprimir) no incluye el documento. */
+  @media print {
+    .documento-legal {
+      display: none !important;
+    }
+  }
+</style>

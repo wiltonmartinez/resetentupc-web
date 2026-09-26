@@ -17,7 +17,7 @@
  * ventana ofrece "Escribir por WhatsApp" con el número del enlace original —
  * nunca se pierde el contacto.
  */
-import { NUCLEO_API_BASE_URL } from "../config/site";
+import { NUCLEO_API_BASE_URL, VENDEDORES_API_URL } from "../config/site";
 import banderaCL from "../assets/flag/CHILE.png";
 import banderaCO from "../assets/flag/COLOMBIA.png";
 import banderaEC from "../assets/flag/ECUADOR.png";
@@ -94,7 +94,7 @@ function cargarVendedores(): Promise<VendedorPublico[]> {
     .then((datosPais: { codigo_pais?: string | null }) => {
       const paisIso = (datosPais.codigo_pais || "").toUpperCase();
       if (!/^[A-Z]{2}$/.test(paisIso)) return [];
-      return fetch(`${NUCLEO_API_BASE_URL}/api/public/vendedores/?pais_iso=${paisIso}`)
+      return fetch(`${VENDEDORES_API_URL}?pais_iso=${paisIso}`)
         .then((res) => res.json())
         .then((datos: { data?: VendedorPublico[] }) => (Array.isArray(datos?.data) ? datos.data : []));
     })

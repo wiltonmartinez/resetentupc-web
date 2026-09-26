@@ -51,9 +51,9 @@ const hrefPaso = (n: number) => (isGeneric ? "#" : `#paso-${sourceIdBase}-${n}`)
 
 const TITULOS_GENERICOS = {
   paso1: t(locale, "procesoReutilizable.paso1TituloGenerico"),
-  paso3: t(locale, "procesoReutilizable.paso3TituloGenerico"),
+  paso3: t(locale, "procesoInstalacion.titulo"), // antes procesoReutilizable.paso3TituloGenerico (sin uso)
   paso4: t(locale, "procesoReutilizable.paso4Titulo"),
-  paso5: t(locale, "procesoReutilizable.paso5Titulo"),
+  paso5: t(locale, "procesoAutonomo.titulo"), // antes procesoReutilizable.paso5Titulo (sin uso)
   paso6: t(locale, "procesoReutilizable.paso6Titulo"),
 };
 ---
@@ -90,7 +90,7 @@ const TITULOS_GENERICOS = {
       <a class="pr-card-link" href={hrefPaso(3)}>
         <span class="pr-numero" aria-hidden="true">3</span>
         <Image src={icono3} alt="" width={80} height={80} class="pr-imagen" />
-        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso3 : t(locale, "procesoReutilizable.paso3TituloEpson")}</p>
+        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso3 : t(locale, "procesoInstalacion.titulo")}</p>
       </a>
     </li>
 
@@ -106,7 +106,7 @@ const TITULOS_GENERICOS = {
       <a class="pr-card-link" href={hrefPaso(5)}>
         <span class="pr-numero" aria-hidden="true">5</span>
         <Image src={icono5} alt="" width={80} height={80} class="pr-imagen" />
-        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso5 : t(locale, "procesoReutilizable.paso5TituloEpson")}</p>
+        <p class="pr-card-titulo">{isGeneric ? TITULOS_GENERICOS.paso5 : t(locale, "procesoAutonomo.titulo")}</p>
       </a>
     </li>
 

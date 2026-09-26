@@ -2,7 +2,7 @@
 import { t, buildWhatsAppLink, buildWhatsAppMessage } from "../../i18n/utils";
 import modelos from "../../data/modelos-muestra.json";
 import pagosData from "../../data/pagos.json";
-import { TECHNICIAN_ID, USB_REDIRECTOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
+import { TECHNICIAN_ID, INSTALADOR_DOWNLOAD_URL, WHATSAPP_NUMBER, SITE_URL, type Locale } from "../../config/site";
 
 interface Props {
   locale: Locale;
@@ -407,7 +407,7 @@ const whatsappDirectoHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsappDi
     <p>📱 {t(locale, "contactForm.conexionPaso1Whatsapp")}</p>
     <p>🔌 {t(locale, "contactForm.conexionPaso1Usb")}</p>
     <p>⬇️ {t(locale, "contactForm.conexionPaso1Descarga")}</p>
-    <a class="contact-form-conexion-descarga" href={USB_REDIRECTOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
+    <a class="contact-form-conexion-descarga" href={INSTALADOR_DOWNLOAD_URL} target="_blank" rel="noopener noreferrer nofollow" data-sound="select">
       ⬇️ {t(locale, "contactForm.conexionDescargarBoton")}
     </a>
     <button type="button" class="contact-form-continuar" data-continuar>{t(locale, "contactForm.continuar")}</button>
@@ -557,7 +557,7 @@ const whatsappDirectoHref = buildWhatsAppLink(WHATSAPP_NUMBER, mensajeWhatsappDi
   // (además de "recipient") para que el formulario funcione incluso mientras el servidor
   // remoto todavía no tenga subida la versión actualizada del PHP.
   const DESTINATARIOS = {
-    wilton: { email: "info@resetenlinea.com", nombre: "Wilton Martínez Escorcia" },
+    wilton: { email: "info@resetentupc.com", nombre: "Wilton Martínez Escorcia" },
     diana: { email: "anaidcaba@hotmail.com", nombre: "Diana Cabana Orozco" },
   };
 
